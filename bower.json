@@ -1,11 +1,7 @@
 {
   "name": "getstream",
-  "version": "0.1",
+  "version": "0.1.1",
   "main": "dist/js/getstream.js",
-  "ignore": [
-    ".jshintrc",
-    "**/*.txt"
-  ],
   "ignore": [
     "src",
     "test",
@@ -19,6 +15,5 @@
   ],
   "dependencies": {
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
