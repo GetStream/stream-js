@@ -1,0 +1,24 @@
+{
+  "name": "getstream",
+  "version": "0.1",
+  "main": "dist/js/getstream.js",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "ignore": [
+    "src",
+    "test",
+    "node_modules",
+    "gulpfile.js",
+    "LICENSE",
+    "package.json",
+    "**/.*",
+    "**/*.json",
+    "**/*.html"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
