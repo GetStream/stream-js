@@ -1,4 +1,8 @@
 
+//     GetStream client library for node and the browser
+//     Author: Thierry Schellenbach
+//     BSD License
+
 var StreamClient = require('./lib/client');
 
 
