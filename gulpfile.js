@@ -68,17 +68,25 @@ gulp.task('release', function () {
 	// update bower to match package.json
     // git tag and push
     // npm publish .
+    //TODO: use something gulp instead of make, gulp-git seems broken
+    // TODO: why does bower read from master?
 	var packageJSON = require('./package.json');
 	var bowerJSON = require('./bower.json');
-	bowerJSON.version = packageJSON.version;
+	var version = packageJSON.version;
+	var versionName = 'v' + version;
+	console.log('Releasing version ' + versionName);
+	console.log(process.cwd());
 	// write the new bower.json file
+	console.log('Updating bower.json');
+	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
 	// push to github (which also impacts bower)
-	var version = 'v' + packageJSON.version;
-	git.tag(version, 'release of version ' + packageJSON.version);
+	console.log('Git tagging');
+	shell.task(['git tag -v ' + version]);
+	shell.task(['git push origin master --tags']);
+	//git.tag(version, 'release of version ' + packageJSON.version);
 	git.push('origin', 'master', {args: '--tags'});
-	// TODO: why does bower read from master?
-	console.log('npm')
+	console.log('Releasing to npm');
 	shell.task(['npm publish .']);
 });
 
