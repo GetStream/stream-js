@@ -1,6 +1,9 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var mocha = require('gulp-mocha');
+var fs = require('fs');
+var git = require('gulp-git');
+var shell = require('gulp-shell');
 
 
 gulp.task('default', function() {
@@ -57,4 +60,29 @@ gulp.task('build', function() {
           standalone : 'stream'
         }))
         .pipe(gulp.dest('./dist/js'));
+});
+
+// release to bower
+gulp.task('release', function () {
+	// read version from package.json
+	// update bower to match package.json
+    // git tag and push
+    // npm publish .
+	var packageJSON = require('./package.json');
+	var bowerJSON = require('./bower.json');
+	bowerJSON.version = packageJSON.version;
+	// write the new bower.json file
+	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
+	// push to github (which also impacts bower)
+	var version = 'v' + packageJSON.version;
+	git.tag(version, 'release of version ' + packageJSON.version);
+	git.push('origin', 'master', {args: '--tags'});
+	// TODO: why does bower read from master?
+	console.log('npm')
+	shell.task(['npm publish .']);
+});
+
+// full publish flow
+gulp.task('publish', ['build', 'test', 'release'], function () {
+    return;
 });

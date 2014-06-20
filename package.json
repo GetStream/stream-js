@@ -23,8 +23,11 @@
     "browserify": "~4.1.11",
     "expect.js": "~0.3.1",
     "gulp": "^3.8.1",
+    "gulp-browserify": "^0.5.0",
+    "gulp-git": "^0.4.3",
     "gulp-jshint": "^1.6.3",
     "gulp-mocha": "^0.4.1",
+    "gulp-shell": "^0.2.7",
     "mocha": "^1.20.1"
   },
   "license": "BSD",
