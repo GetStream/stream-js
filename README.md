@@ -49,7 +49,7 @@ npm install getstream
 ### Install using bower
 
 ```bash
-# comming soon
+bower install getstream
 ```
 
 Contributing
