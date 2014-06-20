@@ -1,28 +1,39 @@
-require("blanket");
-require('bluebird').longStackTraces();
 
-var expect = require('expect.js');
-
+var expect = expect || require('expect.js');
+var node = typeof(stream) == 'undefined';
 
 describe('Stream client', function () {
-  var stream = require('../../src/getstream');
-  var errors = require('../../src/lib/errors');
-  var client;
-
-  beforeEach(function () {
-    client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su');
+  if (node) {
+	  // we arent in a browser
+	  stream = require('../../src/getstream');
+  }
+  console.log('node is set to ', node);
+  errors = stream.errors;
+  
+  var client, user1, aggregated2, aggregated3, flat3;
+  
+  function beforeEachBrowser() {
+  	client = stream.connect('5crf3bhfzesn');
+  	user1 = client.feed('user:1', 'X9HxDkjAijyufcDmlRJfBF3HiHo');
+  	aggregated2 = client.feed('aggregated:2', 'qvc7nLoReHl7ft6d5dQrdxlqrMk');
+  	aggregated3 = client.feed('aggregated:3', 'Pq94Uqiu44OSwBpi-C0v5Y3B_HY');
+  	flat3 = client.feed('flat:3', 'ZTdkqyfadYj76h1p0zm18dsJRc0');
+  }
+  
+  function beforeEachNode() {
+  	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su');
     user1 = client.feed('user:1');
     aggregated2 = client.feed('aggregated:2');
     aggregated3 = client.feed('aggregated:3');
     flat3 = client.feed('flat:3');
-  });
-
-  afterEach(function () {
-  });
+  }
   
+  var before = (node) ? beforeEachNode : beforeEachBrowser;
+
+  beforeEach(before);
+
   it('get feed', function (done) {
-    var feed1 = client.feed('flat:1');
-    feed1.get({'limit': 1}, function(error, response, body) {
+    user1.get({'limit': 1}, function(error, response, body) {
     	expect(response.statusCode).to.eql(200);
 		expect(body['results'][0]['id']).to.be.a('string');
 		done();
@@ -40,30 +51,28 @@ describe('Stream client', function () {
 
   it('add activity', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-    var feed1 = client.feed('flat:1');
     function get(error, response, body) {
     	var activityId = body['id'];
-    	feed1.get({'limit': 1}, function(error, response, body) {
+    	user1.get({'limit': 1}, function(error, response, body) {
     		expect(response.statusCode).to.eql(200);
     		expect(body['results'][0]['id']).to.eql(activityId);
     		done();
     	});
     }
-    feed1.addActivity(activity, get);
+    user1.addActivity(activity, get);
   });
   
   it('remove activity', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-    var feed1 = client.feed('flat:1');
     function remove(error, response, body) {
     	var activityId = body['id'];
     	expect(response.statusCode).to.eql(201);
-    	feed1.removeActivity(activityId, function(error, response, body) {
+    	user1.removeActivity(activityId, function(error, response, body) {
     		expect(response.statusCode).to.eql(200);
     		done();
     	});
     }
-    feed1.addActivity(activity, remove);
+    user1.addActivity(activity, remove);
   });
   
   it('follow', function (done) {

@@ -2,7 +2,7 @@ var request = require('request');
 var StreamFeed = require('./feed');
 var signing = require('./signing');
 var errors = require('./errors');
-
+var crypto = require('crypto');
 
 var StreamClient = function () {
     this.initialize.apply(this, arguments);
@@ -33,8 +33,13 @@ StreamClient.prototype = {
     		throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
     	}
     	
-    	if (!token && this.secret) {
+    	if (crypto.createHash && this.secret && !token) {
+    		// we are server side, have a secret but no feed signature
     		token = signing.sign(this.secret, feedId.replace(':', ''));
+    	}
+    	
+    	if (!token) {
+    		throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
     	}
     	
     	var feed = new StreamFeed(this, feedId, token, siteId);

@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.stream=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 // Browser Request
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -411,11 +411,16 @@ function b64_enc (data) {
     return enc;
 }
 
-},{}],2:[function(require,module,exports){
+},{}],2:[function(_dereq_,module,exports){
 
-},{}],3:[function(require,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 
-var StreamClient = require('./lib/client');
+//     GetStream client library for node and the browser
+//     Author: Thierry Schellenbach
+//     BSD License
+
+var StreamClient = _dereq_('./lib/client');
+var errors = _dereq_('./lib/errors');
 
 
 function connect(apiKey, apiSecret) {
@@ -423,13 +428,14 @@ function connect(apiKey, apiSecret) {
 }
 
 module.exports.connect = connect;
+module.exports.errors = errors;
 
-},{"./lib/client":4}],4:[function(require,module,exports){
-var request = require('request');
-var StreamFeed = require('./feed');
-var signing = require('./signing');
-var errors = require('./errors');
-
+},{"./lib/client":4,"./lib/errors":5}],4:[function(_dereq_,module,exports){
+var request = _dereq_('request');
+var StreamFeed = _dereq_('./feed');
+var signing = _dereq_('./signing');
+var errors = _dereq_('./errors');
+var crypto = _dereq_('crypto');
 
 var StreamClient = function () {
     this.initialize.apply(this, arguments);
@@ -460,8 +466,13 @@ StreamClient.prototype = {
     		throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
     	}
     	
-    	if (!token && this.secret) {
+    	if (crypto.createHash && this.secret && !token) {
+    		// we are server side, have a secret but no feed signature
     		token = signing.sign(this.secret, feedId.replace(':', ''));
+    	}
+    	
+    	if (!token) {
+    		throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
     	}
     	
     	var feed = new StreamFeed(this, feedId, token, siteId);
@@ -508,7 +519,7 @@ StreamClient.prototype = {
 
 module.exports = StreamClient;
 
-},{"./errors":5,"./feed":6,"./signing":7,"request":1}],5:[function(require,module,exports){
+},{"./errors":5,"./feed":6,"./signing":7,"crypto":2,"request":1}],5:[function(_dereq_,module,exports){
 var errors = module.exports;
 
 var canCapture = (typeof Error.captureStackTrace === 'function');
@@ -542,7 +553,7 @@ errors.FeedError = function FeedError(msg) {
 errors.FeedError.prototype = new ErrorAbstract();
 
 
-},{}],6:[function(require,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 
 var StreamFeed = function () {
     this.initialize.apply(this, arguments);
@@ -638,9 +649,9 @@ StreamFeed.prototype = {
 
 
 module.exports = StreamFeed;
-},{}],7:[function(require,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 
-var crypto = require('crypto');
+var crypto = _dereq_('crypto');
 
 
 function urlsafe_b64_encode(s) {
@@ -672,3 +683,5 @@ exports.sign = function(secret, value) {
 	return urlsafe;
 };
 },{"crypto":2}]},{},[3])
+(3)
+});

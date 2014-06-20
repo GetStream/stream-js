@@ -11,11 +11,13 @@
   <script src="mocha.js"></script>
   <script>mocha.setup('bdd')</script>
   <script src="../../dist/js/getstream.js"></script>
+  <script src="../integration/index.js"></script>
+
   <script>
+  
     mocha.checkLeaks();
     mocha.globals(['jQuery']);
     mocha.run();
   </script>
-  <h1>Running tests</h1>
 </body>
 </html>

@@ -6,6 +6,7 @@ var mocha = require('gulp-mocha');
 gulp.task('default', function() {
   // watch for JS changes and run tests
   gulp.watch('./src/lib/*.js', function() {
+  	gulp.run('build');
     gulp.run('test');
   });
 });
@@ -52,7 +53,8 @@ gulp.task('build', function() {
     gulp.src('src/getstream.js')
         .pipe(browserify({
           insertGlobals : false,
-          debug : false
+          debug : false,
+          standalone : 'stream'
         }))
         .pipe(gulp.dest('./dist/js'));
 });
