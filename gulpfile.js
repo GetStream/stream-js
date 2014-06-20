@@ -82,7 +82,7 @@ gulp.task('release', function () {
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
 	// push to github (which also impacts bower)
 	console.log('Git tagging');
-	shell.task(['git tag -v ' + version]);
+	shell.task(['git tag ' + version]);
 	shell.task(['git push origin master --tags']);
 	//git.tag(version, 'release of version ' + packageJSON.version);
 	git.push('origin', 'master', {args: '--tags'});
