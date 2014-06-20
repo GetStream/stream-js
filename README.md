@@ -1,6 +1,8 @@
 stream-node
 ===========
 
+[![Build Status](https://travis-ci.org/tschellenbach/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
+
 stream-node is a Node/Javascript client for [Stream][].
 
 ```javascript
