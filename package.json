@@ -13,6 +13,10 @@
       "pattern": "specified in test/integration/coverage.js"
     }
   },
+  "browser": {
+    "request": "browser-request",
+    "crypto": false
+  },
   "devDependencies": {
     "blanket": "~1.1.6",
     "bluebird": "^2.1.3",

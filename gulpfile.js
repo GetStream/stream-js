@@ -10,6 +10,9 @@ gulp.task('default', function() {
   });
 });
 
+/*
+ * Testing related tasks
+ */
 
 // check for jshint errors
 gulp.task('lint', function() {
@@ -32,9 +35,24 @@ gulp.task('cov', function () {
         
 });
 
-
-
 // run the tests
 gulp.task('test', ['lint', 'mocha'], function () {
     return;
+});
+
+/*
+ * Distribution related tasks
+ */
+
+var browserify = require('gulp-browserify');
+
+// Basic usage
+gulp.task('build', function() {
+    // Single entry point to browserify
+    gulp.src('src/getstream.js')
+        .pipe(browserify({
+          insertGlobals : false,
+          debug : false
+        }))
+        .pipe(gulp.dest('./dist/js'));
 });
