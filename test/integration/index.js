@@ -125,6 +125,7 @@ describe('Stream client', function () {
   it('get filtering', function (done) {
   	// first add three activities
   	//TODO find a library to make async testing easier on the eye
+  	
     var activityIdOne = null;
     var activityIdTwo = null;
     var activityIdThree = null;
