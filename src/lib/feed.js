@@ -26,7 +26,7 @@ StreamFeed.prototype = {
 		 */
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
-			'form': activity,
+			'body': activity,
 			'secret': this.feedToken
 		}, callback);
 		return xhr;
@@ -41,7 +41,7 @@ StreamFeed.prototype = {
 	follow: function(target, callback) {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/', 
-			'form': {'target': target},
+			'body': {'target': target},
 			'secret': this.feedToken
 		}, callback);
 		return xhr;
