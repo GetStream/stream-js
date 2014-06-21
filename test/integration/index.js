@@ -76,6 +76,7 @@ describe('Stream client', function () {
   });
   
   it('follow', function (done) {
+    var activityId = null;
   	function add() {
 		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 		user1.addActivity(activity, follow);
@@ -95,6 +96,7 @@ describe('Stream client', function () {
   });
   
   it('unfollow', function (done) {
+    var activityId = null;
   	function add() {
 		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 		user1.addActivity(activity, follow);
@@ -110,8 +112,8 @@ describe('Stream client', function () {
     	setTimeout(function() {
 	    	aggregated2.get({'limit': 1}, function(error, response, body) {
 	    		expect(response.statusCode).to.eql(200);
-	    		firstResult = body['results'][0];
-	    		activityFound = (firstResult) ? firstResult['activities'][0]['id'] : null;
+	    		var firstResult = body['results'][0];
+	    		var activityFound = (firstResult) ? firstResult['activities'][0]['id'] : null;
 	    		expect(activityFound).to.not.eql(activityId);
 	    		done();
 	    	});
@@ -123,45 +125,57 @@ describe('Stream client', function () {
   it('get filtering', function (done) {
   	// first add three activities
   	//TODO find a library to make async testing easier on the eye
+    var activityIdOne = null;
+    var activityIdTwo = null;
+    var activityIdThree = null;
+
   	function add() {
-		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-		user1.addActivity(activity, add2);
-	}
+  		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+  		user1.addActivity(activity, add2);
+  	}
+
   	function add2(error, response, body) {
   		activityIdOne = body['id'];
-		var activity = {'actor': 2, 'verb': 'watch', 'object': 2};
-		user1.addActivity(activity, add3);
-	}
-  	function add3(error, response, body) {
+  		var activity = {'actor': 2, 'verb': 'watch', 'object': 2};
+  		user1.addActivity(activity, add3);
+  	}
+  	
+    function add3(error, response, body) {
   		activityIdTwo = body['id'];
-		var activity = {'actor': 3, 'verb': 'run', 'object': 2};
-		user1.addActivity(activity, get);
-	}
-	function get(error, response, body) {
-		activityIdThree = body['id'];
-		user1.get({'limit': 2}, check);
-	}
-	// no filtering
-	function check(error, response, body) {
-		expect(body['results'].length).to.eql(2);
-		expect(body['results'][0]['id']).to.eql(activityIdThree);
-		expect(body['results'][1]['id']).to.eql(activityIdTwo);
-		user1.get({limit:2, offset:1}, check2);
-	}
-	// offset based
-	function check2(error, response, body) {
-		expect(body['results'].length).to.eql(2);
-		expect(body['results'][0]['id']).to.eql(activityIdTwo);
-		expect(body['results'][1]['id']).to.eql(activityIdOne);
-		user1.get({limit:2, id_lt:activityIdTwo}, check3);
-	}
-	// try id_lt based
-	function check3(error, response, body) {
-		expect(body['results'].length).to.eql(2);
-		expect(body['results'][0]['id']).to.eql(activityIdOne);
-		done();
-	}
+  		var activity = {'actor': 3, 'verb': 'run', 'object': 2};
+  		user1.addActivity(activity, get);
+  	}
+
+  	function get(error, response, body) {
+  		activityIdThree = body['id'];
+  		user1.get({'limit': 2}, check);
+  	}
+
+  	// no filtering
+  	function check(error, response, body) {
+  		expect(body['results'].length).to.eql(2);
+  		expect(body['results'][0]['id']).to.eql(activityIdThree);
+  		expect(body['results'][1]['id']).to.eql(activityIdTwo);
+  		user1.get({limit:2, offset:1}, check2);
+  	}
+
+  	// offset based
+  	function check2(error, response, body) {
+  		expect(body['results'].length).to.eql(2);
+  		expect(body['results'][0]['id']).to.eql(activityIdTwo);
+  		expect(body['results'][1]['id']).to.eql(activityIdOne);
+  		user1.get({limit:2, id_lt:activityIdTwo}, check3);
+  	}
+
+  	// try id_lt based
+  	function check3(error, response, body) {
+  		expect(body['results'].length).to.eql(2);
+  		expect(body['results'][0]['id']).to.eql(activityIdOne);
+  		done();
+  	}
+
     add();
+
   });
   
 });
