@@ -70,6 +70,7 @@ StreamClient.prototype = {
     get: function(kwargs, cb) {
     	kwargs = this.enrichKwargs(kwargs);
     	kwargs.method = 'GET';
+    	console.log(kwargs);
     	return request.get(kwargs, cb);
     },
     post: function(kwargs, cb) {

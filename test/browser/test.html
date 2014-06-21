@@ -7,6 +7,7 @@
 <body>
   <div id="mocha"></div>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="../../node_modules/mocha-sauce/client.js"></script>
   <script src="expect.js"></script>
   <script src="mocha.js"></script>
   <script>mocha.setup('bdd')</script>
@@ -14,7 +15,7 @@
   <script src="../integration/index.js"></script>
 
   <script>
-  
+  	//mochaSaucePlease();
     mocha.checkLeaks();
     mocha.globals(['jQuery']);
     mocha.run();

@@ -4,6 +4,7 @@ var mocha = require('gulp-mocha');
 var fs = require('fs');
 var git = require('gulp-git');
 var shell = require('gulp-shell');
+var uglify = require('gulp-uglify');
 
 
 gulp.task('default', function() {
@@ -59,6 +60,7 @@ gulp.task('build', function() {
           debug : false,
           standalone : 'stream'
         }))
+        .pipe(uglify())
         .pipe(gulp.dest('./dist/js'));
 });
 
