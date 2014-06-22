@@ -2,6 +2,7 @@ stream-node
 ===========
 
 [![Build Status](https://travis-ci.org/tschellenbach/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
+[![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-js/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-js?branch=master)
 
 stream-node is a Node/Javascript client for [Stream][].
 
