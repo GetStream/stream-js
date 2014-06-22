@@ -2,3 +2,6 @@ language: node_js
 node_js:
   - "0.11"
   - "0.10"
+# run the mocha tests
+# see https://github.com/cainus/node-coveralls#mocha--blanketjs
+script: "mocha test/integration/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js"

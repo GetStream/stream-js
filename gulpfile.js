@@ -34,9 +34,9 @@ gulp.task('mocha', function () {
 
 // run the mocha tests
 gulp.task('cov', function () {
-    return gulp.src('./test/integration/index.js', {read: false})
+    return gulp.src('./test/integration/cov.js', {read: false})
         .pipe(mocha({reporter: 'html-cov'}))
-        .pipe(gulp.dest('./build/'));
+        .pipe(gulp.dest('./dist/'));
         
 });
 

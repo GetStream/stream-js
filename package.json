@@ -10,7 +10,7 @@
   "version": "0.1.5",
   "config": {
     "blanket": {
-      "pattern": "specified in test/integration/coverage.js"
+      "pattern": "src"
     }
   },
   "browser": {
@@ -31,7 +31,9 @@
     "gulp-shell": "^0.2.7",
     "mocha": "^1.20.1",
     "mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
-    "gulp-uglify": "~0.3.1"
+    "gulp-uglify": "~0.3.1",
+    "coveralls": "~2.10.1",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "license": "BSD",
   "dependencies": {
