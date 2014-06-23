@@ -7,6 +7,7 @@ var path = require('path');
 var directory = path.normalize(path.join(__dirname, '../../'));
 console.log('starting webserver in dir ', directory);
 server = connect().use(serveStatic(directory));
+console.log('server ', server);
 server.listen(8080);
 
 // configure
