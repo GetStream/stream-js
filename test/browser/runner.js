@@ -8,7 +8,6 @@ var directory = path.normalize(path.join(__dirname, '../../'));
 console.log('starting webserver in dir ', directory);
 app = connect().use(serveStatic(directory));
 server = app.listen(8080);
-console.log('server ', server);
 
 // configure
 var sauce = new MochaSauce({
