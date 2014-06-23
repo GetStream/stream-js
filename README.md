@@ -69,5 +69,13 @@ test/browser/test.html
 mocha test/integration/cov.js -R html-cov > cov.html
 ```
 
+To release a new version
+```bash
+# package.json is leading and overwrites bower.json version
+gulp bump
+# builds the browserify, tags and submits to npm
+gulp publish
+```
+
   [Stream]: https://getstream.io/
   [GetStream.io]: http://getstream.io/docs/
