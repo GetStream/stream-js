@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var jshint = require('gulp-jshint');
 var mocha = require('gulp-mocha');
 var fs = require('fs');
@@ -95,7 +96,7 @@ gulp.task('tag', function () {
 
   return gulp.src('./')
     .pipe(git.commit(message))
-    .pipe(git.tag(v, message))
+    .pipe(git.tag(v, message)).on('error', gutil.log)
     .pipe(git.push('origin', 'master', '--tags'))
     .pipe(gulp.dest('./'));
 });
