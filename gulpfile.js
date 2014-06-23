@@ -93,12 +93,8 @@ gulp.task('tag', function () {
   var pkg = require('./package.json');
   var v = 'v' + pkg.version;
   var message = 'Release ' + v;
-
-  return gulp.src('./')
-    .pipe(git.commit(message))
-    .pipe(git.tag(v, message, {}, gutil.log))
-    .pipe(git.push('origin', 'master', '--tags'))
-    .pipe(gulp.dest('./'));
+  git.tag(v, message, false, gutil.log);
+  git.push('origin', 'master', {args: '--tags'}).end();
 });
 
 // full release flow
