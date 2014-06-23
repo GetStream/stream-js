@@ -7,7 +7,7 @@
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./src/getstream.js",
   "homepage": "https://getstream.io/",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "config": {
     "blanket": {
       "pattern": "src"
@@ -27,6 +27,7 @@
     "expect.js": "~0.3.1",
     "gulp": "^3.8.1",
     "gulp-browserify": "^0.5.0",
+    "gulp-bump": "^0.1.8",
     "gulp-git": "^0.4.3",
     "gulp-jshint": "^1.6.3",
     "gulp-mocha": "^0.4.1",

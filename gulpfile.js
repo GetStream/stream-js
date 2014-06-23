@@ -5,7 +5,7 @@ var fs = require('fs');
 var git = require('gulp-git');
 var shell = require('gulp-shell');
 var uglify = require('gulp-uglify');
-
+var bump = require('gulp-bump');
 
 gulp.task('default', function() {
   // watch for JS changes and run tests
@@ -64,6 +64,12 @@ gulp.task('build', function() {
         .pipe(gulp.dest('./dist/js'));
 });
 
+gulp.task('bump', function () {
+  return gulp.src(['./package.json'])
+    .pipe(bump())
+    .pipe(gulp.dest('./'));
+});
+
 // release to bower
 gulp.task('release', function () {
 	// read version from package.json
@@ -75,7 +81,9 @@ gulp.task('release', function () {
 	var packageJSON = require('./package.json');
 	var bowerJSON = require('./bower.json');
 	var version = packageJSON.version;
+	var message = 'Released version ' + versionName;
 	var versionName = 'v' + version;
+	
 	console.log('Releasing version ' + versionName);
 	console.log(process.cwd());
 	// write the new bower.json file
@@ -83,13 +91,14 @@ gulp.task('release', function () {
 	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
 	// push to github (which also impacts bower)
-	console.log('Git tagging');
-	shell.task(['git tag ' + version]);
-	shell.task(['git push origin master --tags']);
-	//git.tag(version, 'release of version ' + packageJSON.version);
-	git.push('origin', 'master', {args: '--tags'});
-	console.log('Releasing to npm');
-	shell.task(['npm publish .']);
+	console.log('Git tagging and releasing');
+	return gulp.src('./')
+	    .pipe(git.commit(message))
+	    .pipe(git.tag(versionName, message))
+	    .pipe(git.push('origin', 'master', '--tags'))
+	    .pipe(gulp.dest('./'));
+	//.pipe(shell.task(['npm publish .']));
+	
 });
 
 // full publish flow
