@@ -17,7 +17,7 @@ var sauce = new MochaSauce({
     host: "localhost", // or http://ondemand.sauce.com if not using Sauce Connect
     port: 8080, // 80
     // the test url
-    url: "http://localhost:8080/test/browser/sauce.html/" // point to the site running your mocha tests
+    url: "http://localhost/test/browser/sauce.html/" // point to the site running your mocha tests
 });
 
 
