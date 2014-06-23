@@ -6,7 +6,7 @@ var path = require('path');
 // setup a webserver to run the tests against
 var directory = path.normalize(path.join(__dirname, '../../'));
 console.log('starting webserver in dir ', directory);
-var server = connect().use(serveStatic(directory));
+server = connect().use(serveStatic(directory));
 server.listen(8080);
 
 // configure
