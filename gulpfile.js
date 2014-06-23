@@ -96,8 +96,7 @@ gulp.task('tag', function () {
 
   return gulp.src('./')
     .pipe(git.commit(message))
-    	.on('error', gutil.log)
-    .pipe(git.tag(v, message))
+    .pipe(git.tag(v, message, {}, gutil.log))
     .pipe(git.push('origin', 'master', '--tags'))
     .pipe(gulp.dest('./'));
 });
