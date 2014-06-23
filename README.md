@@ -63,6 +63,10 @@ First, make sure you can run the test suite. Tests are run via Mocha
 
 ```bash
 mocha test/integration/index.js
+# browser version
+test/browser/test.html
+# coverage
+mocha test/integration/cov.js -R html-cov > cov.html
 ```
 
   [Stream]: https://getstream.io/
