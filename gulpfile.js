@@ -102,7 +102,7 @@ gulp.task('tag', function () {
 });
 
 // full release flow
-gulp.task('release', ['write_bower', 'npm'], function () {
+gulp.task('release', ['write_bower', 'tag', 'npm'], function () {
     return;
 });
 
