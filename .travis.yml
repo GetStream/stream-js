@@ -4,4 +4,7 @@ node_js:
   - "0.10"
 # run the mocha tests
 # see https://github.com/cainus/node-coveralls#mocha--blanketjs
-script: "mocha test/integration/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js"
+script: "mocha test/integration/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js; node test/browser/runner.js"
+# see https://docs.saucelabs.com/ci-integrations/travis-ci/
+addons:
+  sauce_connect: true
