@@ -76,37 +76,16 @@ gulp.task('npm', function (done) {
 });
 
 // release to bower
-gulp.task('release', function () {
-	// read version from package.json
-	// update bower to match package.json
-    // git tag and push
-    // npm publish .
-    //TODO: use something gulp instead of make, gulp-git seems broken
-    // TODO: why does bower read from master?
+gulp.task('write_bower', function () {
 	var packageJSON = require('./package.json');
 	var bowerJSON = require('./bower.json');
 	var version = packageJSON.version;
 	var message = 'Released version ' + versionName;
 	var versionName = 'v' + version;
-	
-	console.log('Releasing version ' + versionName);
-	console.log(process.cwd());
-	// write the new bower.json file
 	console.log('Updating bower.json');
 	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
-	// push to github (which also impacts bower)
-	console.log('Git tagging and releasing');
-	return gulp.src('./', {read: false})
-	    .pipe(shell.task(['npm publish .']))
-	    .pipe(gulp.dest('./'));
-	return gulp.src('./', {read: false})
-	    .pipe(git.commit(message))
-	    .pipe(git.tag(versionName, message))
-	    .pipe(git.push('origin', 'master', '--tags'))
-	    .pipe(gulp.dest('./'));
-	//.pipe();
-	
+	return;
 });
 
 gulp.task('tag', function () {
@@ -119,6 +98,11 @@ gulp.task('tag', function () {
     .pipe(git.tag(v, message))
     .pipe(git.push('origin', 'master', '--tags'))
     .pipe(gulp.dest('./'));
+});
+
+// full release flow
+gulp.task('release', ['write_bower', 'tag', 'npm'], function () {
+    return;
 });
 
 // full publish flow
