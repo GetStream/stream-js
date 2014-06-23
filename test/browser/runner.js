@@ -6,9 +6,9 @@ var path = require('path');
 // setup a webserver to run the tests against
 var directory = path.normalize(path.join(__dirname, '../../'));
 console.log('starting webserver in dir ', directory);
-server = connect().use(serveStatic(directory));
+app = connect().use(serveStatic(directory));
+server = app.listen(8080);
 console.log('server ', server);
-server.listen(8080);
 
 // configure
 var sauce = new MochaSauce({
