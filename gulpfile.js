@@ -70,6 +70,11 @@ gulp.task('bump', function () {
     .pipe(gulp.dest('./'));
 });
 
+gulp.task('npm', function (done) {
+  require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' })
+    .on('close', done);
+});
+
 // release to bower
 gulp.task('release', function () {
 	// read version from package.json
@@ -93,12 +98,27 @@ gulp.task('release', function () {
 	// push to github (which also impacts bower)
 	console.log('Git tagging and releasing');
 	return gulp.src('./', {read: false})
+	    .pipe(shell.task(['npm publish .']))
+	    .pipe(gulp.dest('./'));
+	return gulp.src('./', {read: false})
 	    .pipe(git.commit(message))
 	    .pipe(git.tag(versionName, message))
 	    .pipe(git.push('origin', 'master', '--tags'))
 	    .pipe(gulp.dest('./'));
-	//.pipe(shell.task(['npm publish .']));
+	//.pipe();
 	
+});
+
+gulp.task('tag', function () {
+  var pkg = require('./package.json');
+  var v = 'v' + pkg.version;
+  var message = 'Release ' + v;
+
+  return gulp.src('./')
+    .pipe(git.commit(message))
+    .pipe(git.tag(v, message))
+    .pipe(git.push('origin', 'master', '--tags'))
+    .pipe(gulp.dest('./'));
 });
 
 // full publish flow
