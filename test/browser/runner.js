@@ -14,10 +14,10 @@ var sauce = new MochaSauce({
     name: "getstream", // your project name
     username: "tschellenbach", // Sauce username
     accessKey: "982137a0-d75d-4cd8-a6c3-1a497e97a277", // Sauce access key
-    host: "localhost", // or http://ondemand.sauce.com if not using Sauce Connect
+    host: "127.0.0.1", // or http://ondemand.sauce.com if not using Sauce Connect
     port: 8080, // 80
     // the test url
-    url: "http://localhost/test/browser/sauce.html/" // point to the site running your mocha tests
+    url: "http://127.0.0.1/test/browser/sauce.html/" // point to the site running your mocha tests
 });
 
 
