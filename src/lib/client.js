@@ -68,17 +68,23 @@ StreamClient.prototype = {
     /*
      * Shortcuts for post, get and delete HTTP methods
      */
+    dummyCallback: function(error, response, body) {
+    	
+    },
     get: function(kwargs, cb) {
+    	cb = cb || this.dummyCallback; 
     	kwargs = this.enrichKwargs(kwargs);
     	kwargs.method = 'GET';
     	return request.get(kwargs, cb);
     },
     post: function(kwargs, cb) {
+    	cb = cb || this.dummyCallback; 
     	kwargs = this.enrichKwargs(kwargs);
     	kwargs.method = 'POST';
     	return request(kwargs, cb);
     },
     delete: function(kwargs, cb) {
+    	cb = cb || this.dummyCallback; 
     	kwargs = this.enrichKwargs(kwargs);
     	kwargs.method = 'DELETE';
     	return request(kwargs, cb);

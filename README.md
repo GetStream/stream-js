@@ -10,9 +10,9 @@ stream-node is a Node/Javascript client for [Stream][].
 ```javascript
 var stream = require('getstream');
 // Instantiate a new client (server side)
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Instantiate a new client (client side)
-client = stream.connect('YOUR_API_KEY')
+client = stream.connect('YOUR_API_KEY');
 // Find your API keys here https://getstream.io/dashboard/
 
 // Instantiate a feed object server side
@@ -37,7 +37,30 @@ user1.follow('flat:42');
 
 // Stop following another feed
 user1.unfollow('flat:42');
+
+// all methods support callback as the last argument
+user1.follow('flat:42', callback);
+// with this signature
+function(error, response, body) {
+}
 ```
+
+Faye
+----
+
+Stream uses Faye for realtime notifications. Below is quick quide to subcribing to feed changes
+
+```javascript
+var stream = require('getstream');
+// Instantiate a new client (server side)
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'SITE_ID');
+user1 = client.feed('user:1');
+user1.subscribe(function callback() {
+});
+// now whenever something changes to the feed user 1
+// the callback will be called
+```
+
 
 Docs are available on [GetStream.io][].
 

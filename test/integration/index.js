@@ -15,7 +15,7 @@ describe('Stream client', function () {
   
   function beforeEachBrowser() {
   	client = stream.connect('5crf3bhfzesn');
-  	client = stream.connect('5crf3bhfzesn', None, 95);
+  	client = stream.connect('5crf3bhfzesn', null, 96);
   	user1 = client.feed('user:1', 'X9HxDkjAijyufcDmlRJfBF3HiHo');
   	aggregated2 = client.feed('aggregated:2', 'qvc7nLoReHl7ft6d5dQrdxlqrMk');
   	aggregated3 = client.feed('aggregated:3', 'Pq94Uqiu44OSwBpi-C0v5Y3B_HY');
@@ -24,7 +24,7 @@ describe('Stream client', function () {
   
   function beforeEachNode() {
   	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su');
-  	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su', 95);
+  	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su', 96);
     user1 = client.feed('user:1');
     aggregated2 = client.feed('aggregated:2');
     aggregated3 = client.feed('aggregated:3');
@@ -63,6 +63,12 @@ describe('Stream client', function () {
     	});
     }
     user1.addActivity(activity, get);
+  });
+  
+  it('add activity no callback', function (done) {
+    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+    user1.addActivity(activity);
+    done();
   });
   
   it('remove activity', function (done) {
@@ -182,20 +188,20 @@ describe('Stream client', function () {
 
   });
   
-  it('fayeClient', function (done) {
+  it('fayeGetClient', function (done) {
     var client = user1.getFayeClient();
     done();
   });
   
-  it('faye', function (done) {
-  	this.timeout(1000);
+  it('fayeSubscribe', function (done) {
+  	this.timeout(6000);
   	var client = user1.getFayeClient();
-  	user1.subscribe(function() {
+  	user1.subscribe(function callback() {
   		console.log('received notification', arguments);
   		done();
   	});
   	// add something to user 1 feed
-    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+    var activity = {'actor': 1, 'verb': 'add', 'object': Math.floor(Math.random() * 40000 + 10000)};
     user1.addActivity(activity);
     // verify we get a notification, if not we'll get a timeout
   });

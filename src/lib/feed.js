@@ -88,7 +88,6 @@ StreamFeed.prototype = {
     },
 
     subscribe: function(callback){
-    	console.log('listening to', this.client.fayeUrl, 'channel', this.notificationChannel);
         return this.getFayeClient().subscribe('/'+this.notificationChannel, callback);
     }
 };
