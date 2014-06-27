@@ -1,6 +1,6 @@
 {
   "name": "getstream",
-  "version": "0.1.32",
+  "version": "0.1.35",
   "main": "dist/js/getstream.js",
   "ignore": [
     "src",
