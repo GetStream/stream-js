@@ -195,13 +195,15 @@ describe('Stream client', function () {
   it('fayeSubscribe', function (done) {
   	this.timeout(6000);
   	var client = user1.getFayeClient();
-  	user1.subscribe(function callback() {
+  	var subscription = user1.subscribe(function callback() {
   		done();
   	});
-  	// add something to user 1 feed
-    var activity = {'actor': 1, 'verb': 'add', 'object': Math.floor(Math.random() * 40000 + 10000)};
-    user1.addActivity(activity);
-    // verify we get a notification, if not we'll get a timeout
+  	subscription.then(function() {
+	  	// add something to user 1 feed
+	    var activity = {'actor': 1, 'verb': 'add', 'object': Math.floor(Math.random() * 40000 + 10000)};
+	    user1.addActivity(activity);
+	    // verify we get a notification, if not we'll get a timeout
+	 });
   });
   
   it('fayeSubscribeError', function (done) {
