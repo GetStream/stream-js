@@ -114,7 +114,7 @@ gulp.task('tag', function () {
 
 // full release flow
 gulp.task('release', function () {
-	runSynchronized(['bump', 'write_bower', 'tag']);
+	runSynchronized(['bump', 'write_bower', 'build', 'tag']);
     return;
 });
 
