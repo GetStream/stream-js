@@ -107,8 +107,8 @@ gulp.task('tag', function () {
   var v = 'v' + pkg.version;
   var message = 'Release ' + v;
   
-  git.tag(v, message, false, gutil.log);
-  git.commit('updated bower and npm', {args: '-a'});
+  //git.tag(v, message, false, gutil.log);
+  //git.commit('updated bower and npm', {args: '-a'});
   //git.push('origin', 'master', {args: '--tags'}).end();
 });
 
