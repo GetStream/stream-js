@@ -6,17 +6,19 @@ var path = require('path');
 // setup a webserver to run the tests against
 var directory = path.normalize(path.join(__dirname, '../../'));
 console.log('starting webserver in dir ', directory);
-connect().use(serveStatic(directory)).listen(8080);
+app = connect().use(serveStatic(directory));
+server = app.listen(8080);
 
 // configure
 var sauce = new MochaSauce({
     name: "getstream", // your project name
     username: "tschellenbach", // Sauce username
     accessKey: "982137a0-d75d-4cd8-a6c3-1a497e97a277", // Sauce access key
-    host: "localhost", // or http://ondemand.sauce.com if not using Sauce Connect
-    port: 8080, // 80
+    host: "127.0.0.1", // or http://ondemand.sauce.com if not using Sauce Connect
+    port: 4445, // 80
     // the test url
-    url: "http://localhost:8080/test/browser/sauce.html/" // point to the site running your mocha tests
+    url: "http://127.0.0.1/test/browser/sauce.html/", // point to the site running your mocha tests
+    build: process.env.TRAVIS_JOB_NUMBER
 });
 
 
@@ -38,4 +40,7 @@ sauce.on('end', function(browser, res) {
   console.log('  end : %s %s : %d failures', browser.browserName, browser.platform, res.failures);
 });
 
-sauce.start();
+sauce.start(function completed() {
+    console.log('done with the sauce, giving it back');
+    server.close();
+});
