@@ -9,7 +9,7 @@ StreamFeed.prototype = {
 	 * remove activity etc
 	 * 
 	 */
-	initialize: function(client, feed, token, siteId) {
+	initialize: function(client, feed, token) {
 		this.client = client;
 		this.feed = feed;
 		this.token = token;
@@ -17,7 +17,7 @@ StreamFeed.prototype = {
 		this.feedTogether = feed.replace(':', '');
 		this.feedToken = this.feedTogether + ' ' + this.token;
         this.fayeClient = null;
-        this.notificationChannel = 'site-' + siteId + '-feed-' + this.feedTogether;
+        this.notificationChannel = 'site-' + this.client.siteId + '-feed-' + this.feedTogether;
 	},
 	addActivity: function(activity, callback) {
 		/*
@@ -78,6 +78,7 @@ StreamFeed.prototype = {
     },
 
     getFayeClient: function(){
+    	var Faye = require('faye');
         if (this.fayeClient === null){
             this.fayeClient = new Faye.Client(this.client.fayeUrl);
             var authExtension = this.getFayeAuthorization();
@@ -87,6 +88,7 @@ StreamFeed.prototype = {
     },
 
     subscribe: function(callback){
+    	console.log('listening to', this.client.fayeUrl, 'channel', this.notificationChannel);
         return this.getFayeClient().subscribe('/'+this.notificationChannel, callback);
     }
 };

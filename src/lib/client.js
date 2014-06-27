@@ -11,13 +11,14 @@ var StreamClient = function () {
 StreamClient.prototype = {
 	baseUrl: 'https://getstream.io',
 	
-    initialize: function (key, secret, fayeUrl) {
+    initialize: function (key, secret, siteId, fayeUrl) {
     	/*
     	 * API key and secret
     	 * Secret is optional
     	 */
     	this.key = key;
     	this.secret = secret;
+    	this.siteId = siteId;
         this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
     },
     
