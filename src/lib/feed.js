@@ -1,3 +1,5 @@
+var errors = require('./errors');
+
 
 var StreamFeed = function () {
     this.initialize.apply(this, arguments);
