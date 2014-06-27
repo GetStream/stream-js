@@ -14,3 +14,4 @@ function connect(apiKey, apiSecret, siteId) {
 module.exports.connect = connect;
 module.exports.errors = errors;
 module.exports.request = request;
+module.exports.Client = StreamClient;
