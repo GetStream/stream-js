@@ -7,6 +7,7 @@ var git = require('gulp-git');
 var shell = require('gulp-shell');
 var uglify = require('gulp-uglify');
 var bump = require('gulp-bump');
+var async = require('async');
 
 gulp.task('default', function() {
   // watch for JS changes and run tests
@@ -15,6 +16,18 @@ gulp.task('default', function() {
     gulp.run('test');
   });
 });
+
+
+function runSynchronized(tasks, callback){
+    var sync = tasks.map(function(task){
+        return function(callback){
+            gulp.run(task, function(err){
+                callback(err);
+            });
+        };
+    });
+    async.series(sync, callback);
+}
 
 /*
  * Testing related tasks
@@ -86,7 +99,6 @@ gulp.task('write_bower', function () {
 	console.log('Updating bower.json');
 	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
-	//git.commit('updated bower and npm to version ' + versionName).end();
 	return;
 });
 
@@ -94,16 +106,20 @@ gulp.task('tag', function () {
   var pkg = require('./package.json');
   var v = 'v' + pkg.version;
   var message = 'Release ' + v;
+  
   git.tag(v, message, false, gutil.log);
-  git.push('origin', 'master', {args: '--tags'}).end();
+  git.commit('updated bower and npm', {args: '-a'});
+  //git.push('origin', 'master', {args: '--tags'}).end();
 });
 
 // full release flow
-gulp.task('release', ['bump', 'write_bower', 'tag', 'npm'], function () {
+gulp.task('release', function () {
+	runSynchronized(['bump', 'write_bower', 'tag']);
     return;
 });
 
 // full publish flow
-gulp.task('publish', ['build', 'test', 'release'], function () {
+gulp.task('publish', function () {
+	runSynchronized(['build', 'test', 'release']);
     return;
 });
