@@ -86,6 +86,7 @@ gulp.task('write_bower', function () {
 	console.log('Updating bower.json');
 	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
+	//git.commit('updated bower and npm to version ' + versionName).end();
 	return;
 });
 
