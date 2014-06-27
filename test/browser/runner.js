@@ -15,7 +15,7 @@ var sauce = new MochaSauce({
     username: "tschellenbach", // Sauce username
     accessKey: "982137a0-d75d-4cd8-a6c3-1a497e97a277", // Sauce access key
     host: "127.0.0.1", // or http://ondemand.sauce.com if not using Sauce Connect
-    port: 4445, // 80
+    port: 443, // 80
     // the test url
     url: "http://127.0.0.1:8080/test/browser/sauce.html/", // point to the site running your mocha tests
     build: process.env.TRAVIS_JOB_NUMBER
