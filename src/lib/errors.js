@@ -22,11 +22,17 @@ errors._Abstract = ErrorAbstract;
 ErrorAbstract.prototype = new Error();
 
 /**
- * Connection Error
+ * FeedError
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
 errors.FeedError = function FeedError(msg) {
   ErrorAbstract.call(this, msg);
 };
 errors.FeedError.prototype = new ErrorAbstract();
+
+
+errors.SiteError = function SiteError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+errors.SiteError.prototype = new ErrorAbstract();
 

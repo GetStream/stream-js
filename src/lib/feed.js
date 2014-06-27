@@ -88,6 +88,9 @@ StreamFeed.prototype = {
     },
 
     subscribe: function(callback){
+    	if (!this.client.siteId) {
+    		throw new errors.SiteError('Missing site id, which is needed to subscribe, use var client = stream.connect(key, secret, siteId);');
+    	}
         return this.getFayeClient().subscribe('/'+this.notificationChannel, callback);
     }
 };

@@ -52,7 +52,7 @@ Stream uses Faye for realtime notifications. Below is quick quide to subcribing 
 
 ```javascript
 var stream = require('getstream');
-// Instantiate a new client (server side)
+// NOTE: the site id is needed for subscribing
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'SITE_ID');
 user1 = client.feed('user:1');
 user1.subscribe(function callback() {

@@ -46,7 +46,6 @@ describe('Stream client', function () {
   it('get wrong feed', function (done) {
   	var getFeed = function() { client.feed('flat1');};
     expect(getFeed).to.throwException(function (e) {
-    	console.log(e);
 	  	expect(e).to.be.a(errors.FeedError);
 	});
     done();
@@ -197,13 +196,24 @@ describe('Stream client', function () {
   	this.timeout(6000);
   	var client = user1.getFayeClient();
   	user1.subscribe(function callback() {
-  		console.log('received notification', arguments);
   		done();
   	});
   	// add something to user 1 feed
     var activity = {'actor': 1, 'verb': 'add', 'object': Math.floor(Math.random() * 40000 + 10000)};
     user1.addActivity(activity);
     // verify we get a notification, if not we'll get a timeout
+  });
+  
+  it('fayeSubscribeError', function (done) {
+  	var client = stream.connect('5crf3bhfzesn');
+  	function sub() {
+  		var user1 = client.feed('user:1', 'secret');
+  		user1.subscribe();
+  	}
+    expect(sub).to.throwException(function (e) {
+	  	expect(e).to.be.a(errors.SiteError);
+	});
+	done();
   });
   
 });
