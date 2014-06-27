@@ -5,6 +5,8 @@ stream-node
 [![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-js/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-js?branch=master)
 [![Dependencies up to date](https://david-dm.org/tschellenbach/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
 
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
+
 stream-node is a Node/Javascript client for [Stream][].
 
 ```javascript
