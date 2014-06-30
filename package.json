@@ -7,7 +7,7 @@
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./src/getstream.js",
   "homepage": "https://getstream.io/",
-  "version": "0.1.45",
+  "version": "0.1.46",
   "config": {
     "blanket": {
       "pattern": "src"
@@ -38,7 +38,8 @@
     "mocha": "^1.20.1",
     "mocha-lcov-reporter": "0.0.1",
     "mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
-    "serve-static": "^1.2.3"
+    "serve-static": "^1.2.3",
+    "async": "~0.9.0"
   },
   "license": "BSD",
   "dependencies": {

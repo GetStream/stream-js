@@ -34,6 +34,15 @@ describe('Stream client', function () {
   var before = (node) ? beforeEachNode : beforeEachBrowser;
 
   beforeEach(before);
+  
+  it('heroku', function (done) {
+  	var url = 'https://thierry:pass@getstream.io/?site=1';
+  	client = stream.connect(url);
+  	expect(client.key).to.eql('thierry');
+  	expect(client.secret).to.eql('pass');
+  	expect(client.siteId).to.eql('1');
+  	done();
+  });
 
   it('get feed', function (done) {
     user1.get({'limit': 1}, function(error, response, body) {
