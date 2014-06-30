@@ -9,16 +9,15 @@ stream-js
 
 stream-node is a Node/Javascript client for [Stream][].
 
-Installation
-------------
+### Installation
 
-### Install from NPM
+#### Install from NPM
 
 ```bash
 npm install getstream
 ```
 
-### Install using bower
+#### Install using bower
 
 ```bash
 bower install getstream
@@ -64,8 +63,7 @@ function(error, response, body) {
 }
 ```
 
-Faye
-----
+### Faye
 
 Stream uses Faye for realtime notifications. Below is quick quide to subcribing to feed changes
 
@@ -81,7 +79,7 @@ user1.subscribe(function callback() {
 ```
 
 
-Docs are available on [GetStream.io][].
+API Docs are available on [GetStream.io](http://getstream.io/docs/).
 
 
 
