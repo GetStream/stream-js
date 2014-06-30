@@ -9,6 +9,23 @@ stream-js
 
 stream-node is a Node/Javascript client for [Stream][].
 
+Installation
+------------
+
+### Install from NPM
+
+```bash
+npm install getstream
+```
+
+### Install using bower
+
+```bash
+bower install getstream
+```
+
+### Usage
+
 ```javascript
 var stream = require('getstream');
 // Instantiate a new client (server side)
@@ -66,20 +83,7 @@ user1.subscribe(function callback() {
 
 Docs are available on [GetStream.io][].
 
-Installation
-------------
 
-### Install from NPM
-
-```bash
-npm install getstream
-```
-
-### Install using bower
-
-```bash
-bower install getstream
-```
 
 Contributing
 ------------
