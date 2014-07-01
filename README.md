@@ -40,8 +40,8 @@ user1 = client.feed('user:1', 'FEED_SECRET');
 
 // Get activities from 5 to 10 (slow pagination)
 user1.get({limit:5, offset:5}, callback);
-// (Recommended & faster) Filter on an id less than 112334
-user1.get({limit:5, id_lt:112334}, callback);
+// (Recommended & faster) Filter on an id less than a given UUID
+user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"}, callback);
 
 // Create a new activity
 activity = {'actor': 1, 'verb': 'tweet', 'object': 1};
