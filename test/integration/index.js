@@ -36,6 +36,9 @@ describe('Stream client', function () {
   beforeEach(before);
   
   it('heroku', function (done) {
+  	if (!node) {
+  		done();
+  	}
   	var url = 'https://thierry:pass@getstream.io/?site=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect();
@@ -46,6 +49,9 @@ describe('Stream client', function () {
   });
   
   it('heroku_overwrite', function (done) {
+  	if (!node) {
+  		done();
+  	}
   	var url = 'https://thierry:pass@getstream.io/?site=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect('a','b','c');

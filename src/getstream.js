@@ -20,7 +20,7 @@ function connect(apiKey, apiSecret, siteId) {
 	 * https://thierry:pass@getstream.io/?site=1
 	 * 
 	 */
-	if (process.env.STREAM_URL && !apiKey) {
+	if (typeof(process) != "undefined" && process.env.STREAM_URL && !apiKey) {
 		var parts = /https\:\/\/(\w+)\:(\w+).*site=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
