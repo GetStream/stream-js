@@ -37,7 +37,8 @@ describe('Stream client', function () {
   
   it('heroku', function (done) {
   	var url = 'https://thierry:pass@getstream.io/?site=1';
-  	client = stream.connect(url);
+  	process.env.STREAM_URL = url;
+  	client = stream.connect();
   	expect(client.key).to.eql('thierry');
   	expect(client.secret).to.eql('pass');
   	expect(client.siteId).to.eql('1');

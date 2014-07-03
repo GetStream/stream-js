@@ -20,8 +20,8 @@ function connect(apiKey, apiSecret, siteId) {
 	 * https://thierry:pass@getstream.io/?site=1
 	 * 
 	 */
-	if (apiKey.indexOf('https')==0) {
-		var parts = /https\:\/\/(\w+)\:(\w+).*site=(\d+)/.exec(apiKey);
+	if (process.env.STREAM_URL && !apiKey) {
+		var parts = /https\:\/\/(\w+)\:(\w+).*site=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
 		siteId = parts[3];
