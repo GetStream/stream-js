@@ -44,6 +44,16 @@ describe('Stream client', function () {
   	expect(client.siteId).to.eql('1');
   	done();
   });
+  
+  it('heroku_overwrite', function (done) {
+  	var url = 'https://thierry:pass@getstream.io/?site=1';
+  	process.env.STREAM_URL = url;
+  	client = stream.connect('a','b','c');
+  	expect(client.key).to.eql('a');
+  	expect(client.secret).to.eql('b');
+  	expect(client.siteId).to.eql('c');
+  	done();
+  });
 
   it('get feed', function (done) {
     user1.get({'limit': 1}, function(error, response, body) {
