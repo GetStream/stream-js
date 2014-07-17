@@ -4,6 +4,10 @@ var node = typeof(stream) == 'undefined';
 
 describe('Stream client', function () {
   this.timeout(4000);
+  if (typeof(process) != "undefined" && process.env.LOCAL) {
+  	// local testing is slow as we run celery tasks in sync
+  	this.timeout(25000);
+  }
   if (node) {
 	  // we arent in a browser
 	  stream = require('../../src/getstream');
@@ -23,8 +27,8 @@ describe('Stream client', function () {
   }
   
   function beforeEachNode() {
-  	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su');
-  	client = stream.connect('5crf3bhfzesn', 'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su', 96);
+  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519);
     user1 = client.feed('user:1');
     aggregated2 = client.feed('aggregated:2');
     aggregated3 = client.feed('aggregated:3');
