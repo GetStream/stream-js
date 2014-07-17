@@ -20,6 +20,10 @@ StreamClient.prototype = {
     	this.secret = secret;
     	this.siteId = siteId;
         this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
+		if (typeof(process) != "undefined" && process.env.LOCAL) {
+			//this.fayeUrl = 'http://localhost:8000/faye';
+			this.baseUrl = 'http://localhost:8000';
+		}        
     },
     
     feed: function(feedId, token, siteId) {
