@@ -78,10 +78,15 @@ gulp.task('build', function() {
         .pipe(gulp.dest('./dist/js'));
 });
 
-gulp.task('bump', function () {
+gulp.task('bump_package', function () {
   return gulp.src(['./package.json'])
     .pipe(bump())
     .pipe(gulp.dest('./'));
+});
+
+gulp.task('bump', function () {
+  runSynchronized(['bump_package', 'write_bower']);
+  return;
 });
 
 gulp.task('npm', function (done) {

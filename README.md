@@ -71,7 +71,7 @@ activities = [
 user1.addActivities(activities, callback);
 
 // creating a feed token server side
-var token = user1.token;
+token = user1.token;
 // passed to client via template or api and initialized as such
 user1 = client.feed('user:1', token);
 

@@ -64,6 +64,11 @@ describe('Stream client', function () {
   	expect(client.siteId).to.eql('c');
   	done();
   });
+  
+  it('signing', function (done) {
+  	expect(user1.token).to.be.an('string');
+  	done();
+  });
 
   it('get feed', function (done) {
     user1.get({'limit': 1}, function(error, response, body) {

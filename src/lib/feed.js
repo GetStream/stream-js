@@ -17,7 +17,7 @@ StreamFeed.prototype = {
 		this.token = token;
 		this.feedUrl = feed.replace(':', '/');
 		this.feedTogether = feed.replace(':', '');
-		this.feedToken = this.feedTogether + ' ' + this.token;
+		this.authorization = this.feedTogether + ' ' + this.token;
         this.fayeClient = null;
         this.notificationChannel = 'site-' + this.client.siteId + '-feed-' + this.feedTogether;
 	},
@@ -29,14 +29,14 @@ StreamFeed.prototype = {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'body': activity,
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
 	removeActivity: function(activityId, callback) {
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/' + activityId + '/', 
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
@@ -49,7 +49,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'body': data,
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
@@ -57,14 +57,14 @@ StreamFeed.prototype = {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/', 
 			'body': {'target': target},
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
 	unfollow: function(target, callback) {
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/' + target + '/', 
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
@@ -72,7 +72,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'qs': argumentHash,
-			'secret': this.feedToken
+			'authorization': this.authorization
 		}, callback);
 		return xhr;
 	},
