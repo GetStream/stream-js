@@ -40,6 +40,19 @@ StreamFeed.prototype = {
 		}, callback);
 		return xhr;
 	},
+	addActivities: function(activities, callback) {
+		/*
+		 * Adds the given activities to the feed and
+		 * calls the specified callback
+		 */
+		var data = {activities: activities};
+		var xhr = this.client.post({
+			'url': '/api/feed/'+ this.feedUrl + '/', 
+			'body': data,
+			'secret': this.feedToken
+		}, callback);
+		return xhr;
+	},
 	follow: function(target, callback) {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/', 

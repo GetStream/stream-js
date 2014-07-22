@@ -62,6 +62,19 @@ user1.follow('flat:42', callback);
 // with this signature
 function(error, response, body) {
 }
+
+// adding multiple activities
+activities = [
+	{'actor': 1, 'verb': 'tweet', 'object': 1},
+	{'actor': 2, 'verb': 'tweet', 'object': 3}, 
+];
+user1.addActivities(activities, callback);
+
+// creating a feed token server side
+var token = user1.token;
+// passed to client via template or api and initialized as such
+user1 = client.feed('user:1', token);
+
 ```
 
 ### Faye

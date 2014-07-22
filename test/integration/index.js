@@ -113,6 +113,24 @@ describe('Stream client', function () {
     user1.addActivity(activity, remove);
   });
   
+  it('add activities', function (done) {
+	var activities = [
+		{'actor': 1, 'verb': 'tweet', 'object': 1},
+		{'actor': 2, 'verb': 'tweet', 'object': 3}, 
+	];
+    function get(error, response, body) {
+    	var activityIdFirst = body['activities'][0]['id'];
+    	var activityIdLast = body['activities'][1]['id'];
+    	user1.get({'limit': 2}, function(error, response, body) {
+    		expect(response.statusCode).to.eql(200);
+    		expect(body['results'][0]['id']).to.eql(activityIdLast);
+    		expect(body['results'][1]['id']).to.eql(activityIdFirst);
+    		done();
+    	});
+    }
+    user1.addActivities(activities, get);
+  });
+  
   it('follow', function (done) {
     var activityId = null;
   	function add() {
