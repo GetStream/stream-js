@@ -34,8 +34,14 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	removeActivity: function(activityId, callback) {
+		var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
+		var params = {};
+		if (activityId.foreignId) {
+			params.foreign_id = '1';
+		}
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/' + activityId + '/', 
+			'qs': params,
 			'authorization': this.authorization
 		}, callback);
 		return xhr;

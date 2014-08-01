@@ -118,6 +118,19 @@ describe('Stream client', function () {
     user1.addActivity(activity, remove);
   });
   
+  it('remove activity foreign id', function (done) {
+    var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1'};
+    function remove(error, response, body) {
+    	var activityId = body['id'];
+    	expect(response.statusCode).to.eql(201);
+    	user1.removeActivity({foreignId: 'add:1'}, function(error, response, body) {
+    		expect(response.statusCode).to.eql(200);
+    		done();
+    	});
+    }
+    user1.addActivity(activity, remove);
+  });
+  
   it('add activities', function (done) {
 	var activities = [
 		{'actor': 1, 'verb': 'tweet', 'object': 1},
