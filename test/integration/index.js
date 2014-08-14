@@ -99,6 +99,42 @@ describe('Stream client', function () {
     user1.addActivity(activity, get);
   });
   
+  it('add complex activity', function (done) {
+    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+    activity['participants'] = ['Thierry', 'Tommaso'];
+    activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
+    var currentDate = new Date();
+    activity['date'] = currentDate;
+    function get(error, response, body) {
+    	var activityId = body['id'];
+    	user1.get({'limit': 1}, function(error, response, body) {
+    		expect(response.statusCode).to.eql(200);
+    		expect(body['results'][0]['id']).to.eql(activityId);
+    		expect(body['results'][0]['participants']).to.eql(['Thierry', 'Tommaso']);
+    		expect(body['results'][0]['route']).to.eql({'name': 'Vondelpark', 'distance': '20'});
+    		expect(body['results'][0]['date']).to.eql(currentDate);
+    		done();
+    	});
+    }
+    user1.addActivity(activity, get);
+  });
+  
+  it('add activity using to', function (done) {
+    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+    activity['participants'] = ['Thierry', 'Tommaso'];
+    activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
+    activity['to'] = ['flat:3', 'flat:4'];
+    function get(error, response, body) {
+    	var activityId = body['id'];
+    	flat3.get({'limit': 1}, function(error, response, body) {
+    		expect(response.statusCode).to.eql(200);
+    		expect(body['results'][0]['id']).to.eql(activityId);
+    		done();
+    	});
+    }
+    user1.addActivity(activity, get);
+  });
+  
   it('add activity no callback', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     user1.addActivity(activity);
@@ -195,6 +231,36 @@ describe('Stream client', function () {
     }
     add();
   });
+  
+  it('list followers', function (done) {
+    user1.followers({limit: '10', offset: '10'}).then(function(error, response, body){
+    	console.log(arguments);
+    	done();
+    });
+  });
+  
+  it('list following', function (done) {
+    user1.following({limit: '10', offset: '10'}).then(function(error, response, body){
+    	console.log(arguments);
+    	done();
+    });
+  });
+  
+  it('do i follow', function (done) {
+    user1.following({'feeds': ['flat:3']}).then(function(error, response, body){
+    	console.log(arguments);
+    	done();
+    });
+  });
+  
+  it('follow private', function (done) {
+    user1.follow('private:3').then(function(error, response, body){
+    	console.log(arguments);
+    	done();
+    });
+  });
+  
+  
   
   it('get filtering', function (done) {
   	// first add three activities
