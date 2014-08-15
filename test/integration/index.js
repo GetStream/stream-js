@@ -3,9 +3,24 @@ var expect = expect || require('expect.js');
 var node = typeof(stream) == 'undefined';
 
 describe('Stream client', function () {
+	/*
+	 * Run these tests
+	 * 
+	 * mocha test/integration/index.js
+	 * LOCAL=1 mocha test/integration/index.js  
+	 * 
+	 * Browser open
+	 * test.html
+	 * test.html#local=1
+	 * 
+	 */
   this.timeout(4000);
   if (typeof(process) != "undefined" && process.env.LOCAL) {
   	// local testing is slow as we run celery tasks in sync
+  	this.timeout(25000);
+  }
+  if (typeof(document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
+  	// local testing via the browser
   	this.timeout(25000);
   }
   if (node) {
