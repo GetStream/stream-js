@@ -15,15 +15,16 @@ describe('Stream client', function () {
   console.log('node is set to ', node);
   errors = stream.errors;
   
-  var client, user1, aggregated2, aggregated3, flat3;
+  var client, user1, aggregated2, aggregated3, flat3, secret3;
   
   function beforeEachBrowser() {
-  	client = stream.connect('5crf3bhfzesn');
-  	client = stream.connect('5crf3bhfzesn', null, 96);
-  	user1 = client.feed('user:1', 'X9HxDkjAijyufcDmlRJfBF3HiHo');
-  	aggregated2 = client.feed('aggregated:2', 'qvc7nLoReHl7ft6d5dQrdxlqrMk');
-  	aggregated3 = client.feed('aggregated:3', 'Pq94Uqiu44OSwBpi-C0v5Y3B_HY');
-  	flat3 = client.feed('flat:3', 'ZTdkqyfadYj76h1p0zm18dsJRc0');
+  	client = stream.connect('ahj2ndz7gsan');
+  	client = stream.connect('ahj2ndz7gsan', null, 96);
+  	user1 = client.feed('user:1', '3adMDInYCV0LXEw4eEBmELFAnjU');
+  	aggregated2 = client.feed('aggregated:2', '9v6CkZzFnWkFoIkoJz9Gyf-C9Sc');
+  	aggregated3 = client.feed('aggregated:3', 'VxFa7ZWqSCjE0JFzDba1Ar9rpvA');
+  	flat3 = client.feed('flat:3', 'EGW6PWbZqmSwYZvxv97-qbPTYas');
+  	secret3 = client.feed('secret:3', 'WWL6PrHusQLrPursAEcHnIrvOzE');
   }
   
   function beforeEachNode() {
@@ -33,6 +34,7 @@ describe('Stream client', function () {
     aggregated2 = client.feed('aggregated:2');
     aggregated3 = client.feed('aggregated:3');
     flat3 = client.feed('flat:3');
+    secret3 = client.feed('secret:3');
   }
   
   var before = (node) ? beforeEachNode : beforeEachBrowser;
@@ -124,7 +126,10 @@ describe('Stream client', function () {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     activity['participants'] = ['Thierry', 'Tommaso'];
     activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
-    activity['to'] = ['flat:3', 'flat:4'];
+    activity['to'] = ['flat:3'];
+    //flat3
+    if (!node) activity['to'] = ['flat:3' + ' ' + flat3.token];
+    
     function get(error, response, body) {
     	var activityId = body['id'];
     	expect(error).to.eql(null);
@@ -264,11 +269,16 @@ describe('Stream client', function () {
   
   it('follow private', function (done) {
   	function callback(error, response, body){
+  		console.log(arguments);
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
     	done();
    };
+   if (node) {
     user1.follow('secret:3', callback);
+   } else {
+   	user1.follow('secret:3', secret3.token, callback);
+   }
   });
   
   
