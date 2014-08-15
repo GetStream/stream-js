@@ -26,6 +26,7 @@ StreamFeed.prototype = {
 		 * Adds the given activity to the feed and
 		 * calls the specified callback
 		 */
+		var activity = this.client.signActivity(activity);
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'body': activity,
@@ -51,6 +52,7 @@ StreamFeed.prototype = {
 		 * Adds the given activities to the feed and
 		 * calls the specified callback
 		 */
+		var activities = this.client.signActivities(activities);
 		var data = {activities: activities};
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
