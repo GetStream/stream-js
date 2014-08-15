@@ -47,6 +47,13 @@ user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"}, callback);
 // Create a new activity
 activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
 user1.addActivity(activity, callback);
+// Create a bit more complex activity
+activity = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
+	'course': {'name': 'Golden Gate park', 'distance': 10},
+	'participants': ['Thierry', 'Tommaso'],
+	'started_at': new Date()
+};
+user1.addActivity(activity, callback);
 
 // Remove an activity by its id
 user1.removeActivity("e561de8f-00f1-11e4-b400-0cc47a024be0");
@@ -72,6 +79,12 @@ activities = [
 	{'actor': 2, 'verb': 'tweet', 'object': 3}, 
 ];
 user1.addActivities(activities, callback);
+
+// specifying additional feeds to push the activity to using the to param
+// especially usefull for notification style feeds
+to = ['user:2', 'user:3']
+activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
+user1.addActivity(activity, callback);
 
 // creating a feed token server side
 token = user1.token;
