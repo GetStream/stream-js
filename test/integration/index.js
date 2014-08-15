@@ -126,6 +126,8 @@ describe('Stream client', function () {
     activity['to'] = ['flat:3', 'flat:4'];
     function get(error, response, body) {
     	var activityId = body['id'];
+    	expect(error).to.eql(null);
+    	expect(body.exception).to.eql(undefined);
     	flat3.get({'limit': 1}, function(error, response, body) {
     		expect(response.statusCode).to.eql(200);
     		expect(body['results'][0]['id']).to.eql(activityId);
@@ -233,31 +235,40 @@ describe('Stream client', function () {
   });
   
   it('list followers', function (done) {
-    user1.followers({limit: '10', offset: '10'}).then(function(error, response, body){
-    	console.log(arguments);
+    function callback(error, response, body){
+    	expect(error).to.eql(null);
+    	expect(body.exception).to.eql(undefined);
     	done();
-    });
+    };
+    user1.followers({limit: '10', offset: '10'}, callback);
   });
   
   it('list following', function (done) {
-    user1.following({limit: '10', offset: '10'}).then(function(error, response, body){
-    	console.log(arguments);
+    function callback(error, response, body){
+    	expect(error).to.eql(null);
+    	expect(body.exception).to.eql(undefined);
     	done();
-    });
+    };
+    user1.following({limit: '10', offset: '10'}, callback);
   });
   
   it('do i follow', function (done) {
-    user1.following({'feeds': ['flat:3']}).then(function(error, response, body){
+  	function callback(error, response, body){
     	console.log(arguments);
+    	expect(error).to.eql(null);
+    	expect(body.exception).to.eql(undefined);
     	done();
-    });
+    }
+    user1.following({'feeds': ['flat:3']}, callback);
   });
   
   it('follow private', function (done) {
-    user1.follow('private:3').then(function(error, response, body){
-    	console.log(arguments);
+  	function callback(error, response, body){
+    	expect(error).to.eql(null);
+    	expect(body.exception).to.eql(undefined);
     	done();
-    });
+   };
+    user1.follow('secret:3', callback);
   });
   
   

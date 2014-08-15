@@ -59,10 +59,16 @@ StreamFeed.prototype = {
 		}, callback);
 		return xhr;
 	},
-	follow: function(target, callback) {
+	follow: function(target, callbackOrToken, callback) {
+		var targetToken = (callbackOrToken.call) ? null : callbackOrToken;
+		var callback = (callbackOrToken.call) ? callbackOrToken : callback;
+		// if have a secret, always just generate and send along the token
+		if (this.client.secret && !targetToken) {
+			targetToken = this.client.feed(target).token;
+		}
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/', 
-			'body': {'target': target},
+			'body': {'target': target, 'target_token': targetToken},
 			'authorization': this.authorization
 		}, callback);
 		return xhr;
@@ -70,6 +76,22 @@ StreamFeed.prototype = {
 	unfollow: function(target, callback) {
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/' + target + '/', 
+			'authorization': this.authorization
+		}, callback);
+		return xhr;
+	},
+	following: function(argumentHash, callback) {
+		var xhr = this.client.get({
+			'url': '/api/feed/'+ this.feedUrl + '/following/', 
+			'qs': argumentHash,
+			'authorization': this.authorization
+		}, callback);
+		return xhr;
+	},
+	followers: function(argumentHash, callback) {
+		var xhr = this.client.get({
+			'url': '/api/feed/'+ this.feedUrl + '/followers/', 
+			'qs': argumentHash,
 			'authorization': this.authorization
 		}, callback);
 		return xhr;
