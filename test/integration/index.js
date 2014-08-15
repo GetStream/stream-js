@@ -105,6 +105,7 @@ describe('Stream client', function () {
     activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
     var currentDate = new Date();
     activity['date'] = currentDate;
+    var isoDate = currentDate.toISOString();
     function get(error, response, body) {
     	var activityId = body['id'];
     	user1.get({'limit': 1}, function(error, response, body) {
@@ -112,7 +113,7 @@ describe('Stream client', function () {
     		expect(body['results'][0]['id']).to.eql(activityId);
     		expect(body['results'][0]['participants']).to.eql(['Thierry', 'Tommaso']);
     		expect(body['results'][0]['route']).to.eql({'name': 'Vondelpark', 'distance': '20'});
-    		expect(body['results'][0]['date']).to.eql(currentDate);
+    		expect(body['results'][0]['date']).to.eql(isoDate);
     		done();
     	});
     }
@@ -254,7 +255,6 @@ describe('Stream client', function () {
   
   it('do i follow', function (done) {
   	function callback(error, response, body){
-    	console.log(arguments);
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
     	done();
