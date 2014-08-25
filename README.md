@@ -67,6 +67,10 @@ user1.follow('flat:42');
 // Stop following another feed
 user1.unfollow('flat:42');
 
+// List followers, following
+user1.followers({limit: '10', offset: '10'});
+user1.following({limit: '10', offset: '0'});
+
 // all methods support callback as the last argument
 user1.follow('flat:42', callback);
 // with this signature
