@@ -69,6 +69,19 @@ describe('Stream client', function () {
   	done();
   });
   
+  it('heroku real', function (done) {
+  	if (!node) {
+  		done();
+  	}
+  	var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?site=669';
+  	process.env.STREAM_URL = url;
+  	client = stream.connect();
+  	expect(client.key).to.eql('bvt88g4kvc63');
+  	expect(client.secret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
+  	expect(client.siteId).to.eql('669');
+  	done();
+  });
+  
   it('heroku_overwrite', function (done) {
   	if (!node) {
   		done();
