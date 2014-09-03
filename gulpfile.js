@@ -120,6 +120,15 @@ gulp.task('tag', function () {
 
 // full release flow
 gulp.task('release', function () {
+	/*
+	 * Instructions
+	 * First you bump
+	 * Then you build
+	 * You commit the changes
+	 * You tag using the syntax v1.0.1
+	 * You push
+	 * Npm publish .
+	 */
 	runSynchronized(['bump', 'build', 'tag']);
     return;
 });
