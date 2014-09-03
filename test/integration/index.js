@@ -241,6 +241,11 @@ describe('Stream client', function () {
     add();
   });
   
+  it('follow without callback', function (done) {
+    aggregated2.follow('user:111');
+    done();
+  });
+  
   it('unfollow', function (done) {
     var activityId = null;
   	function add() {

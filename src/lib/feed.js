@@ -62,8 +62,10 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	follow: function(target, callbackOrToken, callback) {
-		var targetToken = (callbackOrToken.call) ? null : callbackOrToken;
-		var callback = (callbackOrToken.call) ? callbackOrToken : callback;
+		if (callbackOrToken != undefined) {
+			var targetToken = (callbackOrToken.call) ? null : callbackOrToken;
+			var callback = (callbackOrToken.call) ? callbackOrToken : callback;
+		}
 		// if have a secret, always just generate and send along the token
 		if (this.client.secret && !targetToken) {
 			targetToken = this.client.feed(target).token;
