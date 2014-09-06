@@ -61,6 +61,18 @@ StreamClient.prototype = {
     		this.handlers[key].apply(this, args);
     	}
     },
+    
+    wrapCallback: function (cb) {
+    	var client = this;
+        function callback() {
+        	// first hit the global callback, subsequently forward
+        	client.send.apply(client, ['response'] + arguments());
+        	if (cb != undefined) {
+        		cb.apply(arguments());
+        	}
+        }
+        return callback;
+    },
 
     feed: function (feedId, token, siteId) {
         /*
@@ -108,23 +120,9 @@ StreamClient.prototype = {
     /*
      * Shortcuts for post, get and delete HTTP methods
      */
-    dummyCallback: function (error, response, body) {
-
-    },
-    
-    wrapCallback: function (cb) {
-    	var client = this;
-        function callback() {
-        	// first hit the global callback, subsequently forward
-        	client.send.apply(client, ['response'] + arguments());
-        	cb.apply(arguments());
-        }
-        return callback;
-    }
     
     get: function (kwargs, cb) {
 		this.send('pre_request', 'get', kwargs, cb);
-        cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
         var callback = this.wrapCallback();
@@ -132,7 +130,6 @@ StreamClient.prototype = {
     },
     post: function (kwargs, cb) {
     	this.handlers.send('pre_request', 'post', kwargs, cb);
-        cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
         var callback = this.wrapCallback();
@@ -140,7 +137,6 @@ StreamClient.prototype = {
     },
     delete: function (kwargs, cb) {
     	this.handlers.send('pre_request', 'delete', kwargs, cb);
-        cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'DELETE';
         var callback = this.wrapCallback();
