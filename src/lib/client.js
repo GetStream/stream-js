@@ -24,6 +24,42 @@ StreamClient.prototype = {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
         }
+        this.handlers = {};
+    },
+    
+    on: function(event, callback) {
+    	/*
+    	 * Support for global event callbacks
+    	 * This is useful for generic error and loading handling
+    	 * 
+    	 * client.on('pre_request', callback);
+    	 * client.on('response', callback);
+    	 * 
+    	 */
+    	this.handlers[event] = callback;
+    },
+    
+    off: function(event) {
+    	/*
+    	 * client.off() removes all handlers
+    	 * client.off(name) removes the specified handler
+    	 */
+    	if (key == undefined) {
+    		this.handlers = {};
+    	} else {
+    		delete this.handlers[key];
+    	}
+    },
+    
+    send: function(key) {
+    	/*
+    	 * Call the given handler with the arguments
+    	 */
+    	var key = arguments[0];
+    	var args = arguments.slice(1,null);
+    	if (this.handlers[key]) {
+    		this.handlers[key].apply(this, args);
+    	}
     },
 
     feed: function (feedId, token, siteId) {
@@ -75,23 +111,40 @@ StreamClient.prototype = {
     dummyCallback: function (error, response, body) {
 
     },
+    
+    wrapCallback: function (cb) {
+    	var client = this;
+        function callback() {
+        	// first hit the global callback, subsequently forward
+        	client.send.apply(client, ['response'] + arguments());
+        	cb.apply(arguments());
+        }
+        return callback;
+    }
+    
     get: function (kwargs, cb) {
+		this.send('pre_request', 'get', kwargs, cb);
         cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
-        return request.get(kwargs, cb);
+        var callback = this.wrapCallback();
+        return request.get(kwargs, callback);
     },
     post: function (kwargs, cb) {
+    	this.handlers.send('pre_request', 'post', kwargs, cb);
         cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
-        return request(kwargs, cb);
+        var callback = this.wrapCallback();
+        return request(kwargs, callback);
     },
     delete: function (kwargs, cb) {
+    	this.handlers.send('pre_request', 'delete', kwargs, cb);
         cb = cb || this.dummyCallback;
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'DELETE';
-        return request(kwargs, cb);
+        var callback = this.wrapCallback();
+        return request(kwargs, callback);
     }
 };
 
