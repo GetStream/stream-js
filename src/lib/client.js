@@ -122,6 +122,7 @@ StreamClient.prototype = {
     },
     /*
      * Shortcuts for post, get and delete HTTP methods
+     *
      */
     
     get: function (kwargs, cb) {
