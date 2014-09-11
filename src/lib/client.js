@@ -32,14 +32,14 @@ StreamClient.prototype = {
     	 * Support for global event callbacks
     	 * This is useful for generic error and loading handling
     	 * 
-    	 * client.on('pre_request', callback);
+    	 * client.on('request', callback);
     	 * client.on('response', callback);
     	 * 
     	 */
     	this.handlers[event] = callback;
     },
     
-    off: function(event) {
+    off: function(key) {
     	/*
     	 * client.off() removes all handlers
     	 * client.off(name) removes the specified handler
@@ -55,8 +55,9 @@ StreamClient.prototype = {
     	/*
     	 * Call the given handler with the arguments
     	 */
-    	var key = arguments[0];
-    	var args = arguments.slice(1,null);
+        var args = Array.prototype.slice.call(arguments);
+        var key = args[0];
+    	args = args.slice(1);
     	if (this.handlers[key]) {
     		this.handlers[key].apply(this, args);
     	}
@@ -66,9 +67,11 @@ StreamClient.prototype = {
     	var client = this;
         function callback() {
         	// first hit the global callback, subsequently forward
-        	client.send.apply(client, ['response'] + arguments());
+            var args = Array.prototype.slice.call(arguments);
+            var sendArgs = ['response'].concat(args);
+        	client.send.apply(client, sendArgs);
         	if (cb != undefined) {
-        		cb.apply(arguments());
+        		cb.apply(client, args);
         	}
         }
         return callback;
@@ -122,24 +125,24 @@ StreamClient.prototype = {
      */
     
     get: function (kwargs, cb) {
-		this.send('pre_request', 'get', kwargs, cb);
+		this.send('request', 'get', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
-        var callback = this.wrapCallback();
+        var callback = this.wrapCallback(cb);
         return request.get(kwargs, callback);
     },
     post: function (kwargs, cb) {
-    	this.handlers.send('pre_request', 'post', kwargs, cb);
+    	this.send('request', 'post', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
-        var callback = this.wrapCallback();
+        var callback = this.wrapCallback(cb);
         return request(kwargs, callback);
     },
     delete: function (kwargs, cb) {
-    	this.handlers.send('pre_request', 'delete', kwargs, cb);
+    	this.send('request', 'delete', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'DELETE';
-        var callback = this.wrapCallback();
+        var callback = this.wrapCallback(cb);
         return request(kwargs, callback);
     }
 };

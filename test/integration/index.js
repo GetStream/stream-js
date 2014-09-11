@@ -64,6 +64,33 @@ describe('Stream client', function () {
   	expect(client.siteId).to.eql('c');
   	done();
   });
+
+
+  it('handlers', function (done) {
+    var called = {};
+    called.request = 0;
+    called.response = 0;
+    function callback () {
+      called.request += 1;
+    };
+    function responseCallback () {
+      called.response += 1;
+    };
+    client.on('request', callback);
+    client.on('response', responseCallback);
+
+    function third() {
+      expect(called.request).to.eql(1);
+      expect(called.response).to.eql(1);
+      done();
+    }
+    function second() {
+      client.off();
+      user1.get({'limit': 1}, third);
+    }
+    user1.get({'limit': 1}, second);
+  });
+
   
   it('signing', function (done) {
   	expect(user1.token).to.be.an('string');
