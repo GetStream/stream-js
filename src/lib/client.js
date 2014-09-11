@@ -120,6 +120,34 @@ StreamClient.prototype = {
         kwargs.headers.Authorization = authorization;
         return kwargs;
     },
+    
+    signActivity: function(activity) {
+    	return this.signActivities([activity])[0];
+    },
+    
+    signActivities: function(activities) {
+    	/*
+    	 * We only automatically sign the to parameter when in server side mode
+    	 */
+    	if (!this.secret) {
+    		return activities;
+    	}
+    	
+    	for (var i = 0; i < activities.length; i++) { 
+    		var activity = activities[i];
+    		var to = activity.to || [];
+    		var signedTo = [];
+    		for (var j = 0; j < to.length; j++) { 
+    			var feed = to[j];
+    			var token = this.feed(feed).token;
+    			var signedFeed = feed + ' ' + token;
+    			signedTo.push(signedFeed);
+    		}
+    		activity.to = signedTo;
+		}
+		return activities;
+    },
+    
     /*
      * Shortcuts for post, get and delete HTTP methods
      *

@@ -1,8 +1,8 @@
 stream-js
 ===========
 
-[![Build Status](https://travis-ci.org/tschellenbach/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
-[![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-js/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-js?branch=master)
+[![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
+[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Dependencies up to date](https://david-dm.org/tschellenbach/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
@@ -47,6 +47,13 @@ user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"}, callback);
 // Create a new activity
 activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
 user1.addActivity(activity, callback);
+// Create a bit more complex activity
+activity = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
+	'course': {'name': 'Golden Gate park', 'distance': 10},
+	'participants': ['Thierry', 'Tommaso'],
+	'started_at': new Date()
+};
+user1.addActivity(activity, callback);
 
 // Remove an activity by its id
 user1.removeActivity("e561de8f-00f1-11e4-b400-0cc47a024be0");
@@ -60,6 +67,10 @@ user1.follow('flat:42');
 // Stop following another feed
 user1.unfollow('flat:42');
 
+// List followers, following
+user1.followers({limit: '10', offset: '10'});
+user1.following({limit: '10', offset: '0'});
+
 // all methods support callback as the last argument
 user1.follow('flat:42', callback);
 // with this signature
@@ -72,6 +83,12 @@ activities = [
 	{'actor': 2, 'verb': 'tweet', 'object': 3}, 
 ];
 user1.addActivities(activities, callback);
+
+// specifying additional feeds to push the activity to using the to param
+// especially usefull for notification style feeds
+to = ['user:2', 'user:3']
+activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
+user1.addActivity(activity, callback);
 
 // creating a feed token server side
 token = user1.token;

@@ -74,8 +74,9 @@ gulp.task('build', function() {
           debug : false,
           standalone : 'stream'
         }))
+        .pipe(gulp.dest('./dist/js'))
         .pipe(uglify())
-        .pipe(gulp.dest('./dist/js'));
+        .pipe(gulp.dest('./dist/js_min'));
 });
 
 gulp.task('bump_package', function () {
@@ -119,7 +120,16 @@ gulp.task('tag', function () {
 
 // full release flow
 gulp.task('release', function () {
-	runSynchronized(['bump', 'write_bower', 'build', 'tag']);
+	/*
+	 * Instructions
+	 * First you bump
+	 * Then you build
+	 * You commit the changes
+	 * You tag using the syntax v1.0.1
+	 * You push
+	 * Npm publish .
+	 */
+	runSynchronized(['bump', 'build', 'tag']);
     return;
 });
 
