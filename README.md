@@ -3,7 +3,7 @@ stream-js
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
-[![Dependencies up to date](https://david-dm.org/tschellenbach/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
+[![Dependencies up to date](https://david-dm.org/GetStream/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
 
