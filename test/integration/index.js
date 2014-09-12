@@ -402,6 +402,7 @@ describe('Stream client', function () {
   });
 
   it('mark read and seen', function (done) {
+    // TODO: fully test the behaviour of mark read and seen
     function callback(error, response, body) {
       console.log(body);
       done();
