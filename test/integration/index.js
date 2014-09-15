@@ -30,7 +30,7 @@ describe('Stream client', function () {
   console.log('node is set to ', node);
   errors = stream.errors;
   
-  var client, user1, aggregated2, aggregated3, flat3, secret3;
+  var client, user1, aggregated2, aggregated3, flat3, secret3, notification3;
   
   function beforeEachBrowser() {
   	client = stream.connect('ahj2ndz7gsan');
@@ -133,8 +133,10 @@ describe('Stream client', function () {
     user1.get({'limit': 1}, function(error, response, body) {
     	expect(response.statusCode).to.eql(200);
 		expect(body['results'][0]['id']).to.be.a('string');
-		var userAgent = response.req._headers['user-agent'];
-		expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+		if (node) {
+			var userAgent = response.req._headers['user-agent'];
+			expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+		}
 		done();
 	});
   });
