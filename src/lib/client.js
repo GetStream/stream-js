@@ -25,6 +25,7 @@ StreamClient.prototype = {
             this.baseUrl = 'http://localhost:8000';
         }
         this.handlers = {};
+        this.node = typeof(window) === 'undefined';
     },
     
     on: function(event, callback) {
@@ -78,8 +79,7 @@ StreamClient.prototype = {
     },
     
     userAgent: function() {
-    	var node = typeof(window) === 'undefined';
-    	var description = (node) ? 'node' : 'browser';
+    	var description = (this.node) ? 'node' : 'browser';
     	// TODO: get the version here in a way which works in both and browserify
     	var version = 'unknown';
     	return 'stream-javascript-client-' + description + '-' + version;
@@ -126,7 +126,9 @@ StreamClient.prototype = {
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
         kwargs.headers.Authorization = authorization;
-        kwargs.headers['User-Agent'] = this.userAgent();
+        var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
+        kwargs.headers[headerName] = this.userAgent();
+        
         return kwargs;
     },
     
