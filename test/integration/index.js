@@ -324,9 +324,9 @@ describe('Stream client', function () {
   	function callback(error, response, body){
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
-    	done();
+    	done();	
     }
-    user1.following({'feeds': ['flat:33']}, callback);
+    user1.following({'feeds': ['flat:33', 'flat:44']}, callback);
   });
   
   it('follow private', function (done) {
