@@ -76,6 +76,14 @@ StreamClient.prototype = {
         }
         return callback;
     },
+    
+    userAgent: function() {
+    	var node = typeof(window) === 'undefined';
+    	var description = (node) ? 'node' : 'browser';
+    	// TODO: get the version here in a way which works in both and browserify
+    	var version = 'unknown';
+    	return 'stream-javascript-client-' + description + '-' + version;
+    },
 
     feed: function (feedId, token, siteId) {
         /*
@@ -118,6 +126,7 @@ StreamClient.prototype = {
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
         kwargs.headers.Authorization = authorization;
+        kwargs.headers['User-Agent'] = this.userAgent();
         return kwargs;
     },
     

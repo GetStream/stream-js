@@ -133,6 +133,8 @@ describe('Stream client', function () {
     user1.get({'limit': 1}, function(error, response, body) {
     	expect(response.statusCode).to.eql(200);
 		expect(body['results'][0]['id']).to.be.a('string');
+		var userAgent = response.req._headers['user-agent'];
+		expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
 		done();
 	});
   });
