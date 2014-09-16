@@ -85,8 +85,8 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	following: function(argumentHash, callback) {
-		if (argumentHash != undefined && argumentHash.feeds) {
-			argumentHash.feeds = argumentHash.feeds.join(',');
+		if (argumentHash != undefined && argumentHash.filter) {
+			argumentHash.filter = argumentHash.filter.join(',');
 		}
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/following/', 
@@ -96,8 +96,8 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	followers: function(argumentHash, callback) {
-		if (argumentHash != undefined && argumentHash.feeds) {
-			argumentHash.feeds = argumentHash.feeds.join(',');
+		if (argumentHash != undefined && argumentHash.filter) {
+			argumentHash.filter = argumentHash.filter.join(',');
 		}
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/followers/', 

@@ -325,12 +325,18 @@ describe('Stream client', function () {
   });
   
   it('do i follow', function (done) {
+  	function doifollow() {
+    	user1.following({'filter': ['flat:33', 'flat:44']}, callback);
+  	}
   	function callback(error, response, body){
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
+    	var results = body.results;
+    	expect(results.length).to.eql(1);
+    	expect(results[0].target_id).to.eql('flat:33');
     	done();	
     }
-    user1.following({'feeds': ['flat:33', 'flat:44']}, callback);
+  	user1.follow('flat:33', doifollow);
   });
   
   it('follow private', function (done) {
