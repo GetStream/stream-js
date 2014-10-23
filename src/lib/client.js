@@ -112,16 +112,15 @@ StreamClient.prototype = {
 
     enrichUrl: function (relativeUrl) {
         var url = this.baseUrl + relativeUrl;
-        if (url.indexOf('?') != -1) {
-            url += '&api_key=' + this.key;
-        } else {
-            url += '?api_key=' + this.key;
-        }
         return url;
     },
 
     enrichKwargs: function (kwargs) {
         kwargs.url = this.enrichUrl(kwargs.url);
+        if (kwargs.qs == undefined) {
+        	kwargs.qs = {};
+        }
+        kwargs.qs['api_key'] = this.key;
         kwargs.json = true;
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
