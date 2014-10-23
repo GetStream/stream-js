@@ -169,7 +169,7 @@ StreamClient.prototype = {
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
         var callback = this.wrapCallback(cb);
-        return request.get(kwargs, callback);
+        return request(kwargs, callback);
     },
     post: function (kwargs, cb) {
     	this.send('request', 'post', kwargs, cb);
