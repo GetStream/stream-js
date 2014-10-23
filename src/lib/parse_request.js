@@ -1,18 +1,19 @@
 
-console.log('found me');
+/*
+ * Simple wrapper to make make parse httprequest look
+ * like request library
+ */
+
 function request(options, callback) {
-	console.log('calling request with', options, callback);
 	// first difference with request, qs is called params
 	options.params = options.qs;
 	// next up we need to support json for complex body params
 	options.body = JSON.stringify(options.body);
 	// also the callback is somewhat different
 	function callbackWrapperSuccess(httpResponse) {
-		console.log('succes', httpResponse);
 		callback(httpResponse);
 	}
 	function callbackWrapperFailure(httpResponse) {
-		console.log('fail', httpResponse);
 		callback(httpResponse);
 	}
 	options.success = callbackWrapperSuccess;
