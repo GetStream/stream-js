@@ -1,0 +1,27 @@
+================
+ Change history
+================
+
+1.0.6
+=====
+:release-date: 2014-09-16
+:by: Thierry Schellenbach
+
+* Bugfix for filtering support
+
+1.0.5
+=====
+:release-date: 2014-09-15
+:by: Thierry Schellenbach
+
+* Added user agent for getstream.io analytics
+* Added support for filtering followers and following by providing the feeds argument
+
+
+1.0.4
+=====
+:release-date: 2014-09-12
+:by: Thierry Schellenbach
+
+* Added support for attaching global handlers via client.on('request', callback)
+* Add support for mark read and mark seen (notifications feeds)

@@ -85,6 +85,9 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	following: function(argumentHash, callback) {
+		if (argumentHash != undefined && argumentHash.filter) {
+			argumentHash.filter = argumentHash.filter.join(',');
+		}
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/following/', 
 			'qs': argumentHash,
@@ -93,6 +96,9 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	followers: function(argumentHash, callback) {
+		if (argumentHash != undefined && argumentHash.filter) {
+			argumentHash.filter = argumentHash.filter.join(',');
+		}
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/followers/', 
 			'qs': argumentHash,
@@ -101,6 +107,13 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	get: function(argumentHash, callback) {
+		if (argumentHash && argumentHash.mark_read) {
+			argumentHash.mark_read = argumentHash.mark_read.join(',');
+		}
+		if (argumentHash && argumentHash.mark_seen) {
+			argumentHash.mark_seen = argumentHash.mark_seen.join(',');
+		}
+
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'qs': argumentHash,

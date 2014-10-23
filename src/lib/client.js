@@ -24,6 +24,65 @@ StreamClient.prototype = {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
         }
+        this.handlers = {};
+        this.node = typeof(window) === 'undefined';
+    },
+    
+    on: function(event, callback) {
+    	/*
+    	 * Support for global event callbacks
+    	 * This is useful for generic error and loading handling
+    	 * 
+    	 * client.on('request', callback);
+    	 * client.on('response', callback);
+    	 * 
+    	 */
+    	this.handlers[event] = callback;
+    },
+    
+    off: function(key) {
+    	/*
+    	 * client.off() removes all handlers
+    	 * client.off(name) removes the specified handler
+    	 */
+    	if (key == undefined) {
+    		this.handlers = {};
+    	} else {
+    		delete this.handlers[key];
+    	}
+    },
+    
+    send: function(key) {
+    	/*
+    	 * Call the given handler with the arguments
+    	 */
+        var args = Array.prototype.slice.call(arguments);
+        var key = args[0];
+    	args = args.slice(1);
+    	if (this.handlers[key]) {
+    		this.handlers[key].apply(this, args);
+    	}
+    },
+    
+    wrapCallback: function (cb) {
+    	var client = this;
+        function callback() {
+        	// first hit the global callback, subsequently forward
+            var args = Array.prototype.slice.call(arguments);
+            var sendArgs = ['response'].concat(args);
+        	client.send.apply(client, sendArgs);
+        	if (cb != undefined) {
+        		cb.apply(client, args);
+        	}
+        }
+        return callback;
+    },
+    
+    userAgent: function() {
+    	var description = (this.node) ? 'node' : 'browser';
+    	// TODO: get the version here in a way which works in both and browserify
+    	var version = 'unknown';
+    	return 'stream-javascript-client-' + description + '-' + version;
     },
 
     feed: function (feedId, token, siteId) {
@@ -67,6 +126,9 @@ StreamClient.prototype = {
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
         kwargs.headers.Authorization = authorization;
+        var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
+        kwargs.headers[headerName] = this.userAgent();
+        
         return kwargs;
     },
     
@@ -99,27 +161,29 @@ StreamClient.prototype = {
     
     /*
      * Shortcuts for post, get and delete HTTP methods
+     *
      */
-    dummyCallback: function (error, response, body) {
-
-    },
+    
     get: function (kwargs, cb) {
-        cb = cb || this.dummyCallback;
+		this.send('request', 'get', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
-        return request.get(kwargs, cb);
+        var callback = this.wrapCallback(cb);
+        return request.get(kwargs, callback);
     },
     post: function (kwargs, cb) {
-        cb = cb || this.dummyCallback;
+    	this.send('request', 'post', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
-        return request(kwargs, cb);
+        var callback = this.wrapCallback(cb);
+        return request(kwargs, callback);
     },
     delete: function (kwargs, cb) {
-        cb = cb || this.dummyCallback;
+    	this.send('request', 'delete', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'DELETE';
-        return request(kwargs, cb);
+        var callback = this.wrapCallback(cb);
+        return request(kwargs, callback);
     }
 };
 
