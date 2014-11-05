@@ -187,7 +187,7 @@ describe('Stream client', function () {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     activity['participants'] = ['Thierry', 'Tommaso'];
     activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
-    activity['to'] = ['flat:33'];
+    activity['to'] = ['flat:33', 'user:everyone'];
     //flat3
     if (!node) activity['to'] = ['flat:33' + ' ' + flat3.token];
     
