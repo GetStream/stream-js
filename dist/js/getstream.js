@@ -3225,7 +3225,11 @@ StreamClient.prototype = {
             throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
         }
 
-        if (crypto.createHash && this.secret && !token) {
+        if (!crypto.createHash) {
+            throw new errors.FeedError('crypto is not available, are you running this on a browser?');
+        }
+
+        if (this.secret && !token) {
             // we are server side, have a secret but no feed signature
             token = signing.sign(this.secret, feedId.replace(':', ''));
         }
@@ -3240,16 +3244,15 @@ StreamClient.prototype = {
 
     enrichUrl: function (relativeUrl) {
         var url = this.baseUrl + relativeUrl;
-        if (url.indexOf('?') != -1) {
-            url += '&api_key=' + this.key;
-        } else {
-            url += '?api_key=' + this.key;
-        }
         return url;
     },
 
     enrichKwargs: function (kwargs) {
         kwargs.url = this.enrichUrl(kwargs.url);
+        if (kwargs.qs == undefined) {
+        	kwargs.qs = {};
+        }
+        kwargs.qs['api_key'] = this.key;
         kwargs.json = true;
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
@@ -3297,7 +3300,7 @@ StreamClient.prototype = {
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
         var callback = this.wrapCallback(cb);
-        return request.get(kwargs, callback);
+        return request(kwargs, callback);
     },
     post: function (kwargs, cb) {
     	this.send('request', 'post', kwargs, cb);
@@ -3316,6 +3319,7 @@ StreamClient.prototype = {
 };
 
 module.exports = StreamClient;
+
 }).call(this,_dereq_("1YiZ5S"))
 },{"./errors":7,"./feed":8,"./signing":9,"1YiZ5S":4,"crypto":3,"request":1}],7:[function(_dereq_,module,exports){
 var errors = module.exports;
