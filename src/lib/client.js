@@ -11,21 +11,27 @@ var StreamClient = function () {
 StreamClient.prototype = {
     baseUrl: 'https://getstream.io',
 
-    initialize: function (key, secret, siteId, fayeUrl) {
+    initialize: function (key, secret, appId, fayeUrl) {
         /*
          * API key and secret
          * Secret is optional
          */
-        this.key = key;
-        this.secret = secret;
-        this.siteId = siteId;
+        this.apiKey = key;
+        this.apiSecret = secret;
+        this.appId = appId;
         this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
         if (typeof (process) != "undefined" && process.env.LOCAL) {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
         }
         this.handlers = {};
-        this.node = typeof(window) === 'undefined';
+        this.browser = typeof(window) != 'undefined';
+        this.node = !this.browser;
+        
+        if (this.browser && this.apiSecret) {
+			// dont share your private keys publically
+            throw new errors.FeedError('You are publically sharing your private key. Dont use the private key while in the browser.');
+        }
     },
     
     on: function(event, callback) {
@@ -85,50 +91,54 @@ StreamClient.prototype = {
     	return 'stream-javascript-client-' + description + '-' + version;
     },
 
-    feed: function (feedId, token, siteId) {
+    feed: function (feedSlug, userId, token, siteId) {
         /*
          * Returns a feed object for the given feed id and token
          * Example:
          *
-         * client.feed('user1', 'token2');
+         * client.feed('user', '1', 'token2');
          */
-        var match = feedId.match(/\:/g);
-        if (match === null || match.length != 1) {
-            throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
-        }
-
-        if (!crypto.createHash) {
+        // raise an error if there is no cyrpto
+        if (!token && !crypto.createHash) {
             throw new errors.FeedError('crypto is not available, are you running this on a browser?');
         }
 
-        if (this.secret && !token) {
-            // we are server side, have a secret but no feed signature
-            token = signing.sign(this.secret, feedId.replace(':', ''));
-        }
-
-        if (!token) {
+		// raise an error if there is no token
+        if (!this.apiSecret && !token) {
             throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
         }
+        
+        // create the token in server side mode
+        if (this.apiSecret && !token) {
+            var feedId = '' + feedSlug + userId;
+            token = signing.sign(this.apiSecret, feedId);
+        }
 
-        var feed = new StreamFeed(this, feedId, token, siteId);
+        var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
         return feed;
     },
 
     enrichUrl: function (relativeUrl) {
+    	/*
+    	 * Combines the base url with the relative url
+    	 */
         var url = this.baseUrl + relativeUrl;
         return url;
     },
 
     enrichKwargs: function (kwargs) {
+    	/*
+    	 * Adds the API key and the signature
+    	 */
         kwargs.url = this.enrichUrl(kwargs.url);
         if (kwargs.qs == undefined) {
         	kwargs.qs = {};
         }
-        kwargs.qs['api_key'] = this.key;
+        kwargs.qs['api_key'] = this.apiKey;
         kwargs.json = true;
-        var authorization = kwargs.authorization || this.authorization;
+        var signature = kwargs.signature || this.signature;
         kwargs.headers = {};
-        kwargs.headers.Authorization = authorization;
+        kwargs.headers.Authorization = signature;
         var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
         kwargs.headers[headerName] = this.userAgent();
         
@@ -143,7 +153,7 @@ StreamClient.prototype = {
     	/*
     	 * We only automatically sign the to parameter when in server side mode
     	 */
-    	if (!this.secret) {
+    	if (!this.apiSecret) {
     		return activities;
     	}
     	
@@ -152,9 +162,11 @@ StreamClient.prototype = {
     		var to = activity.to || [];
     		var signedTo = [];
     		for (var j = 0; j < to.length; j++) { 
-    			var feed = to[j];
-    			var token = this.feed(feed).token;
-    			var signedFeed = feed + ' ' + token;
+    			var feedId = to[j];
+    			var feedSlug = feedId.split(':')[0];
+    			var userId = feedId.split(':')[1];
+    			var token = this.feed(feedSlug, userId).token;
+    			var signedFeed = feedId + ' ' + token;
     			signedTo.push(signedFeed);
     		}
     		activity.to = signedTo;

@@ -35,22 +35,22 @@ describe('Stream client', function () {
   function beforeEachBrowser() {
   	client = stream.connect('ahj2ndz7gsan');
   	client = stream.connect('ahj2ndz7gsan', null, 96);
-  	user1 = client.feed('user:11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
-  	aggregated2 = client.feed('aggregated:22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
-  	aggregated3 = client.feed('aggregated:33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
-  	flat3 = client.feed('flat:33', 'MqPLN1eA_7l5iYrJ8zMyImkY8V0');
-  	secret3 = client.feed('secret:33', 'fo8mzeoxsa1if2te5KWJtOF-cZw');
+  	user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
+  	aggregated2 = client.feed('aggregated', '22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
+  	aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
+  	flat3 = client.feed('flat', '33', 'MqPLN1eA_7l5iYrJ8zMyImkY8V0');
+  	secret3 = client.feed('secret', '33', 'fo8mzeoxsa1if2te5KWJtOF-cZw');
     notification3 = client.feed('notification:33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
   }
   
   function beforeEachNode() {
   	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
   	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519);
-    user1 = client.feed('user:11');
-    aggregated2 = client.feed('aggregated:22');
-    aggregated3 = client.feed('aggregated:33');
-    flat3 = client.feed('flat:33');
-    secret3 = client.feed('secret:33');
+    user1 = client.feed('user', '11');
+    aggregated2 = client.feed('aggregated', '22');
+    aggregated3 = client.feed('aggregated', '33');
+    flat3 = client.feed('flat', '33');
+    secret3 = client.feed('secret', '33');
     notification3 = client.feed('notification:33');
   }
   
@@ -65,9 +65,9 @@ describe('Stream client', function () {
   	var url = 'https://thierry:pass@getstream.io/?site=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect();
-  	expect(client.key).to.eql('thierry');
-  	expect(client.secret).to.eql('pass');
-  	expect(client.siteId).to.eql('1');
+  	expect(client.apiKey).to.eql('thierry');
+  	expect(client.apiSecret).to.eql('pass');
+  	expect(client.appId).to.eql('1');
   	done();
   });
   
@@ -78,9 +78,9 @@ describe('Stream client', function () {
   	var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?site=669';
   	process.env.STREAM_URL = url;
   	client = stream.connect();
-  	expect(client.key).to.eql('bvt88g4kvc63');
-  	expect(client.secret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
-  	expect(client.siteId).to.eql('669');
+  	expect(client.apiKey).to.eql('bvt88g4kvc63');
+  	expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
+  	expect(client.appId).to.eql('669');
   	done();
   });
   
@@ -91,9 +91,9 @@ describe('Stream client', function () {
   	var url = 'https://thierry:pass@getstream.io/?site=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect('a','b','c');
-  	expect(client.key).to.eql('a');
-  	expect(client.secret).to.eql('b');
-  	expect(client.siteId).to.eql('c');
+  	expect(client.apiKey).to.eql('a');
+  	expect(client.apiSecret).to.eql('b');
+  	expect(client.appId).to.eql('c');
   	done();
   });
 
@@ -262,7 +262,7 @@ describe('Stream client', function () {
 	}
 	function follow(error, response, body) {
 		activityId = body['id'];
-		aggregated2.follow('user:11', check);
+		aggregated2.follow('user', '11', check);
 	}
     function check(error, response, body) {
     	aggregated2.get({'limit': 1}, function(error, response, body) {
@@ -275,7 +275,7 @@ describe('Stream client', function () {
   });
   
   it('follow without callback', function (done) {
-    aggregated2.follow('user:111');
+    aggregated2.follow('user', '111');
     done();
   });
   
@@ -287,10 +287,10 @@ describe('Stream client', function () {
 	}
 	function follow(error, response, body) {
 		activityId = body['id'];
-		aggregated2.follow('user:11', unfollow);
+		aggregated2.follow('user', '11', unfollow);
 	}
 	function unfollow(error, response, body) {
-		aggregated2.unfollow('user:11', check);
+		aggregated2.unfollow('user', '11', check);
 	}
     function check(error, response, body) {
     	setTimeout(function() {
@@ -326,17 +326,17 @@ describe('Stream client', function () {
   
   it('do i follow', function (done) {
   	function doifollow() {
-    	user1.following({'filter': ['flat:33', 'flat:44']}, callback);
+    	user1.following({'filter': ['flat', '33', 'flat', '44']}, callback);
   	}
   	function callback(error, response, body){
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
     	var results = body.results;
     	expect(results.length).to.eql(1);
-    	expect(results[0].target_id).to.eql('flat:33');
+    	expect(results[0].target_id).to.eql('flat', '33');
     	done();	
     }
-  	user1.follow('flat:33', doifollow);
+  	user1.follow('flat', '33', doifollow);
   });
   
   it('follow private', function (done) {
@@ -346,9 +346,9 @@ describe('Stream client', function () {
     	done();
    };
    if (node) {
-    user1.follow('secret:33', callback);
+    user1.follow('secret', '33', callback);
    } else {
-   	user1.follow('secret:33', secret3.token, callback);
+   	user1.follow('secret', '33', secret3.token, callback);
    }
   });
   
@@ -442,7 +442,7 @@ describe('Stream client', function () {
   it('fayeSubscribeError', function (done) {
   	var client = stream.connect('5crf3bhfzesn');
   	function sub() {
-  		var user1 = client.feed('user:11', 'secret');
+  		var user1 = client.feed('user', '11', 'secret');
   		user1.subscribe();
   	}
     expect(sub).to.throwException(function (e) {

@@ -11,15 +11,20 @@ StreamFeed.prototype = {
 	 * remove activity etc
 	 * 
 	 */
-	initialize: function(client, feed, token) {
+	initialize: function(client, feedSlug, userId, token) {
 		this.client = client;
-		this.feed = feed;
+		this.feedSlug = feedSlug;
+		this.userId = userId;
+		this.feedId = feedSlug + ':' + userId;
 		this.token = token;
-		this.feedUrl = feed.replace(':', '/');
-		this.feedTogether = feed.replace(':', '');
-		this.authorization = this.feedTogether + ' ' + this.token;
+		
+		this.feedUrl = this.feedId.replace(':', '/');
+		this.feedTogether = this.feedId.replace(':', '');
+		this.signature = this.feedTogether + ' ' + this.token;
+		
+		// faye setup
         this.fayeClient = null;
-        this.notificationChannel = 'site-' + this.client.siteId + '-feed-' + this.feedTogether;
+        this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
 	},
 	addActivity: function(activity, callback) {
 		/*
@@ -30,7 +35,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'body': activity,
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
@@ -43,7 +48,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/' + activityId + '/', 
 			'qs': params,
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
@@ -57,30 +62,46 @@ StreamFeed.prototype = {
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'body': data,
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
-	follow: function(target, callbackOrToken, callback) {
-		if (callbackOrToken != undefined) {
-			var targetToken = (callbackOrToken.call) ? null : callbackOrToken;
-			var callback = (callbackOrToken.call) ? callbackOrToken : callback;
+	follow: function(targetSlug, targetUserId, callbackOrToken, callback) {
+		/*
+		 * feed.follow('user', '1');
+		 * or
+		 * feed.follow('user', '1', 'token');
+		 * or
+		 * feed.follow('user', '1', callback);
+		 */
+		var targetToken;
+		var last = arguments[arguments.length-1];
+		// callback is always the last argument
+		var callback = (last.call) ? last : undefined;
+		var target = targetSlug + ':' + targetUserId;
+		// token is 3rd or 4th
+		if (arguments[2] && !arguments[2].call) {
+			targetToken = arguments[2];
+		} else if (arguments[3] && !arguments[3].call) {
+			targetToken = arguments[3];
 		}
+		
 		// if have a secret, always just generate and send along the token
 		if (this.client.secret && !targetToken) {
-			targetToken = this.client.feed(target).token;
+			targetToken = this.client.feed(targetSlug, targetUserId).token;
 		}
 		var xhr = this.client.post({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/', 
 			'body': {'target': target, 'target_token': targetToken},
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
-	unfollow: function(target, callback) {
+	unfollow: function(targetSlug, targetUserId, callback) {
+		var target = targetSlug + ':' + targetUserId;
 		var xhr = this.client.delete({
 			'url': '/api/feed/'+ this.feedUrl + '/follows/' + target + '/', 
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
@@ -91,7 +112,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/following/', 
 			'qs': argumentHash,
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
@@ -102,7 +123,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/followers/', 
 			'qs': argumentHash,
-			'authorization': this.authorization
+			'signature': this.signatures
 		}, callback);
 		return xhr;
 	},
@@ -117,21 +138,21 @@ StreamFeed.prototype = {
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/', 
 			'qs': argumentHash,
-			'authorization': this.authorization
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
 
     getFayeAuthorization: function(){
-        var api_key = this.client.key;
-        var user_id = this.notificationChannel;
-        var signature = this.token;
+        var apiKey = this.client.apiKey;
+        var userId = this.notificationChannel;
+        var token = this.token;
         return {
           incoming: function(message, callback) {
             callback(message);
           },
           outgoing: function(message, callback) {
-            message.ext = {'user_id': user_id, 'api_key':api_key, 'signature': signature};
+            message.ext = {'user_id': userId, 'api_key':apiKey, 'signature': token};
             callback(message);
           }
         };
@@ -148,8 +169,8 @@ StreamFeed.prototype = {
     },
 
     subscribe: function(callback){
-    	if (!this.client.siteId) {
-    		throw new errors.SiteError('Missing site id, which is needed to subscribe, use var client = stream.connect(key, secret, siteId);');
+    	if (!this.client.appId) {
+    		throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
     	}
         return this.getFayeClient().subscribe('/'+this.notificationChannel, callback);
     }
