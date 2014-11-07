@@ -11,21 +11,22 @@ var StreamClient = function () {
 StreamClient.prototype = {
     baseUrl: 'https://getstream.io/api/',
 
-    initialize: function (key, secret, appId, fayeUrl, options) {
+    initialize: function (apiKey, apiSecret, appId, options) {
         /*
-         * API key and secret
-         * Secret is optional
+         * initialize is not directly called by via stream.connect, ie:
+         * stream.connect(apiKey, apiSecret)
+         * secret is optional and only used in server side mode
+         * stream.connect(apiKey, null, appId);
          */
-        this.apiKey = key;
-        this.apiSecret = secret;
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
         this.appId = appId;
         this.options = options || {};
         this.version = this.options.version || 'v1.0';
         this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
         this.location = this.options.location || 'unspecified';
         if (typeof (process) != "undefined" && process.env.LOCAL) {
-            //this.fayeUrl = 'http://localhost:8000/faye';
-            this.baseUrl = 'http://localhost:8000';
+            this.baseUrl = 'http://localhost:8000/api/';
         }
         this.handlers = {};
         this.browser = typeof(window) != 'undefined';
@@ -122,7 +123,7 @@ StreamClient.prototype = {
 
     enrichUrl: function (relativeUrl) {
     	/*
-    	 * Combines the base url with the relative url
+    	 * Combines the base url with version and the relative url
     	 */
         var url = this.baseUrl + this.version + '/' + relativeUrl;
         return url;
@@ -142,6 +143,7 @@ StreamClient.prototype = {
         var signature = kwargs.signature || this.signature;
         kwargs.headers = {};
         kwargs.headers.Authorization = signature;
+        // User agent can only be changed in server side mode
         var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
         kwargs.headers[headerName] = this.userAgent();
         
@@ -154,7 +156,7 @@ StreamClient.prototype = {
     
     signActivities: function(activities) {
     	/*
-    	 * We only automatically sign the to parameter when in server side mode
+    	 * We automatically sign the to parameter when in server side mode
     	 */
     	if (!this.apiSecret) {
     		return activities;

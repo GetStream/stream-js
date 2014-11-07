@@ -40,6 +40,11 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	removeActivity: function(activityId, callback) {
+		/*
+		 * Removes the activity by activityId
+		 * Or 
+		 * feed.removeActivity({'foreign_id': foreignId});
+		 */
 		var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
 		var params = {};
 		if (activityId.foreignId) {
@@ -98,9 +103,9 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	unfollow: function(targetSlug, targetUserId, callback) {
-		var target = targetSlug + ':' + targetUserId;
+		var targetFeedId = targetSlug + ':' + targetUserId;
 		var xhr = this.client.delete({
-			'url': 'feed/'+ this.feedUrl + '/follows/' + target + '/', 
+			'url': 'feed/'+ this.feedUrl + '/follows/' + targetFeedId + '/', 
 			'signature': this.signature
 		}, callback);
 		return xhr;

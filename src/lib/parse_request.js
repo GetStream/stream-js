@@ -1,7 +1,7 @@
 
 /*
- * Simple wrapper to make make parse httprequest look
- * like request library
+ * Simple wrapper to make make parse httprequest look 
+ * somewhat like request library
  */
 
 function request(options, callback) {
