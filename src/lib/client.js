@@ -11,15 +11,28 @@ var StreamClient = function () {
 StreamClient.prototype = {
     baseUrl: 'https://getstream.io',
 
+<<<<<<< HEAD
     initialize: function (key, secret, appId, fayeUrl) {
+=======
+    initialize: function (key, secret, siteId, options) {
+>>>>>>> master
         /*
          * API key and secret
          * Secret is optional
          */
+<<<<<<< HEAD
         this.apiKey = key;
         this.apiSecret = secret;
         this.appId = appId;
         this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
+=======
+        this.key = key;
+        this.secret = secret;
+        this.siteId = siteId;
+        this.options = options || {};
+        this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
+        this.location = this.options.location || 'unspecified';
+>>>>>>> master
         if (typeof (process) != "undefined" && process.env.LOCAL) {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
@@ -98,11 +111,6 @@ StreamClient.prototype = {
          *
          * client.feed('user', '1', 'token2');
          */
-        // raise an error if there is no cyrpto
-        if (!token && !crypto.createHash) {
-            throw new errors.FeedError('crypto is not available, are you running this on a browser?');
-        }
-
 		// raise an error if there is no token
         if (!this.apiSecret && !token) {
             throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
@@ -135,6 +143,7 @@ StreamClient.prototype = {
         	kwargs.qs = {};
         }
         kwargs.qs['api_key'] = this.apiKey;
+        kwargs.qs['location'] = this.location;
         kwargs.json = true;
         var signature = kwargs.signature || this.signature;
         kwargs.headers = {};

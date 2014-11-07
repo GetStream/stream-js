@@ -3096,7 +3096,7 @@ var StreamClient = _dereq_('./lib/client');
 var errors = _dereq_('./lib/errors');
 var request = _dereq_('request');
 
-function connect(apiKey, apiSecret, siteId) {
+function connect(apiKey, apiSecret, siteId, options) {
 	/*
 	 * Usage
 	 * stream.connect(apiKey, ApiSecret)
@@ -3115,7 +3115,7 @@ function connect(apiKey, apiSecret, siteId) {
 		apiSecret = parts[2];
 		siteId = parts[3];
 	}
-	return new StreamClient(apiKey, apiSecret, siteId);
+	return new StreamClient(apiKey, apiSecret, siteId, options);
 }
 
 module.exports.connect = connect;
@@ -3139,7 +3139,7 @@ var StreamClient = function () {
 StreamClient.prototype = {
     baseUrl: 'https://getstream.io',
 
-    initialize: function (key, secret, siteId, fayeUrl) {
+    initialize: function (key, secret, siteId, options) {
         /*
          * API key and secret
          * Secret is optional
@@ -3147,7 +3147,9 @@ StreamClient.prototype = {
         this.key = key;
         this.secret = secret;
         this.siteId = siteId;
-        this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
+        this.options = options || {};
+        this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
+        this.location = this.options.location || 'unspecified';
         if (typeof (process) != "undefined" && process.env.LOCAL) {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
@@ -3225,10 +3227,6 @@ StreamClient.prototype = {
             throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
         }
 
-        if (!crypto.createHash) {
-            throw new errors.FeedError('crypto is not available, are you running this on a browser?');
-        }
-
         if (this.secret && !token) {
             // we are server side, have a secret but no feed signature
             token = signing.sign(this.secret, feedId.replace(':', ''));
@@ -3253,6 +3251,7 @@ StreamClient.prototype = {
         	kwargs.qs = {};
         }
         kwargs.qs['api_key'] = this.key;
+        kwargs.qs['location'] = this.location;
         kwargs.json = true;
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};
