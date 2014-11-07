@@ -116,39 +116,39 @@ StreamFeed.prototype = {
 		}, callback);
 		return xhr;
 	},
-	following : function(argumentHash, callback) {
-		if (argumentHash != undefined && argumentHash.filter) {
-			argumentHash.filter = argumentHash.filter.join(',');
+	following : function(options, callback) {
+		if (options != undefined && options.filter) {
+			options.filter = options.filter.join(',');
 		}
 		var xhr = this.client.get({
 			'url' : 'feed/' + this.feedUrl + '/following/',
-			'qs' : argumentHash,
+			'qs' : options,
 			'signature' : this.signature
 		}, callback);
 		return xhr;
 	},
-	followers : function(argumentHash, callback) {
-		if (argumentHash != undefined && argumentHash.filter) {
-			argumentHash.filter = argumentHash.filter.join(',');
+	followers : function(options, callback) {
+		if (options != undefined && options.filter) {
+			options.filter = options.filter.join(',');
 		}
 		var xhr = this.client.get({
 			'url' : 'feed/' + this.feedUrl + '/followers/',
-			'qs' : argumentHash,
+			'qs' : options,
 			'signature' : this.signature
 		}, callback);
 		return xhr;
 	},
-	get : function(argumentHash, callback) {
-		if (argumentHash && argumentHash.mark_read && argumentHash.mark_read.join) {
-			argumentHash.mark_read = argumentHash.mark_read.join(',');
+	get : function(options, callback) {
+		if (options && options.mark_read && options.mark_read.join) {
+			options.mark_read = options.mark_read.join(',');
 		}
-		if (argumentHash && argumentHash.mark_seen && argumentHash.mark_seen.join) {
-			argumentHash.mark_seen = argumentHash.mark_seen.join(',');
+		if (options && options.mark_seen && options.mark_seen.join) {
+			options.mark_seen = options.mark_seen.join(',');
 		}
 
 		var xhr = this.client.get({
 			'url' : 'feed/' + this.feedUrl + '/',
-			'qs' : argumentHash,
+			'qs' : options,
 			'signature' : this.signature
 		}, callback);
 		return xhr;
