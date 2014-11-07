@@ -14,11 +14,11 @@ StreamFeed.prototype = {
 		this.client = client;
 		this.feedSlug = feedSlug;
 		this.userId = userId;
-		this.feedId = feedSlug + ':' + userId;
+		this.id = feedSlug + ':' + userId;
 		this.token = token;
 
-		this.feedUrl = this.feedId.replace(':', '/');
-		this.feedTogether = this.feedId.replace(':', '');
+		this.feedUrl = this.id.replace(':', '/');
+		this.feedTogether = this.id.replace(':', '');
 		this.signature = this.feedTogether + ' ' + this.token;
 
 		// faye setup
