@@ -99,10 +99,6 @@ StreamClient.prototype = {
             throw new errors.FeedError('Wrong feed format ' + feedId + ' correct format is flat:1');
         }
 
-        if (!crypto.createHash) {
-            throw new errors.FeedError('crypto is not available, are you running this on a browser?');
-        }
-
         if (this.secret && !token) {
             // we are server side, have a secret but no feed signature
             token = signing.sign(this.secret, feedId.replace(':', ''));
