@@ -9,7 +9,7 @@ var StreamClient = function () {
 };
 
 StreamClient.prototype = {
-    baseUrl: 'https://getstream.io',
+    baseUrl: 'https://getstream.io/api/',
 
     initialize: function (key, secret, appId, fayeUrl, options) {
         /*
@@ -20,6 +20,7 @@ StreamClient.prototype = {
         this.apiSecret = secret;
         this.appId = appId;
         this.options = options || {};
+        this.version = this.options.version || 'v1.0';
         this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
         this.location = this.options.location || 'unspecified';
         if (typeof (process) != "undefined" && process.env.LOCAL) {
@@ -100,6 +101,10 @@ StreamClient.prototype = {
          *
          * client.feed('user', '1', 'token2');
          */
+        if (!feedSlug || !userId) {
+        	throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+        }
+        
 		// raise an error if there is no token
         if (!this.apiSecret && !token) {
             throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
@@ -119,7 +124,7 @@ StreamClient.prototype = {
     	/*
     	 * Combines the base url with the relative url
     	 */
-        var url = this.baseUrl + relativeUrl;
+        var url = this.baseUrl + this.version + '/' + relativeUrl;
         return url;
     },
 

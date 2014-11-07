@@ -40,7 +40,7 @@ describe('Stream client', function () {
   	aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
   	flat3 = client.feed('flat', '33', 'MqPLN1eA_7l5iYrJ8zMyImkY8V0');
   	secret3 = client.feed('secret', '33', 'fo8mzeoxsa1if2te5KWJtOF-cZw');
-    notification3 = client.feed('notification:33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
+    notification3 = client.feed('notification', '33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
   }
   
   function beforeEachNode() {
@@ -51,7 +51,7 @@ describe('Stream client', function () {
     aggregated3 = client.feed('aggregated', '33');
     flat3 = client.feed('flat', '33');
     secret3 = client.feed('secret', '33');
-    notification3 = client.feed('notification:33');
+    notification3 = client.feed('notification', '33');
   }
   
   var before = (node) ? beforeEachNode : beforeEachBrowser;
@@ -326,17 +326,17 @@ describe('Stream client', function () {
   
   it('do i follow', function (done) {
   	function doifollow() {
-    	user1.following({'filter': ['flat', '33', 'flat', '44']}, callback);
+    	user1.following({'filter': ['flat:33', 'flat:44']}, callback);
   	}
   	function callback(error, response, body){
     	expect(error).to.eql(null);
     	expect(body.exception).to.eql(undefined);
     	var results = body.results;
     	expect(results.length).to.eql(1);
-    	expect(results[0].target_id).to.eql('flat', '33');
+    	expect(results[0].target_id).to.eql('flat:33');
     	done();	
     }
-  	user1.follow('flat', '33', doifollow);
+  	user1.follow('flat:33', doifollow);
   });
   
   it('follow private', function (done) {

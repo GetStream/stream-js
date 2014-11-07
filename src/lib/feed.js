@@ -33,7 +33,7 @@ StreamFeed.prototype = {
 		 */
 		var activity = this.client.signActivity(activity);
 		var xhr = this.client.post({
-			'url': '/api/feed/'+ this.feedUrl + '/', 
+			'url': 'feed/'+ this.feedUrl + '/', 
 			'body': activity,
 			'signature': this.signature
 		}, callback);
@@ -46,7 +46,7 @@ StreamFeed.prototype = {
 			params.foreign_id = '1';
 		}
 		var xhr = this.client.delete({
-			'url': '/api/feed/'+ this.feedUrl + '/' + activityId + '/', 
+			'url': 'feed/'+ this.feedUrl + '/' + activityId + '/', 
 			'qs': params,
 			'signature': this.signature
 		}, callback);
@@ -60,7 +60,7 @@ StreamFeed.prototype = {
 		var activities = this.client.signActivities(activities);
 		var data = {activities: activities};
 		var xhr = this.client.post({
-			'url': '/api/feed/'+ this.feedUrl + '/', 
+			'url': 'feed/'+ this.feedUrl + '/', 
 			'body': data,
 			'signature': this.signature
 		}, callback);
@@ -87,11 +87,11 @@ StreamFeed.prototype = {
 		}
 		
 		// if have a secret, always just generate and send along the token
-		if (this.client.secret && !targetToken) {
+		if (this.client.apiSecret && !targetToken) {
 			targetToken = this.client.feed(targetSlug, targetUserId).token;
 		}
 		var xhr = this.client.post({
-			'url': '/api/feed/'+ this.feedUrl + '/follows/', 
+			'url': 'feed/'+ this.feedUrl + '/follows/', 
 			'body': {'target': target, 'target_token': targetToken},
 			'signature': this.signature
 		}, callback);
@@ -100,7 +100,7 @@ StreamFeed.prototype = {
 	unfollow: function(targetSlug, targetUserId, callback) {
 		var target = targetSlug + ':' + targetUserId;
 		var xhr = this.client.delete({
-			'url': '/api/feed/'+ this.feedUrl + '/follows/' + target + '/', 
+			'url': 'feed/'+ this.feedUrl + '/follows/' + target + '/', 
 			'signature': this.signature
 		}, callback);
 		return xhr;
@@ -110,7 +110,7 @@ StreamFeed.prototype = {
 			argumentHash.filter = argumentHash.filter.join(',');
 		}
 		var xhr = this.client.get({
-			'url': '/api/feed/'+ this.feedUrl + '/following/', 
+			'url': 'feed/'+ this.feedUrl + '/following/', 
 			'qs': argumentHash,
 			'signature': this.signature
 		}, callback);
@@ -121,7 +121,7 @@ StreamFeed.prototype = {
 			argumentHash.filter = argumentHash.filter.join(',');
 		}
 		var xhr = this.client.get({
-			'url': '/api/feed/'+ this.feedUrl + '/followers/', 
+			'url': 'feed/'+ this.feedUrl + '/followers/', 
 			'qs': argumentHash,
 			'signature': this.signature
 		}, callback);
@@ -136,7 +136,7 @@ StreamFeed.prototype = {
 		}
 
 		var xhr = this.client.get({
-			'url': '/api/feed/'+ this.feedUrl + '/', 
+			'url': 'feed/'+ this.feedUrl + '/', 
 			'qs': argumentHash,
 			'signature': this.signature
 		}, callback);
