@@ -108,15 +108,23 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	unfollow : function(targetSlug, targetUserId, callback) {
+		/*
+		 * Unfollow the given feed, ie:
+		 * feed.unfollow('user', '2', callback);
+		 */
 		var targetFeedId = targetSlug + ':' + targetUserId;
-		var xhr = this.client.
-		delete ( {
+		var xhr = this.client.delete( {
 			'url' : 'feed/' + this.feedUrl + '/follows/' + targetFeedId + '/',
 			'signature' : this.signature
 		}, callback);
 		return xhr;
 	},
 	following : function(options, callback) {
+		/*
+		 * List which feeds this feed is following
+		 * 
+		 * feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
+		 */
 		if (options != undefined && options.filter) {
 			options.filter = options.filter.join(',');
 		}
@@ -128,6 +136,11 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	followers : function(options, callback) {
+		/*
+		 * List the followers of this feed
+		 * 
+		 * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
+		 */
 		if (options != undefined && options.filter) {
 			options.filter = options.filter.join(',');
 		}
@@ -139,6 +152,13 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	get : function(options, callback) {
+		/*
+		 * Reads the feed
+		 * 
+		 * feed.get({limit: 10, id_lte: 'activity-id'})
+		 * or
+		 * feed.get({limit: 10, mark_seen: true})
+		 */
 		if (options && options.mark_read && options.mark_read.join) {
 			options.mark_read = options.mark_read.join(',');
 		}
@@ -184,6 +204,12 @@ StreamFeed.prototype = {
 	},
 
 	subscribe : function(callback) {
+		/*
+		 * subscribes to any changes in the feed, return a promise
+		 * feed.subscribe(callback).then(function(){
+		 * 		console.log('we are now listening to changes');
+		 * });
+		 */
 		if (!this.client.appId) {
 			throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
 		}
