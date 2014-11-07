@@ -123,7 +123,7 @@ StreamFeed.prototype = {
 		var xhr = this.client.get({
 			'url': '/api/feed/'+ this.feedUrl + '/followers/', 
 			'qs': argumentHash,
-			'signature': this.signatures
+			'signature': this.signature
 		}, callback);
 		return xhr;
 	},
