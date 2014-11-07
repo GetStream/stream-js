@@ -128,10 +128,10 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 	get: function(argumentHash, callback) {
-		if (argumentHash && argumentHash.mark_read) {
+		if (argumentHash && argumentHash.mark_read && argumentHash.mark_read.join) {
 			argumentHash.mark_read = argumentHash.mark_read.join(',');
 		}
-		if (argumentHash && argumentHash.mark_seen) {
+		if (argumentHash && argumentHash.mark_seen && argumentHash.mark_seen.join) {
 			argumentHash.mark_seen = argumentHash.mark_seen.join(',');
 		}
 

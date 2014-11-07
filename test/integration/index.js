@@ -34,7 +34,7 @@ describe('Stream client', function () {
   
   function beforeEachBrowser() {
   	client = stream.connect('ahj2ndz7gsan');
-  	client = stream.connect('ahj2ndz7gsan', null, 96);
+  	client = stream.connect('ahj2ndz7gsan', null, 519, {'location': 'browserTestCycle'});
   	user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
   	aggregated2 = client.feed('aggregated', '22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
   	aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
@@ -256,21 +256,25 @@ describe('Stream client', function () {
   
   it('follow', function (done) {
     var activityId = null;
+    this.timeout(6000);
   	function add() {
 		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 		user1.addActivity(activity, follow);
 	}
 	function follow(error, response, body) {
 		activityId = body['id'];
-		aggregated2.follow('user', '11', check);
+		aggregated2.follow('user', '11', runCheck);
 	}
-    function check(error, response, body) {
-    	aggregated2.get({'limit': 1}, function(error, response, body) {
-    		expect(response.statusCode).to.eql(200);
-    		expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
-    		done();
-    	});
-    }
+	function runCheck(error, response, body) {
+		function check() {
+	    	aggregated2.get({'limit': 1}, function(error, response, body) {
+	    		expect(response.statusCode).to.eql(200);
+	    		expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
+	    		done();
+	    	});
+	    }
+		setTimeout(check, 1000);
+	   }
     add();
   });
   
@@ -280,6 +284,7 @@ describe('Stream client', function () {
   });
   
   it('unfollow', function (done) {
+  	this.timeout(6000);
     var activityId = null;
   	function add() {
 		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
@@ -301,7 +306,7 @@ describe('Stream client', function () {
 	    		expect(activityFound).to.not.eql(activityId);
 	    		done();
 	    	});
-    	}, 200);
+    	}, 1000);
     }
     add();
   });
@@ -414,10 +419,10 @@ describe('Stream client', function () {
   it('mark read and seen', function (done) {
     // TODO: fully test the behaviour of mark read and seen
     function callback(error, response, body) {
-      console.log(body);
       done();
     }
-    notification3.get({limit:2, mark_seen:true, mark_seen: ['a', 'b']}, callback);
+    var params = {limit:2, mark_seen:true, mark_read: ['71ae691c-6681-11e4-8080-8001556e1292']};
+    notification3.get(params, callback);
   });
   
   it('fayeGetClient', function (done) {
