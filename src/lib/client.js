@@ -11,7 +11,7 @@ var StreamClient = function () {
 StreamClient.prototype = {
     baseUrl: 'https://getstream.io',
 
-    initialize: function (key, secret, siteId, fayeUrl) {
+    initialize: function (key, secret, siteId, options) {
         /*
          * API key and secret
          * Secret is optional
@@ -19,7 +19,9 @@ StreamClient.prototype = {
         this.key = key;
         this.secret = secret;
         this.siteId = siteId;
-        this.fayeUrl = fayeUrl ? fayeUrl : 'https://getstream.io/faye';
+        this.options = options || {};
+        this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
+        this.location = this.options.location || 'unspecified';
         if (typeof (process) != "undefined" && process.env.LOCAL) {
             //this.fayeUrl = 'http://localhost:8000/faye';
             this.baseUrl = 'http://localhost:8000';
@@ -125,6 +127,7 @@ StreamClient.prototype = {
         	kwargs.qs = {};
         }
         kwargs.qs['api_key'] = this.key;
+        kwargs.qs['location'] = this.location;
         kwargs.json = true;
         var authorization = kwargs.authorization || this.authorization;
         kwargs.headers = {};

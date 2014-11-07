@@ -45,7 +45,7 @@ describe('Stream client', function () {
   
   function beforeEachNode() {
   	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519);
+  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'location': 'testCycle'});
     user1 = client.feed('user:11');
     aggregated2 = client.feed('aggregated:22');
     aggregated3 = client.feed('aggregated:33');

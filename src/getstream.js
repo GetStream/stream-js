@@ -7,7 +7,7 @@ var StreamClient = require('./lib/client');
 var errors = require('./lib/errors');
 var request = require('request');
 
-function connect(apiKey, apiSecret, siteId) {
+function connect(apiKey, apiSecret, siteId, options) {
 	/*
 	 * Usage
 	 * stream.connect(apiKey, ApiSecret)
@@ -26,7 +26,7 @@ function connect(apiKey, apiSecret, siteId) {
 		apiSecret = parts[2];
 		siteId = parts[3];
 	}
-	return new StreamClient(apiKey, apiSecret, siteId);
+	return new StreamClient(apiKey, apiSecret, siteId, options);
 }
 
 module.exports.connect = connect;
