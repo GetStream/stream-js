@@ -27,9 +27,9 @@ exports.sign = function(apiSecret, feedId) {
 	 * digest: Q\xb6\xd5+\x82\xd58\xdeu\x80\xc5\xe3\xb8\xa5bL1\xf1\xa3\xdb
 	 * token: UbbVK4LVON51gMXjuKViTDHxo9s
 	 */
-	var key = new crypto.createHash('sha1').update(apiSecret).digest();
-	var hmac = crypto.createHmac('sha1', feedId);
-	var digest = hmac.update(value).digest('base64');
+	var hashedSecret = new crypto.createHash('sha1').update(apiSecret).digest();
+	var hmac = crypto.createHmac('sha1', hashedSecret);
+	var digest = hmac.update(feedId).digest('base64');
 	var token = makeUrlSafe(digest);
 	return token;
 };

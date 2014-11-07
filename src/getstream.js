@@ -24,7 +24,7 @@ function connect(apiKey, apiSecret, appId, options) {
 		var parts = /https\:\/\/(\w+)\:(\w+).*app=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
-		siteId = parts[3];
+		appId = parts[3];
 	}
 	return new StreamClient(apiKey, apiSecret, appId, options);
 }
