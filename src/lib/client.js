@@ -33,8 +33,7 @@ StreamClient.prototype = {
         this.node = !this.browser;
 
         if (this.browser && this.apiSecret) {
-            // dont share your private keys publically
-            throw new errors.FeedError('You are publically sharing your private key. Dont use the private key while in the browser.');
+            throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
         }
     },
 
