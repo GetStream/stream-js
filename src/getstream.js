@@ -21,7 +21,7 @@ function connect(apiKey, apiSecret, appId, options) {
 	 * 
 	 */
 	if (typeof(process) != "undefined" && process.env.STREAM_URL && !apiKey) {
-		var parts = /https\:\/\/(\w+)\:(\w+).*app=(\d+)/.exec(process.env.STREAM_URL);
+		var parts = /https\:\/\/(\w+)\:(\w+).*app_id=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
 		appId = parts[3];

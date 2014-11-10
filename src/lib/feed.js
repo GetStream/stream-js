@@ -12,9 +12,9 @@ StreamFeed.prototype = {
 	 */
 	initialize : function(client, feedSlug, userId, token) {
 		this.client = client;
-		this.feedSlug = feedSlug;
+		this.slug = feedSlug;
 		this.userId = userId;
-		this.id = feedSlug + ':' + userId;
+		this.id = this.slug + ':' + this.userId;
 		this.token = token;
 
 		this.feedUrl = this.id.replace(':', '/');

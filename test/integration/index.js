@@ -62,7 +62,7 @@ describe('Stream client', function () {
   	if (!node) {
   		done();
   	}
-  	var url = 'https://thierry:pass@getstream.io/?app=1';
+  	var url = 'https://thierry:pass@getstream.io/?app_id=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect();
   	expect(client.apiKey).to.eql('thierry');
@@ -75,7 +75,7 @@ describe('Stream client', function () {
   	if (!node) {
   		done();
   	}
-  	var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app=669';
+  	var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
   	process.env.STREAM_URL = url;
   	client = stream.connect();
   	expect(client.apiKey).to.eql('bvt88g4kvc63');
@@ -88,7 +88,7 @@ describe('Stream client', function () {
   	if (!node) {
   		done();
   	}
-  	var url = 'https://thierry:pass@getstream.io/?app=1';
+  	var url = 'https://thierry:pass@getstream.io/?app_id=1';
   	process.env.STREAM_URL = url;
   	client = stream.connect('a','b','c');
   	expect(client.apiKey).to.eql('a');
