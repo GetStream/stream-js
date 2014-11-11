@@ -341,7 +341,7 @@ describe('Stream client', function () {
     	expect(results[0].target_id).to.eql('flat:33');
     	done();	
     }
-  	user1.follow('flat:33', doifollow);
+  	user1.follow('flat', '33', doifollow);
   });
   
   it('follow private', function (done) {
