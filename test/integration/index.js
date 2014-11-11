@@ -148,6 +148,14 @@ describe('Stream client', function () {
 	});
     done();
   });
+  
+  it('get wrong format', function (done) {
+  	var getFeed = function() { client.feed('flat:1', '2');};
+    expect(getFeed).to.throwException(function (e) {
+	  	expect(e).to.be.a(errors.FeedError);
+	});
+    done();
+  });
 
   it('add activity', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
