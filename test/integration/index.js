@@ -381,7 +381,13 @@ describe('Stream client', function () {
     function add3(error, response, body) {
   		activityIdTwo = body['id'];
   		var activity = {'actor': 3, 'verb': 'run', 'object': 2};
-  		user1.addActivity(activity, get);
+  		user1.addActivity(activity, function(error, response, body) {
+  			// testing eventual consistency is not easy :)
+  			function getBound() {
+  				get(error, response, body);
+  			}
+  			setTimeout(getBound, 200);
+  		});
   	}
 
   	function get(error, response, body) {
