@@ -2,6 +2,16 @@
  Change history
 ================
 
+2.0.0
+=====
+:release-date: 2014-11-10
+:by: Thierry Schellenbach
+
+* Breaking change: New style feed syntax, client.feed('user', '1') instead of client.feed('user:3')
+* Breaking change: New style follow syntax, feed.follow('user', 3)  
+* API versioning support
+* Cleanup of API client codebase and naming
+
 1.0.6
 =====
 :release-date: 2014-09-16
