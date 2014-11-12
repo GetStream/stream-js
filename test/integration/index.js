@@ -238,7 +238,12 @@ describe('Stream client', function () {
     	expect(response.statusCode).to.eql(201);
     	user1.removeActivity({foreignId: 'add:1'}, function(error, response, body) {
     		expect(response.statusCode).to.eql(200);
-    		done();
+    		user1.get({limit:10}, function(error, response, body) {
+    			expect(response.statusCode).to.eql(200);
+    			expect(body['results'][0]['id']).not.to.eql(activityId);
+    			expect(body['results'][0]['foreign_id']).not.to.eql('add:1');
+    			done();
+    		});
     	});
     }
     user1.addActivity(activity, remove);

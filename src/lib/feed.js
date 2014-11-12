@@ -41,6 +41,7 @@ StreamFeed.prototype = {
 	removeActivity : function(activityId, callback) {
 		/*
 		 * Removes the activity by activityId
+		 * feed.removeActivity(activityId);
 		 * Or
 		 * feed.removeActivity({'foreign_id': foreignId});
 		 */
@@ -49,9 +50,8 @@ StreamFeed.prototype = {
 		if (activityId.foreignId) {
 			params.foreign_id = '1';
 		}
-		var xhr = this.client.
-		delete ( {
-			'url' : 'feed/' + this.feedUrl + '/' + activityId + '/',
+		var xhr = this.client.delete( {
+			'url' : 'feed/' + this.feedUrl + '/' + identifier + '/',
 			'qs' : params,
 			'signature' : this.signature
 		}, callback);
