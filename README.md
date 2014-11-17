@@ -118,7 +118,7 @@ user1.subscribe(function callback() {
 ```
 
 
-API Docs are available on [GetStream.io](http://getstream.io/docs/).
+Docs are available on [GetStream.io](http://getstream.io/docs/).
 
 
 
