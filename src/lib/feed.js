@@ -1,4 +1,5 @@
 var errors = require('./errors');
+var utils = require('./utils');
 
 var StreamFeed = function() {
 	this.initialize.apply(this, arguments);
@@ -81,6 +82,8 @@ StreamFeed.prototype = {
 		 * or
 		 * feed.follow('user', '1', callback);
 		 */
+		utils.validateFeedSlug(targetSlug);
+		utils.validateUserId(targetUserId);
 		var targetToken;
 		var last = arguments[arguments.length - 1];
 		// callback is always the last argument
@@ -112,6 +115,8 @@ StreamFeed.prototype = {
 		 * Unfollow the given feed, ie:
 		 * feed.unfollow('user', '2', callback);
 		 */
+		utils.validateFeedSlug(targetSlug);
+		utils.validateUserId(targetUserId);
 		var targetFeedId = targetSlug + ':' + targetUserId;
 		var xhr = this.client.delete( {
 			'url' : 'feed/' + this.feedUrl + '/follows/' + targetFeedId + '/',

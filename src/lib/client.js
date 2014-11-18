@@ -3,6 +3,7 @@ var StreamFeed = require('./feed');
 var signing = require('./signing');
 var errors = require('./errors');
 var crypto = require('crypto');
+var utils = require('./utils');
 
 var StreamClient = function() {
     this.initialize.apply(this, arguments);
@@ -109,6 +110,9 @@ StreamClient.prototype = {
         if (feedSlug.indexOf(':') != -1) {
         	throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
         }
+        
+        utils.validateFeedSlug(feedSlug);
+		utils.validateUserId(userId);
 
         // raise an error if there is no token
         if (!this.apiSecret && !token) {

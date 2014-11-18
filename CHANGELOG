@@ -2,6 +2,14 @@
  Change history
 ================
 
+2.0.1
+=====
+:release-date: 2014-11-18
+:by: Thierry Schellenbach
+
+* Added validation on feed slug and user id
+
+
 2.0.0
 =====
 :release-date: 2014-11-10
