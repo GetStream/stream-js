@@ -1,4 +1,4 @@
-var validRe = /^\w+$/;
+var validRe = /^[\w-]+$/;
 
 
 function validateFeedId(feedId) {

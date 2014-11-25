@@ -2,6 +2,15 @@
  Change history
 ================
 
+
+2.0.5
+=====
+:release-date: 2014-11-25
+:by: Thierry Schellenbach
+
+* Allow "-" in feed id for compatibility with mongo ids
+
+
 2.0.4
 =====
 :release-date: 2014-11-18

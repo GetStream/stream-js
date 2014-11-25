@@ -159,10 +159,10 @@ describe('Stream client', function () {
   
   it('get invalid format', function (done) {
   	var invalidFormats = [];
-  	invalidFormats.push(function() { client.feed('flat-1', '2');});
+  	invalidFormats.push(function() { client.feed('flat 1', '2');});
   	invalidFormats.push(function() { client.feed('flat1', '2:3');});
   	invalidFormats.push(function() { user1.follow('flat 1', '3');});
-  	invalidFormats.push(function() { user1.follow('flat', '3-3');});
+  	invalidFormats.push(function() { user1.follow('flat', '3 3');});
   	// verify all of the above throw an error
   	for (var i = 0; i < invalidFormats.length; i++) { 
 	    var callable = invalidFormats[i];
@@ -170,6 +170,8 @@ describe('Stream client', function () {
 		  	expect(e).to.be.a(errors.FeedError);
 		});
 	}
+	// a dash should be allowed
+	client.feed('flat1', '2-3');
     done();
   });
 
@@ -249,6 +251,8 @@ describe('Stream client', function () {
   
   it('remove activity foreign id', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1'};
+    var now = new Date();
+	activity.time = now.toISOString();
     function remove(error, response, body) {
     	var activityId = body['id'];
     	expect(response.statusCode).to.eql(201);
