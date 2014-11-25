@@ -3646,7 +3646,7 @@ exports.sign = function(apiSecret, feedId) {
 	return token;
 };
 },{"crypto":3}],10:[function(_dereq_,module,exports){
-var validRe = /^\w+$/;
+var validRe = /^[\w-]+$/;
 
 
 function validateFeedId(feedId) {
