@@ -1,7 +1,7 @@
 {
   "author": {
     "name": "Thierry Schellenbach",
-    "company": "Stream INC"
+    "company": "Stream.io Inc"
   },
   "name": "getstream",
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
