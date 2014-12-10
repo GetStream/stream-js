@@ -3138,7 +3138,7 @@ var StreamClient = function() {
 };
 
 StreamClient.prototype = {
-    baseUrl: 'https://getstream.io/api/',
+    baseUrl: 'https://api.getstream.io/api/',
 
     initialize: function(apiKey, apiSecret, appId, options) {
         /*
