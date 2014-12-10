@@ -171,7 +171,7 @@ describe('Stream client', function () {
 		});
 	}
 	// a dash should be allowed
-	client.feed('flat1', '2-3');
+	client.feed('flat1', '2-3', 'token');
     done();
   });
 
