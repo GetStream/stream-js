@@ -25,7 +25,8 @@ bower install getstream
 
 #### Install by downloading the JS file
 
-[JS minified](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
+[JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js) / 
+[Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
 
 #### Install for parse cloud code
 
