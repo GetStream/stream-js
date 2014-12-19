@@ -2,6 +2,12 @@
  Change history
 ================
 
+2.1.0
+=====
+:release-date: 2014-12-19
+:by: Thierry Schellenbach
+
+* Added location support to reduce latency
 
 2.0.5
 =====

@@ -25,8 +25,13 @@ StreamClient.prototype = {
         this.options = options || {};
         this.version = this.options.version || 'v1.0';
         this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
-        this.location = this.options.location || 'unspecified';
-        if (typeof(process) != "undefined" && process.env.LOCAL) {
+        // track a source name for the api calls, ie get started or databrowser
+        this.group = this.options.group || 'unspecified';
+        // which data center to use
+        this.location = this.options.location;
+        if (this.location) {
+        	this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+        } else if (typeof(process) != "undefined" && process.env.LOCAL) {
             this.baseUrl = 'http://localhost:8000/api/';
         }
         this.handlers = {};
@@ -146,7 +151,7 @@ StreamClient.prototype = {
             kwargs.qs = {};
         }
         kwargs.qs['api_key'] = this.apiKey;
-        kwargs.qs['location'] = this.location;
+        kwargs.qs['location'] = this.group;
         kwargs.json = true;
         var signature = kwargs.signature || this.signature;
         kwargs.headers = {};

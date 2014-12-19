@@ -45,7 +45,7 @@ describe('Stream client', function () {
   
   function beforeEachNode() {
   	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'location': 'testCycle'});
+  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle'});
     user1 = client.feed('user', '11');
     aggregated2 = client.feed('aggregated', '22');
     aggregated3 = client.feed('aggregated', '33');
@@ -71,7 +71,7 @@ describe('Stream client', function () {
   	done();
   });
   
-  it('heroku real', function (done) {
+  it('heroku legacy', function (done) {
   	if (!node) {
   		done();
   	}
@@ -81,6 +81,20 @@ describe('Stream client', function () {
   	expect(client.apiKey).to.eql('bvt88g4kvc63');
   	expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
   	expect(client.appId).to.eql('669');
+  	done();
+  });
+  
+  it('heroku with location', function (done) {
+  	if (!node) {
+  		done();
+  	}
+  	var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
+  	process.env.STREAM_URL = url;
+  	client = stream.connect();
+  	expect(client.apiKey).to.eql('ahj2ndz7gsan');
+  	expect(client.apiSecret).to.eql('gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+  	expect(client.appId).to.eql('1');
+  	expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
   	done();
   });
   
@@ -96,7 +110,20 @@ describe('Stream client', function () {
   	expect(client.appId).to.eql('c');
   	done();
   });
-
+  
+  it('location support', function (done) {
+  	if (!node) {
+  		done();
+  	}
+  	var options = {};
+  	var location = 'us-east';
+  	var fullLocation = 'https://us-east-api.getstream.io/api/';
+  	options.location = location;
+  	client = stream.connect('a','b','c', options);
+  	expect(client.baseUrl).to.eql(fullLocation);
+  	expect(client.location).to.eql(location);
+  	done();
+  });
 
   it('handlers', function (done) {
     var called = {};

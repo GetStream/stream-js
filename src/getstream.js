@@ -21,10 +21,15 @@ function connect(apiKey, apiSecret, appId, options) {
 	 * 
 	 */
 	if (typeof(process) != "undefined" && process.env.STREAM_URL && !apiKey) {
-		var parts = /https\:\/\/(\w+)\:(\w+).*app_id=(\d+)/.exec(process.env.STREAM_URL);
+		var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*?app_id=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
-		appId = parts[3];
+		var location = parts[3];
+		appId = parts[4];
+		if (options === undefined) {
+			options = {};
+		}
+		options.location = location;
 	}
 	return new StreamClient(apiKey, apiSecret, appId, options);
 }
