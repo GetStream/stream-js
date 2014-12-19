@@ -34,7 +34,7 @@ describe('Stream client', function () {
   
   function beforeEachBrowser() {
   	client = stream.connect('ahj2ndz7gsan');
-  	client = stream.connect('ahj2ndz7gsan', null, 519, {'location': 'browserTestCycle'});
+  	client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle'});
   	user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
   	aggregated2 = client.feed('aggregated', '22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
   	aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
