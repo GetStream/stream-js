@@ -81,6 +81,7 @@ describe('Stream client', function () {
   	expect(client.apiKey).to.eql('bvt88g4kvc63');
   	expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
   	expect(client.appId).to.eql('669');
+  	expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
   	done();
   });
   

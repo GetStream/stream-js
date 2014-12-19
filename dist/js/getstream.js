@@ -3118,7 +3118,9 @@ function connect(apiKey, apiSecret, appId, options) {
 		if (options === undefined) {
 			options = {};
 		}
-		options.location = location;
+		if (location != 'getstream') {
+			options.location = location;
+		}
 	}
 	return new StreamClient(apiKey, apiSecret, appId, options);
 }
