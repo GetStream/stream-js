@@ -3110,10 +3110,15 @@ function connect(apiKey, apiSecret, appId, options) {
 	 * 
 	 */
 	if (typeof(process) != "undefined" && process.env.STREAM_URL && !apiKey) {
-		var parts = /https\:\/\/(\w+)\:(\w+).*app_id=(\d+)/.exec(process.env.STREAM_URL);
+		var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*?app_id=(\d+)/.exec(process.env.STREAM_URL);
 		apiKey = parts[1];
 		apiSecret = parts[2];
-		appId = parts[3];
+		var location = parts[3];
+		appId = parts[4];
+		if (options === undefined) {
+			options = {};
+		}
+		options.location = location;
 	}
 	return new StreamClient(apiKey, apiSecret, appId, options);
 }
@@ -3153,8 +3158,13 @@ StreamClient.prototype = {
         this.options = options || {};
         this.version = this.options.version || 'v1.0';
         this.fayeUrl = this.options.fayeUrl || 'https://getstream.io/faye';
-        this.location = this.options.location || 'unspecified';
-        if (typeof(process) != "undefined" && process.env.LOCAL) {
+        // track a source name for the api calls, ie get started or databrowser
+        this.group = this.options.group || 'unspecified';
+        // which data center to use
+        this.location = this.options.location;
+        if (this.location) {
+        	this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+        } else if (typeof(process) != "undefined" && process.env.LOCAL) {
             this.baseUrl = 'http://localhost:8000/api/';
         }
         this.handlers = {};
@@ -3274,7 +3284,7 @@ StreamClient.prototype = {
             kwargs.qs = {};
         }
         kwargs.qs['api_key'] = this.apiKey;
-        kwargs.qs['location'] = this.location;
+        kwargs.qs['location'] = this.group;
         kwargs.json = true;
         var signature = kwargs.signature || this.signature;
         kwargs.headers = {};
