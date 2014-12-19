@@ -8,6 +8,7 @@
 :by: Thierry Schellenbach
 
 * Added location support to reduce latency
+* Heroku location support
 
 2.0.5
 =====
