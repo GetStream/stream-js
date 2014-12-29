@@ -34,7 +34,7 @@ describe('Stream client', function () {
   
   function beforeEachBrowser() {
   	client = stream.connect('ahj2ndz7gsan');
-  	client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle'});
+  	client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
   	user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
   	aggregated2 = client.feed('aggregated', '22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
   	aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
@@ -45,7 +45,7 @@ describe('Stream client', function () {
   
   function beforeEachNode() {
   	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle'});
+  	client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
     user1 = client.feed('user', '11');
     aggregated2 = client.feed('aggregated', '22');
     aggregated3 = client.feed('aggregated', '33');
