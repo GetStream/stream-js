@@ -101,7 +101,7 @@ StreamFeed.prototype = {
 			targetToken = this.client.feed(targetSlug, targetUserId).token;
 		}
 		var xhr = this.client.post({
-			'url' : 'feed/' + this.feedUrl + '/follows/',
+			'url' : 'feed/' + this.feedUrl + '/following/',
 			'body' : {
 				'target' : target,
 				'target_token' : targetToken
@@ -119,7 +119,7 @@ StreamFeed.prototype = {
 		utils.validateUserId(targetUserId);
 		var targetFeedId = targetSlug + ':' + targetUserId;
 		var xhr = this.client.delete( {
-			'url' : 'feed/' + this.feedUrl + '/follows/' + targetFeedId + '/',
+			'url' : 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
 			'signature' : this.signature
 		}, callback);
 		return xhr;
