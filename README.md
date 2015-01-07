@@ -1,7 +1,7 @@
 stream-js
 ===========
 
-[![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/tschellenbach/stream-js)
+[![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Dependencies up to date](https://david-dm.org/GetStream/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
 
