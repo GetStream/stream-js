@@ -204,7 +204,7 @@ describe('Stream client', function () {
   });
 
   it('add activity', function (done) {
-    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world'};
     function get(error, response, body) {
     	var activityId = body['id'];
     	user1.get({'limit': 1}, function(error, response, body) {
