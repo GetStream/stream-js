@@ -3631,7 +3631,7 @@ function makeUrlSafe(s) {
 	/*
 	 * Makes the given base64 encoded string urlsafe
 	 */
-	var escaped = s.replace('+', '-').replace('/', '_');
+	var escaped = s.replace(/\+/g, '-').replace(/\//g, '_');
 	return escaped.replace(/^=+/, '').replace(/=+$/, '');
 }
 
@@ -3658,6 +3658,7 @@ exports.sign = function(apiSecret, feedId) {
 	var token = makeUrlSafe(digest);
 	return token;
 };
+
 },{"crypto":3}],10:[function(_dereq_,module,exports){
 var validRe = /^[\w-]+$/;
 
