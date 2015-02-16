@@ -549,35 +549,6 @@ describe('Stream client', function () {
 	done();
   });
 
-  it('follow and faye', function (done) {
-    /*
-    Verify that after adding an activity to a feed and following a feed,
-    Faye is triggered
-    */
-    var activityId = null;
-    var foreignId = 'thierry:16';
-    this.timeout(6000);
-    flat3.subscribe(function(data){
-      console.log('data', data);
-      expect(data['new'][0].foreign_id).to.eql(foreignId);
-      done();
-    }).then(function(){
-      function follow(error, response, body) {
-        console.log('follow');
-         activityId = body['id'];
-         flat3.unfollow('user', '11');
-         flat3.follow('user', '11');
-
-      }
-      function add() {
-        console.log('add');
-         var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': foreignId};
-         user1.addActivity(activity, follow);
-      }
-
-      add();
-    });
-  });
 
 
 
