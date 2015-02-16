@@ -484,12 +484,38 @@ describe('Stream client', function () {
   });
 
   it('mark read and seen', function (done) {
-    // TODO: fully test the behaviour of mark read and seen
-    function callback(error, response, body) {
-      done();
+    // add 2 activities to ensure we have new data
+    var params = {limit: 2};
+    var activities = [
+      {'actor': 1, 'verb': 'add', 'object': 1},
+      {'actor': 2, 'verb': 'test', 'object': 2}
+    ]
+    notification3.addActivities(activities, getNotifications);
+    // lookup the notification ids
+    function getNotifications(error, response, body) {
+      notification3.get(params, markRead);
+    };
+    // mark all seen and the first read
+    function markRead(error, response, body) {
+       var notificationId = body['results'][0]['id'];
+       var params = {limit:2, mark_seen:true, mark_read: notificationId};
+       notification3.get(params, readFeed);
     }
-    var params = {limit:2, mark_seen:true, mark_read: ['71ae691c-6681-11e4-8080-8001556e1292']};
-    notification3.get(params, callback);
+    // read the feed (should be seen and 1 unread)
+    function readFeed(error, response, body) {
+      notification3.get(params, verifyState);
+    };
+    // verify the seen and 1 unread
+    function verifyState(error, response, body) {
+      expect(body['results'][0]['is_seen']).to.eql(true);
+      expect(body['results'][1]['is_seen']).to.eql(true);
+      expect(body['results'][0]['is_read']).to.eql(true);
+      expect(body['results'][1]['is_read']).to.eql(false);
+      expect(body['unread']).to.eql(1);
+      expect(body['unseen']).to.eql(0);
+      done();
+    };
+    
   });
   
   it('fayeGetClient', function (done) {
@@ -522,5 +548,38 @@ describe('Stream client', function () {
 	});
 	done();
   });
+
+  it('follow and faye', function (done) {
+    /*
+    Verify that after adding an activity to a feed and following a feed,
+    Faye is triggered
+    */
+    var activityId = null;
+    var foreignId = 'thierry:16';
+    this.timeout(6000);
+    flat3.subscribe(function(data){
+      console.log('data', data);
+      expect(data['new'][0].foreign_id).to.eql(foreignId);
+      done();
+    }).then(function(){
+      function follow(error, response, body) {
+        console.log('follow');
+         activityId = body['id'];
+         flat3.unfollow('user', '11');
+         flat3.follow('user', '11');
+
+      }
+      function add() {
+        console.log('add');
+         var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': foreignId};
+         user1.addActivity(activity, follow);
+      }
+
+      add();
+    });
+  });
+
+
+
   
 });
