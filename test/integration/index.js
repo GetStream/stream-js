@@ -511,7 +511,7 @@ describe('Stream client', function () {
       expect(body['results'][1]['is_seen']).to.eql(true);
       expect(body['results'][0]['is_read']).to.eql(true);
       expect(body['results'][1]['is_read']).to.eql(false);
-      expect(body['unread']).to.eql(1);
+      expect(body['unread']).to.be.greaterThan(1);
       expect(body['unseen']).to.eql(0);
       done();
     };
