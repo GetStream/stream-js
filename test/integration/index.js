@@ -317,7 +317,7 @@ describe('Stream client', function () {
   
   it('follow', function (done) {
     var activityId = null;
-    this.timeout(6000);
+    this.timeout(9000);
   	function add() {
 		var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 		user1.addActivity(activity, follow);
@@ -334,7 +334,7 @@ describe('Stream client', function () {
 	    		done();
 	    	});
 	    }
-		setTimeout(check, 1000);
+		setTimeout(check, 3000);
 	   }
     add();
   });

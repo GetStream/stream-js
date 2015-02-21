@@ -7,7 +7,7 @@
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./src/getstream.js",
   "homepage": "https://getstream.io/",
-  "version": "2.1.4",
+  "version": "2.1.6",
   "config": {
     "blanket": {
       "pattern": "src"
@@ -21,31 +21,31 @@
   "devDependencies": {
     "async": "~0.9.0",
     "blanket": "~1.1.6",
-    "bluebird": "^2.1.3",
+    "bluebird": "^2.9.12",
     "browser-request": "git://github.com/iriscouch/browser-request",
-    "browserify": "~4.1.11",
-    "crypto-browserify": "^3.2.8",
-    "connect": "^3.0.1",
-    "coveralls": "~2.10.1",
+    "browserify": "~9.0.3",
+    "crypto-browserify": "^3.9.12",
+    "connect": "^3.3.4",
+    "coveralls": "~2.11.2",
     "expect.js": "~0.3.1",
-    "gulp": "^3.8.7",
-    "gulp-browserify": "^0.5.0",
-    "gulp-bump": "^0.1.8",
+    "gulp": "^3.8.11",
+    "gulp-browserify": "^0.5.1",
+    "gulp-bump": "^0.1.13",
     "gulp-git": "git://github.com/stevelacy/gulp-git.git",
-    "gulp-jshint": "^1.6.3",
-    "gulp-mocha": "^0.4.1",
-    "gulp-shell": "^0.2.7",
-    "gulp-uglify": "~0.3.1",
-    "gulp-util": "^2.2.17",
-    "mocha": "^1.20.1",
+    "gulp-jshint": "^1.9.2",
+    "gulp-mocha": "^2.0.0",
+    "gulp-shell": "^0.3.0",
+    "gulp-uglify": "~1.1.0",
+    "gulp-util": "^3.0.3",
+    "mocha": "^2.1.0",
     "mocha-lcov-reporter": "0.0.1",
     "mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
-    "serve-static": "^1.2.3"
+    "serve-static": "^1.9.1"
   },
   "license": "BSD",
   "dependencies": {
-    "faye": "^1.0.1",
-    "request": "2.36.0"
+    "faye": "^1.1.0",
+    "request": "2.53.0"
   },
   "repository": {
     "type": "git",

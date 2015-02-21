@@ -153,7 +153,7 @@ StreamClient.prototype = {
         kwargs.qs['api_key'] = this.apiKey;
         kwargs.qs['location'] = this.group;
         kwargs.json = true;
-        var signature = kwargs.signature || this.signature;
+        var signature = kwargs.signature;
         kwargs.headers = {};
         kwargs.headers.Authorization = signature;
         // User agent can only be changed in server side mode
