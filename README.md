@@ -7,7 +7,9 @@ stream-js
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
 
-stream-node is a Node/Javascript client for [Stream][].
+stream-python is a Javascript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams. 
+The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/).
+
 
 ### Installation
 
