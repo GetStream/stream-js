@@ -31,8 +31,12 @@ StreamClient.prototype = {
         this.location = this.options.location;
         if (this.location) {
         	this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
-        } else if (typeof(process) != "undefined" && process.env.LOCAL) {
+        }
+        if (typeof(process) != "undefined" && process.env.LOCAL) {
             this.baseUrl = 'http://localhost:8000/api/';
+        }
+        if (typeof(process) != "undefined" && process.env.LOCAL_FAYE) {
+            this.fayeUrl = 'http://localhost:9999/faye/';
         }
         this.handlers = {};
         this.browser = typeof(window) != 'undefined';
@@ -67,7 +71,7 @@ StreamClient.prototype = {
         }
     },
 
-    send: function(key) {
+    send: function() {
         /*
          * Call the given handler with the arguments
          */
@@ -87,7 +91,7 @@ StreamClient.prototype = {
             var args = Array.prototype.slice.call(arguments);
             var sendArgs = ['response'].concat(args);
             client.send.apply(client, sendArgs);
-            if (cb != undefined) {
+            if (cb !== undefined) {
                 cb.apply(client, args);
             }
         }
@@ -101,13 +105,36 @@ StreamClient.prototype = {
         return 'stream-javascript-client-' + description + '-' + version;
     },
 
-    feed: function(feedSlug, userId, token, siteId) {
+    getReadOnlyToken: function(feedSlug, userId) {
+        /*
+         * Returns a token that allows only read operations
+         *
+         * client.getReadOnlyToken('user', '1');
+         */
+         var feedId = '' + feedSlug + userId;
+         return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+    },
+
+    getReadWriteToken: function(feedSlug, userId) {
+        /*
+         * Returns a token that allows read and write operations
+         *
+         * client.getReadWriteToken('user', '1');
+         */
+         var feedId = '' + feedSlug + userId;
+         return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+    },
+
+    feed: function(feedSlug, userId, token, siteId, options) {
         /*
          * Returns a feed object for the given feed id and token
          * Example:
          *
          * client.feed('user', '1', 'token2');
          */
+
+        options = options || {};
+
         if (!feedSlug || !userId) {
             throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
         }
@@ -127,7 +154,8 @@ StreamClient.prototype = {
         // create the token in server side mode
         if (this.apiSecret && !token) {
             var feedId = '' + feedSlug + userId;
-            token = signing.sign(this.apiSecret, feedId);
+            // use scoped token if read-only access is necessary
+            token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
         }
 
         var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
@@ -147,19 +175,28 @@ StreamClient.prototype = {
          * Adds the API key and the signature
          */
         kwargs.url = this.enrichUrl(kwargs.url);
-        if (kwargs.qs == undefined) {
+        if (kwargs.qs === undefined) {
             kwargs.qs = {};
         }
-        kwargs.qs['api_key'] = this.apiKey;
-        kwargs.qs['location'] = this.group;
+        kwargs.qs.api_key = this.apiKey;
+        kwargs.qs.location = this.group;
         kwargs.json = true;
         var signature = kwargs.signature || this.signature;
         kwargs.headers = {};
+
+        // auto-detect authentication type and set HTTP headers accordingly
+        if (signing.isJWTSignature(signature)) {
+            kwargs.headers.STREAM_AUTH_TYPE = 'jwt';
+            signature = signature.split(' ').reverse()[0];
+        } else {
+            kwargs.headers.STREAM_AUTH_TYPE = 'simple';
+        }
+
         kwargs.headers.Authorization = signature;
+
         // User agent can only be changed in server side mode
         var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
         kwargs.headers[headerName] = this.userAgent();
-
         return kwargs;
     },
 

@@ -11,7 +11,7 @@ StreamFeed.prototype = {
 	 * remove activity etc
 	 *
 	 */
-	initialize : function(client, feedSlug, userId, token) {
+	initialize : function(client, feedSlug, userId, token, siteId) {
 		this.client = client;
 		this.slug = feedSlug;
 		this.userId = userId;
@@ -31,7 +31,7 @@ StreamFeed.prototype = {
 		 * Adds the given activity to the feed and
 		 * calls the specified callback
 		 */
-		var activity = this.client.signActivity(activity);
+		activity = this.client.signActivity(activity);
 		var xhr = this.client.post({
 			'url' : 'feed/' + this.feedUrl + '/',
 			'body' : activity,
@@ -63,7 +63,7 @@ StreamFeed.prototype = {
 		 * Adds the given activities to the feed and
 		 * calls the specified callback
 		 */
-		var activities = this.client.signActivities(activities);
+		activities = this.client.signActivities(activities);
 		var data = {
 			activities : activities
 		};
@@ -87,7 +87,7 @@ StreamFeed.prototype = {
 		var targetToken;
 		var last = arguments[arguments.length - 1];
 		// callback is always the last argument
-		var callback = (last.call) ? last : undefined;
+		callback = (last.call) ? last : undefined;
 		var target = targetSlug + ':' + targetUserId;
 		// token is 3rd or 4th
 		if (arguments[2] && !arguments[2].call) {
@@ -130,7 +130,7 @@ StreamFeed.prototype = {
 		 * 
 		 * feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
 		 */
-		if (options != undefined && options.filter) {
+		if (options !== undefined && options.filter) {
 			options.filter = options.filter.join(',');
 		}
 		var xhr = this.client.get({
@@ -146,7 +146,7 @@ StreamFeed.prototype = {
 		 * 
 		 * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
 		 */
-		if (options != undefined && options.filter) {
+		if (options !== undefined && options.filter) {
 			options.filter = options.filter.join(',');
 		}
 		var xhr = this.client.get({
