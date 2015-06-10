@@ -186,10 +186,10 @@ StreamClient.prototype = {
 
         // auto-detect authentication type and set HTTP headers accordingly
         if (signing.isJWTSignature(signature)) {
-            kwargs.headers.STREAM_AUTH_TYPE = 'jwt';
+            kwargs.headers['stream-auth-type'] = 'jwt';
             signature = signature.split(' ').reverse()[0];
         } else {
-            kwargs.headers.STREAM_AUTH_TYPE = 'simple';
+            kwargs.headers['stream-auth-type'] = 'simple';
         }
 
         kwargs.headers.Authorization = signature;
