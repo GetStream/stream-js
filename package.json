@@ -46,7 +46,7 @@
   "dependencies": {
     "faye": "^1.0.1",
     "jsonwebtoken": "^5.0.1",
-    "request": "2.36.0"
+    "request": "2.58.0"
   },
   "repository": {
     "type": "git",
