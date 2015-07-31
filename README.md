@@ -71,6 +71,14 @@ user1.removeActivity("e561de8f-00f1-11e4-b400-0cc47a024be0");
 // or remove by the foreign id
 user1.removeActivity({foreignId: 'tweet:1'});
 
+// mark a notification feed as read
+notification1 = client.feed('notification', '1');
+var params = {mark_read: true};
+notification1.get(params, readFeed);
+
+// mark a notification feed as seen
+var params = {mark_seen:true};
+notification1.get(params, readFeed);
 
 // Follow another feed
 user1.follow('flat', '42');
