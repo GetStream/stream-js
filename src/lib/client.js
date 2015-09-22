@@ -193,10 +193,7 @@ StreamClient.prototype = {
         }
 
         kwargs.headers.Authorization = signature;
-
-        // User agent can only be changed in server side mode
-        var headerName = (this.node) ? 'User-Agent' : 'X-Stream-Client';
-        kwargs.headers[headerName] = this.userAgent();
+        kwargs.headers['X-Stream-Client'] = this.userAgent();
         return kwargs;
     },
 
