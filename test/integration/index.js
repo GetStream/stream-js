@@ -434,6 +434,7 @@ describe('Stream client', function () {
   it('get read-only feed', function (done) {
     function check(error, response, body) {
       expect(response.statusCode).to.eql(200);
+      done();
     }
     user1ReadOnly.get({'limit': 2}, check);
   });

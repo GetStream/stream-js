@@ -13,11 +13,6 @@
       "pattern": "src"
     }
   },
-  "browser": {
-    "request": "browser-request",
-    "faye": "./node_modules/faye/browser/faye-browser.js",
-    "crypto": false
-  },
   "devDependencies": {
     "async": "~0.9.0",
     "babel-core": "^5.8.25",
@@ -48,7 +43,7 @@
   "dependencies": {
     "faye": "^1.0.1",
     "jsonwebtoken": "^5.0.1",
-    "request": "2.36.0"
+    "request": "2.63.0"
   },
   "repository": {
     "type": "git",

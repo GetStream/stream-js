@@ -1,5 +1,6 @@
 var path = require("path");
 var webpack = require("webpack");
+
 module.exports = {
     context: __dirname + "/src",
     entry: {
@@ -13,9 +14,22 @@ module.exports = {
         library: "stream",
         libraryTarget: "umd"
     },
+    node: {
+        console: false,
+        Buffer: true,
+        crypto: 'empty',
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+    },
+    resolve: {
+      alias: {
+        'request': 'browser-request',
+        'jsonwebtoken': path.join(__dirname, "src", "empty.js"),
+      }
+    },
     module: {
       loaders: [
-        { test: /jsonwebtoken\/(.*)js/, loader: "babel-loader"},
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
     }
