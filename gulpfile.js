@@ -47,7 +47,10 @@ gulp.task('lint', function() {
 // run the mocha tests
 gulp.task('mocha', function () {
     return gulp.src('./test/integration/index.js', {read: false})
-        .pipe(mocha());
+        .pipe(mocha())
+        .once('end', function () {
+            process.exit();
+        });
 });
 
 // run the mocha tests
