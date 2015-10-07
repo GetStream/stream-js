@@ -8,7 +8,7 @@ stream-js
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
 
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/).
+The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
 
 
 ### Installation
