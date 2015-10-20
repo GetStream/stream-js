@@ -25,7 +25,7 @@ module.exports = {
     resolve: {
       alias: {
         'request': 'browser-request',
-        'jsonwebtoken': path.join(__dirname, "src", "empty.js"),
+        'jsonwebtoken': path.join(__dirname, "src", "missing.js"),
       }
     },
     module: {
