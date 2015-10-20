@@ -25,8 +25,11 @@ StreamClient.prototype = {
         this.options = options || {};
         this.version = this.options.version || 'v1.0';
         this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+		    this.fayeClient = null;
         // track a source name for the api calls, ie get started or databrowser
         this.group = this.options.group || 'unspecified';
+        // track subscriptions made on feeds created by this client
+        this.subscriptions = {};
         // which data center to use
         this.location = this.options.location;
         if (this.location) {
@@ -224,6 +227,38 @@ StreamClient.prototype = {
             activity.to = signedTo;
         }
         return activities;
+    },
+
+    getFayeAuthorization : function() {
+      var apiKey = this.apiKey,
+          self = this;
+      return {
+        incoming : function(message, callback) {
+          callback(message);
+        },
+        outgoing : function(message, callback) {
+          if( message.subscription && self.subscriptions[message.subscription] ) {
+            var subscription = self.subscriptions[message.subscription];
+
+            message.ext = {
+              'user_id' : subscription.userId,
+              'api_key' : apiKey,
+              'signature' : subscription.token 
+            };
+          }
+          callback(message);
+        }
+      };
+    },
+
+    getFayeClient : function() {
+      var Faye = require('faye');
+      if (this.fayeClient === null) {
+        this.fayeClient = new Faye.Client(this.fayeUrl);
+        var authExtension = this.getFayeAuthorization();
+        this.fayeClient.addExtension(authExtension);
+      }
+      return this.fayeClient;
     },
 
     /*

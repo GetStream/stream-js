@@ -23,7 +23,6 @@ StreamFeed.prototype = {
 		this.signature = this.feedTogether + ' ' + this.token;
 
 		// faye setup
-		this.fayeClient = null;
 		this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
 	},
 	addActivity : function(activity, callback) {
@@ -179,34 +178,9 @@ StreamFeed.prototype = {
 		return xhr;
 	},
 
-	getFayeAuthorization : function() {
-		var apiKey = this.client.apiKey;
-		var userId = this.notificationChannel;
-		var token = this.token;
-		return {
-			incoming : function(message, callback) {
-				callback(message);
-			},
-			outgoing : function(message, callback) {
-				message.ext = {
-					'user_id' : userId,
-					'api_key' : apiKey,
-					'signature' : token
-				};
-				callback(message);
-			}
-		};
-	},
-
-	getFayeClient : function() {
-		var Faye = require('faye');
-		if (this.fayeClient === null) {
-			this.fayeClient = new Faye.Client(this.client.fayeUrl);
-			var authExtension = this.getFayeAuthorization();
-			this.fayeClient.addExtension(authExtension);
-		}
-		return this.fayeClient;
-	},
+  getFayeClient : function() {
+    return this.client.getFayeClient();
+  },
 
 	subscribe : function(callback) {
 		/*
@@ -218,6 +192,12 @@ StreamFeed.prototype = {
 		if (!this.client.appId) {
 			throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
 		}
+
+    this.client.subscriptions['/' + this.notificationChannel] = {
+      'token': this.token,
+      'userId': this.notificationChannel 
+    };
+
 		return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
 	}
 };

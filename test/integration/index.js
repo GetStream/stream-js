@@ -1,5 +1,6 @@
 
 var expect = expect || require('expect.js');
+var Faye = Faye || require('faye');
 var node = typeof(stream) == 'undefined';
 
 describe('Stream client', function () {
@@ -544,13 +545,90 @@ describe('Stream client', function () {
   
   it('fayeSubscribe', function (done) {
     this.timeout(6000);
-    var client = user1.getFayeClient();
+    var client = user1.getFayeClient()
     var subscription = user1.subscribe(function callback() {
-      done();
     });
     subscription.then(function() {
       done();
    });
+  });
+
+  it('fayeSubscribeListening', function(done) {
+    this.timeout(6000);
+    
+    var testUser1 = client.feed('user', '111', 'ksBmfluIarcgjR9e6ptwqkWZWJo'),
+        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM'),
+        testUser3 = client.feed('user', '333', '7e4xHA0y1Pn6_iZAv7nu0ujuMXg');
+
+    var subscribes = [],
+        messages = 0,
+        N_MESSAGES = 3,
+        activity = {
+      'verb': 'test',
+      'actor': 'User:1',
+      'object': 1 
+    };
+
+    var msgCallback = function(message) {
+      if( message && message.new && message.new.length > 0) {
+        messages += 1;
+      }
+
+      if( messages == N_MESSAGES ) {
+        done();
+      }
+    };
+    
+    var httpCallback = function(error, response, body) {
+      if(error) done(error);
+      if(response.statusCode !== 201) done(body); 
+    };
+
+    Faye.Promise.all([
+      testUser1.subscribe(msgCallback),
+      testUser2.subscribe(msgCallback),
+      testUser3.subscribe(msgCallback)
+    ]).then(function() {
+      testUser1.addActivity(activity, httpCallback);
+      testUser2.addActivity(activity, httpCallback);
+      testUser3.addActivity(activity, httpCallback);
+    }, done);
+  });
+
+  it('fayeSubscribeListeningWrongToken', function(done) {
+    this.timeout(6000);
+    
+    var testUser1 = client.feed('user', '111', 'psuPHwgwoX-PGsg780jcXdO93VM'),
+        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM');
+
+    var messages = 0,
+        activity = {
+      'verb': 'test',
+      'actor': 'User:1',
+      'object': 1 
+    };
+
+    var httpCallback = function(error, response, body) {
+      if(error) done(error);
+      if(response.statusCode !== 201) done(body); 
+    };
+
+    var doneYet = function(obj) {
+      messages++;
+
+      if(messages === 2) done();
+    }
+
+    testUser1.subscribe(function(message) {
+      done('testUser1 should not receive any messages');
+    }).then(function() {
+      done('testUser1 should not authenticate succefully');
+    }, doneYet);
+
+    testUser2.subscribe(doneYet).then(function() {
+      testUser2.addActivity(activity, httpCallback);
+    }, done);
+
   });
 
   it('fayeSubscribeScope', function (done) {
@@ -587,8 +665,4 @@ describe('Stream client', function () {
   done();
   });
 
-
-
-
-  
 });
