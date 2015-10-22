@@ -1,6 +1,5 @@
-
-var expect = expect || require('expect.js');
-var Faye = Faye || require('faye');
+var expect = require('expect.js');
+var Faye = require('faye');
 var node = typeof(stream) == 'undefined';
 
 describe('Stream client', function () {
@@ -666,3 +665,4 @@ describe('Stream client', function () {
   });
 
 });
+
