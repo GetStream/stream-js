@@ -8,6 +8,12 @@
   "main": "./src/getstream.js",
   "homepage": "https://getstream.io/",
   "version": "2.2.2",
+  "browser": {
+    "request": "browser-request",
+    "faye": "./node_modules/faye/faye-browser.js",
+    "crypto": false,
+    "jsonwebtoken": false
+  },
   "config": {
     "blanket": {
       "pattern": "src"
@@ -43,6 +49,7 @@
   "license": "BSD",
   "dependencies": {
     "Base64": "^0.3.0",
+    "browser-request": "^0.3.3",
     "faye": "^1.0.1",
     "jsonwebtoken": "^5.0.1",
     "request": "2.63.0"
