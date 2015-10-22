@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var jwt = require('jsonwebtoken');
 var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
+var Base64 = require('Base64');
 
 function makeUrlSafe(s) {
     /*
@@ -10,8 +11,16 @@ function makeUrlSafe(s) {
     return escaped.replace(/^=+/, '').replace(/=+$/, '');
 }
 
-function decodeBase64Url(base64UrlString, encoding) {
-  return Buffer(toBase64(base64UrlString), 'base64').toString(encoding);
+function decodeBase64Url(base64UrlString) {
+  try {
+    return Base64.atob(toBase64(base64UrlString));
+  } catch(e) {
+    if(e.name === 'InvalidCharacterError') {
+      return undefined;
+    } else {
+      throw e;
+    }
+  } 
 }
 
 function safeJsonParse(thing) {
@@ -32,17 +41,13 @@ function padString(string) {
     var position = stringLength;
     var padLength = segmentLength - diff;
     var paddedStringLength = stringLength + padLength;
-    var buffer = Buffer(paddedStringLength);
-    buffer.write(string);
+
     while (padLength--)
-        buffer.write('=', position++);
-    return buffer.toString();
+      string += '=';
+    return string;
 }
 
 function toBase64(base64UrlString) {
-  if (Buffer.isBuffer(base64UrlString))
-    base64UrlString = base64UrlString.toString();
-
   var b64str = padString(base64UrlString)
     .replace(/\-/g, '+')
     .replace(/_/g, '/');
@@ -51,8 +56,10 @@ function toBase64(base64UrlString) {
 
 function headerFromJWS(jwsSig) {
   var encodedHeader = jwsSig.split('.', 1)[0];
-  return safeJsonParse(decodeBase64Url(encodedHeader, 'binary'));
+  return safeJsonParse(decodeBase64Url(encodedHeader));
 }
+
+exports.headerFromJWS = headerFromJWS;
 
 exports.sign = function(apiSecret, feedId) {
     /*

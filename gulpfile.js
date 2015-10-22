@@ -37,6 +37,7 @@ function runSynchronized(tasks, callback){
  * Testing related tasks
  */
 
+
 // check for jshint errors
 gulp.task('lint', function() {
   return gulp.src('./src/lib/*.js')
@@ -46,7 +47,7 @@ gulp.task('lint', function() {
 
 // run the mocha tests
 gulp.task('mocha', function () {
-    return gulp.src('./test/integration/index.js', {read: false})
+    return gulp.src(['./test/integration/index.js', './test/unit/index.js'], {read: false})
         .pipe(mocha())
         .once('end', function () {
             process.exit();
@@ -71,7 +72,7 @@ gulp.task('test', ['lint', 'mocha'], function () {
  */
 
 gulp.task("build", function() {
-  runSynchronized(['build:webpack', 'build:optimize']);
+  runSynchronized(['build:webpack', 'build:test', 'build:optimize']);
 });
 
 
@@ -80,6 +81,27 @@ gulp.task("build:webpack", function(callback) {
     webpack(myConfig, function(err, stats) {
     if(err) throw new gutil.PluginError("webpack:build", err);
     gutil.log("[webpack:build]", stats.toString({
+      colors: true
+    }));
+    callback();
+  });
+});
+
+gulp.task('build:test', function(callback) {
+  webpack({
+    entry: './test/browser/index.js',
+    output : {
+      path: __dirname + '/test/browser',
+      filename: 'browser.js'
+    },
+    resolve: {
+      alias: {
+        'request': 'browser-request',
+      }
+    }
+  }, function(err, stats) {
+    if(err) throw new gutil.PluginError("webpack:build:test", err);
+    gutil.log("[webpack:build:test]", stats.toString({
       colors: true
     }));
     callback();

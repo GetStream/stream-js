@@ -16,7 +16,7 @@ module.exports = {
     },
     node: {
         console: false,
-        Buffer: true,
+        Buffer: false,
         crypto: 'empty',
         fs: 'empty',
         net: 'empty',
