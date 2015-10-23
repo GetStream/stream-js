@@ -1,6 +1,8 @@
 var expect = require('expect.js');
 var jwt = require('jsonwebtoken');
 var qc = require('quickcheck');
+var utils = require('../../src/lib/utils');
+var errors = require('../../src/lib/errors');
 var node = typeof(window) === 'undefined';
 
 var signing = signing || require('../../src/lib/signing');
@@ -60,3 +62,16 @@ describe('Json web token validation', function() {
   }
 });
 
+describe('Utility functions', function() {
+  it('should validate feed id\'s', function() {
+    expect(utils.validateFeedId('flat:0')).to.be.ok();
+  });
+
+  it('should throw exception while validating faulty feed id',function() {
+    expect(function() {
+      utils.validateFeedId('b134u92fval')
+    }).to.throwError(function(e) {
+      expect(e).to.be.a(errors.FeedError);
+    });
+  });
+});

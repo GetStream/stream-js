@@ -16,7 +16,10 @@
   },
   "config": {
     "blanket": {
-      "pattern": "src"
+      "pattern": "src",
+      "data-cover-never": [
+        "node_modules"
+      ]
     }
   },
   "devDependencies": {
