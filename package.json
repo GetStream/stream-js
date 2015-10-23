@@ -12,7 +12,7 @@
     "request": "browser-request",
     "crypto": false,
     "jsonwebtoken": false,
-    "./batch_operations": false
+    "./src/lib/batch_operations.js": false
   },
   "config": {
     "blanket": {
