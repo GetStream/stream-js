@@ -206,9 +206,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var request = __webpack_require__(3);
 	var StreamFeed = __webpack_require__(4);
 	var signing = __webpack_require__(7);
+	var httpSignature = __webpack_require__(9);
 	var errors = __webpack_require__(5);
 	var crypto = __webpack_require__(8);
 	var utils = __webpack_require__(6);
+	var BatchOperations = __webpack_require__(9);
 
 	var StreamClient = function StreamClient() {
 	    this.initialize.apply(this, arguments);
@@ -247,7 +249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.fayeUrl = 'http://localhost:9999/faye/';
 	        }
 	        this.handlers = {};
-	        this.browser = typeof window != 'undefined';
+	        this.browser = typeof window !== 'undefined';
 	        this.node = !this.browser;
 
 	        if (this.browser && this.apiSecret) {
@@ -492,7 +494,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var callback = this.wrapCallback(cb);
 	        return request(kwargs, callback);
 	    }
+
 	};
+
+	// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
+	if (BatchOperations) {
+	    for (var key in BatchOperations) {
+	        if (BatchOperations.hasOwnProperty(key)) {
+	            StreamClient.prototype[key] = BatchOperations[key];
+	        }
+	    }
+	}
 
 	module.exports = StreamClient;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
@@ -1409,7 +1421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 8 */
 /***/ function(module, exports) {
 
-	
+	/* (ignored) */
 
 /***/ },
 /* 9 */

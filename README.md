@@ -106,6 +106,26 @@ to = ['user:2', 'user:3'];
 activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
 user1.addActivity(activity, function(error, response, body) { /* callback */ });
 
+// adding one activity to multiple feeds
+var feeds = ['flat:1', 'flat:2', 'flat:3', 'flat:4'];
+activity = {
+  'actor': 'User:2',
+  'verb': 'pin',
+  'object': 'Place:42',
+  'target': 'Board:1'
+};
+
+client.addToMany(activity, feeds, function(error, response, body) { /* callback */ });
+
+// Batch create follow relations
+var follows = [
+  {'source': 'flat:1', 'target': 'user:1'},
+  {'source': 'flat:1', 'target': 'user:2'},
+  {'source': 'flat:1', 'target': 'user:3'}
+];
+
+client.followMany(follows, function(error, response, body) { /* callback */ });
+
 // creating a feed token server side
 token = user1.token;
 // passed to client via template or api and initialized as such

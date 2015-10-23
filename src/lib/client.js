@@ -1,9 +1,11 @@
 var request = require('request');
 var StreamFeed = require('./feed');
 var signing = require('./signing');
+var httpSignature = require('http-signature');
 var errors = require('./errors');
 var crypto = require('crypto');
 var utils = require('./utils');
+var BatchOperations = require('./batch_operations');
 
 var StreamClient = function() {
     this.initialize.apply(this, arguments);
@@ -42,7 +44,7 @@ StreamClient.prototype = {
             this.fayeUrl = 'http://localhost:9999/faye/';
         }
         this.handlers = {};
-        this.browser = typeof(window) != 'undefined';
+        this.browser = typeof(window) !== 'undefined';
         this.node = !this.browser;
 
         if (this.browser && this.apiSecret) {
@@ -85,6 +87,7 @@ StreamClient.prototype = {
             this.handlers[key].apply(this, args);
         }
     },
+
 
     wrapCallback: function(cb) {
         var client = this;
@@ -147,7 +150,7 @@ StreamClient.prototype = {
         }
         
         utils.validateFeedSlug(feedSlug);
-		utils.validateUserId(userId);
+        utils.validateUserId(userId);
 
         // raise an error if there is no token
         if (!this.apiSecret && !token) {
@@ -286,7 +289,17 @@ StreamClient.prototype = {
         kwargs.method = 'DELETE';
         var callback = this.wrapCallback(cb);
         return request(kwargs, callback);
-    }
+    },
+
 };
+
+// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
+if(BatchOperations) {
+  for(var key in BatchOperations) {
+    if(BatchOperations.hasOwnProperty(key)) {
+      StreamClient.prototype[key] = BatchOperations[key];
+    }
+  }
+}
 
 module.exports = StreamClient;

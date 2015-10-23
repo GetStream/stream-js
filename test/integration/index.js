@@ -1,6 +1,9 @@
 var expect = require('expect.js');
 var Faye = require('faye');
+var erros = require('../../src/lib/errors');
 var node = typeof(stream) == 'undefined';
+
+var READ_TIMEOUT = 2000;
 
 describe('Stream client', function () {
   /*
@@ -175,7 +178,7 @@ describe('Stream client', function () {
       expect(response.statusCode).to.eql(200);
     expect(body['results'][0]['id']).to.be.a('string');
     if (node) {
-      var userAgent = response.req._headers['user-agent'];
+      var userAgent = response.req._headers['x-stream-client'];
       expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
     }
     done();
@@ -330,7 +333,7 @@ describe('Stream client', function () {
   
   it('follow', function (done) {
     var activityId = null;
-    this.timeout(6000);
+    this.timeout(9000);
     function add() {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     user1.addActivity(activity, follow);
@@ -347,7 +350,7 @@ describe('Stream client', function () {
           done();
         });
       }
-    setTimeout(check, 1000);
+    setTimeout(check, READ_TIMEOUT);
      }
     add();
   });
@@ -380,7 +383,7 @@ describe('Stream client', function () {
           expect(activityFound).to.not.eql(activityId);
           done();
         });
-      }, 1000);
+      }, READ_TIMEOUT);
     }
     add();
   });
@@ -633,26 +636,37 @@ describe('Stream client', function () {
   it('fayeSubscribeScope', function (done) {
     this.timeout(6000);
     var client = user1ReadOnly.getFayeClient();
-    var subscription = user1ReadOnly.subscribe(function callback() {
-      done();
-    });
-    subscription.then(function() {
-      done();
-   });
+    var isDone = false;
+
+    var doneYet = function() {
+      if(!isDone) {
+        done();
+        isDone = true;
+      }
+    }
+
+    var subscription = user1ReadOnly.subscribe(doneYet);
+    subscription.then(doneYet);
   });
 
   it('fayeSubscribeScopeTampered', function (done) {
     this.timeout(6000);
     var client = user1ReadOnly.getFayeClient();
-    var subscription = user1ReadOnly.subscribe(function callback() {
-      done();
-    });
-    subscription.then(function() {
-      done();
-   });
+    var isDone = false;
+
+    var doneYet = function() {
+      if(!isDone) {
+        done();
+        isDone = true;
+      }
+    }
+    var subscription = user1ReadOnly.subscribe(doneYet);
+    subscription.then(doneYet);
   });
 
   it('fayeSubscribeError', function (done) {
+    this.timeout(6000);
+
     var client = stream.connect('5crf3bhfzesn');
     function sub() {
       var user1 = client.feed('user', '11', 'secret');
@@ -664,5 +678,82 @@ describe('Stream client', function () {
   done();
   });
 
+  var wrapCB = function(expectedStatusCode, done, cb) {
+    return function(error, response, body) {
+      if(error) return done(error);
+      expect(response.statusCode).to.be(expectedStatusCode);
+
+      if( typeof cb === 'function') {
+        cb.apply(cb, arguments);
+      } else {
+        done();
+      }
+    } 
+  };
+
+  if(node) {
+    // Server side specific tests
+
+    it('supports application level authentication', function(done) {
+      this.timeout(6000);  
+
+      client.makeSignedRequest({
+        url: 'test/auth/digest/'
+      }, wrapCB(200, done));
+    });
+
+    it('fails application level authentication with wrong keys', function(done) {
+      this.timeout(6000);
+      var client = stream.connect('aap','noot');
+
+      client.makeSignedRequest({
+        url: 'test/auth/digest/'
+      }, function(error, response, body) {
+        if(error) done(error);
+        if(body.exception === 'ApiKeyException') done();
+      });
+    });
+
+    it('supports adding activity to multiple feeds', function(done) {
+      this.timeout(6000);
+
+      var activity = {
+        'actor': 'user:11',
+        'verb': 'like',
+        'object': '000'
+      };
+      var feeds = ['flat:33', 'user:11'];
+    
+      client.addToMany(activity, feeds, wrapCB(201, done));
+    });
+
+    it('supports batch following', function(done) {
+      this.timeout(6000);
+
+      var follows = [
+        {'source': 'flat:1', 'target': 'user:1'},
+        {'source': 'flat:1', 'target': 'user:2'},
+        {'source': 'flat:1', 'target': 'user:3'}
+      ];
+    
+      client.followMany(follows, wrapCB(201, done));
+    });
+
+    it('no secret application auth', function() {
+      var client = stream.connect('ahj2ndz7gsan');
+      
+      expect(function() {
+        client.addToMany({},[])
+      }).to.throwError(function(e) {
+        expect(e).to.be.a(errors.SiteError);
+      });
+    });
+  } else {
+    // Client side specific tests
+
+    it('shouldn\'t support signed requests on the client', function() {
+      expect(client.makeSignedRequest).to.be(undefined);
+    });
+  }
 });
 
