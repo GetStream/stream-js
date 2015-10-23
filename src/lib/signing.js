@@ -34,13 +34,10 @@ function safeJsonParse(thing) {
 
 function padString(string) {
     var segmentLength = 4;
-    var stringLength = string.length;
     var diff = string.length % segmentLength;
     if (!diff)
         return string;
-    var position = stringLength;
     var padLength = segmentLength - diff;
-    var paddedStringLength = stringLength + padLength;
 
     while (padLength--)
       string += '=';

@@ -7,7 +7,7 @@ function validateFeedId(feedId) {
 	 * Validate that the feedId matches the spec user:1
 	 */
 	var parts = feedId.split(':');
-	if (parts.length != 2) {
+	if (parts.length !== 2) {
         throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
 	}
 	var feedSlug = parts[0];

@@ -1,9 +1,7 @@
 var request = require('request');
 var StreamFeed = require('./feed');
 var signing = require('./signing');
-var httpSignature = require('http-signature');
 var errors = require('./errors');
-var crypto = require('crypto');
 var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
 
@@ -37,10 +35,10 @@ StreamClient.prototype = {
         if (this.location) {
         	this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
         }
-        if (typeof(process) != "undefined" && process.env.LOCAL) {
+        if (typeof(process) !== "undefined" && process.env.LOCAL) {
             this.baseUrl = 'http://localhost:8000/api/';
         }
-        if (typeof(process) != "undefined" && process.env.LOCAL_FAYE) {
+        if (typeof(process) !== "undefined" && process.env.LOCAL_FAYE) {
             this.fayeUrl = 'http://localhost:9999/faye/';
         }
         this.handlers = {};
@@ -145,7 +143,7 @@ StreamClient.prototype = {
             throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
         }
         
-        if (feedSlug.indexOf(':') != -1) {
+        if (feedSlug.indexOf(':') !== -1) {
         	throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
         }
         
