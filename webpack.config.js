@@ -24,13 +24,13 @@ module.exports = {
     },
     resolve: {
       alias: {
-        'request': 'browser-request',
-        'jsonwebtoken': path.join(__dirname, "src", "missing.js"),
+        'request': 'browser-request'
       }
     },
     module: {
       loaders: [
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
-    }
+    },
+    plugins: [new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations)/, path.join(__dirname, "src", "/missing.js"))]
 };

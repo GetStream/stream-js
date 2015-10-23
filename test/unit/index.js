@@ -53,8 +53,10 @@ describe('Json web token validation', function() {
     expect( signing.isJWTSignature(invalidSignature) ).to.be(false);
   });
 
-  it('should decode valid jwts headers', function() {
-    expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
-  });  
+  if(node) {
+    it('should decode valid jwts headers', function() {
+      expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
+    });  
+  }
 });
 
