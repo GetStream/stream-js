@@ -1,7 +1,7 @@
 var expect = require('expect.js');
 var jwt = require('jsonwebtoken');
 var qc = require('quickcheck');
-var node = typeof(stream) == 'undefined';
+var node = typeof(window) === 'undefined';
 
 var signing = signing || require('../../src/lib/signing');
 

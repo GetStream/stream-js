@@ -1,5 +1,6 @@
 var httpSignature = require('http-signature');
 var request = require('request');
+var errors = require('./errors');
 
 module.exports = {
     addToMany: function(activity, feeds, callback) {

@@ -1,6 +1,5 @@
 var expect = require('expect.js');
 var Faye = require('faye');
-var erros = require('../../src/lib/errors');
 var node = typeof(stream) == 'undefined';
 
 var READ_TIMEOUT = 2000;

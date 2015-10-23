@@ -41,8 +41,10 @@ function runSynchronized(tasks, callback){
 // check for jshint errors
 gulp.task('lint', function() {
   return gulp.src('./src/lib/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint({
+        lookup: true
+      }))
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
 // run the mocha tests
@@ -63,7 +65,8 @@ gulp.task('cov', function () {
 });
 
 // run the tests
-gulp.task('test', ['lint', 'mocha'], function () {
+gulp.task('test', function () {
+    runSynchronized(['lint', 'mocha']);
     return;
 });
 
