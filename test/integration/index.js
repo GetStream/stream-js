@@ -334,22 +334,22 @@ describe('Stream client', function () {
     var activityId = null;
     this.timeout(9000);
     function add() {
-    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-    user1.addActivity(activity, follow);
-  }
-  function follow(error, response, body) {
-    activityId = body['id'];
-    aggregated2.follow('user', '11', runCheck);
-  }
-  function runCheck(error, response, body) {
-    function check() {
-        aggregated2.get({'limit': 1}, function(error, response, body) {
-          expect(response.statusCode).to.eql(200);
-          expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
-          done();
-        });
-      }
-    setTimeout(check, READ_TIMEOUT);
+      var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+      user1.addActivity(activity, follow);
+    }
+    function follow(error, response, body) {
+      activityId = body['id'];
+      aggregated2.follow('user', '11', runCheck);
+    }
+    function runCheck(error, response, body) {
+      function check() {
+          aggregated2.get({'limit': 1}, function(error, response, body) {
+            expect(response.statusCode).to.eql(200);
+            expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
+            done();
+          });
+        }
+      setTimeout(check, READ_TIMEOUT);
      }
     add();
   });
@@ -357,6 +357,14 @@ describe('Stream client', function () {
   it('follow without callback', function (done) {
     aggregated2.follow('user', '111');
     done();
+  });
+
+  it('follow with copy limit', function (done) {
+    aggregated2.follow('user', '999', { limit: 500 }, function(error, response, body) {
+      if(error) done(error);
+      expect(response.statusCode).to.be(201);
+      done();
+    });
   });
   
   it('unfollow', function (done) {
@@ -419,19 +427,6 @@ describe('Stream client', function () {
     }
     user1.follow('flat', '33', doifollow);
   });
-  
-  it('follow private', function (done) {
-    function callback(error, response, body){
-      expect(error).to.eql(null);
-      expect(body.exception).to.eql(undefined);
-      done();
-   };
-   if (node) {
-    user1.follow('secret', '33', callback);
-   } else {
-    user1.follow('secret', '33', secret3.token, callback);
-   }
-  });  
   
   it('get read-only feed', function (done) {
     function check(error, response, body) {

@@ -73,38 +73,41 @@ StreamFeed.prototype = {
 		}, callback);
 		return xhr;
 	},
-	follow : function(targetSlug, targetUserId, callbackOrToken, callback) {
+	follow : function(targetSlug, targetUserId, options, callback) {
 		/*
 		 * feed.follow('user', '1');
 		 * or
-		 * feed.follow('user', '1', 'token');
-		 * or
 		 * feed.follow('user', '1', callback);
+     * or
+     * feed.follow('user', '1', options, callback);
 		 */
 		utils.validateFeedSlug(targetSlug);
 		utils.validateUserId(targetUserId);
-		var targetToken;
+
+		var activityCopyLimit;
 		var last = arguments[arguments.length - 1];
 		// callback is always the last argument
 		callback = (last.call) ? last : undefined;
 		var target = targetSlug + ':' + targetUserId;
-		// token is 3rd or 4th
-		if (arguments[2] && !arguments[2].call) {
-			targetToken = arguments[2];
-		} else if (arguments[3] && !arguments[3].call) {
-			targetToken = arguments[3];
-		}
 
-		// if have a secret, always just generate and send along the token
-		if (this.client.apiSecret && !targetToken) {
-			targetToken = this.client.feed(targetSlug, targetUserId).token;
-		}
+    // check for additional options
+    if(options && !options.call) {
+      if(options.limit) {
+        activityCopyLimit = options.limit;
+      }
+    }
+
+    var body = {
+      'target': target
+    };
+
+    if(activityCopyLimit) {
+      body['activity_copy_limit'] = activityCopyLimit;
+    }
+
 		var xhr = this.client.post({
 			'url' : 'feed/' + this.feedUrl + '/following/',
-			'body' : {
-				'target' : target,
-				'target_token' : targetToken
-			},
+			'body' : body,
 			'signature' : this.signature
 		}, callback);
 		return xhr;

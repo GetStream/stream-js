@@ -206,9 +206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var request = __webpack_require__(3);
 	var StreamFeed = __webpack_require__(4);
 	var signing = __webpack_require__(7);
-	var httpSignature = __webpack_require__(9);
 	var errors = __webpack_require__(5);
-	var crypto = __webpack_require__(8);
 	var utils = __webpack_require__(6);
 	var BatchOperations = __webpack_require__(9);
 
@@ -242,10 +240,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.location) {
 	            this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
 	        }
-	        if (typeof process != "undefined" && process.env.LOCAL) {
+	        if (typeof process !== "undefined" && process.env.LOCAL) {
 	            this.baseUrl = 'http://localhost:8000/api/';
 	        }
-	        if (typeof process != "undefined" && process.env.LOCAL_FAYE) {
+	        if (typeof process !== "undefined" && process.env.LOCAL_FAYE) {
 	            this.fayeUrl = 'http://localhost:9999/faye/';
 	        }
 	        this.handlers = {};
@@ -349,7 +347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
 	        }
 
-	        if (feedSlug.indexOf(':') != -1) {
+	        if (feedSlug.indexOf(':') !== -1) {
 	            throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
 	        }
 
@@ -1090,38 +1088,41 @@ return /******/ (function(modules) { // webpackBootstrap
 			}, callback);
 			return xhr;
 		},
-		follow: function follow(targetSlug, targetUserId, callbackOrToken, callback) {
+		follow: function follow(targetSlug, targetUserId, options, callback) {
 			/*
 	   * feed.follow('user', '1');
 	   * or
-	   * feed.follow('user', '1', 'token');
-	   * or
 	   * feed.follow('user', '1', callback);
+	     * or
+	     * feed.follow('user', '1', options, callback);
 	   */
 			utils.validateFeedSlug(targetSlug);
 			utils.validateUserId(targetUserId);
-			var targetToken;
+
+			var targetToken, activityCopyLimit;
 			var last = arguments[arguments.length - 1];
 			// callback is always the last argument
 			callback = last.call ? last : undefined;
 			var target = targetSlug + ':' + targetUserId;
-			// token is 3rd or 4th
-			if (arguments[2] && !arguments[2].call) {
-				targetToken = arguments[2];
-			} else if (arguments[3] && !arguments[3].call) {
-				targetToken = arguments[3];
+
+			// check for additional options
+			if (options && !options.call) {
+				if (options.limit) {
+					activityCopyLimit = options.limit;
+				}
 			}
 
-			// if have a secret, always just generate and send along the token
-			if (this.client.apiSecret && !targetToken) {
-				targetToken = this.client.feed(targetSlug, targetUserId).token;
+			var body = {
+				'target': target
+			};
+
+			if (activityCopyLimit) {
+				body['activity_copy_limit'] = activityCopyLimit;
 			}
+
 			var xhr = this.client.post({
 				'url': 'feed/' + this.feedUrl + '/following/',
-				'body': {
-					'target': target,
-					'target_token': targetToken
-				},
+				'body': body,
 				'signature': this.signature
 			}, callback);
 			return xhr;
@@ -1277,7 +1278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  * Validate that the feedId matches the spec user:1
 	  */
 		var parts = feedId.split(':');
-		if (parts.length != 2) {
+		if (parts.length !== 2) {
 			throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
 		}
 		var feedSlug = parts[0];
@@ -1354,12 +1355,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function padString(string) {
 	  var segmentLength = 4;
-	  var stringLength = string.length;
 	  var diff = string.length % segmentLength;
 	  if (!diff) return string;
-	  var position = stringLength;
 	  var padLength = segmentLength - diff;
-	  var paddedStringLength = stringLength + padLength;
 
 	  while (padLength--) string += '=';
 	  return string;
