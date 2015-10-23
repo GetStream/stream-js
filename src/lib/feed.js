@@ -84,7 +84,7 @@ StreamFeed.prototype = {
 		utils.validateFeedSlug(targetSlug);
 		utils.validateUserId(targetUserId);
 
-		var targetToken, activityCopyLimit;
+		var activityCopyLimit;
 		var last = arguments[arguments.length - 1];
 		// callback is always the last argument
 		callback = (last.call) ? last : undefined;
