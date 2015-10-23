@@ -2,16 +2,27 @@ var errors = require('./errors');
 var utils = require('./utils');
 
 var StreamFeed = function() {
+  /**
+   * Manage api calls for specific feeds
+   * The feed object contains convenience functions such add activity, remove activity etc
+   * @class StreamFeed
+   */
   this.initialize.apply(this, arguments);
 };
 
 StreamFeed.prototype = {
-  /*
-   * The feed object contains convenience functions such add activity
-   * remove activity etc
-   *
-   */
   initialize: function(client, feedSlug, userId, token, siteId) {
+    /**
+     * Initialize a feed object
+     * @method intialize
+     * @memberOf StreamFeed.prototype
+     * @param {StreamClient} client - The stream client this feed is constructed from
+     * @param {string} feedSlug - The feed slug
+     * @param {string} userId - The user id
+     * @param {string} [token] - The authentication token
+     * @param {string} [siteId] - The site identifier
+     * 
+     */
     this.client = client;
     this.slug = feedSlug;
     this.userId = userId;
@@ -27,9 +38,13 @@ StreamFeed.prototype = {
   },
 
   addActivity: function(activity, callback) {
-    /*
+    /**
      * Adds the given activity to the feed and
      * calls the specified callback
+     * @method addActivity
+     * @memberOf StreamFeed
+     * @param {object} activity - The activity to add
+     * @param {function} callback - The callback
      */
     activity = this.client.signActivity(activity);
     var xhr = this.client.post({

@@ -6,6 +6,10 @@ var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
 
 var StreamClient = function() {
+  /**
+   * Client to connect to Stream api
+   * @class StreamClient
+   */ 
   this.initialize.apply(this, arguments);
 };
 
@@ -13,10 +17,18 @@ StreamClient.prototype = {
   baseUrl: 'https://api.getstream.io/api/',
 
   initialize: function(apiKey, apiSecret, appId, options) {
-    /*
-     * initialize is not directly called by via stream.connect, ie:
+    /**
+     * Initialize a client
+     * @method intialize
+     * @memberof StreamClient.prototype
+     * @param {string} apiKey - the api key
+     * @param {string} [apiSecret] - the api secret 
+     * @param {string} [appId] - id of the app
+     * @param {object} options - additional options
+     * @param {string} options.location - which data center to use
+     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
      * stream.connect(apiKey, apiSecret)
-     * secret is optional and only used in server side mode
+     * @example <caption>secret is optional and only used in server side mode</caption>
      * stream.connect(apiKey, null, appId);
      */
     this.apiKey = apiKey;
@@ -54,19 +66,27 @@ StreamClient.prototype = {
   },
 
   on: function(event, callback) {
-    /*
+    /**
      * Support for global event callbacks
      * This is useful for generic error and loading handling
-     *
+     * @method on
+     * @memberof StreamClient.prototype
+     * @param {string} event - Name of the event
+     * @param {function} callback - Function that is called when the event fires
+     * @example
      * client.on('request', callback);
      * client.on('response', callback);
-     *
      */
     this.handlers[event] = callback;
   },
 
   off: function(key) {
-    /*
+    /**
+     * Remove one or more event handlers
+     * @method off
+     * @memberof StreamClient.prototype
+     * @param {string} [key] - Name of the handler
+     * @example
      * client.off() removes all handlers
      * client.off(name) removes the specified handler
      */
@@ -78,8 +98,11 @@ StreamClient.prototype = {
   },
 
   send: function() {
-    /*
+    /**
      * Call the given handler with the arguments
+     * @method send
+     * @memberof StreamClient.prototype
+     * @access private
      */
     var args = Array.prototype.slice.call(arguments);
     var key = args[0];
@@ -90,6 +113,12 @@ StreamClient.prototype = {
   },
 
   wrapCallback: function(cb) {
+    /**
+     * Wrap callback for HTTP request
+     * @method wrapCallBack
+     * @memberof StreamClient.prototype
+     * @access private
+     */
     var client = this;
 
     function callback() {
@@ -113,9 +142,15 @@ StreamClient.prototype = {
   },
 
   getReadOnlyToken: function(feedSlug, userId) {
-    /*
+    /**
      * Returns a token that allows only read operations
      *
+     * @method getReadOnlyToken 
+     * @memberOf StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
@@ -123,9 +158,15 @@ StreamClient.prototype = {
   },
 
   getReadWriteToken: function(feedSlug, userId) {
-    /*
+    /**
      * Returns a token that allows read and write operations
      *
+     * @method getReadWriteToken
+     * @memberOf StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
@@ -133,10 +174,18 @@ StreamClient.prototype = {
   },
 
   feed: function(feedSlug, userId, token, siteId, options) {
-    /*
+    /**
      * Returns a feed object for the given feed id and token
-     * Example:
-     *
+     * @method feed
+     * @memberOf StreamClient.prototype
+     * @param {string} feedSlug - The feed slug
+     * @param {string} userId - The user identifier
+     * @param {string} [token] - The token
+     * @param {string} [siteId] - The site identifier
+     * @param {object} [options] - Additional function options 
+     * @param {boolean} [options.readOnly] - A boolean indicating whether to generate a read only token for this feed
+     * @return {Feed}
+     * @example
      * client.feed('user', '1', 'token2');
      */
 
@@ -170,16 +219,18 @@ StreamClient.prototype = {
   },
 
   enrichUrl: function(relativeUrl) {
-    /*
+    /**
      * Combines the base url with version and the relative url
+     * @access private
      */
     var url = this.baseUrl + this.version + '/' + relativeUrl;
     return url;
   },
 
   enrichKwargs: function(kwargs) {
-    /*
+    /**
      * Adds the API key and the signature
+     * @access private
      */
     kwargs.url = this.enrichUrl(kwargs.url);
     if (kwargs.qs === undefined) {
@@ -210,8 +261,9 @@ StreamClient.prototype = {
   },
 
   signActivities: function(activities) {
-    /*
+    /**
      * We automatically sign the to parameter when in server side mode
+     * @access private
      */
     if (!this.apiSecret) {
       return activities;
