@@ -117,7 +117,7 @@ activity = {
 
 client.addToMany(activity, feeds, function(error, response, body) { /* callback */ });
 
-// Batch create follow relations
+// Batch create follow relations (let flat:1 follow user:1, user:2 and user:3 feeds in one single request)
 var follows = [
   {'source': 'flat:1', 'target': 'user:1'},
   {'source': 'flat:1', 'target': 'user:2'},
