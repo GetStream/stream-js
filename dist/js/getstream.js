@@ -1088,17 +1088,13 @@ return /******/ (function(modules) { // webpackBootstrap
 			}, callback);
 			return xhr;
 		},
-		follow: function follow(targetSlug, targetUserId, limitOrTokenOrCallback, callbackOrToken, callback) {
+		follow: function follow(targetSlug, targetUserId, options, callback) {
 			/*
 	   * feed.follow('user', '1');
 	   * or
-	   * feed.follow('user', '1', 'token');
-	   * or
 	   * feed.follow('user', '1', callback);
 	     * or
-	     * feed.follow('user', '1', 'token', 300, callback);
-	     * or
-	     * feed.follow('user', '1', 300, callback);
+	     * feed.follow('user', '1', options, callback);
 	   */
 			utils.validateFeedSlug(targetSlug);
 			utils.validateUserId(targetUserId);
@@ -1108,29 +1104,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			// callback is always the last argument
 			callback = last.call ? last : undefined;
 			var target = targetSlug + ':' + targetUserId;
-			// token is 3rd or 4th
-			var arg2 = arguments[2],
-			    arg3 = arguments[3],
-			    arg4 = arguments[4];
 
-			if (arg2 && !arg2.call && typeof arg2 === 'string') {
-				targetToken = arg2;
-			} else if (arg3 && !arg3.call && typeof arg3 === 'string') {
-				targetToken = arg3;
-			}
-
-			if (arg2 && !arg2.call && typeof arg2 === 'number') {
-				activityCopyLimit = arg2;
-			}
-
-			// if have a secret, always just generate and send along the token
-			if (this.client.apiSecret && !targetToken) {
-				targetToken = this.client.feed(targetSlug, targetUserId).token;
+			// check for additional options
+			if (options && !options.call) {
+				if (options.limit) {
+					activityCopyLimit = options.limit;
+				}
 			}
 
 			var body = {
-				'target': target,
-				'target_token': targetToken
+				'target': target
 			};
 
 			if (activityCopyLimit) {

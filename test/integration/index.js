@@ -360,22 +360,10 @@ describe('Stream client', function () {
   });
 
   it('follow with copy limit', function (done) {
-    var i = 0;
-    var doneYet = function() {
-      if(i===1) done();
-      i++;
-    }
-
-    aggregated2.follow('user', '999', 500, function(error, response, body) {
+    aggregated2.follow('user', '999', { limit: 500 }, function(error, response, body) {
       if(error) done(error);
       expect(response.statusCode).to.be(201);
-      doneYet();
-    });
-
-    user1.follow('secret', '33', secret3.token, 500, function(error, response, body) {
-      if(error) done(error);
-      expect(response.statusCode).to.be(201);
-      doneYet();
+      done();
     });
   });
   
@@ -439,19 +427,6 @@ describe('Stream client', function () {
     }
     user1.follow('flat', '33', doifollow);
   });
-  
-  it('follow private', function (done) {
-    function callback(error, response, body){
-      expect(error).to.eql(null);
-      expect(body.exception).to.eql(undefined);
-      done();
-   };
-   if (node) {
-    user1.follow('secret', '33', callback);
-   } else {
-    user1.follow('secret', '33', secret3.token, callback);
-   }
-  });  
   
   it('get read-only feed', function (done) {
     function check(error, response, body) {
