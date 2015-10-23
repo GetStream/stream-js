@@ -73,38 +73,58 @@ StreamFeed.prototype = {
 		}, callback);
 		return xhr;
 	},
-	follow : function(targetSlug, targetUserId, callbackOrToken, callback) {
+	follow : function(targetSlug, targetUserId, limitOrTokenOrCallback, callbackOrToken, callback) {
 		/*
 		 * feed.follow('user', '1');
 		 * or
 		 * feed.follow('user', '1', 'token');
 		 * or
 		 * feed.follow('user', '1', callback);
+     * or
+     * feed.follow('user', '1', 'token', 300, callback);
+     * or
+     * feed.follow('user', '1', 300, callback);
 		 */
 		utils.validateFeedSlug(targetSlug);
 		utils.validateUserId(targetUserId);
-		var targetToken;
+
+		var targetToken, activityCopyLimit;
 		var last = arguments[arguments.length - 1];
 		// callback is always the last argument
 		callback = (last.call) ? last : undefined;
 		var target = targetSlug + ':' + targetUserId;
 		// token is 3rd or 4th
-		if (arguments[2] && !arguments[2].call) {
-			targetToken = arguments[2];
-		} else if (arguments[3] && !arguments[3].call) {
-			targetToken = arguments[3];
-		}
+    var arg2 = arguments[2],
+        arg3 = arguments[3],
+        arg4 = arguments[4];
+
+    if(arg2 && !arg2.call && typeof arg2 === 'string') {
+      targetToken = arg2;
+    } else if(arg3 && !arg3.call && typeof arg3 === 'string') {
+      targetToken = arg3;
+    }
+
+    if(arg2 && !arg2.call && typeof arg2 === 'number') {
+      activityCopyLimit = arg2;
+    }
 
 		// if have a secret, always just generate and send along the token
 		if (this.client.apiSecret && !targetToken) {
 			targetToken = this.client.feed(targetSlug, targetUserId).token;
 		}
+
+    var body = {
+      'target': target,
+      'target_token': targetToken 
+    };
+
+    if(activityCopyLimit) {
+      body['activity_copy_limit'] = activityCopyLimit;
+    }
+
 		var xhr = this.client.post({
 			'url' : 'feed/' + this.feedUrl + '/following/',
-			'body' : {
-				'target' : target,
-				'target_token' : targetToken
-			},
+			'body' : body,
 			'signature' : this.signature
 		}, callback);
 		return xhr;
