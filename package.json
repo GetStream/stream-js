@@ -35,6 +35,8 @@
     "gulp-browserify": "^0.5.0",
     "gulp-bump": "^0.1.8",
     "gulp-git": "git://github.com/stevelacy/gulp-git.git",
+    "gulp-jscs": "^3.0.1",
+    "gulp-jscs-stylish": "^1.2.1",
     "gulp-jshint": "^1.6.3",
     "gulp-mocha": "^0.4.1",
     "gulp-shell": "^0.2.7",
