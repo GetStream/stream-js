@@ -86,8 +86,8 @@ user1.follow('flat', '42');
 // Stop following another feed
 user1.unfollow('flat', '42');
 
-// Follow another feed with a limit on the amount of activities copied over
-user1.follow('flat', '42', { limit: 300 });
+// Follow another feed without copying the history
+user1.follow('flat', '42', { limit: 0 });
 
 // List followers, following
 user1.followers({limit: '10', offset: '10'});
