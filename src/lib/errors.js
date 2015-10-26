@@ -3,6 +3,13 @@ var errors = module.exports;
 var canCapture = (typeof Error.captureStackTrace === 'function');
 var canStack = !!(new Error()).stack;
 
+/**
+ * Abstract error object
+ * @class ErrorAbstract
+ * @access private
+ * @param  {string}      [msg]         Error message
+ * @param  {function}    constructor
+ */
 function ErrorAbstract(msg, constructor) {
   this.message = msg;
 
@@ -22,6 +29,10 @@ ErrorAbstract.prototype = new Error();
 
 /**
  * FeedError
+ * @class FeedError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
 errors.FeedError = function FeedError(msg) {
@@ -30,9 +41,16 @@ errors.FeedError = function FeedError(msg) {
 
 errors.FeedError.prototype = new ErrorAbstract();
 
+/**
+ * SiteError
+ * @class SiteError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string}  [msg]  An error message that will probably end up in a log.
+ */
 errors.SiteError = function SiteError(msg) {
   ErrorAbstract.call(this, msg);
 };
 
 errors.SiteError.prototype = new ErrorAbstract();
-

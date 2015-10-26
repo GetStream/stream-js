@@ -13,6 +13,7 @@ var async = require('async');
 var source = require('vinyl-source-stream');
 var webpack = require("webpack");
 var webpackConfig = require('./webpack.config.js');
+var child_process = require('child_process');
 
 
 gulp.task('default', function() {
@@ -146,6 +147,18 @@ gulp.task('write_bower', function () {
 	bowerJSON.version = version;
 	fs.writeFileSync('bower.json', JSON.stringify(bowerJSON, null, '  '));
 	return;
+});
+
+gulp.task('docs', function(done) {
+  var p = child_process.exec('jsdoc -c .jsdoc',function(error, stdout, stderr) {
+    if(error) {
+      throw new gutil.PluginError({
+        plugin: 'jsdoc',
+        message: 'Something went wrong while executing the jsdoc command: ' + error
+      })
+    } 
+    done();
+  });
 });
 
 gulp.task('tag', function () {

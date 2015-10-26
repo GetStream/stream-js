@@ -1,0 +1,15 @@
+{
+  "source" : {
+    "include": ["."],
+    "includePattern": "src",
+    "exclude": ["node_modules","dist","test"]
+  },
+  "plugins": [],
+  "opts": {
+    "recurse": true,
+    "template": "templates/default",
+    "destination": "./docs/",
+    "package": "./package.json",
+    "readme": "./README.md"
+  }
+}
