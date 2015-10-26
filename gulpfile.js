@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var jshint = require('gulp-jshint');
+var jscs = require('gulp-jscs');
+var stylish = require('gulp-jscs-stylish');
 var mocha = require('gulp-mocha');
 var fs = require('fs');
 var git = require('gulp-git');
@@ -38,12 +40,12 @@ function runSynchronized(tasks, callback){
  */
 
 
-// check for jshint errors
+// check for jshint and jscs errors
 gulp.task('lint', function() {
-  return gulp.src('./src/lib/*.js')
-    .pipe(jshint({
-        lookup: true
-      }))
+  return gulp.src('./src/**/*.js')
+    .pipe(jshint({ lookup: true }))
+    .pipe(jscs())
+    .pipe(stylish.combineWithHintResults())
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
