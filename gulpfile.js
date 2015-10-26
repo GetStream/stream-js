@@ -47,7 +47,8 @@ gulp.task('lint', function() {
     .pipe(jshint({ lookup: true }))
     .pipe(jscs())
     .pipe(stylish.combineWithHintResults())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
 });
 
 // run the mocha tests
@@ -64,7 +65,7 @@ gulp.task('cov', function () {
     return gulp.src('./test/integration/cov.js', {read: false})
         .pipe(mocha({reporter: 'html-cov'}))
         .pipe(gulp.dest('./dist/'));
-        
+
 });
 
 // run the tests
@@ -156,7 +157,7 @@ gulp.task('docs', function(done) {
         plugin: 'jsdoc',
         message: 'Something went wrong while executing the jsdoc command: ' + error
       })
-    } 
+    }
     done();
   });
 });
@@ -165,7 +166,7 @@ gulp.task('tag', function () {
   var pkg = require('./package.json');
   var v = 'v' + pkg.version;
   var message = 'Release ' + v;
-  
+
   //git.tag(v, message, false, gutil.log);
   //git.commit('updated bower and npm', {args: '-a'});
   //git.push('origin', 'master', {args: '--tags'}).end();
