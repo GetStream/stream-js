@@ -5,11 +5,18 @@ var errors = require('./errors');
 var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
 
+/**
+ * @callback requestCallback
+ * @param {object} [errors]
+ * @param {object} response
+ * @param {object} body
+ */
+
 var StreamClient = function() {
   /**
    * Client to connect to Stream api
    * @class StreamClient
-   */ 
+   */
   this.initialize.apply(this, arguments);
 };
 
@@ -22,7 +29,7 @@ StreamClient.prototype = {
      * @method intialize
      * @memberof StreamClient.prototype
      * @param {string} apiKey - the api key
-     * @param {string} [apiSecret] - the api secret 
+     * @param {string} [apiSecret] - the api secret
      * @param {string} [appId] - id of the app
      * @param {object} options - additional options
      * @param {string} options.location - which data center to use
@@ -145,8 +152,8 @@ StreamClient.prototype = {
     /**
      * Returns a token that allows only read operations
      *
-     * @method getReadOnlyToken 
-     * @memberOf StreamClient.prototype
+     * @method getReadOnlyToken
+     * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug to get a read only token for
      * @param {string} userId - The user identifier
      * @return {string} token
@@ -162,7 +169,7 @@ StreamClient.prototype = {
      * Returns a token that allows read and write operations
      *
      * @method getReadWriteToken
-     * @memberOf StreamClient.prototype
+     * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug to get a read only token for
      * @param {string} userId - The user identifier
      * @return {string} token
@@ -177,14 +184,14 @@ StreamClient.prototype = {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
-     * @memberOf StreamClient.prototype
+     * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug
      * @param {string} userId - The user identifier
      * @param {string} [token] - The token
      * @param {string} [siteId] - The site identifier
-     * @param {object} [options] - Additional function options 
+     * @param {object} [options] - Additional function options
      * @param {boolean} [options.readOnly] - A boolean indicating whether to generate a read only token for this feed
-     * @return {Feed}
+     * @return {StreamFeed}
      * @example
      * client.feed('user', '1', 'token2');
      */

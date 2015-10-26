@@ -1,0 +1,13 @@
+{
+  "source" : {
+    "include": ["src/"]
+  },
+  "plugins": [],
+  "opts": {
+    "recurse": true,
+    "template": "templates/default",
+    "destination": "./docs/",
+    "package": "./package.json",
+    "readme": "./README.md"
+  }
+}

@@ -15,13 +15,12 @@ StreamFeed.prototype = {
     /**
      * Initialize a feed object
      * @method intialize
-     * @memberOf StreamFeed.prototype
+     * @memberof StreamFeed.prototype
      * @param {StreamClient} client - The stream client this feed is constructed from
      * @param {string} feedSlug - The feed slug
      * @param {string} userId - The user id
      * @param {string} [token] - The authentication token
      * @param {string} [siteId] - The site identifier
-     * 
      */
     this.client = client;
     this.slug = feedSlug;
@@ -42,9 +41,9 @@ StreamFeed.prototype = {
      * Adds the given activity to the feed and
      * calls the specified callback
      * @method addActivity
-     * @memberOf StreamFeed
+     * @memberof StreamFeed.prototype
      * @param {object} activity - The activity to add
-     * @param {function} callback - The callback
+     * @param {requestCallback} callback - Callback to call on completion
      */
     activity = this.client.signActivity(activity);
     var xhr = this.client.post({
@@ -56,10 +55,16 @@ StreamFeed.prototype = {
   },
 
   removeActivity: function(activityId, callback) {
-    /*
+    /**
      * Removes the activity by activityId
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {string}   activityId Identifier of activity to remove
+     * @param  {requestCallback} callback   Callback to call on completion
+     * @return {object}              XHR request object
+     * @example
      * feed.removeActivity(activityId);
-     * Or
+     * @example
      * feed.removeActivity({'foreign_id': foreignId});
      */
     var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
@@ -77,9 +82,13 @@ StreamFeed.prototype = {
   },
 
   addActivities: function(activities, callback) {
-    /*
-     * Adds the given activities to the feed and
-     * calls the specified callback
+    /**
+     * Adds the given activities to the feed and calls the specified callback
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {Array}   activities Array of activities to add
+     * @param  {requestCallback} callback   Callback to call on completion
+     * @return {object}              XHR request object
      */
     activities = this.client.signActivities(activities);
     var data = {
@@ -94,12 +103,19 @@ StreamFeed.prototype = {
   },
 
   follow: function(targetSlug, targetUserId, options, callback) {
-    /*
-     * feed.follow('user', '1');
-     * or
-     * feed.follow('user', '1', callback);
-     * or
-     * feed.follow('user', '1', options, callback);
+    /**
+     * Follows the given target feed
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId User identifier of the target feed
+     * @param  {object}   options      Additional options
+     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
+     * @param  {requestCallback} callback     Callback to call on completion
+     * @return {object}                XHR request object
+     * @example feed.follow('user', '1');
+     * @example feed.follow('user', '1', callback);
+     * @example feed.follow('user', '1', options, callback);
      */
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
@@ -134,9 +150,15 @@ StreamFeed.prototype = {
   },
 
   unfollow: function(targetSlug, targetUserId, callback) {
-    /*
-     * Unfollow the given feed, ie:
-     * feed.unfollow('user', '2', callback);
+    /**
+     * Unfollow the given feed
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId [description]
+     * @param  {requestCallback} callback     Callback to call on completion
+     * @return {object}                XHR request object
+     * @example feed.unfollow('user', '2', callback);
      */
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
@@ -149,10 +171,15 @@ StreamFeed.prototype = {
   },
 
   following: function(options, callback) {
-    /*
+    /**
      * List which feeds this feed is following
-     *
-     * feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {string}   options.filter Filter to apply on search operation
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {object}            XHR request object
+     * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
     if (options !== undefined && options.filter) {
       options.filter = options.filter.join(',');
@@ -167,9 +194,15 @@ StreamFeed.prototype = {
   },
 
   followers: function(options, callback) {
-    /*
+    /**
      * List the followers of this feed
-     *
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {string}   options.filter Filter to apply on search operation
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {object}            XHR request object
+     * @example
      * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
     if (options !== undefined && options.filter) {
@@ -185,12 +218,15 @@ StreamFeed.prototype = {
   },
 
   get: function(options, callback) {
-    /*
+    /**
      * Reads the feed
-     *
-     * feed.get({limit: 10, id_lte: 'activity-id'})
-     * or
-     * feed.get({limit: 10, mark_seen: true})
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {object}            XHR request object
+     * @example feed.get({limit: 10, id_lte: 'activity-id'})
+     * @example feed.get({limit: 10, mark_seen: true})
      */
     if (options && options['mark_read'] && options['mark_read'].join) {
       options['mark_read'] = options['mark_read'].join(',');
@@ -209,12 +245,24 @@ StreamFeed.prototype = {
   },
 
   getFayeClient: function() {
+    /**
+     * Returns the current faye client object
+     * @method function
+     * @memberof StreamFeed.prototype
+     * @access private
+     * @return {object} Faye client
+     */
     return this.client.getFayeClient();
   },
 
   subscribe: function(callback) {
-    /*
-     * subscribes to any changes in the feed, return a promise
+    /**
+     * Subscribes to any changes in the feed, return a promise
+     * @method subscribe
+     * @memberof StreamFeed.prototype
+     * @param  {function} callback Callback to call on completion
+     * @return {promise}           Promise object
+     * @example
      * feed.subscribe(callback).then(function(){
      * 		console.log('we are now listening to changes');
      * });
