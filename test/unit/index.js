@@ -49,7 +49,7 @@ describe('Json web token validation', function() {
 
   it('should validate valid jwts', function() {
     expect( signing.isJWTSignature(validSignature) ).to.be(true);
-  }); 
+  });
 
   it('should validate unvalid jwts', function() {
     expect( signing.isJWTSignature(invalidSignature) ).to.be(false);
@@ -58,7 +58,7 @@ describe('Json web token validation', function() {
   if(node) {
     it('should decode valid jwts headers', function() {
       expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
-    });  
+    });
   }
 });
 

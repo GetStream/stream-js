@@ -1,9 +1,8 @@
-
 /*
  * Simple wrapper to make make parse httprequest look
  * somewhat like request library
  */
-
+/* globals Parse */
 function request(options, callback) {
   // first difference with request, qs is called params
   options.params = options.qs;

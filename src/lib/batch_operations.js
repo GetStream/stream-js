@@ -1,6 +1,7 @@
 var httpSignature = require('http-signature');
 var request = require('request');
 var errors = require('./errors');
+var Promise = require('./promise');
 
 module.exports = {
   addToMany: function(activity, feeds, callback) {
@@ -12,17 +13,15 @@ module.exports = {
      * @param  {object}   activity The activity to add
      * @param  {Array}   feeds    Array of objects describing the feeds to add to
      * @param  {requestCallback} callback Callback called on completion
-     * @return {object}            XHR request object
+     * @return {Promise}           Promise object
      */
-    var req = this.makeSignedRequest({
+    return this.makeSignedRequest({
       url: 'feed/add_to_many/',
       body: {
         activity: activity,
         feeds: feeds,
       },
     }, callback);
-
-    return req;
   },
 
   followMany: function(follows, callback)  {
@@ -33,14 +32,12 @@ module.exports = {
      * @since 2.3.0
      * @param  {Array}   follows  The follow relations to create
      * @param  {requestCallback} callback Callback called on completion
-     * @return {object}            XHR request object
+     * @return {Promise}           Promise object
      */
-    var req = this.makeSignedRequest({
+    return this.makeSignedRequest({
       url: 'follow_many/',
       body: follows,
     }, callback);
-
-    return req;
   },
 
   makeSignedRequest: function(kwargs, cb) {
@@ -52,28 +49,28 @@ module.exports = {
      * @access private
      * @param  {object}   kwargs Arguments for the request
      * @param  {requestCallback} cb     Callback to call on completion
-     * @return {object}          XHR request object
+     * @return {Promise}         Promise object
      */
     if (!this.apiSecret) {
       throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
     }
 
-    this.send('request', 'post', kwargs, cb);
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'post', kwargs, cb);
 
-    kwargs.url = this.enrichUrl(kwargs.url);
-    kwargs.json = true;
-    kwargs.method = 'POST';
-    kwargs.headers = { 'X-Api-Key': this.apiKey };
+      kwargs.url = this.enrichUrl(kwargs.url);
+      kwargs.json = true;
+      kwargs.method = 'POST';
+      kwargs.headers = { 'X-Api-Key': this.apiKey };
 
-    var callback = this.wrapCallback(cb);
-    var req = request(kwargs, callback);
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      var req = request(kwargs, callback);
 
-    httpSignature.sign(req, {
-      algorithm: 'hmac-sha256',
-      key: this.apiSecret,
-      keyId: this.apiKey,
-    });
-
-    return request;
+      httpSignature.sign(req, {
+        algorithm: 'hmac-sha256',
+        key: this.apiSecret,
+        keyId: this.apiKey,
+      });
+    }.bind(this));
   },
 };

@@ -7,14 +7,14 @@ var READ_TIMEOUT = 2000;
 describe('Stream client', function () {
   /*
    * Run these tests
-   * 
+   *
    * mocha test/integration/index.js
-   * LOCAL=1 mocha test/integration/index.js  
-   * 
+   * LOCAL=1 mocha test/integration/index.js
+   *
    * Browser open
    * test.html
    * test.html#local=1
-   * 
+   *
    */
   var self = this;
   this.timeout(4000);
@@ -35,9 +35,9 @@ describe('Stream client', function () {
   }
   console.log('node is set to ', node);
   errors = stream.errors;
-  
+
   var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
-  
+
   function beforeEachBrowser() {
     client = stream.connect('ahj2ndz7gsan');
     client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
@@ -55,7 +55,7 @@ describe('Stream client', function () {
     notification3 = client.feed('notification', '33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
     user1ReadOnly = client.feed('user', '11', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmZWVkX2lkIjoidXNlcjExIiwicmVzb3VyY2UiOiIqIiwiYWN0aW9uIjoicmVhZCIsImlhdCI6MTQzMzkzODYyMX0.8FAc6ja0Gb2IBZjBIJ7NnsbtMHpGtDpreej-z84NPOQ');
   }
-  
+
   function beforeEachNode() {
     client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
     client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
@@ -68,11 +68,11 @@ describe('Stream client', function () {
     user1ReadOnly = client.feed('user', '11', null, null, {readOnly: true});
     user2ReadOnly = client.feed('user', '22', null, null, {readOnly: true});
   }
-  
+
   var before = (node) ? beforeEachNode : beforeEachBrowser;
 
   beforeEach(before);
-  
+
   it('heroku', function (done) {
     if (!node) {
       done();
@@ -85,7 +85,7 @@ describe('Stream client', function () {
     expect(client.appId).to.eql('1');
     done();
   });
-  
+
   it('heroku legacy', function (done) {
     if (!node) {
       done();
@@ -99,7 +99,7 @@ describe('Stream client', function () {
     expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
     done();
   });
-  
+
   it('heroku with location', function (done) {
     if (!node) {
       done();
@@ -113,7 +113,7 @@ describe('Stream client', function () {
     expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
     done();
   });
-  
+
   it('heroku_overwrite', function (done) {
     if (!node) {
       done();
@@ -126,7 +126,7 @@ describe('Stream client', function () {
     expect(client.appId).to.eql('c');
     done();
   });
-  
+
   it('location support', function (done) {
     if (!node) {
       done();
@@ -166,7 +166,7 @@ describe('Stream client', function () {
     user1.get({'limit': 1}, second);
   });
 
-  
+
   it('signing', function (done) {
     expect(user1.token).to.be.an('string');
     done();
@@ -183,7 +183,7 @@ describe('Stream client', function () {
     done();
   });
   });
-  
+
   it('get wrong feed', function (done) {
     var getFeed = function() { client.feed('flat1');};
     expect(getFeed).to.throwException(function (e) {
@@ -191,7 +191,7 @@ describe('Stream client', function () {
   });
     done();
   });
-  
+
   it('get wrong format', function (done) {
     var getFeed = function() { client.feed('flat:1', '2');};
     expect(getFeed).to.throwException(function (e) {
@@ -199,7 +199,7 @@ describe('Stream client', function () {
   });
     done();
   });
-  
+
   it('get invalid format', function (done) {
     var invalidFormats = [];
     invalidFormats.push(function() { client.feed('flat 1', '2');});
@@ -207,7 +207,7 @@ describe('Stream client', function () {
     invalidFormats.push(function() { user1.follow('flat 1', '3');});
     invalidFormats.push(function() { user1.follow('flat', '3 3');});
     // verify all of the above throw an error
-    for (var i = 0; i < invalidFormats.length; i++) { 
+    for (var i = 0; i < invalidFormats.length; i++) {
       var callable = invalidFormats[i];
         expect(callable).to.throwException(function (e) {
         expect(e).to.be.a(errors.FeedError);
@@ -230,7 +230,7 @@ describe('Stream client', function () {
     }
     user1.addActivity(activity, get);
   });
-  
+
   it('add complex activity', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     activity['participants'] = ['Thierry', 'Tommaso'];
@@ -251,7 +251,7 @@ describe('Stream client', function () {
     }
     user1.addActivity(activity, get);
   });
-  
+
   it('add activity using to', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     activity['participants'] = ['Thierry', 'Tommaso'];
@@ -259,7 +259,7 @@ describe('Stream client', function () {
     activity['to'] = ['flat:33', 'user:everyone'];
     //flat3
     if (!node) activity['to'] = ['flat:33' + ' ' + flat3.token];
-    
+
     function get(error, response, body) {
       var activityId = body['id'];
       expect(error).to.eql(null);
@@ -272,13 +272,13 @@ describe('Stream client', function () {
     }
     user1.addActivity(activity, get);
   });
-  
+
   it('add activity no callback', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     user1.addActivity(activity);
     done();
   });
-  
+
   it('remove activity', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1};
     function remove(error, response, body) {
@@ -291,7 +291,7 @@ describe('Stream client', function () {
     }
     user1.addActivity(activity, remove);
   });
-  
+
   it('remove activity foreign id', function (done) {
     var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1'};
     var now = new Date();
@@ -311,11 +311,11 @@ describe('Stream client', function () {
     }
     user1.addActivity(activity, remove);
   });
-  
+
   it('add activities', function (done) {
   var activities = [
     {'actor': 1, 'verb': 'tweet', 'object': 1},
-    {'actor': 2, 'verb': 'tweet', 'object': 3}, 
+    {'actor': 2, 'verb': 'tweet', 'object': 3},
   ];
     function get(error, response, body) {
       var activityIdFirst = body['activities'][0]['id'];
@@ -329,7 +329,7 @@ describe('Stream client', function () {
     }
     user1.addActivities(activities, get);
   });
-  
+
   it('follow', function (done) {
     var activityId = null;
     this.timeout(9000);
@@ -353,7 +353,7 @@ describe('Stream client', function () {
      }
     add();
   });
-  
+
   it('follow without callback', function (done) {
     aggregated2.follow('user', '111');
     done();
@@ -366,7 +366,7 @@ describe('Stream client', function () {
       done();
     });
   });
-  
+
   it('unfollow', function (done) {
     this.timeout(6000);
     var activityId = null;
@@ -394,7 +394,7 @@ describe('Stream client', function () {
     }
     add();
   });
-  
+
   it('list followers', function (done) {
     function callback(error, response, body){
       expect(error).to.eql(null);
@@ -403,7 +403,7 @@ describe('Stream client', function () {
     };
     user1.followers({limit: '10', offset: '10'}, callback);
   });
-  
+
   it('list following', function (done) {
     function callback(error, response, body){
       expect(error).to.eql(null);
@@ -412,7 +412,7 @@ describe('Stream client', function () {
     };
     user1.following({limit: '10', offset: '10'}, callback);
   });
-  
+
   it('do i follow', function (done) {
     function doifollow() {
       user1.following({'filter': ['flat:33', 'flat:44']}, callback);
@@ -423,11 +423,11 @@ describe('Stream client', function () {
       var results = body.results;
       expect(results.length).to.eql(1);
       expect(results[0].target_id).to.eql('flat:33');
-      done(); 
+      done();
     }
     user1.follow('flat', '33', doifollow);
   });
-  
+
   it('get read-only feed', function (done) {
     function check(error, response, body) {
       expect(response.statusCode).to.eql(200);
@@ -439,7 +439,7 @@ describe('Stream client', function () {
   it('get filtering', function (done) {
     // first add three activities
     //TODO find a library to make async testing easier on the eye
-    
+
     var activityIdOne = null;
     var activityIdTwo = null;
     var activityIdThree = null;
@@ -454,7 +454,7 @@ describe('Stream client', function () {
       var activity = {'actor': 2, 'verb': 'watch', 'object': 2};
       user1.addActivity(activity, add3);
     }
-    
+
     function add3(error, response, body) {
       activityIdTwo = body['id'];
       var activity = {'actor': 3, 'verb': 'run', 'object': 2};
@@ -531,14 +531,14 @@ describe('Stream client', function () {
       expect(body['unseen']).to.eql(0);
       done();
     };
-    
+
   });
-  
+
   it('fayeGetClient', function (done) {
     var client = user1.getFayeClient();
     done();
   });
-  
+
   it('fayeSubscribe', function (done) {
     this.timeout(6000);
     var client = user1.getFayeClient()
@@ -551,7 +551,7 @@ describe('Stream client', function () {
 
   it('fayeSubscribeListening', function(done) {
     this.timeout(6000);
-    
+
     var testUser1 = client.feed('user', '111', 'ksBmfluIarcgjR9e6ptwqkWZWJo'),
         testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM'),
         testUser3 = client.feed('user', '333', '7e4xHA0y1Pn6_iZAv7nu0ujuMXg');
@@ -562,7 +562,7 @@ describe('Stream client', function () {
         activity = {
       'verb': 'test',
       'actor': 'User:1',
-      'object': 1 
+      'object': 1
     };
 
     var msgCallback = function(message) {
@@ -574,10 +574,10 @@ describe('Stream client', function () {
         done();
       }
     };
-    
+
     var httpCallback = function(error, response, body) {
       if(error) done(error);
-      if(response.statusCode !== 201) done(body); 
+      if(response.statusCode !== 201) done(body);
     };
 
     Faye.Promise.all([
@@ -593,7 +593,7 @@ describe('Stream client', function () {
 
   it('fayeSubscribeListeningWrongToken', function(done) {
     this.timeout(6000);
-    
+
     var testUser1 = client.feed('user', '111', 'psuPHwgwoX-PGsg780jcXdO93VM'),
         testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM');
 
@@ -601,12 +601,12 @@ describe('Stream client', function () {
         activity = {
       'verb': 'test',
       'actor': 'User:1',
-      'object': 1 
+      'object': 1
     };
 
     var httpCallback = function(error, response, body) {
       if(error) done(error);
-      if(response.statusCode !== 201) done(body); 
+      if(response.statusCode !== 201) done(body);
     };
 
     var doneYet = function(obj) {
@@ -682,22 +682,19 @@ describe('Stream client', function () {
       } else {
         done();
       }
-    } 
+    }
   };
 
   if(node) {
     // Server side specific tests
 
     it('supports application level authentication', function(done) {
-      this.timeout(6000);  
-
       client.makeSignedRequest({
         url: 'test/auth/digest/'
       }, wrapCB(200, done));
     });
 
     it('fails application level authentication with wrong keys', function(done) {
-      this.timeout(6000);
       var client = stream.connect('aap','noot');
 
       client.makeSignedRequest({
@@ -709,15 +706,13 @@ describe('Stream client', function () {
     });
 
     it('supports adding activity to multiple feeds', function(done) {
-      this.timeout(6000);
-
       var activity = {
         'actor': 'user:11',
         'verb': 'like',
         'object': '000'
       };
       var feeds = ['flat:33', 'user:11'];
-    
+
       client.addToMany(activity, feeds, wrapCB(201, done));
     });
 
@@ -729,18 +724,31 @@ describe('Stream client', function () {
         {'source': 'flat:1', 'target': 'user:2'},
         {'source': 'flat:1', 'target': 'user:3'}
       ];
-    
+
       client.followMany(follows, wrapCB(201, done));
     });
 
     it('no secret application auth', function() {
       var client = stream.connect('ahj2ndz7gsan');
-      
+
       expect(function() {
         client.addToMany({},[])
       }).to.throwError(function(e) {
         expect(e).to.be.a(errors.SiteError);
       });
+    });
+
+    it('batch promises', function (done) {
+      var activity = {
+        'actor': 'user:11',
+        'verb': 'like',
+        'object': '000'
+      };
+      var feeds = ['flat:33', 'user:11'];
+
+      client.addToMany(activity, feeds).then(function(body) {
+        done();
+      }, done);
     });
   } else {
     // Client side specific tests
@@ -749,5 +757,27 @@ describe('Stream client', function () {
       expect(client.makeSignedRequest).to.be(undefined);
     });
   }
-});
 
+  it('get promises', function (done) {
+    user1.get({'limit': 1}).then(function(body) {
+      done();
+    }, done);
+  });
+
+  it('post promises', function (done) {
+    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world'};
+    user1.addActivity(activity).then(function(body) {
+        done();
+    }, done);
+  });
+
+  it('post promises fail', function (done) {
+    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world'};
+    user1.addActivity(activity)
+      .then(function(body) {
+        done('expected failure');
+      }).catch(function(errorObj) {
+        done();
+      });
+  });
+});

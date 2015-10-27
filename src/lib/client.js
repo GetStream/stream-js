@@ -4,6 +4,7 @@ var signing = require('./signing');
 var errors = require('./errors');
 var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
+var Promise = require('faye').Promise;
 
 /**
  * @callback requestCallback
@@ -119,6 +120,39 @@ StreamClient.prototype = {
     }
   },
 
+  wrapPromiseTask: function(cb, fulfill, reject) {
+    /**
+     * Wrap a task to be used as a promise
+     * @method wrapPromiseTask
+     * @memberof StreamClient.prototype
+     * @private
+     * @param {requestCallback} cb
+     * @param {function} fulfill
+     * @param {function} reject
+     * @return {function}
+     */
+    var client = this;
+
+    var callback = this.wrapCallback(cb);
+    return function task(error, response, body) {
+      if (error) {
+        reject({
+          error: error,
+          response: response,
+        });
+      } else if (!/^2/.test('' + response.statusCode)) {
+        reject({
+          error: body,
+          response: response,
+        });
+      } else {
+        fulfill(body);
+      }
+
+      callback.apply(client, arguments);
+    };
+  },
+
   wrapCallback: function(cb) {
     /**
      * Wrap callback for HTTP request
@@ -142,6 +176,12 @@ StreamClient.prototype = {
   },
 
   userAgent: function() {
+    /**
+     * Get the current user agent
+     * @method userAgent
+     * @memberof StreamClient.prototype
+     * @return {string} current user agent
+     */
     var description = (this.node) ? 'node' : 'browser';
     // TODO: get the version here in a way which works in both and browserify
     var version = 'unknown';
@@ -228,7 +268,10 @@ StreamClient.prototype = {
   enrichUrl: function(relativeUrl) {
     /**
      * Combines the base url with version and the relative url
-     * @access private
+     * @method enrichUrl
+     * @memberof StreamClient.prototype
+     * @private
+     * @param {string} relativeUrl
      */
     var url = this.baseUrl + this.version + '/' + relativeUrl;
     return url;
@@ -237,7 +280,10 @@ StreamClient.prototype = {
   enrichKwargs: function(kwargs) {
     /**
      * Adds the API key and the signature
-     * @access private
+     * @method enrichKwargs
+     * @memberof StreamClient.prototype
+     * @param {object} kwargs
+     * @private
      */
     kwargs.url = this.enrichUrl(kwargs.url);
     if (kwargs.qs === undefined) {
@@ -264,13 +310,23 @@ StreamClient.prototype = {
   },
 
   signActivity: function(activity) {
+    /**
+     * We automatically sign the to parameter when in server side mode
+     * @method signActivities
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}       [activity] Activity to sign
+     */
     return this.signActivities([activity])[0];
   },
 
   signActivities: function(activities) {
     /**
      * We automatically sign the to parameter when in server side mode
-     * @access private
+     * @method signActivities
+     * @memberof StreamClient.prototype
+     * @private
+     * @param {array} Activities
      */
     if (!this.apiSecret) {
       return activities;
@@ -296,68 +352,110 @@ StreamClient.prototype = {
   },
 
   getFayeAuthorization: function() {
-      var apiKey = this.apiKey,
-          self = this;
+    /**
+     * Get the authorization middleware to use Faye with getstream.io
+     * @method getFayeAuthorization
+     * @memberof StreamClient.prototype
+     * @private
+     * @return {object} Faye authorization middleware
+     */
+    var apiKey = this.apiKey,
+        self = this;
 
-      return {
-        incoming: function(message, callback) {
-          callback(message);
-        },
+    return {
+      incoming: function(message, callback) {
+        callback(message);
+      },
 
-        outgoing: function(message, callback) {
-          if (message.subscription && self.subscriptions[message.subscription]) {
-            var subscription = self.subscriptions[message.subscription];
+      outgoing: function(message, callback) {
+        if (message.subscription && self.subscriptions[message.subscription]) {
+          var subscription = self.subscriptions[message.subscription];
 
-            message.ext = {
-              'user_id': subscription.userId,
-              'api_key': apiKey,
-              'signature': subscription.token,
-            };
-          }
+          message.ext = {
+            'user_id': subscription.userId,
+            'api_key': apiKey,
+            'signature': subscription.token,
+          };
+        }
 
-          callback(message);
-        },
-      };
-    },
+        callback(message);
+      },
+    };
+  },
 
   getFayeClient: function() {
-      var Faye = require('faye');
-      if (this.fayeClient === null) {
-        this.fayeClient = new Faye.Client(this.fayeUrl);
-        var authExtension = this.getFayeAuthorization();
-        this.fayeClient.addExtension(authExtension);
-      }
+    /**
+     * Returns this client's current Faye client
+     * @method getFayeClient
+     * @memberof StreamClient.prototype
+     * @private
+     * @return {object} Faye client
+     */
+    var Faye = require('faye');
+    if (this.fayeClient === null) {
+      this.fayeClient = new Faye.Client(this.fayeUrl);
+      var authExtension = this.getFayeAuthorization();
+      this.fayeClient.addExtension(authExtension);
+    }
 
-      return this.fayeClient;
-    },
-
-  /*
-   * Shortcuts for post, get and delete HTTP methods
-   *
-   */
+    return this.fayeClient;
+  },
 
   get: function(kwargs, cb) {
-    this.send('request', 'get', kwargs, cb);
-    kwargs = this.enrichKwargs(kwargs);
-    kwargs.method = 'GET';
-    var callback = this.wrapCallback(cb);
-    return request(kwargs, callback);
+    /**
+     * Shorthand function for get request
+     * @method get
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}   kwargs
+     * @param  {requestCallback} cb     Callback to call on completion
+     * @return {Promise}                Promise object
+     */
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'get', kwargs, cb);
+      kwargs = this.enrichKwargs(kwargs);
+      kwargs.method = 'GET';
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      request(kwargs, callback);
+    }.bind(this));
   },
 
   post: function(kwargs, cb) {
-    this.send('request', 'post', kwargs, cb);
-    kwargs = this.enrichKwargs(kwargs);
-    kwargs.method = 'POST';
-    var callback = this.wrapCallback(cb);
-    return request(kwargs, callback);
+    /**
+     * Shorthand function for post request
+     * @method post
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}   kwargs
+     * @param  {requestCallback} cb     Callback to call on completion
+     * @return {Promise}                Promise object
+     */
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'post', kwargs, cb);
+      kwargs = this.enrichKwargs(kwargs);
+      kwargs.method = 'POST';
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      request(kwargs, callback);
+    }.bind(this));
   },
 
   delete: function(kwargs, cb) {
-    this.send('request', 'delete', kwargs, cb);
-    kwargs = this.enrichKwargs(kwargs);
-    kwargs.method = 'DELETE';
-    var callback = this.wrapCallback(cb);
-    return request(kwargs, callback);
+    /**
+     * Shorthand function for delete request
+     * @method delete
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}   kwargs
+     * @param  {requestCallback} cb     Callback to call on completion
+     * @return {Promise}                Promise object
+     */
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'delete', kwargs, cb);
+      kwargs = this.enrichKwargs(kwargs);
+      kwargs.method = 'DELETE';
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      request(kwargs, callback);
+    }.bind(this));
   },
 
 };
