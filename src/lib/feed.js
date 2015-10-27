@@ -11,7 +11,7 @@ var StreamFeed = function() {
 };
 
 StreamFeed.prototype = {
-  initialize: function(client, feedSlug, userId, token, siteId) {
+  initialize: function(client, feedSlug, userId, token) {
     /**
      * Initialize a feed object
      * @method intialize
@@ -20,7 +20,6 @@ StreamFeed.prototype = {
      * @param {string} feedSlug - The feed slug
      * @param {string} userId - The user id
      * @param {string} [token] - The authentication token
-     * @param {string} [siteId] - The site identifier
      */
     this.client = client;
     this.slug = feedSlug;
@@ -44,14 +43,15 @@ StreamFeed.prototype = {
      * @memberof StreamFeed.prototype
      * @param {object} activity - The activity to add
      * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object
      */
     activity = this.client.signActivity(activity);
-    var xhr = this.client.post({
+
+    return this.client.post({
       url: 'feed/' + this.feedUrl + '/',
       body: activity,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   removeActivity: function(activityId, callback) {
@@ -61,7 +61,7 @@ StreamFeed.prototype = {
      * @memberof StreamFeed.prototype
      * @param  {string}   activityId Identifier of activity to remove
      * @param  {requestCallback} callback   Callback to call on completion
-     * @return {object}              XHR request object
+     * @return {Promise} Promise object
      * @example
      * feed.removeActivity(activityId);
      * @example
@@ -73,12 +73,11 @@ StreamFeed.prototype = {
       params['foreign_id'] = '1';
     }
 
-    var xhr = this.client.delete({
+    return this.client.delete({
       url: 'feed/' + this.feedUrl + '/' + identifier + '/',
       qs: params,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   addActivities: function(activities, callback) {
@@ -88,7 +87,7 @@ StreamFeed.prototype = {
      * @memberof StreamFeed.prototype
      * @param  {Array}   activities Array of activities to add
      * @param  {requestCallback} callback   Callback to call on completion
-     * @return {object}              XHR request object
+     * @return {Promise}               XHR request object
      */
     activities = this.client.signActivities(activities);
     var data = {
@@ -112,7 +111,7 @@ StreamFeed.prototype = {
      * @param  {object}   options      Additional options
      * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
      * @param  {requestCallback} callback     Callback to call on completion
-     * @return {object}                XHR request object
+     * @return {Promise}  Promise object
      * @example feed.follow('user', '1');
      * @example feed.follow('user', '1', callback);
      * @example feed.follow('user', '1', options, callback);
@@ -141,12 +140,11 @@ StreamFeed.prototype = {
       body['activity_copy_limit'] = activityCopyLimit;
     }
 
-    var xhr = this.client.post({
+    return this.client.post({
       url: 'feed/' + this.feedUrl + '/following/',
       body: body,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   unfollow: function(targetSlug, targetUserId, callback) {
@@ -178,19 +176,18 @@ StreamFeed.prototype = {
      * @param  {object}   options  Additional options
      * @param  {string}   options.filter Filter to apply on search operation
      * @param  {requestCallback} callback Callback to call on completion
-     * @return {object}            XHR request object
+     * @return {Promise} Promise object
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
     if (options !== undefined && options.filter) {
       options.filter = options.filter.join(',');
     }
 
-    var xhr = this.client.get({
+    return this.client.get({
       url: 'feed/' + this.feedUrl + '/following/',
       qs: options,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   followers: function(options, callback) {
@@ -201,7 +198,7 @@ StreamFeed.prototype = {
      * @param  {object}   options  Additional options
      * @param  {string}   options.filter Filter to apply on search operation
      * @param  {requestCallback} callback Callback to call on completion
-     * @return {object}            XHR request object
+     * @return {Promise} Promise object
      * @example
      * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
@@ -209,12 +206,11 @@ StreamFeed.prototype = {
       options.filter = options.filter.join(',');
     }
 
-    var xhr = this.client.get({
+    return this.client.get({
       url: 'feed/' + this.feedUrl + '/followers/',
       qs: options,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   get: function(options, callback) {
@@ -224,7 +220,7 @@ StreamFeed.prototype = {
      * @memberof StreamFeed.prototype
      * @param  {object}   options  Additional options
      * @param  {requestCallback} callback Callback to call on completion
-     * @return {object}            XHR request object
+     * @return {Promise} Promise object
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
@@ -236,12 +232,11 @@ StreamFeed.prototype = {
       options['mark_seen'] = options['mark_seen'].join(',');
     }
 
-    var xhr = this.client.get({
+    return this.client.get({
       url: 'feed/' + this.feedUrl + '/',
       qs: options,
       signature: this.signature,
     }, callback);
-    return xhr;
   },
 
   getFayeClient: function() {
@@ -261,7 +256,7 @@ StreamFeed.prototype = {
      * @method subscribe
      * @memberof StreamFeed.prototype
      * @param  {function} callback Callback to call on completion
-     * @return {promise}           Promise object
+     * @return {Promise}           Promise object
      * @example
      * feed.subscribe(callback).then(function(){
      * 		console.log('we are now listening to changes');

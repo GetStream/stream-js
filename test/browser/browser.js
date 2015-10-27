@@ -61,14 +61,14 @@
 	describe('Stream client', function () {
 	  /*
 	   * Run these tests
-	   * 
+	   *
 	   * mocha test/integration/index.js
-	   * LOCAL=1 mocha test/integration/index.js  
-	   * 
+	   * LOCAL=1 mocha test/integration/index.js
+	   *
 	   * Browser open
 	   * test.html
 	   * test.html#local=1
-	   * 
+	   *
 	   */
 	  var self = this;
 	  this.timeout(4000);
@@ -89,9 +89,9 @@
 	  }
 	  console.log('node is set to ', node);
 	  errors = stream.errors;
-	  
+
 	  var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
-	  
+
 	  function beforeEachBrowser() {
 	    client = stream.connect('ahj2ndz7gsan');
 	    client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
@@ -109,7 +109,7 @@
 	    notification3 = client.feed('notification', '33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
 	    user1ReadOnly = client.feed('user', '11', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmZWVkX2lkIjoidXNlcjExIiwicmVzb3VyY2UiOiIqIiwiYWN0aW9uIjoicmVhZCIsImlhdCI6MTQzMzkzODYyMX0.8FAc6ja0Gb2IBZjBIJ7NnsbtMHpGtDpreej-z84NPOQ');
 	  }
-	  
+
 	  function beforeEachNode() {
 	    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
 	    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
@@ -122,11 +122,11 @@
 	    user1ReadOnly = client.feed('user', '11', null, null, {readOnly: true});
 	    user2ReadOnly = client.feed('user', '22', null, null, {readOnly: true});
 	  }
-	  
+
 	  var before = (node) ? beforeEachNode : beforeEachBrowser;
 
 	  beforeEach(before);
-	  
+
 	  it('heroku', function (done) {
 	    if (!node) {
 	      done();
@@ -139,7 +139,7 @@
 	    expect(client.appId).to.eql('1');
 	    done();
 	  });
-	  
+
 	  it('heroku legacy', function (done) {
 	    if (!node) {
 	      done();
@@ -153,7 +153,7 @@
 	    expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
 	    done();
 	  });
-	  
+
 	  it('heroku with location', function (done) {
 	    if (!node) {
 	      done();
@@ -167,7 +167,7 @@
 	    expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
 	    done();
 	  });
-	  
+
 	  it('heroku_overwrite', function (done) {
 	    if (!node) {
 	      done();
@@ -180,7 +180,7 @@
 	    expect(client.appId).to.eql('c');
 	    done();
 	  });
-	  
+
 	  it('location support', function (done) {
 	    if (!node) {
 	      done();
@@ -220,7 +220,7 @@
 	    user1.get({'limit': 1}, second);
 	  });
 
-	  
+
 	  it('signing', function (done) {
 	    expect(user1.token).to.be.an('string');
 	    done();
@@ -237,7 +237,7 @@
 	    done();
 	  });
 	  });
-	  
+
 	  it('get wrong feed', function (done) {
 	    var getFeed = function() { client.feed('flat1');};
 	    expect(getFeed).to.throwException(function (e) {
@@ -245,7 +245,7 @@
 	  });
 	    done();
 	  });
-	  
+
 	  it('get wrong format', function (done) {
 	    var getFeed = function() { client.feed('flat:1', '2');};
 	    expect(getFeed).to.throwException(function (e) {
@@ -253,7 +253,7 @@
 	  });
 	    done();
 	  });
-	  
+
 	  it('get invalid format', function (done) {
 	    var invalidFormats = [];
 	    invalidFormats.push(function() { client.feed('flat 1', '2');});
@@ -261,7 +261,7 @@
 	    invalidFormats.push(function() { user1.follow('flat 1', '3');});
 	    invalidFormats.push(function() { user1.follow('flat', '3 3');});
 	    // verify all of the above throw an error
-	    for (var i = 0; i < invalidFormats.length; i++) { 
+	    for (var i = 0; i < invalidFormats.length; i++) {
 	      var callable = invalidFormats[i];
 	        expect(callable).to.throwException(function (e) {
 	        expect(e).to.be.a(errors.FeedError);
@@ -284,7 +284,7 @@
 	    }
 	    user1.addActivity(activity, get);
 	  });
-	  
+
 	  it('add complex activity', function (done) {
 	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 	    activity['participants'] = ['Thierry', 'Tommaso'];
@@ -305,7 +305,7 @@
 	    }
 	    user1.addActivity(activity, get);
 	  });
-	  
+
 	  it('add activity using to', function (done) {
 	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 	    activity['participants'] = ['Thierry', 'Tommaso'];
@@ -313,7 +313,7 @@
 	    activity['to'] = ['flat:33', 'user:everyone'];
 	    //flat3
 	    if (!node) activity['to'] = ['flat:33' + ' ' + flat3.token];
-	    
+
 	    function get(error, response, body) {
 	      var activityId = body['id'];
 	      expect(error).to.eql(null);
@@ -326,13 +326,13 @@
 	    }
 	    user1.addActivity(activity, get);
 	  });
-	  
+
 	  it('add activity no callback', function (done) {
 	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 	    user1.addActivity(activity);
 	    done();
 	  });
-	  
+
 	  it('remove activity', function (done) {
 	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
 	    function remove(error, response, body) {
@@ -345,7 +345,7 @@
 	    }
 	    user1.addActivity(activity, remove);
 	  });
-	  
+
 	  it('remove activity foreign id', function (done) {
 	    var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1'};
 	    var now = new Date();
@@ -365,11 +365,11 @@
 	    }
 	    user1.addActivity(activity, remove);
 	  });
-	  
+
 	  it('add activities', function (done) {
 	  var activities = [
 	    {'actor': 1, 'verb': 'tweet', 'object': 1},
-	    {'actor': 2, 'verb': 'tweet', 'object': 3}, 
+	    {'actor': 2, 'verb': 'tweet', 'object': 3},
 	  ];
 	    function get(error, response, body) {
 	      var activityIdFirst = body['activities'][0]['id'];
@@ -383,7 +383,7 @@
 	    }
 	    user1.addActivities(activities, get);
 	  });
-	  
+
 	  it('follow', function (done) {
 	    var activityId = null;
 	    this.timeout(9000);
@@ -407,7 +407,7 @@
 	     }
 	    add();
 	  });
-	  
+
 	  it('follow without callback', function (done) {
 	    aggregated2.follow('user', '111');
 	    done();
@@ -420,7 +420,7 @@
 	      done();
 	    });
 	  });
-	  
+
 	  it('unfollow', function (done) {
 	    this.timeout(6000);
 	    var activityId = null;
@@ -448,7 +448,7 @@
 	    }
 	    add();
 	  });
-	  
+
 	  it('list followers', function (done) {
 	    function callback(error, response, body){
 	      expect(error).to.eql(null);
@@ -457,7 +457,7 @@
 	    };
 	    user1.followers({limit: '10', offset: '10'}, callback);
 	  });
-	  
+
 	  it('list following', function (done) {
 	    function callback(error, response, body){
 	      expect(error).to.eql(null);
@@ -466,7 +466,7 @@
 	    };
 	    user1.following({limit: '10', offset: '10'}, callback);
 	  });
-	  
+
 	  it('do i follow', function (done) {
 	    function doifollow() {
 	      user1.following({'filter': ['flat:33', 'flat:44']}, callback);
@@ -477,11 +477,11 @@
 	      var results = body.results;
 	      expect(results.length).to.eql(1);
 	      expect(results[0].target_id).to.eql('flat:33');
-	      done(); 
+	      done();
 	    }
 	    user1.follow('flat', '33', doifollow);
 	  });
-	  
+
 	  it('get read-only feed', function (done) {
 	    function check(error, response, body) {
 	      expect(response.statusCode).to.eql(200);
@@ -493,7 +493,7 @@
 	  it('get filtering', function (done) {
 	    // first add three activities
 	    //TODO find a library to make async testing easier on the eye
-	    
+
 	    var activityIdOne = null;
 	    var activityIdTwo = null;
 	    var activityIdThree = null;
@@ -508,7 +508,7 @@
 	      var activity = {'actor': 2, 'verb': 'watch', 'object': 2};
 	      user1.addActivity(activity, add3);
 	    }
-	    
+
 	    function add3(error, response, body) {
 	      activityIdTwo = body['id'];
 	      var activity = {'actor': 3, 'verb': 'run', 'object': 2};
@@ -585,14 +585,14 @@
 	      expect(body['unseen']).to.eql(0);
 	      done();
 	    };
-	    
+
 	  });
-	  
+
 	  it('fayeGetClient', function (done) {
 	    var client = user1.getFayeClient();
 	    done();
 	  });
-	  
+
 	  it('fayeSubscribe', function (done) {
 	    this.timeout(6000);
 	    var client = user1.getFayeClient()
@@ -605,7 +605,7 @@
 
 	  it('fayeSubscribeListening', function(done) {
 	    this.timeout(6000);
-	    
+
 	    var testUser1 = client.feed('user', '111', 'ksBmfluIarcgjR9e6ptwqkWZWJo'),
 	        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM'),
 	        testUser3 = client.feed('user', '333', '7e4xHA0y1Pn6_iZAv7nu0ujuMXg');
@@ -616,7 +616,7 @@
 	        activity = {
 	      'verb': 'test',
 	      'actor': 'User:1',
-	      'object': 1 
+	      'object': 1
 	    };
 
 	    var msgCallback = function(message) {
@@ -628,10 +628,10 @@
 	        done();
 	      }
 	    };
-	    
+
 	    var httpCallback = function(error, response, body) {
 	      if(error) done(error);
-	      if(response.statusCode !== 201) done(body); 
+	      if(response.statusCode !== 201) done(body);
 	    };
 
 	    Faye.Promise.all([
@@ -647,7 +647,7 @@
 
 	  it('fayeSubscribeListeningWrongToken', function(done) {
 	    this.timeout(6000);
-	    
+
 	    var testUser1 = client.feed('user', '111', 'psuPHwgwoX-PGsg780jcXdO93VM'),
 	        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM');
 
@@ -655,12 +655,12 @@
 	        activity = {
 	      'verb': 'test',
 	      'actor': 'User:1',
-	      'object': 1 
+	      'object': 1
 	    };
 
 	    var httpCallback = function(error, response, body) {
 	      if(error) done(error);
-	      if(response.statusCode !== 201) done(body); 
+	      if(response.statusCode !== 201) done(body);
 	    };
 
 	    var doneYet = function(obj) {
@@ -736,22 +736,19 @@
 	      } else {
 	        done();
 	      }
-	    } 
+	    }
 	  };
 
 	  if(node) {
 	    // Server side specific tests
 
 	    it('supports application level authentication', function(done) {
-	      this.timeout(6000);  
-
 	      client.makeSignedRequest({
 	        url: 'test/auth/digest/'
 	      }, wrapCB(200, done));
 	    });
 
 	    it('fails application level authentication with wrong keys', function(done) {
-	      this.timeout(6000);
 	      var client = stream.connect('aap','noot');
 
 	      client.makeSignedRequest({
@@ -763,15 +760,13 @@
 	    });
 
 	    it('supports adding activity to multiple feeds', function(done) {
-	      this.timeout(6000);
-
 	      var activity = {
 	        'actor': 'user:11',
 	        'verb': 'like',
 	        'object': '000'
 	      };
 	      var feeds = ['flat:33', 'user:11'];
-	    
+
 	      client.addToMany(activity, feeds, wrapCB(201, done));
 	    });
 
@@ -783,18 +778,31 @@
 	        {'source': 'flat:1', 'target': 'user:2'},
 	        {'source': 'flat:1', 'target': 'user:3'}
 	      ];
-	    
+
 	      client.followMany(follows, wrapCB(201, done));
 	    });
 
 	    it('no secret application auth', function() {
 	      var client = stream.connect('ahj2ndz7gsan');
-	      
+
 	      expect(function() {
 	        client.addToMany({},[])
 	      }).to.throwError(function(e) {
 	        expect(e).to.be.a(errors.SiteError);
 	      });
+	    });
+
+	    it('batch promises', function (done) {
+	      var activity = {
+	        'actor': 'user:11',
+	        'verb': 'like',
+	        'object': '000'
+	      };
+	      var feeds = ['flat:33', 'user:11'];
+
+	      client.addToMany(activity, feeds).then(function(body) {
+	        done();
+	      }, done);
 	    });
 	  } else {
 	    // Client side specific tests
@@ -803,8 +811,30 @@
 	      expect(client.makeSignedRequest).to.be(undefined);
 	    });
 	  }
-	});
 
+	  it('get promises', function (done) {
+	    user1.get({'limit': 1}).then(function(body) {
+	      done();
+	    }, done);
+	  });
+
+	  it('post promises', function (done) {
+	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world'};
+	    user1.addActivity(activity).then(function(body) {
+	        done();
+	    }, done);
+	  });
+
+	  it('post promises fail', function (done) {
+	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world'};
+	    user1.addActivity(activity)
+	      .then(function(body) {
+	        done('expected failure');
+	      }).catch(function(errorObj) {
+	        done();
+	      });
+	  });
+	});
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
@@ -6888,42 +6918,50 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {
-	//     GetStream client library for node and the browser
-	//     Author: Thierry Schellenbach
-	//     BSD License
-
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * @module stream
+	 * @author Thierry Schellenbach
+	 * BSD License
+	 */
 	var StreamClient = __webpack_require__(12);
 	var errors = __webpack_require__(15);
 	var request = __webpack_require__(13);
 
 	function connect(apiKey, apiSecret, appId, options) {
-		/*
-		 * Usage
-		 * stream.connect(apiKey, apiSecret)
-		 * or if you want to be able to subscribe and listen
-		 * for changes
-		 * stream.connect(apiKey, apiSecret, appId)
-		 * or on heroku
-		 * stream.connect(streamURL)
-		 * where streamURL looks like this
-		 * https://thierry:pass@getstream.io/?app=1
-		 * 
-		 */
-		if (typeof(process) != "undefined" && process.env.STREAM_URL && !apiKey) {
-			var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
-			apiKey = parts[1];
-			apiSecret = parts[2];
-			var location = parts[3];
-			appId = parts[4];
-			if (options === undefined) {
-				options = {};
-			}
-			if (location != 'getstream') {
-				options.location = location;
-			}
-		}
-		return new StreamClient(apiKey, apiSecret, appId, options);
+	  /**
+	   * Create StreamClient
+	   * @method connect
+	   * @param  {string} apiKey    API key
+	   * @param  {string} [apiSecret] API secret (only use this on the server)
+	   * @param  {string} [appId]     Application identifier
+	   * @param  {object} [options]   Additional options
+	   * @param  {string} [options.location] Datacenter location
+	   * @return {StreamClient}     StreamClient
+	   * @example <caption>Basic usage</caption>
+	   * stream.connect(apiKey, apiSecret);
+	   * @example <caption>or if you want to be able to subscribe and listen</caption>
+	   * stream.connect(apiKey, apiSecret, appId);
+	   * @example <caption>or on Heroku</caption>
+	   * stream.connect(streamURL);
+	   * @example <caption>where streamURL looks like</caption>
+	   * "https://thierry:pass@gestream.io/?app=1"
+	   */
+	  if (typeof (process) !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+	    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
+	    apiKey = parts[1];
+	    apiSecret = parts[2];
+	    var location = parts[3];
+	    appId = parts[4];
+	    if (options === undefined) {
+	      options = {};
+	    }
+
+	    if (location !== 'getstream') {
+	      options.location = location;
+	    }
+	  }
+
+	  return new StreamClient(apiKey, apiSecret, appId, options);
 	}
 
 	module.exports.connect = connect;
@@ -6943,297 +6981,466 @@
 	var errors = __webpack_require__(15);
 	var utils = __webpack_require__(16);
 	var BatchOperations = __webpack_require__(21);
+	var Promise = __webpack_require__(9).Promise;
+
+	/**
+	 * @callback requestCallback
+	 * @param {object} [errors]
+	 * @param {object} response
+	 * @param {object} body
+	 */
 
 	var StreamClient = function() {
-	    this.initialize.apply(this, arguments);
+	  /**
+	   * Client to connect to Stream api
+	   * @class StreamClient
+	   */
+	  this.initialize.apply(this, arguments);
 	};
 
 	StreamClient.prototype = {
-	    baseUrl: 'https://api.getstream.io/api/',
+	  baseUrl: 'https://api.getstream.io/api/',
 
-	    initialize: function(apiKey, apiSecret, appId, options) {
-	        /*
-	         * initialize is not directly called by via stream.connect, ie:
-	         * stream.connect(apiKey, apiSecret)
-	         * secret is optional and only used in server side mode
-	         * stream.connect(apiKey, null, appId);
-	         */
-	        this.apiKey = apiKey;
-	        this.apiSecret = apiSecret;
-	        this.appId = appId;
-	        this.options = options || {};
-	        this.version = this.options.version || 'v1.0';
-	        this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
-			    this.fayeClient = null;
-	        // track a source name for the api calls, ie get started or databrowser
-	        this.group = this.options.group || 'unspecified';
-	        // track subscriptions made on feeds created by this client
-	        this.subscriptions = {};
-	        // which data center to use
-	        this.location = this.options.location;
-	        if (this.location) {
-	        	this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
-	        }
-	        if (typeof(process) !== "undefined" && process.env.LOCAL) {
-	            this.baseUrl = 'http://localhost:8000/api/';
-	        }
-	        if (typeof(process) !== "undefined" && process.env.LOCAL_FAYE) {
-	            this.fayeUrl = 'http://localhost:9999/faye/';
-	        }
-	        this.handlers = {};
-	        this.browser = typeof(window) !== 'undefined';
-	        this.node = !this.browser;
+	  initialize: function(apiKey, apiSecret, appId, options) {
+	    /**
+	     * Initialize a client
+	     * @method intialize
+	     * @memberof StreamClient.prototype
+	     * @param {string} apiKey - the api key
+	     * @param {string} [apiSecret] - the api secret
+	     * @param {string} [appId] - id of the app
+	     * @param {object} options - additional options
+	     * @param {string} options.location - which data center to use
+	     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
+	     * stream.connect(apiKey, apiSecret)
+	     * @example <caption>secret is optional and only used in server side mode</caption>
+	     * stream.connect(apiKey, null, appId);
+	     */
+	    this.apiKey = apiKey;
+	    this.apiSecret = apiSecret;
+	    this.appId = appId;
+	    this.options = options || {};
+	    this.version = this.options.version || 'v1.0';
+	    this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+	    this.fayeClient = null;
+	    // track a source name for the api calls, ie get started or databrowser
+	    this.group = this.options.group || 'unspecified';
+	    // track subscriptions made on feeds created by this client
+	    this.subscriptions = {};
+	    // which data center to use
+	    this.location = this.options.location;
+	    if (this.location) {
+	      this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+	    }
 
-	        if (this.browser && this.apiSecret) {
-	            throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
-	        }
-	    },
+	    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
+	      this.baseUrl = 'http://localhost:8000/api/';
+	    }
 
-	    on: function(event, callback) {
-	        /*
-	         * Support for global event callbacks
-	         * This is useful for generic error and loading handling
-	         *
-	         * client.on('request', callback);
-	         * client.on('response', callback);
-	         *
-	         */
-	        this.handlers[event] = callback;
-	    },
+	    if (typeof (process) !== 'undefined' && process.env.LOCAL_FAYE) {
+	      this.fayeUrl = 'http://localhost:9999/faye/';
+	    }
 
-	    off: function(key) {
-	        /*
-	         * client.off() removes all handlers
-	         * client.off(name) removes the specified handler
-	         */
-	        if (key === undefined) {
-	            this.handlers = {};
-	        } else {
-	            delete this.handlers[key];
-	        }
-	    },
+	    this.handlers = {};
+	    this.browser = typeof (window) !== 'undefined';
+	    this.node = !this.browser;
 
-	    send: function() {
-	        /*
-	         * Call the given handler with the arguments
-	         */
-	        var args = Array.prototype.slice.call(arguments);
-	        var key = args[0];
-	        args = args.slice(1);
-	        if (this.handlers[key]) {
-	            this.handlers[key].apply(this, args);
-	        }
-	    },
+	    if (this.browser && this.apiSecret) {
+	      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
+	    }
+	  },
 
+	  on: function(event, callback) {
+	    /**
+	     * Support for global event callbacks
+	     * This is useful for generic error and loading handling
+	     * @method on
+	     * @memberof StreamClient.prototype
+	     * @param {string} event - Name of the event
+	     * @param {function} callback - Function that is called when the event fires
+	     * @example
+	     * client.on('request', callback);
+	     * client.on('response', callback);
+	     */
+	    this.handlers[event] = callback;
+	  },
 
-	    wrapCallback: function(cb) {
-	        var client = this;
+	  off: function(key) {
+	    /**
+	     * Remove one or more event handlers
+	     * @method off
+	     * @memberof StreamClient.prototype
+	     * @param {string} [key] - Name of the handler
+	     * @example
+	     * client.off() removes all handlers
+	     * client.off(name) removes the specified handler
+	     */
+	    if (key === undefined) {
+	      this.handlers = {};
+	    } else {
+	      delete this.handlers[key];
+	    }
+	  },
 
-	        function callback() {
-	            // first hit the global callback, subsequently forward
-	            var args = Array.prototype.slice.call(arguments);
-	            var sendArgs = ['response'].concat(args);
-	            client.send.apply(client, sendArgs);
-	            if (cb !== undefined) {
-	                cb.apply(client, args);
-	            }
-	        }
-	        return callback;
-	    },
+	  send: function() {
+	    /**
+	     * Call the given handler with the arguments
+	     * @method send
+	     * @memberof StreamClient.prototype
+	     * @access private
+	     */
+	    var args = Array.prototype.slice.call(arguments);
+	    var key = args[0];
+	    args = args.slice(1);
+	    if (this.handlers[key]) {
+	      this.handlers[key].apply(this, args);
+	    }
+	  },
 
-	    userAgent: function() {
-	        var description = (this.node) ? 'node' : 'browser';
-	        // TODO: get the version here in a way which works in both and browserify
-	        var version = 'unknown';
-	        return 'stream-javascript-client-' + description + '-' + version;
-	    },
+	  wrapPromiseTask: function(cb, fulfill, reject) {
+	    /**
+	     * Wrap a task to be used as a promise
+	     * @method wrapPromiseTask
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {requestCallback} cb
+	     * @param {function} fulfill
+	     * @param {function} reject
+	     * @return {function}
+	     */
+	    var client = this;
 
-	    getReadOnlyToken: function(feedSlug, userId) {
-	        /*
-	         * Returns a token that allows only read operations
-	         *
-	         * client.getReadOnlyToken('user', '1');
-	         */
-	         var feedId = '' + feedSlug + userId;
-	         return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
-	    },
-
-	    getReadWriteToken: function(feedSlug, userId) {
-	        /*
-	         * Returns a token that allows read and write operations
-	         *
-	         * client.getReadWriteToken('user', '1');
-	         */
-	         var feedId = '' + feedSlug + userId;
-	         return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
-	    },
-
-	    feed: function(feedSlug, userId, token, siteId, options) {
-	        /*
-	         * Returns a feed object for the given feed id and token
-	         * Example:
-	         *
-	         * client.feed('user', '1', 'token2');
-	         */
-
-	        options = options || {};
-
-	        if (!feedSlug || !userId) {
-	            throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
-	        }
-	        
-	        if (feedSlug.indexOf(':') !== -1) {
-	        	throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
-	        }
-	        
-	        utils.validateFeedSlug(feedSlug);
-	        utils.validateUserId(userId);
-
-	        // raise an error if there is no token
-	        if (!this.apiSecret && !token) {
-	            throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
-	        }
-
-	        // create the token in server side mode
-	        if (this.apiSecret && !token) {
-	            var feedId = '' + feedSlug + userId;
-	            // use scoped token if read-only access is necessary
-	            token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
-	        }
-
-	        var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
-	        return feed;
-	    },
-
-	    enrichUrl: function(relativeUrl) {
-	        /*
-	         * Combines the base url with version and the relative url
-	         */
-	        var url = this.baseUrl + this.version + '/' + relativeUrl;
-	        return url;
-	    },
-
-	    enrichKwargs: function(kwargs) {
-	        /*
-	         * Adds the API key and the signature
-	         */
-	        kwargs.url = this.enrichUrl(kwargs.url);
-	        if (kwargs.qs === undefined) {
-	            kwargs.qs = {};
-	        }
-	        kwargs.qs.api_key = this.apiKey;
-	        kwargs.qs.location = this.group;
-	        kwargs.json = true;
-	        var signature = kwargs.signature || this.signature;
-	        kwargs.headers = {};
-
-	        // auto-detect authentication type and set HTTP headers accordingly
-	        if (signing.isJWTSignature(signature)) {
-	            kwargs.headers['stream-auth-type'] = 'jwt';
-	            signature = signature.split(' ').reverse()[0];
-	        } else {
-	            kwargs.headers['stream-auth-type'] = 'simple';
-	        }
-
-	        kwargs.headers.Authorization = signature;
-	        kwargs.headers['X-Stream-Client'] = this.userAgent();
-	        return kwargs;
-	    },
-
-	    signActivity: function(activity) {
-	        return this.signActivities([activity])[0];
-	    },
-
-	    signActivities: function(activities) {
-	        /*
-	         * We automatically sign the to parameter when in server side mode
-	         */
-	        if (!this.apiSecret) {
-	            return activities;
-	        }
-
-	        for (var i = 0; i < activities.length; i++) {
-	            var activity = activities[i];
-	            var to = activity.to || [];
-	            var signedTo = [];
-	            for (var j = 0; j < to.length; j++) {
-	                var feedId = to[j];
-	                var feedSlug = feedId.split(':')[0];
-	                var userId = feedId.split(':')[1];
-	                var token = this.feed(feedSlug, userId).token;
-	                var signedFeed = feedId + ' ' + token;
-	                signedTo.push(signedFeed);
-	            }
-	            activity.to = signedTo;
-	        }
-	        return activities;
-	    },
-
-	    getFayeAuthorization : function() {
-	      var apiKey = this.apiKey,
-	          self = this;
-	      return {
-	        incoming : function(message, callback) {
-	          callback(message);
-	        },
-	        outgoing : function(message, callback) {
-	          if( message.subscription && self.subscriptions[message.subscription] ) {
-	            var subscription = self.subscriptions[message.subscription];
-
-	            message.ext = {
-	              'user_id' : subscription.userId,
-	              'api_key' : apiKey,
-	              'signature' : subscription.token 
-	            };
-	          }
-	          callback(message);
-	        }
-	      };
-	    },
-
-	    getFayeClient : function() {
-	      var Faye = __webpack_require__(9);
-	      if (this.fayeClient === null) {
-	        this.fayeClient = new Faye.Client(this.fayeUrl);
-	        var authExtension = this.getFayeAuthorization();
-	        this.fayeClient.addExtension(authExtension);
+	    var callback = this.wrapCallback(cb);
+	    return function task(error, response, body) {
+	      if (error) {
+	        reject({
+	          error: error,
+	          response: response,
+	        });
+	      } else if (!/^2/.test('' + response.statusCode)) {
+	        reject({
+	          error: body,
+	          response: response,
+	        });
+	      } else {
+	        fulfill(body);
 	      }
-	      return this.fayeClient;
-	    },
 
-	    /*
-	     * Shortcuts for post, get and delete HTTP methods
+	      callback.apply(client, arguments);
+	    };
+	  },
+
+	  wrapCallback: function(cb) {
+	    /**
+	     * Wrap callback for HTTP request
+	     * @method wrapCallBack
+	     * @memberof StreamClient.prototype
+	     * @access private
+	     */
+	    var client = this;
+
+	    function callback() {
+	      // first hit the global callback, subsequently forward
+	      var args = Array.prototype.slice.call(arguments);
+	      var sendArgs = ['response'].concat(args);
+	      client.send.apply(client, sendArgs);
+	      if (cb !== undefined) {
+	        cb.apply(client, args);
+	      }
+	    }
+
+	    return callback;
+	  },
+
+	  userAgent: function() {
+	    /**
+	     * Get the current user agent
+	     * @method userAgent
+	     * @memberof StreamClient.prototype
+	     * @return {string} current user agent
+	     */
+	    var description = (this.node) ? 'node' : 'browser';
+	    // TODO: get the version here in a way which works in both and browserify
+	    var version = 'unknown';
+	    return 'stream-javascript-client-' + description + '-' + version;
+	  },
+
+	  getReadOnlyToken: function(feedSlug, userId) {
+	    /**
+	     * Returns a token that allows only read operations
 	     *
+	     * @method getReadOnlyToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadOnlyToken('user', '1');
+	     */
+	    var feedId = '' + feedSlug + userId;
+	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+	  },
+
+	  getReadWriteToken: function(feedSlug, userId) {
+	    /**
+	     * Returns a token that allows read and write operations
+	     *
+	     * @method getReadWriteToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadWriteToken('user', '1');
+	     */
+	    var feedId = '' + feedSlug + userId;
+	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+	  },
+
+	  feed: function(feedSlug, userId, token, siteId, options) {
+	    /**
+	     * Returns a feed object for the given feed id and token
+	     * @method feed
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug
+	     * @param {string} userId - The user identifier
+	     * @param {string} [token] - The token
+	     * @param {string} [siteId] - The site identifier
+	     * @param {object} [options] - Additional function options
+	     * @param {boolean} [options.readOnly] - A boolean indicating whether to generate a read only token for this feed
+	     * @return {StreamFeed}
+	     * @example
+	     * client.feed('user', '1', 'token2');
 	     */
 
-	    get: function(kwargs, cb) {
-	        this.send('request', 'get', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'GET';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
-	    },
-	    post: function(kwargs, cb) {
-	        this.send('request', 'post', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'POST';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
-	    },
-	    delete: function(kwargs, cb) {
-	        this.send('request', 'delete', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'DELETE';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
-	    },
+	    options = options || {};
+
+	    if (!feedSlug || !userId) {
+	      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+	    }
+
+	    if (feedSlug.indexOf(':') !== -1) {
+	      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+	    }
+
+	    utils.validateFeedSlug(feedSlug);
+	    utils.validateUserId(userId);
+
+	    // raise an error if there is no token
+	    if (!this.apiSecret && !token) {
+	      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+	    }
+
+	    // create the token in server side mode
+	    if (this.apiSecret && !token) {
+	      var feedId = '' + feedSlug + userId;
+	      // use scoped token if read-only access is necessary
+	      token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
+	    }
+
+	    var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
+	    return feed;
+	  },
+
+	  enrichUrl: function(relativeUrl) {
+	    /**
+	     * Combines the base url with version and the relative url
+	     * @method enrichUrl
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {string} relativeUrl
+	     */
+	    var url = this.baseUrl + this.version + '/' + relativeUrl;
+	    return url;
+	  },
+
+	  enrichKwargs: function(kwargs) {
+	    /**
+	     * Adds the API key and the signature
+	     * @method enrichKwargs
+	     * @memberof StreamClient.prototype
+	     * @param {object} kwargs
+	     * @private
+	     */
+	    kwargs.url = this.enrichUrl(kwargs.url);
+	    if (kwargs.qs === undefined) {
+	      kwargs.qs = {};
+	    }
+
+	    kwargs.qs['api_key'] = this.apiKey;
+	    kwargs.qs.location = this.group;
+	    kwargs.json = true;
+	    var signature = kwargs.signature || this.signature;
+	    kwargs.headers = {};
+
+	    // auto-detect authentication type and set HTTP headers accordingly
+	    if (signing.isJWTSignature(signature)) {
+	      kwargs.headers['stream-auth-type'] = 'jwt';
+	      signature = signature.split(' ').reverse()[0];
+	    } else {
+	      kwargs.headers['stream-auth-type'] = 'simple';
+	    }
+
+	    kwargs.headers.Authorization = signature;
+	    kwargs.headers['X-Stream-Client'] = this.userAgent();
+	    return kwargs;
+	  },
+
+	  signActivity: function(activity) {
+	    /**
+	     * We automatically sign the to parameter when in server side mode
+	     * @method signActivities
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}       [activity] Activity to sign
+	     */
+	    return this.signActivities([activity])[0];
+	  },
+
+	  signActivities: function(activities) {
+	    /**
+	     * We automatically sign the to parameter when in server side mode
+	     * @method signActivities
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {array} Activities
+	     */
+	    if (!this.apiSecret) {
+	      return activities;
+	    }
+
+	    for (var i = 0; i < activities.length; i++) {
+	      var activity = activities[i];
+	      var to = activity.to || [];
+	      var signedTo = [];
+	      for (var j = 0; j < to.length; j++) {
+	        var feedId = to[j];
+	        var feedSlug = feedId.split(':')[0];
+	        var userId = feedId.split(':')[1];
+	        var token = this.feed(feedSlug, userId).token;
+	        var signedFeed = feedId + ' ' + token;
+	        signedTo.push(signedFeed);
+	      }
+
+	      activity.to = signedTo;
+	    }
+
+	    return activities;
+	  },
+
+	  getFayeAuthorization: function() {
+	    /**
+	     * Get the authorization middleware to use Faye with getstream.io
+	     * @method getFayeAuthorization
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @return {object} Faye authorization middleware
+	     */
+	    var apiKey = this.apiKey,
+	        self = this;
+
+	    return {
+	      incoming: function(message, callback) {
+	        callback(message);
+	      },
+
+	      outgoing: function(message, callback) {
+	        if (message.subscription && self.subscriptions[message.subscription]) {
+	          var subscription = self.subscriptions[message.subscription];
+
+	          message.ext = {
+	            'user_id': subscription.userId,
+	            'api_key': apiKey,
+	            'signature': subscription.token,
+	          };
+	        }
+
+	        callback(message);
+	      },
+	    };
+	  },
+
+	  getFayeClient: function() {
+	    /**
+	     * Returns this client's current Faye client
+	     * @method getFayeClient
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @return {object} Faye client
+	     */
+	    var Faye = __webpack_require__(9);
+	    if (this.fayeClient === null) {
+	      this.fayeClient = new Faye.Client(this.fayeUrl);
+	      var authExtension = this.getFayeAuthorization();
+	      this.fayeClient.addExtension(authExtension);
+	    }
+
+	    return this.fayeClient;
+	  },
+
+	  get: function(kwargs, cb) {
+	    /**
+	     * Shorthand function for get request
+	     * @method get
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise(function(fulfill, reject) {
+	      this.send('request', 'get', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'GET';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }.bind(this));
+	  },
+
+	  post: function(kwargs, cb) {
+	    /**
+	     * Shorthand function for post request
+	     * @method post
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise(function(fulfill, reject) {
+	      this.send('request', 'post', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'POST';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }.bind(this));
+	  },
+
+	  delete: function(kwargs, cb) {
+	    /**
+	     * Shorthand function for delete request
+	     * @method delete
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise(function(fulfill, reject) {
+	      this.send('request', 'delete', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'DELETE';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }.bind(this));
+	  },
 
 	};
 
 	// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
-	if(BatchOperations) {
-	  for(var key in BatchOperations) {
-	    if(BatchOperations.hasOwnProperty(key)) {
+	if (BatchOperations) {
+	  for (var key in BatchOperations) {
+	    if (BatchOperations.hasOwnProperty(key)) {
 	      StreamClient.prototype[key] = BatchOperations[key];
 	    }
 	  }
@@ -7751,210 +7958,280 @@
 	var utils = __webpack_require__(16);
 
 	var StreamFeed = function() {
-		this.initialize.apply(this, arguments);
+	  /**
+	   * Manage api calls for specific feeds
+	   * The feed object contains convenience functions such add activity, remove activity etc
+	   * @class StreamFeed
+	   */
+	  this.initialize.apply(this, arguments);
 	};
 
 	StreamFeed.prototype = {
-		/*
-		 * The feed object contains convenience functions such add activity
-		 * remove activity etc
-		 *
-		 */
-		initialize : function(client, feedSlug, userId, token, siteId) {
-			this.client = client;
-			this.slug = feedSlug;
-			this.userId = userId;
-			this.id = this.slug + ':' + this.userId;
-			this.token = token;
+	  initialize: function(client, feedSlug, userId, token) {
+	    /**
+	     * Initialize a feed object
+	     * @method intialize
+	     * @memberof StreamFeed.prototype
+	     * @param {StreamClient} client - The stream client this feed is constructed from
+	     * @param {string} feedSlug - The feed slug
+	     * @param {string} userId - The user id
+	     * @param {string} [token] - The authentication token
+	     */
+	    this.client = client;
+	    this.slug = feedSlug;
+	    this.userId = userId;
+	    this.id = this.slug + ':' + this.userId;
+	    this.token = token;
 
-			this.feedUrl = this.id.replace(':', '/');
-			this.feedTogether = this.id.replace(':', '');
-			this.signature = this.feedTogether + ' ' + this.token;
+	    this.feedUrl = this.id.replace(':', '/');
+	    this.feedTogether = this.id.replace(':', '');
+	    this.signature = this.feedTogether + ' ' + this.token;
 
-			// faye setup
-			this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
-		},
-		addActivity : function(activity, callback) {
-			/*
-			 * Adds the given activity to the feed and
-			 * calls the specified callback
-			 */
-			activity = this.client.signActivity(activity);
-			var xhr = this.client.post({
-				'url' : 'feed/' + this.feedUrl + '/',
-				'body' : activity,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		removeActivity : function(activityId, callback) {
-			/*
-			 * Removes the activity by activityId
-			 * feed.removeActivity(activityId);
-			 * Or
-			 * feed.removeActivity({'foreign_id': foreignId});
-			 */
-			var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
-			var params = {};
-			if (activityId.foreignId) {
-				params.foreign_id = '1';
-			}
-			var xhr = this.client.delete( {
-				'url' : 'feed/' + this.feedUrl + '/' + identifier + '/',
-				'qs' : params,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		addActivities : function(activities, callback) {
-			/*
-			 * Adds the given activities to the feed and
-			 * calls the specified callback
-			 */
-			activities = this.client.signActivities(activities);
-			var data = {
-				activities : activities
-			};
-			var xhr = this.client.post({
-				'url' : 'feed/' + this.feedUrl + '/',
-				'body' : data,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		follow : function(targetSlug, targetUserId, options, callback) {
-			/*
-			 * feed.follow('user', '1');
-			 * or
-			 * feed.follow('user', '1', callback);
-	     * or
-	     * feed.follow('user', '1', options, callback);
-			 */
-			utils.validateFeedSlug(targetSlug);
-			utils.validateUserId(targetUserId);
+	    // faye setup
+	    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
+	  },
 
-			var targetToken, activityCopyLimit;
-			var last = arguments[arguments.length - 1];
-			// callback is always the last argument
-			callback = (last.call) ? last : undefined;
-			var target = targetSlug + ':' + targetUserId;
+	  addActivity: function(activity, callback) {
+	    /**
+	     * Adds the given activity to the feed and
+	     * calls the specified callback
+	     * @method addActivity
+	     * @memberof StreamFeed.prototype
+	     * @param {object} activity - The activity to add
+	     * @param {requestCallback} callback - Callback to call on completion
+	     * @return {Promise} Promise object
+	     */
+	    activity = this.client.signActivity(activity);
+
+	    return this.client.post({
+	      url: 'feed/' + this.feedUrl + '/',
+	      body: activity,
+	      signature: this.signature,
+	    }, callback);
+	  },
+
+	  removeActivity: function(activityId, callback) {
+	    /**
+	     * Removes the activity by activityId
+	     * @method removeActivity
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   activityId Identifier of activity to remove
+	     * @param  {requestCallback} callback   Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example
+	     * feed.removeActivity(activityId);
+	     * @example
+	     * feed.removeActivity({'foreign_id': foreignId});
+	     */
+	    var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
+	    var params = {};
+	    if (activityId.foreignId) {
+	      params['foreign_id'] = '1';
+	    }
+
+	    return this.client.delete({
+	      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
+	      qs: params,
+	      signature: this.signature,
+	    }, callback);
+	  },
+
+	  addActivities: function(activities, callback) {
+	    /**
+	     * Adds the given activities to the feed and calls the specified callback
+	     * @method addActivities
+	     * @memberof StreamFeed.prototype
+	     * @param  {Array}   activities Array of activities to add
+	     * @param  {requestCallback} callback   Callback to call on completion
+	     * @return {Promise}               XHR request object
+	     */
+	    activities = this.client.signActivities(activities);
+	    var data = {
+	      activities: activities,
+	    };
+	    var xhr = this.client.post({
+	      url: 'feed/' + this.feedUrl + '/',
+	      body: data,
+	      signature: this.signature,
+	    }, callback);
+	    return xhr;
+	  },
+
+	  follow: function(targetSlug, targetUserId, options, callback) {
+	    /**
+	     * Follows the given target feed
+	     * @method follow
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   targetSlug   Slug of the target feed
+	     * @param  {string}   targetUserId User identifier of the target feed
+	     * @param  {object}   options      Additional options
+	     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
+	     * @param  {requestCallback} callback     Callback to call on completion
+	     * @return {Promise}  Promise object
+	     * @example feed.follow('user', '1');
+	     * @example feed.follow('user', '1', callback);
+	     * @example feed.follow('user', '1', options, callback);
+	     */
+	    utils.validateFeedSlug(targetSlug);
+	    utils.validateUserId(targetUserId);
+
+	    var activityCopyLimit;
+	    var last = arguments[arguments.length - 1];
+	    // callback is always the last argument
+	    callback = (last.call) ? last : undefined;
+	    var target = targetSlug + ':' + targetUserId;
 
 	    // check for additional options
-	    if(options && !options.call) {
-	      if(options.limit) {
+	    if (options && !options.call) {
+	      if (options.limit) {
 	        activityCopyLimit = options.limit;
 	      }
 	    }
 
 	    var body = {
-	      'target': target
+	      target: target,
 	    };
 
-	    if(activityCopyLimit) {
+	    if (activityCopyLimit) {
 	      body['activity_copy_limit'] = activityCopyLimit;
 	    }
 
-			var xhr = this.client.post({
-				'url' : 'feed/' + this.feedUrl + '/following/',
-				'body' : body,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		unfollow : function(targetSlug, targetUserId, callback) {
-			/*
-			 * Unfollow the given feed, ie:
-			 * feed.unfollow('user', '2', callback);
-			 */
-			utils.validateFeedSlug(targetSlug);
-			utils.validateUserId(targetUserId);
-			var targetFeedId = targetSlug + ':' + targetUserId;
-			var xhr = this.client.delete( {
-				'url' : 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		following : function(options, callback) {
-			/*
-			 * List which feeds this feed is following
-			 * 
-			 * feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
-			 */
-			if (options !== undefined && options.filter) {
-				options.filter = options.filter.join(',');
-			}
-			var xhr = this.client.get({
-				'url' : 'feed/' + this.feedUrl + '/following/',
-				'qs' : options,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		followers : function(options, callback) {
-			/*
-			 * List the followers of this feed
-			 * 
-			 * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
-			 */
-			if (options !== undefined && options.filter) {
-				options.filter = options.filter.join(',');
-			}
-			var xhr = this.client.get({
-				'url' : 'feed/' + this.feedUrl + '/followers/',
-				'qs' : options,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
-		get : function(options, callback) {
-			/*
-			 * Reads the feed
-			 * 
-			 * feed.get({limit: 10, id_lte: 'activity-id'})
-			 * or
-			 * feed.get({limit: 10, mark_seen: true})
-			 */
-			if (options && options.mark_read && options.mark_read.join) {
-				options.mark_read = options.mark_read.join(',');
-			}
-			if (options && options.mark_seen && options.mark_seen.join) {
-				options.mark_seen = options.mark_seen.join(',');
-			}
+	    return this.client.post({
+	      url: 'feed/' + this.feedUrl + '/following/',
+	      body: body,
+	      signature: this.signature,
+	    }, callback);
+	  },
 
-			var xhr = this.client.get({
-				'url' : 'feed/' + this.feedUrl + '/',
-				'qs' : options,
-				'signature' : this.signature
-			}, callback);
-			return xhr;
-		},
+	  unfollow: function(targetSlug, targetUserId, callback) {
+	    /**
+	     * Unfollow the given feed
+	     * @method unfollow
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   targetSlug   Slug of the target feed
+	     * @param  {string}   targetUserId [description]
+	     * @param  {requestCallback} callback     Callback to call on completion
+	     * @return {object}                XHR request object
+	     * @example feed.unfollow('user', '2', callback);
+	     */
+	    utils.validateFeedSlug(targetSlug);
+	    utils.validateUserId(targetUserId);
+	    var targetFeedId = targetSlug + ':' + targetUserId;
+	    var xhr = this.client.delete({
+	      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+	      signature: this.signature,
+	    }, callback);
+	    return xhr;
+	  },
 
-	  getFayeClient : function() {
+	  following: function(options, callback) {
+	    /**
+	     * List which feeds this feed is following
+	     * @method following
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {string}   options.filter Filter to apply on search operation
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
+	     */
+	    if (options !== undefined && options.filter) {
+	      options.filter = options.filter.join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/following/',
+	      qs: options,
+	      signature: this.signature,
+	    }, callback);
+	  },
+
+	  followers: function(options, callback) {
+	    /**
+	     * List the followers of this feed
+	     * @method followers
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {string}   options.filter Filter to apply on search operation
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example
+	     * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
+	     */
+	    if (options !== undefined && options.filter) {
+	      options.filter = options.filter.join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/followers/',
+	      qs: options,
+	      signature: this.signature,
+	    }, callback);
+	  },
+
+	  get: function(options, callback) {
+	    /**
+	     * Reads the feed
+	     * @method get
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example feed.get({limit: 10, id_lte: 'activity-id'})
+	     * @example feed.get({limit: 10, mark_seen: true})
+	     */
+	    if (options && options['mark_read'] && options['mark_read'].join) {
+	      options['mark_read'] = options['mark_read'].join(',');
+	    }
+
+	    if (options && options['mark_seen'] && options['mark_seen'].join) {
+	      options['mark_seen'] = options['mark_seen'].join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/',
+	      qs: options,
+	      signature: this.signature,
+	    }, callback);
+	  },
+
+	  getFayeClient: function() {
+	    /**
+	     * Returns the current faye client object
+	     * @method getFayeClient
+	     * @memberof StreamFeed.prototype
+	     * @access private
+	     * @return {object} Faye client
+	     */
 	    return this.client.getFayeClient();
 	  },
 
-		subscribe : function(callback) {
-			/*
-			 * subscribes to any changes in the feed, return a promise
-			 * feed.subscribe(callback).then(function(){
-			 * 		console.log('we are now listening to changes');
-			 * });
-			 */
-			if (!this.client.appId) {
-				throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
-			}
+	  subscribe: function(callback) {
+	    /**
+	     * Subscribes to any changes in the feed, return a promise
+	     * @method subscribe
+	     * @memberof StreamFeed.prototype
+	     * @param  {function} callback Callback to call on completion
+	     * @return {Promise}           Promise object
+	     * @example
+	     * feed.subscribe(callback).then(function(){
+	     * 		console.log('we are now listening to changes');
+	     * });
+	     */
+	    if (!this.client.appId) {
+	      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
+	    }
 
 	    this.client.subscriptions['/' + this.notificationChannel] = {
-	      'token': this.token,
-	      'userId': this.notificationChannel 
+	      token: this.token,
+	      userId: this.notificationChannel,
 	    };
 
-			return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
-		}
+	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+	  },
 	};
 
-	module.exports = StreamFeed; 
+	module.exports = StreamFeed;
 
 
 /***/ },
@@ -7963,21 +8240,28 @@
 
 	var errors = module.exports;
 
-	var canCapture = ( typeof Error.captureStackTrace === 'function');
+	var canCapture = (typeof Error.captureStackTrace === 'function');
 	var canStack = !!(new Error()).stack;
 
+	/**
+	 * Abstract error object
+	 * @class ErrorAbstract
+	 * @access private
+	 * @param  {string}      [msg]         Error message
+	 * @param  {function}    constructor
+	 */
 	function ErrorAbstract(msg, constructor) {
-		this.message = msg;
+	  this.message = msg;
 
-		Error.call(this, this.message);
+	  Error.call(this, this.message);
 
-		if (canCapture) {
-			Error.captureStackTrace(this, constructor);
-		} else if (canStack) {
-			this.stack = (new Error()).stack;
-		} else {
-			this.stack = '';
-		}
+	  if (canCapture) {
+	    Error.captureStackTrace(this, constructor);
+	  } else if (canStack) {
+	    this.stack = (new Error()).stack;
+	  } else {
+	    this.stack = '';
+	  }
 	}
 
 	errors._Abstract = ErrorAbstract;
@@ -7985,18 +8269,31 @@
 
 	/**
 	 * FeedError
+	 * @class FeedError
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
 	 * @param {String} [msg] - An error message that will probably end up in a log.
 	 */
 	errors.FeedError = function FeedError(msg) {
-		ErrorAbstract.call(this, msg);
+	  ErrorAbstract.call(this, msg);
 	};
+
 	errors.FeedError.prototype = new ErrorAbstract();
 
+	/**
+	 * SiteError
+	 * @class SiteError
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
+	 * @param  {string}  [msg]  An error message that will probably end up in a log.
+	 */
 	errors.SiteError = function SiteError(msg) {
-		ErrorAbstract.call(this, msg);
+	  ErrorAbstract.call(this, msg);
 	};
-	errors.SiteError.prototype = new ErrorAbstract();
 
+	errors.SiteError.prototype = new ErrorAbstract();
 
 
 /***/ },
@@ -8006,47 +8303,50 @@
 	var errors = __webpack_require__(15);
 	var validRe = /^[\w-]+$/;
 
-
 	function validateFeedId(feedId) {
-		/*
-		 * Validate that the feedId matches the spec user:1
-		 */
-		var parts = feedId.split(':');
-		if (parts.length !== 2) {
-	        throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
-		}
-		var feedSlug = parts[0];
-		var userId = parts[1];
-		validateFeedSlug(feedSlug);
-		validateUserId(userId);
-		return feedId;
+	  /*
+	  	 * Validate that the feedId matches the spec user:1
+	  	 */
+	  var parts = feedId.split(':');
+	  if (parts.length !== 2) {
+	    throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
+	  }
+
+	  var feedSlug = parts[0];
+	  var userId = parts[1];
+	  validateFeedSlug(feedSlug);
+	  validateUserId(userId);
+	  return feedId;
 	}
+
 	exports.validateFeedId = validateFeedId;
 
-
 	function validateFeedSlug(feedSlug) {
-		/*
-		 * Validate that the feedSlug matches \w
-		 */
-		var valid = validRe.test(feedSlug);
-		if (!valid) {
-	        throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
-		}
-		return feedSlug;
+	  /*
+	  	 * Validate that the feedSlug matches \w
+	  	 */
+	  var valid = validRe.test(feedSlug);
+	  if (!valid) {
+	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
+	  }
+
+	  return feedSlug;
 	}
+
 	exports.validateFeedSlug = validateFeedSlug;
 
-
 	function validateUserId(userId) {
-		/*
-		 * Validate the userId matches \w
-		 */
-		var valid = validRe.test(userId);
-		if (!valid) {
-	        throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
-		}
-		return userId;	
+	  /*
+	  	 * Validate the userId matches \w
+	  	 */
+	  var valid = validRe.test(userId);
+	  if (!valid) {
+	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
+	  }
+
+	  return userId;
 	}
+
 	exports.validateUserId = validateUserId;
 
 
@@ -8061,27 +8361,27 @@
 	var Base64 = __webpack_require__(20);
 
 	function makeUrlSafe(s) {
-	    /*
-	     * Makes the given base64 encoded string urlsafe
-	     */
-	    var escaped = s.replace(/\+/g, '-').replace(/\//g, '_');
-	    return escaped.replace(/^=+/, '').replace(/=+$/, '');
+	  /*
+	   * Makes the given base64 encoded string urlsafe
+	   */
+	  var escaped = s.replace(/\+/g, '-').replace(/\//g, '_');
+	  return escaped.replace(/^=+/, '').replace(/=+$/, '');
 	}
 
 	function decodeBase64Url(base64UrlString) {
 	  try {
 	    return Base64.atob(toBase64(base64UrlString));
-	  } catch(e) {
-	    if(e.name === 'InvalidCharacterError') {
+	  } catch (e) {
+	    if (e.name === 'InvalidCharacterError') {
 	      return undefined;
 	    } else {
 	      throw e;
 	    }
-	  } 
+	  }
 	}
 
 	function safeJsonParse(thing) {
-	  if (typeof(thing) === "object") return thing;
+	  if (typeof (thing) === 'object') return thing;
 	  try {
 	    return JSON.parse(thing);
 	  } catch (e) {
@@ -8090,15 +8390,15 @@
 	}
 
 	function padString(string) {
-	    var segmentLength = 4;
-	    var diff = string.length % segmentLength;
-	    if (!diff)
-	        return string;
-	    var padLength = segmentLength - diff;
+	  var segmentLength = 4;
+	  var diff = string.length % segmentLength;
+	  if (!diff)
+	      return string;
+	  var padLength = segmentLength - diff;
 
-	    while (padLength--)
-	      string += '=';
-	    return string;
+	  while (padLength--)
+	    string += '=';
+	  return string;
 	}
 
 	function toBase64(base64UrlString) {
@@ -8116,43 +8416,43 @@
 	exports.headerFromJWS = headerFromJWS;
 
 	exports.sign = function(apiSecret, feedId) {
-	    /*
-	     * Setup sha1 based on the secret
-	     * Get the digest of the value
-	     * Base64 encode the result
-	     *
-	     * Also see
-	     * https://github.com/tbarbugli/stream-ruby/blob/master/lib/stream/signer.rb
-	     * https://github.com/tschellenbach/stream-python/blob/master/stream/signing.py
-	     *
-	     * Steps
-	     * apiSecret: tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su
-	     * feedId: flat1
-	     * digest: Q\xb6\xd5+\x82\xd58\xdeu\x80\xc5\xe3\xb8\xa5bL1\xf1\xa3\xdb
-	     * token: UbbVK4LVON51gMXjuKViTDHxo9s
-	     */
-	    var hashedSecret = new crypto.createHash('sha1').update(apiSecret).digest();
-	    var hmac = crypto.createHmac('sha1', hashedSecret);
-	    var digest = hmac.update(feedId).digest('base64');
-	    var token = makeUrlSafe(digest);
-	    return token;
+	  /*
+	   * Setup sha1 based on the secret
+	   * Get the digest of the value
+	   * Base64 encode the result
+	   *
+	   * Also see
+	   * https://github.com/tbarbugli/stream-ruby/blob/master/lib/stream/signer.rb
+	   * https://github.com/tschellenbach/stream-python/blob/master/stream/signing.py
+	   *
+	   * Steps
+	   * apiSecret: tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su
+	   * feedId: flat1
+	   * digest: Q\xb6\xd5+\x82\xd58\xdeu\x80\xc5\xe3\xb8\xa5bL1\xf1\xa3\xdb
+	   * token: UbbVK4LVON51gMXjuKViTDHxo9s
+	   */
+	  var hashedSecret = new crypto.createHash('sha1').update(apiSecret).digest();
+	  var hmac = crypto.createHmac('sha1', hashedSecret);
+	  var digest = hmac.update(feedId).digest('base64');
+	  var token = makeUrlSafe(digest);
+	  return token;
 	};
 
 	exports.JWTScopeToken = function(apiSecret, feedId, resource, action) {
-	    /*
-	     * Creates the JWT token for feedId, resource and action using the apiSecret
-	     */
-	    var payload = {feed_id:feedId, resource:resource, action:action};
-	    var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256'});
-	    return token;
+	  /*
+	   * Creates the JWT token for feedId, resource and action using the apiSecret
+	   */
+	  var payload = {'feed_id':feedId, resource:resource, action:action};
+	  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256'});
+	  return token;
 	};
 
 	exports.isJWTSignature = function(signature) {
-	    /*
-	     * check if token is a valid JWT token
-	     */
-	    var token = signature.split(' ')[1];
-	    return JWS_REGEX.test(token) && !!headerFromJWS(token);
+	  /*
+	   * check if token is a valid JWT token
+	   */
+	  var token = signature.split(' ')[1];
+	  return JWS_REGEX.test(token) && !!headerFromJWS(token);
 	};
 
 
@@ -8248,6 +8548,8 @@
 	var expect = __webpack_require__(3);
 	var jwt = __webpack_require__(23);
 	var qc = __webpack_require__(24);
+	var utils = __webpack_require__(16);
+	var errors = __webpack_require__(15);
 	var node = typeof(window) === 'undefined';
 
 	var signing = signing || __webpack_require__(17);
@@ -8294,7 +8596,7 @@
 
 	  it('should validate valid jwts', function() {
 	    expect( signing.isJWTSignature(validSignature) ).to.be(true);
-	  }); 
+	  });
 
 	  it('should validate unvalid jwts', function() {
 	    expect( signing.isJWTSignature(invalidSignature) ).to.be(false);
@@ -8303,10 +8605,23 @@
 	  if(node) {
 	    it('should decode valid jwts headers', function() {
 	      expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
-	    });  
+	    });
 	  }
 	});
 
+	describe('Utility functions', function() {
+	  it('should validate feed id\'s', function() {
+	    expect(utils.validateFeedId('flat:0')).to.be.ok();
+	  });
+
+	  it('should throw exception while validating faulty feed id',function() {
+	    expect(function() {
+	      utils.validateFeedId('b134u92fval')
+	    }).to.throwError(function(e) {
+	      expect(e).to.be.a(errors.FeedError);
+	    });
+	  });
+	});
 
 
 /***/ },

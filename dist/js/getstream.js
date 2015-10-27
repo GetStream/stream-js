@@ -54,11 +54,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {
-	//     GetStream client library for node and the browser
-	//     Author: Thierry Schellenbach
-	//     BSD License
-
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * @module stream
+	 * @author Thierry Schellenbach
+	 * BSD License
+	 */
 	'use strict';
 
 	var StreamClient = __webpack_require__(2);
@@ -66,32 +66,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	var request = __webpack_require__(3);
 
 	function connect(apiKey, apiSecret, appId, options) {
-		/*
-	  * Usage
-	  * stream.connect(apiKey, apiSecret)
-	  * or if you want to be able to subscribe and listen
-	  * for changes
-	  * stream.connect(apiKey, apiSecret, appId)
-	  * or on heroku
-	  * stream.connect(streamURL)
-	  * where streamURL looks like this
-	  * https://thierry:pass@getstream.io/?app=1
-	  * 
-	  */
-		if (typeof process != "undefined" && process.env.STREAM_URL && !apiKey) {
-			var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
-			apiKey = parts[1];
-			apiSecret = parts[2];
-			var location = parts[3];
-			appId = parts[4];
-			if (options === undefined) {
-				options = {};
-			}
-			if (location != 'getstream') {
-				options.location = location;
-			}
-		}
-		return new StreamClient(apiKey, apiSecret, appId, options);
+	  /**
+	   * Create StreamClient
+	   * @method connect
+	   * @param  {string} apiKey    API key
+	   * @param  {string} [apiSecret] API secret (only use this on the server)
+	   * @param  {string} [appId]     Application identifier
+	   * @param  {object} [options]   Additional options
+	   * @param  {string} [options.location] Datacenter location
+	   * @return {StreamClient}     StreamClient
+	   * @example <caption>Basic usage</caption>
+	   * stream.connect(apiKey, apiSecret);
+	   * @example <caption>or if you want to be able to subscribe and listen</caption>
+	   * stream.connect(apiKey, apiSecret, appId);
+	   * @example <caption>or on Heroku</caption>
+	   * stream.connect(streamURL);
+	   * @example <caption>where streamURL looks like</caption>
+	   * "https://thierry:pass@gestream.io/?app=1"
+	   */
+	  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+	    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
+	    apiKey = parts[1];
+	    apiSecret = parts[2];
+	    var location = parts[3];
+	    appId = parts[4];
+	    if (options === undefined) {
+	      options = {};
+	    }
+
+	    if (location !== 'getstream') {
+	      options.location = location;
+	    }
+	  }
+
+	  return new StreamClient(apiKey, apiSecret, appId, options);
 	}
 
 	module.exports.connect = connect;
@@ -209,299 +217,469 @@ return /******/ (function(modules) { // webpackBootstrap
 	var errors = __webpack_require__(5);
 	var utils = __webpack_require__(6);
 	var BatchOperations = __webpack_require__(9);
+	var Promise = __webpack_require__(11).Promise;
+
+	/**
+	 * @callback requestCallback
+	 * @param {object} [errors]
+	 * @param {object} response
+	 * @param {object} body
+	 */
 
 	var StreamClient = function StreamClient() {
-	    this.initialize.apply(this, arguments);
+	  /**
+	   * Client to connect to Stream api
+	   * @class StreamClient
+	   */
+	  this.initialize.apply(this, arguments);
 	};
 
 	StreamClient.prototype = {
-	    baseUrl: 'https://api.getstream.io/api/',
+	  baseUrl: 'https://api.getstream.io/api/',
 
-	    initialize: function initialize(apiKey, apiSecret, appId, options) {
-	        /*
-	         * initialize is not directly called by via stream.connect, ie:
-	         * stream.connect(apiKey, apiSecret)
-	         * secret is optional and only used in server side mode
-	         * stream.connect(apiKey, null, appId);
-	         */
-	        this.apiKey = apiKey;
-	        this.apiSecret = apiSecret;
-	        this.appId = appId;
-	        this.options = options || {};
-	        this.version = this.options.version || 'v1.0';
-	        this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
-	        this.fayeClient = null;
-	        // track a source name for the api calls, ie get started or databrowser
-	        this.group = this.options.group || 'unspecified';
-	        // track subscriptions made on feeds created by this client
-	        this.subscriptions = {};
-	        // which data center to use
-	        this.location = this.options.location;
-	        if (this.location) {
-	            this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
-	        }
-	        if (typeof process !== "undefined" && process.env.LOCAL) {
-	            this.baseUrl = 'http://localhost:8000/api/';
-	        }
-	        if (typeof process !== "undefined" && process.env.LOCAL_FAYE) {
-	            this.fayeUrl = 'http://localhost:9999/faye/';
-	        }
-	        this.handlers = {};
-	        this.browser = typeof window !== 'undefined';
-	        this.node = !this.browser;
+	  initialize: function initialize(apiKey, apiSecret, appId, options) {
+	    /**
+	     * Initialize a client
+	     * @method intialize
+	     * @memberof StreamClient.prototype
+	     * @param {string} apiKey - the api key
+	     * @param {string} [apiSecret] - the api secret
+	     * @param {string} [appId] - id of the app
+	     * @param {object} options - additional options
+	     * @param {string} options.location - which data center to use
+	     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
+	     * stream.connect(apiKey, apiSecret)
+	     * @example <caption>secret is optional and only used in server side mode</caption>
+	     * stream.connect(apiKey, null, appId);
+	     */
+	    this.apiKey = apiKey;
+	    this.apiSecret = apiSecret;
+	    this.appId = appId;
+	    this.options = options || {};
+	    this.version = this.options.version || 'v1.0';
+	    this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+	    this.fayeClient = null;
+	    // track a source name for the api calls, ie get started or databrowser
+	    this.group = this.options.group || 'unspecified';
+	    // track subscriptions made on feeds created by this client
+	    this.subscriptions = {};
+	    // which data center to use
+	    this.location = this.options.location;
+	    if (this.location) {
+	      this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+	    }
 
-	        if (this.browser && this.apiSecret) {
-	            throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
-	        }
-	    },
+	    if (typeof process !== 'undefined' && process.env.LOCAL) {
+	      this.baseUrl = 'http://localhost:8000/api/';
+	    }
 
-	    on: function on(event, callback) {
-	        /*
-	         * Support for global event callbacks
-	         * This is useful for generic error and loading handling
-	         *
-	         * client.on('request', callback);
-	         * client.on('response', callback);
-	         *
-	         */
-	        this.handlers[event] = callback;
-	    },
+	    if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
+	      this.fayeUrl = 'http://localhost:9999/faye/';
+	    }
 
-	    off: function off(key) {
-	        /*
-	         * client.off() removes all handlers
-	         * client.off(name) removes the specified handler
-	         */
-	        if (key === undefined) {
-	            this.handlers = {};
-	        } else {
-	            delete this.handlers[key];
-	        }
-	    },
+	    this.handlers = {};
+	    this.browser = typeof window !== 'undefined';
+	    this.node = !this.browser;
 
-	    send: function send() {
-	        /*
-	         * Call the given handler with the arguments
-	         */
-	        var args = Array.prototype.slice.call(arguments);
-	        var key = args[0];
-	        args = args.slice(1);
-	        if (this.handlers[key]) {
-	            this.handlers[key].apply(this, args);
-	        }
-	    },
+	    if (this.browser && this.apiSecret) {
+	      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
+	    }
+	  },
 
-	    wrapCallback: function wrapCallback(cb) {
-	        var client = this;
+	  on: function on(event, callback) {
+	    /**
+	     * Support for global event callbacks
+	     * This is useful for generic error and loading handling
+	     * @method on
+	     * @memberof StreamClient.prototype
+	     * @param {string} event - Name of the event
+	     * @param {function} callback - Function that is called when the event fires
+	     * @example
+	     * client.on('request', callback);
+	     * client.on('response', callback);
+	     */
+	    this.handlers[event] = callback;
+	  },
 
-	        function callback() {
-	            // first hit the global callback, subsequently forward
-	            var args = Array.prototype.slice.call(arguments);
-	            var sendArgs = ['response'].concat(args);
-	            client.send.apply(client, sendArgs);
-	            if (cb !== undefined) {
-	                cb.apply(client, args);
-	            }
-	        }
-	        return callback;
-	    },
+	  off: function off(key) {
+	    /**
+	     * Remove one or more event handlers
+	     * @method off
+	     * @memberof StreamClient.prototype
+	     * @param {string} [key] - Name of the handler
+	     * @example
+	     * client.off() removes all handlers
+	     * client.off(name) removes the specified handler
+	     */
+	    if (key === undefined) {
+	      this.handlers = {};
+	    } else {
+	      delete this.handlers[key];
+	    }
+	  },
 
-	    userAgent: function userAgent() {
-	        var description = this.node ? 'node' : 'browser';
-	        // TODO: get the version here in a way which works in both and browserify
-	        var version = 'unknown';
-	        return 'stream-javascript-client-' + description + '-' + version;
-	    },
+	  send: function send() {
+	    /**
+	     * Call the given handler with the arguments
+	     * @method send
+	     * @memberof StreamClient.prototype
+	     * @access private
+	     */
+	    var args = Array.prototype.slice.call(arguments);
+	    var key = args[0];
+	    args = args.slice(1);
+	    if (this.handlers[key]) {
+	      this.handlers[key].apply(this, args);
+	    }
+	  },
 
-	    getReadOnlyToken: function getReadOnlyToken(feedSlug, userId) {
-	        /*
-	         * Returns a token that allows only read operations
-	         *
-	         * client.getReadOnlyToken('user', '1');
-	         */
-	        var feedId = '' + feedSlug + userId;
-	        return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
-	    },
+	  wrapPromiseTask: function wrapPromiseTask(cb, fulfill, reject) {
+	    /**
+	     * Wrap a task to be used as a promise
+	     * @method wrapPromiseTask
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {requestCallback} cb
+	     * @param {function} fulfill
+	     * @param {function} reject
+	     * @return {function}
+	     */
+	    var client = this;
 
-	    getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
-	        /*
-	         * Returns a token that allows read and write operations
-	         *
-	         * client.getReadWriteToken('user', '1');
-	         */
-	        var feedId = '' + feedSlug + userId;
-	        return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
-	    },
+	    var callback = this.wrapCallback(cb);
+	    return function task(error, response, body) {
+	      if (error) {
+	        reject({
+	          error: error,
+	          response: response
+	        });
+	      } else if (!/^2/.test('' + response.statusCode)) {
+	        reject({
+	          error: body,
+	          response: response
+	        });
+	      } else {
+	        fulfill(body);
+	      }
 
-	    feed: function feed(feedSlug, userId, token, siteId, options) {
-	        /*
-	         * Returns a feed object for the given feed id and token
-	         * Example:
-	         *
-	         * client.feed('user', '1', 'token2');
-	         */
+	      callback.apply(client, arguments);
+	    };
+	  },
 
-	        options = options || {};
+	  wrapCallback: function wrapCallback(cb) {
+	    /**
+	     * Wrap callback for HTTP request
+	     * @method wrapCallBack
+	     * @memberof StreamClient.prototype
+	     * @access private
+	     */
+	    var client = this;
 
-	        if (!feedSlug || !userId) {
-	            throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
-	        }
+	    function callback() {
+	      // first hit the global callback, subsequently forward
+	      var args = Array.prototype.slice.call(arguments);
+	      var sendArgs = ['response'].concat(args);
+	      client.send.apply(client, sendArgs);
+	      if (cb !== undefined) {
+	        cb.apply(client, args);
+	      }
+	    }
 
-	        if (feedSlug.indexOf(':') !== -1) {
-	            throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
-	        }
+	    return callback;
+	  },
 
-	        utils.validateFeedSlug(feedSlug);
-	        utils.validateUserId(userId);
+	  userAgent: function userAgent() {
+	    /**
+	     * Get the current user agent
+	     * @method userAgent
+	     * @memberof StreamClient.prototype
+	     * @return {string} current user agent
+	     */
+	    var description = this.node ? 'node' : 'browser';
+	    // TODO: get the version here in a way which works in both and browserify
+	    var version = 'unknown';
+	    return 'stream-javascript-client-' + description + '-' + version;
+	  },
 
-	        // raise an error if there is no token
-	        if (!this.apiSecret && !token) {
-	            throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
-	        }
-
-	        // create the token in server side mode
-	        if (this.apiSecret && !token) {
-	            var feedId = '' + feedSlug + userId;
-	            // use scoped token if read-only access is necessary
-	            token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
-	        }
-
-	        var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
-	        return feed;
-	    },
-
-	    enrichUrl: function enrichUrl(relativeUrl) {
-	        /*
-	         * Combines the base url with version and the relative url
-	         */
-	        var url = this.baseUrl + this.version + '/' + relativeUrl;
-	        return url;
-	    },
-
-	    enrichKwargs: function enrichKwargs(kwargs) {
-	        /*
-	         * Adds the API key and the signature
-	         */
-	        kwargs.url = this.enrichUrl(kwargs.url);
-	        if (kwargs.qs === undefined) {
-	            kwargs.qs = {};
-	        }
-	        kwargs.qs.api_key = this.apiKey;
-	        kwargs.qs.location = this.group;
-	        kwargs.json = true;
-	        var signature = kwargs.signature || this.signature;
-	        kwargs.headers = {};
-
-	        // auto-detect authentication type and set HTTP headers accordingly
-	        if (signing.isJWTSignature(signature)) {
-	            kwargs.headers['stream-auth-type'] = 'jwt';
-	            signature = signature.split(' ').reverse()[0];
-	        } else {
-	            kwargs.headers['stream-auth-type'] = 'simple';
-	        }
-
-	        kwargs.headers.Authorization = signature;
-	        kwargs.headers['X-Stream-Client'] = this.userAgent();
-	        return kwargs;
-	    },
-
-	    signActivity: function signActivity(activity) {
-	        return this.signActivities([activity])[0];
-	    },
-
-	    signActivities: function signActivities(activities) {
-	        /*
-	         * We automatically sign the to parameter when in server side mode
-	         */
-	        if (!this.apiSecret) {
-	            return activities;
-	        }
-
-	        for (var i = 0; i < activities.length; i++) {
-	            var activity = activities[i];
-	            var to = activity.to || [];
-	            var signedTo = [];
-	            for (var j = 0; j < to.length; j++) {
-	                var feedId = to[j];
-	                var feedSlug = feedId.split(':')[0];
-	                var userId = feedId.split(':')[1];
-	                var token = this.feed(feedSlug, userId).token;
-	                var signedFeed = feedId + ' ' + token;
-	                signedTo.push(signedFeed);
-	            }
-	            activity.to = signedTo;
-	        }
-	        return activities;
-	    },
-
-	    getFayeAuthorization: function getFayeAuthorization() {
-	        var apiKey = this.apiKey,
-	            self = this;
-	        return {
-	            incoming: function incoming(message, callback) {
-	                callback(message);
-	            },
-	            outgoing: function outgoing(message, callback) {
-	                if (message.subscription && self.subscriptions[message.subscription]) {
-	                    var subscription = self.subscriptions[message.subscription];
-
-	                    message.ext = {
-	                        'user_id': subscription.userId,
-	                        'api_key': apiKey,
-	                        'signature': subscription.token
-	                    };
-	                }
-	                callback(message);
-	            }
-	        };
-	    },
-
-	    getFayeClient: function getFayeClient() {
-	        var Faye = __webpack_require__(11);
-	        if (this.fayeClient === null) {
-	            this.fayeClient = new Faye.Client(this.fayeUrl);
-	            var authExtension = this.getFayeAuthorization();
-	            this.fayeClient.addExtension(authExtension);
-	        }
-	        return this.fayeClient;
-	    },
-
-	    /*
-	     * Shortcuts for post, get and delete HTTP methods
+	  getReadOnlyToken: function getReadOnlyToken(feedSlug, userId) {
+	    /**
+	     * Returns a token that allows only read operations
 	     *
+	     * @method getReadOnlyToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadOnlyToken('user', '1');
+	     */
+	    var feedId = '' + feedSlug + userId;
+	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+	  },
+
+	  getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
+	    /**
+	     * Returns a token that allows read and write operations
+	     *
+	     * @method getReadWriteToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadWriteToken('user', '1');
+	     */
+	    var feedId = '' + feedSlug + userId;
+	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+	  },
+
+	  feed: function feed(feedSlug, userId, token, siteId, options) {
+	    /**
+	     * Returns a feed object for the given feed id and token
+	     * @method feed
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug
+	     * @param {string} userId - The user identifier
+	     * @param {string} [token] - The token
+	     * @param {string} [siteId] - The site identifier
+	     * @param {object} [options] - Additional function options
+	     * @param {boolean} [options.readOnly] - A boolean indicating whether to generate a read only token for this feed
+	     * @return {StreamFeed}
+	     * @example
+	     * client.feed('user', '1', 'token2');
 	     */
 
-	    get: function get(kwargs, cb) {
-	        this.send('request', 'get', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'GET';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
-	    },
-	    post: function post(kwargs, cb) {
-	        this.send('request', 'post', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'POST';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
-	    },
-	    'delete': function _delete(kwargs, cb) {
-	        this.send('request', 'delete', kwargs, cb);
-	        kwargs = this.enrichKwargs(kwargs);
-	        kwargs.method = 'DELETE';
-	        var callback = this.wrapCallback(cb);
-	        return request(kwargs, callback);
+	    options = options || {};
+
+	    if (!feedSlug || !userId) {
+	      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
 	    }
+
+	    if (feedSlug.indexOf(':') !== -1) {
+	      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+	    }
+
+	    utils.validateFeedSlug(feedSlug);
+	    utils.validateUserId(userId);
+
+	    // raise an error if there is no token
+	    if (!this.apiSecret && !token) {
+	      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+	    }
+
+	    // create the token in server side mode
+	    if (this.apiSecret && !token) {
+	      var feedId = '' + feedSlug + userId;
+	      // use scoped token if read-only access is necessary
+	      token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
+	    }
+
+	    var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
+	    return feed;
+	  },
+
+	  enrichUrl: function enrichUrl(relativeUrl) {
+	    /**
+	     * Combines the base url with version and the relative url
+	     * @method enrichUrl
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {string} relativeUrl
+	     */
+	    var url = this.baseUrl + this.version + '/' + relativeUrl;
+	    return url;
+	  },
+
+	  enrichKwargs: function enrichKwargs(kwargs) {
+	    /**
+	     * Adds the API key and the signature
+	     * @method enrichKwargs
+	     * @memberof StreamClient.prototype
+	     * @param {object} kwargs
+	     * @private
+	     */
+	    kwargs.url = this.enrichUrl(kwargs.url);
+	    if (kwargs.qs === undefined) {
+	      kwargs.qs = {};
+	    }
+
+	    kwargs.qs['api_key'] = this.apiKey;
+	    kwargs.qs.location = this.group;
+	    kwargs.json = true;
+	    var signature = kwargs.signature || this.signature;
+	    kwargs.headers = {};
+
+	    // auto-detect authentication type and set HTTP headers accordingly
+	    if (signing.isJWTSignature(signature)) {
+	      kwargs.headers['stream-auth-type'] = 'jwt';
+	      signature = signature.split(' ').reverse()[0];
+	    } else {
+	      kwargs.headers['stream-auth-type'] = 'simple';
+	    }
+
+	    kwargs.headers.Authorization = signature;
+	    kwargs.headers['X-Stream-Client'] = this.userAgent();
+	    return kwargs;
+	  },
+
+	  signActivity: function signActivity(activity) {
+	    /**
+	     * We automatically sign the to parameter when in server side mode
+	     * @method signActivities
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}       [activity] Activity to sign
+	     */
+	    return this.signActivities([activity])[0];
+	  },
+
+	  signActivities: function signActivities(activities) {
+	    /**
+	     * We automatically sign the to parameter when in server side mode
+	     * @method signActivities
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param {array} Activities
+	     */
+	    if (!this.apiSecret) {
+	      return activities;
+	    }
+
+	    for (var i = 0; i < activities.length; i++) {
+	      var activity = activities[i];
+	      var to = activity.to || [];
+	      var signedTo = [];
+	      for (var j = 0; j < to.length; j++) {
+	        var feedId = to[j];
+	        var feedSlug = feedId.split(':')[0];
+	        var userId = feedId.split(':')[1];
+	        var token = this.feed(feedSlug, userId).token;
+	        var signedFeed = feedId + ' ' + token;
+	        signedTo.push(signedFeed);
+	      }
+
+	      activity.to = signedTo;
+	    }
+
+	    return activities;
+	  },
+
+	  getFayeAuthorization: function getFayeAuthorization() {
+	    /**
+	     * Get the authorization middleware to use Faye with getstream.io
+	     * @method getFayeAuthorization
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @return {object} Faye authorization middleware
+	     */
+	    var apiKey = this.apiKey,
+	        self = this;
+
+	    return {
+	      incoming: function incoming(message, callback) {
+	        callback(message);
+	      },
+
+	      outgoing: function outgoing(message, callback) {
+	        if (message.subscription && self.subscriptions[message.subscription]) {
+	          var subscription = self.subscriptions[message.subscription];
+
+	          message.ext = {
+	            'user_id': subscription.userId,
+	            'api_key': apiKey,
+	            'signature': subscription.token
+	          };
+	        }
+
+	        callback(message);
+	      }
+	    };
+	  },
+
+	  getFayeClient: function getFayeClient() {
+	    /**
+	     * Returns this client's current Faye client
+	     * @method getFayeClient
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @return {object} Faye client
+	     */
+	    var Faye = __webpack_require__(11);
+	    if (this.fayeClient === null) {
+	      this.fayeClient = new Faye.Client(this.fayeUrl);
+	      var authExtension = this.getFayeAuthorization();
+	      this.fayeClient.addExtension(authExtension);
+	    }
+
+	    return this.fayeClient;
+	  },
+
+	  get: function get(kwargs, cb) {
+	    /**
+	     * Shorthand function for get request
+	     * @method get
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise((function (fulfill, reject) {
+	      this.send('request', 'get', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'GET';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }).bind(this));
+	  },
+
+	  post: function post(kwargs, cb) {
+	    /**
+	     * Shorthand function for post request
+	     * @method post
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise((function (fulfill, reject) {
+	      this.send('request', 'post', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'POST';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }).bind(this));
+	  },
+
+	  'delete': function _delete(kwargs, cb) {
+	    /**
+	     * Shorthand function for delete request
+	     * @method delete
+	     * @memberof StreamClient.prototype
+	     * @private
+	     * @param  {object}   kwargs
+	     * @param  {requestCallback} cb     Callback to call on completion
+	     * @return {Promise}                Promise object
+	     */
+	    return new Promise((function (fulfill, reject) {
+	      this.send('request', 'delete', kwargs, cb);
+	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.method = 'DELETE';
+	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+	      request(kwargs, callback);
+	    }).bind(this));
+	  }
 
 	};
 
 	// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 	if (BatchOperations) {
-	    for (var key in BatchOperations) {
-	        if (BatchOperations.hasOwnProperty(key)) {
-	            StreamClient.prototype[key] = BatchOperations[key];
-	        }
+	  for (var key in BatchOperations) {
+	    if (BatchOperations.hasOwnProperty(key)) {
+	      StreamClient.prototype[key] = BatchOperations[key];
 	    }
+	  }
 	}
 
 	module.exports = StreamClient;
@@ -1017,207 +1195,277 @@ return /******/ (function(modules) { // webpackBootstrap
 	var utils = __webpack_require__(6);
 
 	var StreamFeed = function StreamFeed() {
-		this.initialize.apply(this, arguments);
+	  /**
+	   * Manage api calls for specific feeds
+	   * The feed object contains convenience functions such add activity, remove activity etc
+	   * @class StreamFeed
+	   */
+	  this.initialize.apply(this, arguments);
 	};
 
 	StreamFeed.prototype = {
-		/*
-	  * The feed object contains convenience functions such add activity
-	  * remove activity etc
-	  *
-	  */
-		initialize: function initialize(client, feedSlug, userId, token, siteId) {
-			this.client = client;
-			this.slug = feedSlug;
-			this.userId = userId;
-			this.id = this.slug + ':' + this.userId;
-			this.token = token;
+	  initialize: function initialize(client, feedSlug, userId, token) {
+	    /**
+	     * Initialize a feed object
+	     * @method intialize
+	     * @memberof StreamFeed.prototype
+	     * @param {StreamClient} client - The stream client this feed is constructed from
+	     * @param {string} feedSlug - The feed slug
+	     * @param {string} userId - The user id
+	     * @param {string} [token] - The authentication token
+	     */
+	    this.client = client;
+	    this.slug = feedSlug;
+	    this.userId = userId;
+	    this.id = this.slug + ':' + this.userId;
+	    this.token = token;
 
-			this.feedUrl = this.id.replace(':', '/');
-			this.feedTogether = this.id.replace(':', '');
-			this.signature = this.feedTogether + ' ' + this.token;
+	    this.feedUrl = this.id.replace(':', '/');
+	    this.feedTogether = this.id.replace(':', '');
+	    this.signature = this.feedTogether + ' ' + this.token;
 
-			// faye setup
-			this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
-		},
-		addActivity: function addActivity(activity, callback) {
-			/*
-	   * Adds the given activity to the feed and
-	   * calls the specified callback
-	   */
-			activity = this.client.signActivity(activity);
-			var xhr = this.client.post({
-				'url': 'feed/' + this.feedUrl + '/',
-				'body': activity,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		removeActivity: function removeActivity(activityId, callback) {
-			/*
-	   * Removes the activity by activityId
-	   * feed.removeActivity(activityId);
-	   * Or
-	   * feed.removeActivity({'foreign_id': foreignId});
-	   */
-			var identifier = activityId.foreignId ? activityId.foreignId : activityId;
-			var params = {};
-			if (activityId.foreignId) {
-				params.foreign_id = '1';
-			}
-			var xhr = this.client['delete']({
-				'url': 'feed/' + this.feedUrl + '/' + identifier + '/',
-				'qs': params,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		addActivities: function addActivities(activities, callback) {
-			/*
-	   * Adds the given activities to the feed and
-	   * calls the specified callback
-	   */
-			activities = this.client.signActivities(activities);
-			var data = {
-				activities: activities
-			};
-			var xhr = this.client.post({
-				'url': 'feed/' + this.feedUrl + '/',
-				'body': data,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		follow: function follow(targetSlug, targetUserId, options, callback) {
-			/*
-	   * feed.follow('user', '1');
-	   * or
-	   * feed.follow('user', '1', callback);
-	     * or
-	     * feed.follow('user', '1', options, callback);
-	   */
-			utils.validateFeedSlug(targetSlug);
-			utils.validateUserId(targetUserId);
+	    // faye setup
+	    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
+	  },
 
-			var targetToken, activityCopyLimit;
-			var last = arguments[arguments.length - 1];
-			// callback is always the last argument
-			callback = last.call ? last : undefined;
-			var target = targetSlug + ':' + targetUserId;
+	  addActivity: function addActivity(activity, callback) {
+	    /**
+	     * Adds the given activity to the feed and
+	     * calls the specified callback
+	     * @method addActivity
+	     * @memberof StreamFeed.prototype
+	     * @param {object} activity - The activity to add
+	     * @param {requestCallback} callback - Callback to call on completion
+	     * @return {Promise} Promise object
+	     */
+	    activity = this.client.signActivity(activity);
 
-			// check for additional options
-			if (options && !options.call) {
-				if (options.limit) {
-					activityCopyLimit = options.limit;
-				}
-			}
+	    return this.client.post({
+	      url: 'feed/' + this.feedUrl + '/',
+	      body: activity,
+	      signature: this.signature
+	    }, callback);
+	  },
 
-			var body = {
-				'target': target
-			};
+	  removeActivity: function removeActivity(activityId, callback) {
+	    /**
+	     * Removes the activity by activityId
+	     * @method removeActivity
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   activityId Identifier of activity to remove
+	     * @param  {requestCallback} callback   Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example
+	     * feed.removeActivity(activityId);
+	     * @example
+	     * feed.removeActivity({'foreign_id': foreignId});
+	     */
+	    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
+	    var params = {};
+	    if (activityId.foreignId) {
+	      params['foreign_id'] = '1';
+	    }
 
-			if (activityCopyLimit) {
-				body['activity_copy_limit'] = activityCopyLimit;
-			}
+	    return this.client['delete']({
+	      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
+	      qs: params,
+	      signature: this.signature
+	    }, callback);
+	  },
 
-			var xhr = this.client.post({
-				'url': 'feed/' + this.feedUrl + '/following/',
-				'body': body,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		unfollow: function unfollow(targetSlug, targetUserId, callback) {
-			/*
-	   * Unfollow the given feed, ie:
-	   * feed.unfollow('user', '2', callback);
-	   */
-			utils.validateFeedSlug(targetSlug);
-			utils.validateUserId(targetUserId);
-			var targetFeedId = targetSlug + ':' + targetUserId;
-			var xhr = this.client['delete']({
-				'url': 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		following: function following(options, callback) {
-			/*
-	   * List which feeds this feed is following
-	   * 
-	   * feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
-	   */
-			if (options !== undefined && options.filter) {
-				options.filter = options.filter.join(',');
-			}
-			var xhr = this.client.get({
-				'url': 'feed/' + this.feedUrl + '/following/',
-				'qs': options,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		followers: function followers(options, callback) {
-			/*
-	   * List the followers of this feed
-	   * 
-	   * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
-	   */
-			if (options !== undefined && options.filter) {
-				options.filter = options.filter.join(',');
-			}
-			var xhr = this.client.get({
-				'url': 'feed/' + this.feedUrl + '/followers/',
-				'qs': options,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
-		get: function get(options, callback) {
-			/*
-	   * Reads the feed
-	   * 
-	   * feed.get({limit: 10, id_lte: 'activity-id'})
-	   * or
-	   * feed.get({limit: 10, mark_seen: true})
-	   */
-			if (options && options.mark_read && options.mark_read.join) {
-				options.mark_read = options.mark_read.join(',');
-			}
-			if (options && options.mark_seen && options.mark_seen.join) {
-				options.mark_seen = options.mark_seen.join(',');
-			}
+	  addActivities: function addActivities(activities, callback) {
+	    /**
+	     * Adds the given activities to the feed and calls the specified callback
+	     * @method addActivities
+	     * @memberof StreamFeed.prototype
+	     * @param  {Array}   activities Array of activities to add
+	     * @param  {requestCallback} callback   Callback to call on completion
+	     * @return {Promise}               XHR request object
+	     */
+	    activities = this.client.signActivities(activities);
+	    var data = {
+	      activities: activities
+	    };
+	    var xhr = this.client.post({
+	      url: 'feed/' + this.feedUrl + '/',
+	      body: data,
+	      signature: this.signature
+	    }, callback);
+	    return xhr;
+	  },
 
-			var xhr = this.client.get({
-				'url': 'feed/' + this.feedUrl + '/',
-				'qs': options,
-				'signature': this.signature
-			}, callback);
-			return xhr;
-		},
+	  follow: function follow(targetSlug, targetUserId, options, callback) {
+	    /**
+	     * Follows the given target feed
+	     * @method follow
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   targetSlug   Slug of the target feed
+	     * @param  {string}   targetUserId User identifier of the target feed
+	     * @param  {object}   options      Additional options
+	     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
+	     * @param  {requestCallback} callback     Callback to call on completion
+	     * @return {Promise}  Promise object
+	     * @example feed.follow('user', '1');
+	     * @example feed.follow('user', '1', callback);
+	     * @example feed.follow('user', '1', options, callback);
+	     */
+	    utils.validateFeedSlug(targetSlug);
+	    utils.validateUserId(targetUserId);
 
-		getFayeClient: function getFayeClient() {
-			return this.client.getFayeClient();
-		},
+	    var activityCopyLimit;
+	    var last = arguments[arguments.length - 1];
+	    // callback is always the last argument
+	    callback = last.call ? last : undefined;
+	    var target = targetSlug + ':' + targetUserId;
 
-		subscribe: function subscribe(callback) {
-			/*
-	   * subscribes to any changes in the feed, return a promise
-	   * feed.subscribe(callback).then(function(){
-	   * 		console.log('we are now listening to changes');
-	   * });
-	   */
-			if (!this.client.appId) {
-				throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
-			}
+	    // check for additional options
+	    if (options && !options.call) {
+	      if (options.limit) {
+	        activityCopyLimit = options.limit;
+	      }
+	    }
 
-			this.client.subscriptions['/' + this.notificationChannel] = {
-				'token': this.token,
-				'userId': this.notificationChannel
-			};
+	    var body = {
+	      target: target
+	    };
 
-			return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
-		}
+	    if (activityCopyLimit) {
+	      body['activity_copy_limit'] = activityCopyLimit;
+	    }
+
+	    return this.client.post({
+	      url: 'feed/' + this.feedUrl + '/following/',
+	      body: body,
+	      signature: this.signature
+	    }, callback);
+	  },
+
+	  unfollow: function unfollow(targetSlug, targetUserId, callback) {
+	    /**
+	     * Unfollow the given feed
+	     * @method unfollow
+	     * @memberof StreamFeed.prototype
+	     * @param  {string}   targetSlug   Slug of the target feed
+	     * @param  {string}   targetUserId [description]
+	     * @param  {requestCallback} callback     Callback to call on completion
+	     * @return {object}                XHR request object
+	     * @example feed.unfollow('user', '2', callback);
+	     */
+	    utils.validateFeedSlug(targetSlug);
+	    utils.validateUserId(targetUserId);
+	    var targetFeedId = targetSlug + ':' + targetUserId;
+	    var xhr = this.client['delete']({
+	      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+	      signature: this.signature
+	    }, callback);
+	    return xhr;
+	  },
+
+	  following: function following(options, callback) {
+	    /**
+	     * List which feeds this feed is following
+	     * @method following
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {string}   options.filter Filter to apply on search operation
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
+	     */
+	    if (options !== undefined && options.filter) {
+	      options.filter = options.filter.join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/following/',
+	      qs: options,
+	      signature: this.signature
+	    }, callback);
+	  },
+
+	  followers: function followers(options, callback) {
+	    /**
+	     * List the followers of this feed
+	     * @method followers
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {string}   options.filter Filter to apply on search operation
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example
+	     * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
+	     */
+	    if (options !== undefined && options.filter) {
+	      options.filter = options.filter.join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/followers/',
+	      qs: options,
+	      signature: this.signature
+	    }, callback);
+	  },
+
+	  get: function get(options, callback) {
+	    /**
+	     * Reads the feed
+	     * @method get
+	     * @memberof StreamFeed.prototype
+	     * @param  {object}   options  Additional options
+	     * @param  {requestCallback} callback Callback to call on completion
+	     * @return {Promise} Promise object
+	     * @example feed.get({limit: 10, id_lte: 'activity-id'})
+	     * @example feed.get({limit: 10, mark_seen: true})
+	     */
+	    if (options && options['mark_read'] && options['mark_read'].join) {
+	      options['mark_read'] = options['mark_read'].join(',');
+	    }
+
+	    if (options && options['mark_seen'] && options['mark_seen'].join) {
+	      options['mark_seen'] = options['mark_seen'].join(',');
+	    }
+
+	    return this.client.get({
+	      url: 'feed/' + this.feedUrl + '/',
+	      qs: options,
+	      signature: this.signature
+	    }, callback);
+	  },
+
+	  getFayeClient: function getFayeClient() {
+	    /**
+	     * Returns the current faye client object
+	     * @method getFayeClient
+	     * @memberof StreamFeed.prototype
+	     * @access private
+	     * @return {object} Faye client
+	     */
+	    return this.client.getFayeClient();
+	  },
+
+	  subscribe: function subscribe(callback) {
+	    /**
+	     * Subscribes to any changes in the feed, return a promise
+	     * @method subscribe
+	     * @memberof StreamFeed.prototype
+	     * @param  {function} callback Callback to call on completion
+	     * @return {Promise}           Promise object
+	     * @example
+	     * feed.subscribe(callback).then(function(){
+	     * 		console.log('we are now listening to changes');
+	     * });
+	     */
+	    if (!this.client.appId) {
+	      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
+	    }
+
+	    this.client.subscriptions['/' + this.notificationChannel] = {
+	      token: this.token,
+	      userId: this.notificationChannel
+	    };
+
+	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+	  }
 	};
 
 	module.exports = StreamFeed;
@@ -1233,18 +1481,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	var canCapture = typeof Error.captureStackTrace === 'function';
 	var canStack = !!new Error().stack;
 
+	/**
+	 * Abstract error object
+	 * @class ErrorAbstract
+	 * @access private
+	 * @param  {string}      [msg]         Error message
+	 * @param  {function}    constructor
+	 */
 	function ErrorAbstract(msg, constructor) {
-		this.message = msg;
+	  this.message = msg;
 
-		Error.call(this, this.message);
+	  Error.call(this, this.message);
 
-		if (canCapture) {
-			Error.captureStackTrace(this, constructor);
-		} else if (canStack) {
-			this.stack = new Error().stack;
-		} else {
-			this.stack = '';
-		}
+	  if (canCapture) {
+	    Error.captureStackTrace(this, constructor);
+	  } else if (canStack) {
+	    this.stack = new Error().stack;
+	  } else {
+	    this.stack = '';
+	  }
 	}
 
 	errors._Abstract = ErrorAbstract;
@@ -1252,16 +1507,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * FeedError
+	 * @class FeedError
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
 	 * @param {String} [msg] - An error message that will probably end up in a log.
 	 */
 	errors.FeedError = function FeedError(msg) {
-		ErrorAbstract.call(this, msg);
+	  ErrorAbstract.call(this, msg);
 	};
+
 	errors.FeedError.prototype = new ErrorAbstract();
 
+	/**
+	 * SiteError
+	 * @class SiteError
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
+	 * @param  {string}  [msg]  An error message that will probably end up in a log.
+	 */
 	errors.SiteError = function SiteError(msg) {
-		ErrorAbstract.call(this, msg);
+	  ErrorAbstract.call(this, msg);
 	};
+
 	errors.SiteError.prototype = new ErrorAbstract();
 
 /***/ },
@@ -1274,43 +1543,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	var validRe = /^[\w-]+$/;
 
 	function validateFeedId(feedId) {
-		/*
-	  * Validate that the feedId matches the spec user:1
-	  */
-		var parts = feedId.split(':');
-		if (parts.length !== 2) {
-			throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
-		}
-		var feedSlug = parts[0];
-		var userId = parts[1];
-		validateFeedSlug(feedSlug);
-		validateUserId(userId);
-		return feedId;
+	  /*
+	  	 * Validate that the feedId matches the spec user:1
+	  	 */
+	  var parts = feedId.split(':');
+	  if (parts.length !== 2) {
+	    throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
+	  }
+
+	  var feedSlug = parts[0];
+	  var userId = parts[1];
+	  validateFeedSlug(feedSlug);
+	  validateUserId(userId);
+	  return feedId;
 	}
+
 	exports.validateFeedId = validateFeedId;
 
 	function validateFeedSlug(feedSlug) {
-		/*
-	  * Validate that the feedSlug matches \w
-	  */
-		var valid = validRe.test(feedSlug);
-		if (!valid) {
-			throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
-		}
-		return feedSlug;
+	  /*
+	  	 * Validate that the feedSlug matches \w
+	  	 */
+	  var valid = validRe.test(feedSlug);
+	  if (!valid) {
+	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
+	  }
+
+	  return feedSlug;
 	}
+
 	exports.validateFeedSlug = validateFeedSlug;
 
 	function validateUserId(userId) {
-		/*
-	  * Validate the userId matches \w
-	  */
-		var valid = validRe.test(userId);
-		if (!valid) {
-			throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
-		}
-		return userId;
+	  /*
+	  	 * Validate the userId matches \w
+	  	 */
+	  var valid = validRe.test(userId);
+	  if (!valid) {
+	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
+	  }
+
+	  return userId;
 	}
+
 	exports.validateUserId = validateUserId;
 
 /***/ },
@@ -1345,7 +1620,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	function safeJsonParse(thing) {
-	  if (typeof thing === "object") return thing;
+	  if (typeof thing === 'object') return thing;
 	  try {
 	    return JSON.parse(thing);
 	  } catch (e) {
@@ -1402,7 +1677,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	   * Creates the JWT token for feedId, resource and action using the apiSecret
 	   */
-	  var payload = { feed_id: feedId, resource: resource, action: action };
+	  var payload = { 'feed_id': feedId, resource: resource, action: action };
 	  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256' });
 	  return token;
 	};
