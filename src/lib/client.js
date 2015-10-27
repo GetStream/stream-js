@@ -5,6 +5,7 @@ var errors = require('./errors');
 var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
 var Promise = require('faye').Promise;
+var qs = require('qs');
 
 /**
  * @callback requestCallback
@@ -23,6 +24,7 @@ var StreamClient = function() {
 
 StreamClient.prototype = {
   baseUrl: 'https://api.getstream.io/api/',
+  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
   initialize: function(apiKey, apiSecret, appId, options) {
     /**
@@ -32,8 +34,9 @@ StreamClient.prototype = {
      * @param {string} apiKey - the api key
      * @param {string} [apiSecret] - the api secret
      * @param {string} [appId] - id of the app
-     * @param {object} options - additional options
-     * @param {string} options.location - which data center to use
+     * @param {object} [options] - additional options
+     * @param {string} [options.location] - which data center to use
+     * @param {boolean} [options.noJWTTimestamp=true] - whether to use a JWT timestamp field (i.e. iat)
      * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
      * stream.connect(apiKey, apiSecret)
      * @example <caption>secret is optional and only used in server side mode</caption>
@@ -50,6 +53,7 @@ StreamClient.prototype = {
     this.group = this.options.group || 'unspecified';
     // track subscriptions made on feeds created by this client
     this.subscriptions = {};
+    this.noJWTTimestamp = this.options.noJWTTimestamp || true;
     // which data center to use
     this.location = this.options.location;
     if (this.location) {
@@ -201,7 +205,7 @@ StreamClient.prototype = {
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, noTimestamp: this.noJWTTimestamp });
   },
 
   getReadWriteToken: function(feedSlug, userId) {
@@ -217,7 +221,7 @@ StreamClient.prototype = {
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, noTimestamp: this.noJWTTimestamp });
   },
 
   feed: function(feedSlug, userId, token, siteId, options) {
@@ -459,6 +463,42 @@ StreamClient.prototype = {
   },
 
 };
+
+if (qs) {
+  StreamClient.prototype.createRedirectUrl = function(targetUrl, userId, events) {
+    /**
+     * Creates a redirect url for tracking the given events in the context of
+     * an email using Stream's analytics platform. Learn more at
+     * getstream.io/personalization
+     * @method createRedirectUrl
+     * @memberof StreamClient.prototype
+     * @param  {string} targetUrl Target url
+     * @param  {string} userId    User id to track
+     * @param  {array} events     List of events to track
+     * @return {string}           The redirect url
+     */
+    var url = require('url');
+    var uri = url.parse(targetUrl);
+
+    if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
+      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
+    }
+
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, noTimestamp: this.noJWTTimestamp });
+    var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
+    var kwargs = {
+      'auth_type': 'jwt',
+      'authorization': authToken,
+      'url': targetUrl,
+      'api_key': this.apiKey,
+      'events': JSON.stringify(events),
+    };
+
+    var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
+
+    return analyticsUrl + '?' + qString;
+  };
+}
 
 // If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 if (BatchOperations) {

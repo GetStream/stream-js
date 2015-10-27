@@ -20,7 +20,8 @@ module.exports = {
         crypto: 'empty',
         fs: 'empty',
         net: 'empty',
-        tls: 'empty'
+        tls: 'empty',
+        url: 'empty'
     },
     resolve: {
       alias: {
@@ -32,5 +33,5 @@ module.exports = {
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
     },
-    plugins: [new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations)/, path.join(__dirname, "src", "/missing.js"))]
+    plugins: [new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js"))]
 };

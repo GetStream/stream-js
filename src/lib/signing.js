@@ -81,18 +81,47 @@ exports.sign = function(apiSecret, feedId) {
   return token;
 };
 
-exports.JWTScopeToken = function(apiSecret, feedId, resource, action) {
-  /*
+exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
+  /**
    * Creates the JWT token for feedId, resource and action using the apiSecret
+   * @method JWTScopeToken
+   * @memberof signing
+   * @private
+   * @param {string} apiSecret - API Secret key
+   * @param {string} resource - JWT payload resource
+   * @param {string} action - JWT payload action
+   * @param {object} [options] - Optional additional options
+   * @param {string} [options.feedId] - JWT payload feed identifier
+   * @param {string} [options.userId] - JWT payload user identifier
+   * @return {string} JWT Token
    */
-  var payload = {'feed_id':feedId, resource:resource, action:action};
-  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256'});
+  var options = opts || {},
+      noTimestamp = options.noTimestamp || true;
+  var payload = {
+    resource: resource,
+    action: action,
+  };
+
+  if (options.feedId) {
+    payload['feed_id'] = options.feedId;
+  }
+
+  if (options.userId) {
+    payload['user_id'] = options.userId;
+  }
+
+  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256', noTimestamp: noTimestamp});
   return token;
 };
 
 exports.isJWTSignature = function(signature) {
-  /*
+  /**
    * check if token is a valid JWT token
+   * @method isJWTSignature
+   * @memberof signing
+   * @private
+   * @param {string} signature - Signature to check
+   * @return {boolean}
    */
   var token = signature.split(' ')[1];
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
