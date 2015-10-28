@@ -38,8 +38,10 @@ bower install getstream
 
 ```javascript
 var stream = require('getstream');
-// Instantiate a new client (server side)
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+// Instantiate a new client (server side), optionally supply an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', { location: 'us-west' });
+// Optionally supply the app identifier and an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Instantiate a new client (client side)
 client = stream.connect('YOUR_API_KEY');
 // Find your API keys here https://getstream.io/dashboard/
@@ -178,11 +180,11 @@ Contributing
 First, make sure you can run the test suite. Tests are run via Mocha
 
 ```bash
-mocha test/integration/index.js
-# browser version
+mocha test/integration/index.js test/unit/index.js
+# browser version (needs to be build through gulp build:test)
 test/browser/test.html
 # coverage
-mocha test/integration/cov.js -R html-cov > cov.html
+mocha test/cov.js -R html-cov > cov.html
 ```
 
 To release a new version

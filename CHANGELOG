@@ -2,6 +2,23 @@
  Change history
 ================
 
+3.0.0
+=====
+:release-date: ....
+:by: Matthisk Heimensen
+
+* Breaking change: Functions performing an XHR Request no longer return the request object, instead they return a Promise
+* Added support for add_to_many api call (i.e. client.addToMany) to add one activity to many feeds
+* Added support for follow_many api call (i.e. client.followMany) to create multiple follow relations in one request
+* Added support to create a redirect url (i.e. client.createRedirectUrl) to track events via stream's analytics platform
+* Added support for follow_copy_limit API parameter on follow.
+* Added option to enable JWT token expiration (default behavior is no expiration) through option: { expireTokens: true }
+* Removed Buffer as a dependency of lib/signing.js to reduce distributable size for the browser. Instead use Base64 lib for
+  base64 encoding.
+* Generated API documentation in /docs
+* Enforce code style through jscs and jshint during the build (i.e. gulp lint)
+
+
 2.1.0
 =====
 :release-date: 2014-12-19
@@ -32,7 +49,7 @@
 :by: Thierry Schellenbach
 
 * Breaking change: New style feed syntax, client.feed('user', '1') instead of client.feed('user:3')
-* Breaking change: New style follow syntax, feed.follow('user', 3)  
+* Breaking change: New style follow syntax, feed.follow('user', 3)
 * API versioning support
 * Cleanup of API client codebase and naming
 
