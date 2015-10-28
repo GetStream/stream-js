@@ -47,3 +47,10 @@ function validateUserId(userId) {
 
 exports.validateUserId = validateUserId;
 
+function rfc3986(str) {
+  return str.replace(/[!'()*]/g, function(c) {
+    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+
+exports.rfc3986 = rfc3986;

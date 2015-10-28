@@ -54,3 +54,17 @@ errors.SiteError = function SiteError(msg) {
 };
 
 errors.SiteError.prototype = new ErrorAbstract();
+
+/**
+ * MissingSchemaError
+ * @method MissingSchema
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string} msg
+ */
+errors.MissingSchemaError = function MissingSchemaError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+
+errors.MissingSchemaError.prototype = new ErrorAbstract();

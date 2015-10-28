@@ -12,7 +12,9 @@
     "request": "browser-request",
     "crypto": false,
     "jsonwebtoken": false,
-    "./src/lib/batch_operations.js": false
+    "./src/lib/batch_operations.js": false,
+    "qs": false,
+    "url": false
   },
   "config": {
     "blanket": {
@@ -58,6 +60,7 @@
     "faye": "^1.0.1",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
+    "qs": "^5.2.0",
     "request": "2.63.0"
   },
   "repository": {
