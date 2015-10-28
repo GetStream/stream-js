@@ -45,7 +45,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var integrationTests = __webpack_require__(1);
-	var unitTests = __webpack_require__(22);
+	var unitTests = __webpack_require__(25);
 
 
 /***/ },
@@ -54,7 +54,8 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {var expect = __webpack_require__(3);
 	var Faye = __webpack_require__(9);
-	var node = typeof(stream) == 'undefined';
+	var stream = __webpack_require__(11);
+	var isNodeEnv = typeof window === 'undefined';
 
 	var READ_TIMEOUT = 2000;
 
@@ -73,21 +74,17 @@
 	  var self = this;
 	  this.timeout(4000);
 	  this.localRun = false;
-	  if (typeof(process) != "undefined" && process.env.LOCAL) {
+	  if (typeof (process) != "undefined" && process.env.LOCAL) {
 	    // local testing is slow as we run celery tasks in sync
 	    this.timeout(25000);
 	    this.localRun = true;
 	  }
-	  if (typeof(document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
+	  if (typeof (document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
 	    // local testing via the browser
 	    this.timeout(25000);
 	    this.localRun = true;
 	  }
-	  if (node) {
-	    // we arent in a browser
-	    stream = __webpack_require__(11);
-	  }
-	  console.log('node is set to ', node);
+	  console.log('node is set to ', isNodeEnv);
 	  errors = stream.errors;
 
 	  var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
@@ -123,77 +120,64 @@
 	    user2ReadOnly = client.feed('user', '22', null, null, {readOnly: true});
 	  }
 
-	  var before = (node) ? beforeEachNode : beforeEachBrowser;
+	  var before = (isNodeEnv) ? beforeEachNode : beforeEachBrowser;
 
 	  beforeEach(before);
 
-	  it('heroku', function (done) {
-	    if (!node) {
+	  if (isNodeEnv) {
+	    it('heroku', function (done) {
+	      var url = 'https://thierry:pass@getstream.io/?app_id=1';
+	      process.env.STREAM_URL = url;
+	      client = stream.connect();
+	      expect(client.apiKey).to.eql('thierry');
+	      expect(client.apiSecret).to.eql('pass');
+	      expect(client.appId).to.eql('1');
 	      done();
-	    }
-	    var url = 'https://thierry:pass@getstream.io/?app_id=1';
-	    process.env.STREAM_URL = url;
-	    client = stream.connect();
-	    expect(client.apiKey).to.eql('thierry');
-	    expect(client.apiSecret).to.eql('pass');
-	    expect(client.appId).to.eql('1');
-	    done();
-	  });
+	    });
 
-	  it('heroku legacy', function (done) {
-	    if (!node) {
+	    it('heroku legacy', function (done) {
+	      var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
+	      process.env.STREAM_URL = url;
+	      client = stream.connect();
+	      expect(client.apiKey).to.eql('bvt88g4kvc63');
+	      expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
+	      expect(client.appId).to.eql('669');
+	      expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
 	      done();
-	    }
-	    var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
-	    process.env.STREAM_URL = url;
-	    client = stream.connect();
-	    expect(client.apiKey).to.eql('bvt88g4kvc63');
-	    expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
-	    expect(client.appId).to.eql('669');
-	    expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
-	    done();
-	  });
+	    });
 
-	  it('heroku with location', function (done) {
-	    if (!node) {
+	    it('heroku with location', function (done) {
+	      var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
+	      process.env.STREAM_URL = url;
+	      client = stream.connect();
+	      expect(client.apiKey).to.eql('ahj2ndz7gsan');
+	      expect(client.apiSecret).to.eql('gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+	      expect(client.appId).to.eql('1');
+	      expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
 	      done();
-	    }
-	    var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
-	    process.env.STREAM_URL = url;
-	    client = stream.connect();
-	    expect(client.apiKey).to.eql('ahj2ndz7gsan');
-	    expect(client.apiSecret).to.eql('gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-	    expect(client.appId).to.eql('1');
-	    expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
-	    done();
-	  });
+	    });
 
-	  it('heroku_overwrite', function (done) {
-	    if (!node) {
+	    it('heroku_overwrite', function (done) {
+	      var url = 'https://thierry:pass@getstream.io/?app_id=1';
+	      process.env.STREAM_URL = url;
+	      client = stream.connect('a','b','c');
+	      expect(client.apiKey).to.eql('a');
+	      expect(client.apiSecret).to.eql('b');
+	      expect(client.appId).to.eql('c');
 	      done();
-	    }
-	    var url = 'https://thierry:pass@getstream.io/?app_id=1';
-	    process.env.STREAM_URL = url;
-	    client = stream.connect('a','b','c');
-	    expect(client.apiKey).to.eql('a');
-	    expect(client.apiSecret).to.eql('b');
-	    expect(client.appId).to.eql('c');
-	    done();
-	  });
+	    });
 
-	  it('location support', function (done) {
-	    if (!node) {
+	    it('location support', function (done) {
+	      var options = {};
+	      var location = 'us-east';
+	      var fullLocation = 'https://us-east-api.getstream.io/api/';
+	      options.location = location;
+	      client = stream.connect('a','b','c', options);
+	      expect(client.baseUrl).to.eql(fullLocation);
+	      expect(client.location).to.eql(location);
 	      done();
-	    }
-	    var options = {};
-	    var location = 'us-east';
-	    var fullLocation = 'https://us-east-api.getstream.io/api/';
-	    options.location = location;
-	    client = stream.connect('a','b','c', options);
-	    expect(client.baseUrl).to.eql(fullLocation);
-	    expect(client.location).to.eql(location);
-	    done();
-	  });
+	    });
+	  }
 
 	  it('handlers', function (done) {
 	    var called = {};
@@ -230,7 +214,7 @@
 	    user1.get({'limit': 1}, function(error, response, body) {
 	      expect(response.statusCode).to.eql(200);
 	    expect(body['results'][0]['id']).to.be.a('string');
-	    if (node) {
+	    if (isNodeEnv) {
 	      var userAgent = response.req._headers['x-stream-client'];
 	      expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
 	    }
@@ -312,7 +296,7 @@
 	    activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
 	    activity['to'] = ['flat:33', 'user:everyone'];
 	    //flat3
-	    if (!node) activity['to'] = ['flat:33' + ' ' + flat3.token];
+	    if (!isNodeEnv) activity['to'] = ['flat:33' + ' ' + flat3.token];
 
 	    function get(error, response, body) {
 	      var activityId = body['id'];
@@ -739,7 +723,7 @@
 	    }
 	  };
 
-	  if(node) {
+	  if(isNodeEnv) {
 	    // Server side specific tests
 
 	    it('supports application level authentication', function(done) {
@@ -827,10 +811,11 @@
 
 	  it('post promises fail', function (done) {
 	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world'};
-	    user1.addActivity(activity)
+	    var p = user1.addActivity(activity)
 	      .then(function(body) {
 	        done('expected failure');
-	      }).catch(function(errorObj) {
+	      })
+	      p.catch(function(errorObj) {
 	        done();
 	      });
 	  });
@@ -6981,7 +6966,8 @@
 	var errors = __webpack_require__(15);
 	var utils = __webpack_require__(16);
 	var BatchOperations = __webpack_require__(21);
-	var Promise = __webpack_require__(9).Promise;
+	var Promise = __webpack_require__(22);
+	var qs = __webpack_require__(23);
 
 	/**
 	 * @callback requestCallback
@@ -7000,6 +6986,7 @@
 
 	StreamClient.prototype = {
 	  baseUrl: 'https://api.getstream.io/api/',
+	  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
 	  initialize: function(apiKey, apiSecret, appId, options) {
 	    /**
@@ -7009,8 +6996,9 @@
 	     * @param {string} apiKey - the api key
 	     * @param {string} [apiSecret] - the api secret
 	     * @param {string} [appId] - id of the app
-	     * @param {object} options - additional options
-	     * @param {string} options.location - which data center to use
+	     * @param {object} [options] - additional options
+	     * @param {string} [options.location] - which data center to use
+	     * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
 	     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
 	     * stream.connect(apiKey, apiSecret)
 	     * @example <caption>secret is optional and only used in server side mode</caption>
@@ -7027,6 +7015,7 @@
 	    this.group = this.options.group || 'unspecified';
 	    // track subscriptions made on feeds created by this client
 	    this.subscriptions = {};
+	    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
 	    // which data center to use
 	    this.location = this.options.location;
 	    if (this.location) {
@@ -7178,7 +7167,7 @@
 	     * client.getReadOnlyToken('user', '1');
 	     */
 	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+	    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
 	  getReadWriteToken: function(feedSlug, userId) {
@@ -7194,7 +7183,7 @@
 	     * client.getReadWriteToken('user', '1');
 	     */
 	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+	    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
 	  feed: function(feedSlug, userId, token, siteId, options) {
@@ -7437,6 +7426,42 @@
 
 	};
 
+	if (qs) {
+	  StreamClient.prototype.createRedirectUrl = function(targetUrl, userId, events) {
+	    /**
+	     * Creates a redirect url for tracking the given events in the context of
+	     * an email using Stream's analytics platform. Learn more at
+	     * getstream.io/personalization
+	     * @method createRedirectUrl
+	     * @memberof StreamClient.prototype
+	     * @param  {string} targetUrl Target url
+	     * @param  {string} userId    User id to track
+	     * @param  {array} events     List of events to track
+	     * @return {string}           The redirect url
+	     */
+	    var url = __webpack_require__(24);
+	    var uri = url.parse(targetUrl);
+
+	    if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
+	      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
+	    }
+
+	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+	    var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
+	    var kwargs = {
+	      'auth_type': 'jwt',
+	      'authorization': authToken,
+	      'url': targetUrl,
+	      'api_key': this.apiKey,
+	      'events': JSON.stringify(events),
+	    };
+
+	    var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
+
+	    return analyticsUrl + '?' + qString;
+	  };
+	}
+
 	// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 	if (BatchOperations) {
 	  for (var key in BatchOperations) {
@@ -7452,9 +7477,9 @@
 
 /***/ },
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Browser Request
+	// Browser Request
 	//
 	// Licensed under the Apache License, Version 2.0 (the "License");
 	// you may not use this file except in compliance with the License.
@@ -7467,23 +7492,6 @@
 	// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	// See the License for the specific language governing permissions and
 	// limitations under the License.
-
-	// UMD HEADER START 
-	(function (root, factory) {
-	    if (true) {
-	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    } else if (typeof exports === 'object') {
-	        // Node. Does not work with strict CommonJS, but
-	        // only CommonJS-like enviroments that support module.exports,
-	        // like Node.
-	        module.exports = factory();
-	    } else {
-	        // Browser globals (root is window)
-	        root.returnExports = factory();
-	  }
-	}(this, function () {
-	// UMD HEADER END
 
 	var XHR = XMLHttpRequest
 	if (!XHR) throw new Error('missing XMLHttpRequest')
@@ -7671,6 +7679,10 @@
 	  xhr.open(options.method, options.uri, true) // asynchronous
 	  if(is_cors)
 	    xhr.withCredentials = !! options.withCredentials
+
+	  for (var key in options.headers)
+	    xhr.setRequestHeader(key, options.headers[key])
+
 	  xhr.send(options.body)
 	  return xhr
 
@@ -7682,8 +7694,6 @@
 
 	    if(xhr.readyState === XHR.OPENED) {
 	      request.log.debug('Request started', {'id':xhr.id})
-	      for (var key in options.headers)
-	        xhr.setRequestHeader(key, options.headers[key])
 	    }
 
 	    else if(xhr.readyState === XHR.HEADERS_RECEIVED)
@@ -7944,10 +7954,7 @@
 
 	    return enc;
 	}
-	    return request;
-	//UMD FOOTER START
-	}));
-	//UMD FOOTER END
+	module.exports = request;
 
 
 /***/ },
@@ -8295,6 +8302,20 @@
 
 	errors.SiteError.prototype = new ErrorAbstract();
 
+	/**
+	 * MissingSchemaError
+	 * @method MissingSchema
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
+	 * @param  {string} msg
+	 */
+	errors.MissingSchemaError = function MissingSchemaError(msg) {
+	  ErrorAbstract.call(this, msg);
+	};
+
+	errors.MissingSchemaError.prototype = new ErrorAbstract();
+
 
 /***/ },
 /* 16 */
@@ -8349,6 +8370,13 @@
 
 	exports.validateUserId = validateUserId;
 
+	function rfc3986(str) {
+	  return str.replace(/[!'()*]/g, function(c) {
+	    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+	  });
+	}
+
+	exports.rfc3986 = rfc3986;
 
 
 /***/ },
@@ -8438,18 +8466,47 @@
 	  return token;
 	};
 
-	exports.JWTScopeToken = function(apiSecret, feedId, resource, action) {
-	  /*
+	exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
+	  /**
 	   * Creates the JWT token for feedId, resource and action using the apiSecret
+	   * @method JWTScopeToken
+	   * @memberof signing
+	   * @private
+	   * @param {string} apiSecret - API Secret key
+	   * @param {string} resource - JWT payload resource
+	   * @param {string} action - JWT payload action
+	   * @param {object} [options] - Optional additional options
+	   * @param {string} [options.feedId] - JWT payload feed identifier
+	   * @param {string} [options.userId] - JWT payload user identifier
+	   * @return {string} JWT Token
 	   */
-	  var payload = {'feed_id':feedId, resource:resource, action:action};
-	  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256'});
+	  var options = opts || {},
+	      noTimestamp = options.expireTokens ? !options.expireTokens : true;
+	  var payload = {
+	    resource: resource,
+	    action: action,
+	  };
+
+	  if (options.feedId) {
+	    payload['feed_id'] = options.feedId;
+	  }
+
+	  if (options.userId) {
+	    payload['user_id'] = options.userId;
+	  }
+
+	  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256', noTimestamp: noTimestamp});
 	  return token;
 	};
 
 	exports.isJWTSignature = function(signature) {
-	  /*
+	  /**
 	   * check if token is a valid JWT token
+	   * @method isJWTSignature
+	   * @memberof signing
+	   * @private
+	   * @param {string} signature - Signature to check
+	   * @return {boolean}
 	   */
 	  var token = signature.split(' ')[1];
 	  return JWS_REGEX.test(token) && !!headerFromJWS(token);
@@ -8545,14 +8602,44 @@
 /* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var Promise = __webpack_require__(9).Promise;
+
+	Promise.prototype.catch = function(onRejected) {
+	  return this.then(null, onRejected);
+	};
+
+	module.exports = Promise;
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var expect = __webpack_require__(3);
-	var jwt = __webpack_require__(23);
-	var qc = __webpack_require__(24);
+	var jwt = __webpack_require__(26);
+	var url = __webpack_require__(27);
+	var qs = __webpack_require__(28);
+	var qc = __webpack_require__(29);
 	var utils = __webpack_require__(16);
 	var errors = __webpack_require__(15);
-	var node = typeof(window) === 'undefined';
+	var isNodeEnv = typeof window === 'undefined';
+	var stream = __webpack_require__(11);
 
 	var signing = signing || __webpack_require__(17);
+
+	console.log('node is set to', isNodeEnv);
 
 	function propertyHeaderJSON(jwt) {
 	  var json = signing.isJWTSignature(jwt);
@@ -8602,7 +8689,7 @@
 	    expect( signing.isJWTSignature(invalidSignature) ).to.be(false);
 	  });
 
-	  if(node) {
+	  if(isNodeEnv) {
 	    it('should decode valid jwts headers', function() {
 	      expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
 	    });
@@ -8623,15 +8710,68 @@
 	  });
 	});
 
+	if (isNodeEnv) {
+	  describe('Stream Client', function() {
+	    var client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+
+	    it('should create email redirects', function() {
+	      var expectedParts = ['https://analytics.getstream.io/analytics/redirect/',
+	        'auth_type=jwt',
+	        'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
+	        'events=%5B%7B%22foreign_ids%22%3A%5B%22tweet%3A1%22%2C%22tweet%3A2%22%2C%22tweet%3A3%22%2C%22tweet%3A4%22%2C%22tweet%3A5%22%5D%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%2C%7B%22foreign_id%22%3A%22tweet%3A1%22%2C%22label%22%3A%22click%22%2C%22position%22%3A3%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%5D',
+	        'api_key=ahj2ndz7gsan',
+	      ];
+	      var engagement = { 'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global' },
+	          impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'},
+	          events = [impression, engagement],
+	          userId = 'tommaso',
+	          targetUrl = 'http://google.com/?a=b&c=d';
+	      var redirectUrl = client.createRedirectUrl(targetUrl, userId, events);
+
+	      var queryString = qs.parse(url.parse(redirectUrl).query);
+	      var decoded = jwt.verify(queryString.authorization, 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+
+	      expect(decoded).to.eql({
+	        'resource': 'redirect_and_track',
+	        'action': '*',
+	        'user_id': userId,
+	      });
+
+	      for (var i = 0; i < expectedParts.length; i++) {
+	        expect(redirectUrl).to.contain(expectedParts[i]);
+	      }
+	    });
+
+	    it('should fail creating email redirects on invalid targets', function() {
+	      expect(function() {
+	        client.createRedirectUrl('google.com', 'tommaso', []);
+	      }).to.throwException(errors.MissingSchemaError);
+	    });
+
+	  });
+	}
+
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 24 */
+/* 27 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
+
+/***/ },
+/* 29 */
 /***/ function(module, exports) {
 
 	function arbBool() {

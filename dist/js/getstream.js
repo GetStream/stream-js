@@ -217,7 +217,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var errors = __webpack_require__(5);
 	var utils = __webpack_require__(6);
 	var BatchOperations = __webpack_require__(9);
-	var Promise = __webpack_require__(11).Promise;
+	var Promise = __webpack_require__(11);
+	var qs = __webpack_require__(9);
 
 	/**
 	 * @callback requestCallback
@@ -236,6 +237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	StreamClient.prototype = {
 	  baseUrl: 'https://api.getstream.io/api/',
+	  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
 	  initialize: function initialize(apiKey, apiSecret, appId, options) {
 	    /**
@@ -245,8 +247,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {string} apiKey - the api key
 	     * @param {string} [apiSecret] - the api secret
 	     * @param {string} [appId] - id of the app
-	     * @param {object} options - additional options
-	     * @param {string} options.location - which data center to use
+	     * @param {object} [options] - additional options
+	     * @param {string} [options.location] - which data center to use
+	     * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
 	     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
 	     * stream.connect(apiKey, apiSecret)
 	     * @example <caption>secret is optional and only used in server side mode</caption>
@@ -263,6 +266,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.group = this.options.group || 'unspecified';
 	    // track subscriptions made on feeds created by this client
 	    this.subscriptions = {};
+	    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
 	    // which data center to use
 	    this.location = this.options.location;
 	    if (this.location) {
@@ -414,7 +418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * client.getReadOnlyToken('user', '1');
 	     */
 	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', 'read');
+	    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
 	  getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
@@ -430,7 +434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * client.getReadWriteToken('user', '1');
 	     */
 	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, feedId, '*', '*');
+	    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
 	  feed: function feed(feedSlug, userId, token, siteId, options) {
@@ -604,7 +608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     * @return {object} Faye client
 	     */
-	    var Faye = __webpack_require__(11);
+	    var Faye = __webpack_require__(12);
 	    if (this.fayeClient === null) {
 	      this.fayeClient = new Faye.Client(this.fayeUrl);
 	      var authExtension = this.getFayeAuthorization();
@@ -673,6 +677,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	};
 
+	if (qs) {
+	  StreamClient.prototype.createRedirectUrl = function (targetUrl, userId, events) {
+	    /**
+	     * Creates a redirect url for tracking the given events in the context of
+	     * an email using Stream's analytics platform. Learn more at
+	     * getstream.io/personalization
+	     * @method createRedirectUrl
+	     * @memberof StreamClient.prototype
+	     * @param  {string} targetUrl Target url
+	     * @param  {string} userId    User id to track
+	     * @param  {array} events     List of events to track
+	     * @return {string}           The redirect url
+	     */
+	    var url = __webpack_require__(14);
+	    var uri = url.parse(targetUrl);
+
+	    if (!(uri.host || uri.hostname && uri.port) && !uri.isUnix) {
+	      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
+	    }
+
+	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+	    var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
+	    var kwargs = {
+	      'auth_type': 'jwt',
+	      'authorization': authToken,
+	      'url': targetUrl,
+	      'api_key': this.apiKey,
+	      'events': JSON.stringify(events)
+	    };
+
+	    var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
+
+	    return analyticsUrl + '?' + qString;
+	  };
+	}
+
 	// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 	if (BatchOperations) {
 	  for (var key in BatchOperations) {
@@ -687,9 +727,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Browser Request
+	// Browser Request
 	//
 	// Licensed under the Apache License, Version 2.0 (the "License");
 	// you may not use this file except in compliance with the License.
@@ -702,23 +742,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	// See the License for the specific language governing permissions and
 	// limitations under the License.
-
-	// UMD HEADER START 
-	(function (root, factory) {
-	    if (true) {
-	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    } else if (typeof exports === 'object') {
-	        // Node. Does not work with strict CommonJS, but
-	        // only CommonJS-like enviroments that support module.exports,
-	        // like Node.
-	        module.exports = factory();
-	    } else {
-	        // Browser globals (root is window)
-	        root.returnExports = factory();
-	  }
-	}(this, function () {
-	// UMD HEADER END
 
 	var XHR = XMLHttpRequest
 	if (!XHR) throw new Error('missing XMLHttpRequest')
@@ -906,6 +929,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  xhr.open(options.method, options.uri, true) // asynchronous
 	  if(is_cors)
 	    xhr.withCredentials = !! options.withCredentials
+
+	  for (var key in options.headers)
+	    xhr.setRequestHeader(key, options.headers[key])
+
 	  xhr.send(options.body)
 	  return xhr
 
@@ -917,8 +944,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if(xhr.readyState === XHR.OPENED) {
 	      request.log.debug('Request started', {'id':xhr.id})
-	      for (var key in options.headers)
-	        xhr.setRequestHeader(key, options.headers[key])
 	    }
 
 	    else if(xhr.readyState === XHR.HEADERS_RECEIVED)
@@ -1179,10 +1204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return enc;
 	}
-	    return request;
-	//UMD FOOTER START
-	}));
-	//UMD FOOTER END
+	module.exports = request;
 
 
 /***/ },
@@ -1533,6 +1555,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	errors.SiteError.prototype = new ErrorAbstract();
 
+	/**
+	 * MissingSchemaError
+	 * @method MissingSchema
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
+	 * @param  {string} msg
+	 */
+	errors.MissingSchemaError = function MissingSchemaError(msg) {
+	  ErrorAbstract.call(this, msg);
+	};
+
+	errors.MissingSchemaError.prototype = new ErrorAbstract();
+
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
@@ -1587,6 +1623,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	exports.validateUserId = validateUserId;
+
+	function rfc3986(str) {
+	  return str.replace(/[!'()*]/g, function (c) {
+	    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+	  });
+	}
+
+	exports.rfc3986 = rfc3986;
 
 /***/ },
 /* 7 */
@@ -1673,18 +1717,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return token;
 	};
 
-	exports.JWTScopeToken = function (apiSecret, feedId, resource, action) {
-	  /*
+	exports.JWTScopeToken = function (apiSecret, resource, action, opts) {
+	  /**
 	   * Creates the JWT token for feedId, resource and action using the apiSecret
+	   * @method JWTScopeToken
+	   * @memberof signing
+	   * @private
+	   * @param {string} apiSecret - API Secret key
+	   * @param {string} resource - JWT payload resource
+	   * @param {string} action - JWT payload action
+	   * @param {object} [options] - Optional additional options
+	   * @param {string} [options.feedId] - JWT payload feed identifier
+	   * @param {string} [options.userId] - JWT payload user identifier
+	   * @return {string} JWT Token
 	   */
-	  var payload = { 'feed_id': feedId, resource: resource, action: action };
-	  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256' });
+	  var options = opts || {},
+	      noTimestamp = options.expireTokens ? !options.expireTokens : true;
+	  var payload = {
+	    resource: resource,
+	    action: action
+	  };
+
+	  if (options.feedId) {
+	    payload['feed_id'] = options.feedId;
+	  }
+
+	  if (options.userId) {
+	    payload['user_id'] = options.userId;
+	  }
+
+	  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', noTimestamp: noTimestamp });
 	  return token;
 	};
 
 	exports.isJWTSignature = function (signature) {
-	  /*
+	  /**
 	   * check if token is a valid JWT token
+	   * @method isJWTSignature
+	   * @memberof signing
+	   * @private
+	   * @param {string} signature - Signature to check
+	   * @return {boolean}
 	   */
 	  var token = signature.split(' ')[1];
 	  return JWS_REGEX.test(token) && !!headerFromJWS(token);
@@ -1771,6 +1844,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Promise = __webpack_require__(12).Promise;
+
+	Promise.prototype['catch'] = function (onRejected) {
+	  return this.then(null, onRejected);
+	};
+
+	module.exports = Promise;
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, setImmediate, process) {(function() {
@@ -4547,10 +4634,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12).setImmediate, __webpack_require__(1)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(13).setImmediate, __webpack_require__(1)))
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(1).nextTick;
@@ -4629,7 +4716,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12).setImmediate, __webpack_require__(12).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13).setImmediate, __webpack_require__(13).clearImmediate))
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
 
 /***/ }
 /******/ ])
