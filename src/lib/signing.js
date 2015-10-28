@@ -96,7 +96,7 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
    * @return {string} JWT Token
    */
   var options = opts || {},
-      noTimestamp = options.noTimestamp || true;
+      noTimestamp = options.expireTokens ? !options.expireTokens : true;
   var payload = {
     resource: resource,
     action: action,

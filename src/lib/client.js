@@ -4,7 +4,7 @@ var signing = require('./signing');
 var errors = require('./errors');
 var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
-var Promise = require('faye').Promise;
+var Promise = require('./promise');
 var qs = require('qs');
 
 /**
@@ -36,7 +36,7 @@ StreamClient.prototype = {
      * @param {string} [appId] - id of the app
      * @param {object} [options] - additional options
      * @param {string} [options.location] - which data center to use
-     * @param {boolean} [options.noJWTTimestamp=true] - whether to use a JWT timestamp field (i.e. iat)
+     * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
      * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
      * stream.connect(apiKey, apiSecret)
      * @example <caption>secret is optional and only used in server side mode</caption>
@@ -53,7 +53,7 @@ StreamClient.prototype = {
     this.group = this.options.group || 'unspecified';
     // track subscriptions made on feeds created by this client
     this.subscriptions = {};
-    this.noJWTTimestamp = this.options.noJWTTimestamp || true;
+    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
     if (this.location) {
@@ -205,7 +205,7 @@ StreamClient.prototype = {
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, noTimestamp: this.noJWTTimestamp });
+    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
   },
 
   getReadWriteToken: function(feedSlug, userId) {
@@ -221,7 +221,7 @@ StreamClient.prototype = {
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, noTimestamp: this.noJWTTimestamp });
+    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
   },
 
   feed: function(feedSlug, userId, token, siteId, options) {
@@ -484,7 +484,7 @@ if (qs) {
       throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, noTimestamp: this.noJWTTimestamp });
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {
       'auth_type': 'jwt',
