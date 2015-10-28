@@ -1,0 +1,14 @@
+gulp build
+npm test
+#npm brower_test
+#npm integration_test
+git checkout test/
+git commit dist/ -m 'update distributables'
+npm version [major/minor]
+gulp docs
+git add docs/getstream/
+git commit -m 'update docs'
+gulp write_bower
+git commit bower.json -m 'publish new version on Bower'
+npm publish
+git push origin --tags
