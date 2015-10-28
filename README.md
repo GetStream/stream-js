@@ -5,8 +5,6 @@ stream-js
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Dependencies up to date](https://david-dm.org/GetStream/stream-js.png)](https://david-dm.org/tschellenbach/stream-js)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/tschellenbach.svg)](https://saucelabs.com/u/tschellenbach)
-
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
 
@@ -40,6 +38,8 @@ bower install getstream
 var stream = require('getstream');
 // Instantiate a new client (server side)
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+// Optionally supply the app identifier and an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Instantiate a new client (client side)
 client = stream.connect('YOUR_API_KEY');
 // Find your API keys here https://getstream.io/dashboard/
@@ -178,11 +178,11 @@ Contributing
 First, make sure you can run the test suite. Tests are run via Mocha
 
 ```bash
-mocha test/integration/index.js
-# browser version
+mocha test/integration/index.js test/unit/index.js
+# browser version (needs to be build through gulp build:test)
 test/browser/test.html
 # coverage
-mocha test/integration/cov.js -R html-cov > cov.html
+mocha test/cov.js -R html-cov > cov.html
 ```
 
 To release a new version

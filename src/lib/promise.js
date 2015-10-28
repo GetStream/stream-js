@@ -1,7 +1,7 @@
-var Faye = require('faye');
+var Promise = require('faye').Promise;
 
-Faye.Promise.prototype.catch = function(onRejected) {
+Promise.prototype.catch = function(onRejected) {
   return this.then(null, onRejected);
 };
 
-module.exports = Faye.Promise;
+module.exports = Promise;

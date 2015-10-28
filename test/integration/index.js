@@ -1,6 +1,7 @@
 var expect = require('expect.js');
 var Faye = require('faye');
-var node = typeof(stream) == 'undefined';
+var stream = require('../../src/getstream');
+var isNodeEnv = typeof window === 'undefined';
 
 var READ_TIMEOUT = 2000;
 
@@ -19,21 +20,17 @@ describe('Stream client', function () {
   var self = this;
   this.timeout(4000);
   this.localRun = false;
-  if (typeof(process) != "undefined" && process.env.LOCAL) {
+  if (typeof (process) != "undefined" && process.env.LOCAL) {
     // local testing is slow as we run celery tasks in sync
     this.timeout(25000);
     this.localRun = true;
   }
-  if (typeof(document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
+  if (typeof (document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
     // local testing via the browser
     this.timeout(25000);
     this.localRun = true;
   }
-  if (node) {
-    // we arent in a browser
-    stream = require('../../src/getstream');
-  }
-  console.log('node is set to ', node);
+  console.log('node is set to ', isNodeEnv);
   errors = stream.errors;
 
   var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
@@ -69,77 +66,64 @@ describe('Stream client', function () {
     user2ReadOnly = client.feed('user', '22', null, null, {readOnly: true});
   }
 
-  var before = (node) ? beforeEachNode : beforeEachBrowser;
+  var before = (isNodeEnv) ? beforeEachNode : beforeEachBrowser;
 
   beforeEach(before);
 
-  it('heroku', function (done) {
-    if (!node) {
+  if (isNodeEnv) {
+    it('heroku', function (done) {
+      var url = 'https://thierry:pass@getstream.io/?app_id=1';
+      process.env.STREAM_URL = url;
+      client = stream.connect();
+      expect(client.apiKey).to.eql('thierry');
+      expect(client.apiSecret).to.eql('pass');
+      expect(client.appId).to.eql('1');
       done();
-    }
-    var url = 'https://thierry:pass@getstream.io/?app_id=1';
-    process.env.STREAM_URL = url;
-    client = stream.connect();
-    expect(client.apiKey).to.eql('thierry');
-    expect(client.apiSecret).to.eql('pass');
-    expect(client.appId).to.eql('1');
-    done();
-  });
+    });
 
-  it('heroku legacy', function (done) {
-    if (!node) {
+    it('heroku legacy', function (done) {
+      var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
+      process.env.STREAM_URL = url;
+      client = stream.connect();
+      expect(client.apiKey).to.eql('bvt88g4kvc63');
+      expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
+      expect(client.appId).to.eql('669');
+      expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
       done();
-    }
-    var url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
-    process.env.STREAM_URL = url;
-    client = stream.connect();
-    expect(client.apiKey).to.eql('bvt88g4kvc63');
-    expect(client.apiSecret).to.eql('twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd');
-    expect(client.appId).to.eql('669');
-    expect(client.baseUrl).to.eql('https://api.getstream.io/api/');
-    done();
-  });
+    });
 
-  it('heroku with location', function (done) {
-    if (!node) {
+    it('heroku with location', function (done) {
+      var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
+      process.env.STREAM_URL = url;
+      client = stream.connect();
+      expect(client.apiKey).to.eql('ahj2ndz7gsan');
+      expect(client.apiSecret).to.eql('gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+      expect(client.appId).to.eql('1');
+      expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
       done();
-    }
-    var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
-    process.env.STREAM_URL = url;
-    client = stream.connect();
-    expect(client.apiKey).to.eql('ahj2ndz7gsan');
-    expect(client.apiSecret).to.eql('gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-    expect(client.appId).to.eql('1');
-    expect(client.baseUrl).to.eql('https://us-east-api.getstream.io/api/');
-    done();
-  });
+    });
 
-  it('heroku_overwrite', function (done) {
-    if (!node) {
+    it('heroku_overwrite', function (done) {
+      var url = 'https://thierry:pass@getstream.io/?app_id=1';
+      process.env.STREAM_URL = url;
+      client = stream.connect('a','b','c');
+      expect(client.apiKey).to.eql('a');
+      expect(client.apiSecret).to.eql('b');
+      expect(client.appId).to.eql('c');
       done();
-    }
-    var url = 'https://thierry:pass@getstream.io/?app_id=1';
-    process.env.STREAM_URL = url;
-    client = stream.connect('a','b','c');
-    expect(client.apiKey).to.eql('a');
-    expect(client.apiSecret).to.eql('b');
-    expect(client.appId).to.eql('c');
-    done();
-  });
+    });
 
-  it('location support', function (done) {
-    if (!node) {
+    it('location support', function (done) {
+      var options = {};
+      var location = 'us-east';
+      var fullLocation = 'https://us-east-api.getstream.io/api/';
+      options.location = location;
+      client = stream.connect('a','b','c', options);
+      expect(client.baseUrl).to.eql(fullLocation);
+      expect(client.location).to.eql(location);
       done();
-    }
-    var options = {};
-    var location = 'us-east';
-    var fullLocation = 'https://us-east-api.getstream.io/api/';
-    options.location = location;
-    client = stream.connect('a','b','c', options);
-    expect(client.baseUrl).to.eql(fullLocation);
-    expect(client.location).to.eql(location);
-    done();
-  });
+    });
+  }
 
   it('handlers', function (done) {
     var called = {};
@@ -176,7 +160,7 @@ describe('Stream client', function () {
     user1.get({'limit': 1}, function(error, response, body) {
       expect(response.statusCode).to.eql(200);
     expect(body['results'][0]['id']).to.be.a('string');
-    if (node) {
+    if (isNodeEnv) {
       var userAgent = response.req._headers['x-stream-client'];
       expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
     }
@@ -258,7 +242,7 @@ describe('Stream client', function () {
     activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
     activity['to'] = ['flat:33', 'user:everyone'];
     //flat3
-    if (!node) activity['to'] = ['flat:33' + ' ' + flat3.token];
+    if (!isNodeEnv) activity['to'] = ['flat:33' + ' ' + flat3.token];
 
     function get(error, response, body) {
       var activityId = body['id'];
@@ -685,7 +669,7 @@ describe('Stream client', function () {
     }
   };
 
-  if(node) {
+  if(isNodeEnv) {
     // Server side specific tests
 
     it('supports application level authentication', function(done) {
@@ -773,10 +757,11 @@ describe('Stream client', function () {
 
   it('post promises fail', function (done) {
     var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world'};
-    user1.addActivity(activity)
+    var p = user1.addActivity(activity)
       .then(function(body) {
         done('expected failure');
-      }).catch(function(errorObj) {
+      })
+      p.catch(function(errorObj) {
         done();
       });
   });
