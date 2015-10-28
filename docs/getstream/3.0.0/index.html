@@ -26,7 +26,7 @@
     
 
 
-    <h3>getstream 2.2.2</h3>
+    <h3>getstream 3.0.0</h3>
 
 
 
@@ -46,15 +46,16 @@
         <article><h1>stream-js</h1><p><a href="https://travis-ci.org/GetStream/stream-js"><img src="https://travis-ci.org/GetStream/stream-js.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/r/GetStream/stream-js?branch=master"><img src="https://img.shields.io/coveralls/GetStream/stream-js.svg" alt="Coverage Status"></a>
 <a href="https://david-dm.org/tschellenbach/stream-js"><img src="https://david-dm.org/GetStream/stream-js.png" alt="Dependencies up to date"></a></p>
-<p><a href="https://saucelabs.com/u/tschellenbach"><img src="https://saucelabs.com/browser-matrix/tschellenbach.svg" alt="Sauce Test Status"></a></p>
 <p>stream-js is the official JavaScript client for <a href="https://getstream.io/">Stream</a>, a web service for building scalable newsfeeds and activity streams.
 The full documentation is available on <a href="http://getstream.io/docs/">GetStream.io/docs</a>. Note that there is also a <a href="https://github.com/getstream/stream-node">higher level Node integration</a> which hooks into your ORM.</p>
-<h3>Installation</h3><h4>Install from NPM</h4><pre class="prettyprint source lang-bash"><code>npm install getstream</code></pre><h4>Install using bower</h4><pre class="prettyprint source lang-bash"><code>bower install getstream</code></pre><h4>Install by downloading the JS file</h4><p><a href="https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js">JS</a> / 
+<h3>Installation</h3><h4>Install from NPM</h4><pre class="prettyprint source lang-bash"><code>npm install getstream</code></pre><h4>Install using bower</h4><pre class="prettyprint source lang-bash"><code>bower install getstream</code></pre><h4>Install by downloading the JS file</h4><p><a href="https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js">JS</a> /
 <a href="https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js">Minified JS</a></p>
 <h4>Install for parse cloud code</h4><p><a href="https://raw.githubusercontent.com/GetStream/stream-js/parse/dist/js/getstream.js">JS</a></p>
 <h3>Usage</h3><pre class="prettyprint source lang-javascript"><code>var stream = require('getstream');
 // Instantiate a new client (server side)
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+// Optionally supply the app identifier and an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Instantiate a new client (client side)
 client = stream.connect('YOUR_API_KEY');
 // Find your API keys here https://getstream.io/dashboard/
@@ -68,18 +69,23 @@ user1 = client.feed('user', '1', 'FEED_TOKEN');
 // Get activities from 5 to 10 (slow pagination)
 user1.get({limit:5, offset:5}, callback);
 // (Recommended & faster) Filter on an id less than a given UUID
-user1.get({limit:5, id_lt:&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;}, function(error, response, body) { /* callback */ });
+user1.get({limit:5, id_lt:&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;});
+
+// All API calls are performed asynchronous and return a Promise object
+user1.get({limit:5, id_lt:&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;})
+    .then(function(body) { /* on success */ })
+    .catch(function(error) { /* on failure */ });
 
 // Create a new activity
 activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
-user1.addActivity(activity, function(error, response, body) { ... });
+user1.addActivity(activity);
 // Create a bit more complex activity
-activity = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
+activity = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1',
     'course': {'name': 'Golden Gate park', 'distance': 10},
     'participants': ['Thierry', 'Tommaso'],
     'started_at': new Date()
 };
-user1.addActivity(activity, function(error, response, body) { /* callback */ });
+user1.addActivity(activity);
 
 // Remove an activity by its id
 user1.removeActivity(&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;);
@@ -89,11 +95,11 @@ user1.removeActivity({foreignId: 'tweet:1'});
 // mark a notification feed as read
 notification1 = client.feed('notification', '1');
 var params = {mark_read: true};
-notification1.get(params, function(error, response, body) { /* callback */ });
+notification1.get(params);
 
 // mark a notification feed as seen
 var params = {mark_seen:true};
-notification1.get(params, function(error, response, body) { /* callback */ });
+notification1.get(params);
 
 // Follow another feed
 user1.follow('flat', '42');
@@ -109,20 +115,20 @@ user1.followers({limit: '10', offset: '10'});
 user1.following({limit: '10', offset: '0'});
 
 // all methods support callback as the last argument
-user1.follow('flat', '42', function(error, response, body) { /* callback */ });
+user1.follow('flat', '42');
 
 // adding multiple activities
 activities = [
     {'actor': 1, 'verb': 'tweet', 'object': 1},
-    {'actor': 2, 'verb': 'tweet', 'object': 3}, 
+    {'actor': 2, 'verb': 'tweet', 'object': 3},
 ];
-user1.addActivities(activities, function(error, response, body) { /* callback */ });
+user1.addActivities(activities);
 
 // specifying additional feeds to push the activity to using the to param
 // especially usefull for notification style feeds
 to = ['user:2', 'user:3'];
 activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
-user1.addActivity(activity, function(error, response, body) { /* callback */ });
+user1.addActivity(activity);
 
 // adding one activity to multiple feeds
 var feeds = ['flat:1', 'flat:2', 'flat:3', 'flat:4'];
@@ -133,7 +139,7 @@ activity = {
   'target': 'Board:1'
 };
 
-client.addToMany(activity, feeds, function(error, response, body) { /* callback */ });
+client.addToMany(activity, feeds);
 
 // Batch create follow relations (let flat:1 follow user:1, user:2 and user:3 feeds in one single request)
 var follows = [
@@ -142,7 +148,7 @@ var follows = [
   {'source': 'flat:1', 'target': 'user:3'}
 ];
 
-client.followMany(follows, function(error, response, body) { /* callback */ });
+client.followMany(follows);
 
 // creating a feed token server side
 token = user1.token;
@@ -163,15 +169,16 @@ client = stream.connect('YOUR_API_KEY', null, 'SITE_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
 user1.subscribe(function callback() {
+    /* callback */
 });
 // now whenever something changes to the feed user 1
 // the callback will be called</code></pre><p>Docs are available on <a href="http://getstream.io/docs/">GetStream.io</a>.</p>
 <h2>Contributing</h2><p>First, make sure you can run the test suite. Tests are run via Mocha</p>
-<pre class="prettyprint source lang-bash"><code>mocha test/integration/index.js
-# browser version
+<pre class="prettyprint source lang-bash"><code>mocha test/integration/index.js test/unit/index.js
+# browser version (needs to be build through gulp build:test)
 test/browser/test.html
 # coverage
-mocha test/integration/cov.js -R html-cov > cov.html</code></pre><p>To release a new version</p>
+mocha test/cov.js -R html-cov > cov.html</code></pre><p>To release a new version</p>
 <pre class="prettyprint source lang-bash"><code># package.json is leading and overwrites bower.json version
 gulp bump
 # builds the browserify, tags and submits to npm
@@ -192,7 +199,7 @@ gulp publish</code></pre></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Oct 26 2015 14:59:17 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Wed Oct 28 2015 14:59:07 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

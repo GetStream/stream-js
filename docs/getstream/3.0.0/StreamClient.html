@@ -93,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line16">line 16</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line18">line 18</a>
     </li></ul></dd>
     
 
@@ -142,7 +142,7 @@
 
     
 
-    <h4 class="name" id="addToMany"><span class="type-signature"></span>addToMany<span class="signature">(activity, feeds, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="addToMany"><span class="type-signature"></span>addToMany<span class="signature">(activity, feeds, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -291,7 +291,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_batch_operations.js.html">lib/batch_operations.js</a>, <a href="lib_batch_operations.js.html#line7">line 7</a>
+        <a href="lib_batch_operations.js.html">lib/batch_operations.js</a>, <a href="lib_batch_operations.js.html#line8">line 8</a>
     </li></ul></dd>
     
 
@@ -318,7 +318,7 @@
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -329,7 +329,208 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="createRedirectUrl"><span class="type-signature"></span>createRedirectUrl<span class="signature">(targetUrl, userId, events)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Creates a redirect url for tracking the given events in the context of
+an email using Stream's analytics platform. Learn more at
+getstream.io/personalization
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>targetUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Target url</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User id to track</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>events</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of events to track</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line469">line 469</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The redirect url
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
 
 
     </dd>
@@ -645,7 +846,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line184">line 184</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line228">line 228</a>
     </li></ul></dd>
     
 
@@ -699,7 +900,7 @@
 
     
 
-    <h4 class="name" id="followMany"><span class="type-signature"></span>followMany<span class="signature">(follows, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="followMany"><span class="type-signature"></span>followMany<span class="signature">(follows, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -825,7 +1026,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_batch_operations.js.html">lib/batch_operations.js</a>, <a href="lib_batch_operations.js.html#line29">line 29</a>
+        <a href="lib_batch_operations.js.html">lib/batch_operations.js</a>, <a href="lib_batch_operations.js.html#line28">line 28</a>
     </li></ul></dd>
     
 
@@ -852,7 +1053,7 @@
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -863,7 +1064,7 @@
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -1001,7 +1202,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line152">line 152</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line196">line 196</a>
     </li></ul></dd>
     
 
@@ -1182,7 +1383,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line168">line 168</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -1240,7 +1441,7 @@
 
     
 
-    <h4 class="name" id="intialize"><span class="type-signature"></span>intialize<span class="signature">(apiKey, apiSecret<span class="signature-attributes">opt</span>, appId<span class="signature-attributes">opt</span>, options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="intialize"><span class="type-signature"></span>intialize<span class="signature">(apiKey, apiSecret<span class="signature-attributes">opt</span>, appId<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1397,6 +1598,8 @@
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -1420,7 +1623,11 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1445,10 +1652,63 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">which data center to use</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>expireTokens</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">whether to use a JWT timestamp field (i.e. iat)</td>
         </tr>
 
     
@@ -1496,7 +1756,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line27">line 27</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -1650,7 +1910,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line91">line 91</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -1811,7 +2071,7 @@ This is useful for generic error and loading handling
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line76">line 76</a>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -1844,6 +2104,110 @@ client.on('response', callback);</code></pre>
 
 
         
+            
+
+    
+
+    <h4 class="name" id="userAgent"><span class="type-signature"></span>userAgent<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Get the current user agent
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_client.js.html">lib/client.js</a>, <a href="lib_client.js.html#line183">line 183</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    current user agent
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
     
 
     
@@ -1865,7 +2229,7 @@ client.on('response', callback);</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Oct 26 2015 14:59:17 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Wed Oct 28 2015 14:59:07 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

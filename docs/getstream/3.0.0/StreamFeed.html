@@ -143,7 +143,7 @@ The feed object contains convenience functions such add activity, remove activit
 
     
 
-    <h4 class="name" id="addActivities"><span class="type-signature"></span>addActivities<span class="signature">(activities, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="addActivities"><span class="type-signature"></span>addActivities<span class="signature">(activities, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -266,7 +266,7 @@ The feed object contains convenience functions such add activity, remove activit
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line85">line 85</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -304,7 +304,7 @@ The feed object contains convenience functions such add activity, remove activit
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -319,7 +319,7 @@ The feed object contains convenience functions such add activity, remove activit
 
     
 
-    <h4 class="name" id="addActivity"><span class="type-signature"></span>addActivity<span class="signature">(activity, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addActivity"><span class="type-signature"></span>addActivity<span class="signature">(activity, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -443,7 +443,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line40">line 40</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -466,6 +466,28 @@ calls the specified callback
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promise object
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -474,7 +496,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="follow"><span class="type-signature"></span>follow<span class="signature">(targetSlug, targetUserId, options, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="follow"><span class="type-signature"></span>follow<span class="signature">(targetSlug, targetUserId, options, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -692,7 +714,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line106">line 106</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line105">line 105</a>
     </li></ul></dd>
     
 
@@ -719,7 +741,7 @@ calls the specified callback
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -730,7 +752,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -754,7 +776,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="followers"><span class="type-signature"></span>followers<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="followers"><span class="type-signature"></span>followers<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -926,7 +948,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line197">line 197</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line194">line 194</a>
     </li></ul></dd>
     
 
@@ -953,7 +975,7 @@ calls the specified callback
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -964,7 +986,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -984,7 +1006,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="following"><span class="type-signature"></span>following<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="following"><span class="type-signature"></span>following<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -1156,7 +1178,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line174">line 174</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -1183,7 +1205,7 @@ calls the specified callback
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -1194,7 +1216,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -1214,7 +1236,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(options, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -1337,7 +1359,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line221">line 221</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line217">line 217</a>
     </li></ul></dd>
     
 
@@ -1364,7 +1386,7 @@ calls the specified callback
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -1375,7 +1397,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -1397,7 +1419,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="intialize"><span class="type-signature"></span>intialize<span class="signature">(client, feedSlug, userId, token<span class="signature-attributes">opt</span>, siteId<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="intialize"><span class="type-signature"></span>intialize<span class="signature">(client, feedSlug, userId, token<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -1565,39 +1587,6 @@ calls the specified callback
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>siteId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The site identifier</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -1666,7 +1655,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="removeActivity"><span class="type-signature"></span>removeActivity<span class="signature">(activityId, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="removeActivity"><span class="type-signature"></span>removeActivity<span class="signature">(activityId, callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -1816,7 +1805,7 @@ calls the specified callback
 
         
 <div class="param-desc">
-    XHR request object
+    Promise object
 </div>
 
 
@@ -1827,7 +1816,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">object</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -1849,7 +1838,7 @@ calls the specified callback
 
     
 
-    <h4 class="name" id="subscribe"><span class="type-signature"></span>subscribe<span class="signature">(callback)</span><span class="type-signature"> &rarr; {promise}</span></h4>
+    <h4 class="name" id="subscribe"><span class="type-signature"></span>subscribe<span class="signature">(callback)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -1949,7 +1938,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line259">line 259</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line254">line 254</a>
     </li></ul></dd>
     
 
@@ -1987,7 +1976,7 @@ calls the specified callback
     </dt>
     <dd>
         
-<span class="param-type">promise</span>
+<span class="param-type">Promise</span>
 
 
     </dd>
@@ -2155,7 +2144,7 @@ calls the specified callback
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line153">line 153</a>
+        <a href="lib_feed.js.html">lib/feed.js</a>, <a href="lib_feed.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -2230,7 +2219,7 @@ calls the specified callback
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Oct 26 2015 14:59:17 GMT+0100 (CET)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Wed Oct 28 2015 14:59:07 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>
