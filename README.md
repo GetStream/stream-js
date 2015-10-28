@@ -38,8 +38,8 @@ bower install getstream
 
 ```javascript
 var stream = require('getstream');
-// Instantiate a new client (server side), optionally supply an object specifying the data center to use
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', { location: 'us-west' });
+// Instantiate a new client (server side)
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Instantiate a new client (client side)
