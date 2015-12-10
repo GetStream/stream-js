@@ -58,7 +58,7 @@ user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"});
 // All API calls are performed asynchronous and return a Promise object
 user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"})
 	.then(function(body) { /* on success */ })
-	.catch(function(error) { /* on failure */ });
+	.catch(function(reason) { /* on failure, reason.error contains an explanation */ });
 
 // Create a new activity
 activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
