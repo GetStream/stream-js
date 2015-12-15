@@ -401,7 +401,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    var description = this.node ? 'node' : 'browser';
 	    // TODO: get the version here in a way which works in both and browserify
-	    var version = 'unknown';
+
+	    var version = __webpack_require__(14).version;
+
 	    return 'stream-javascript-client-' + description + '-' + version;
 	  },
 
@@ -514,7 +516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    kwargs.headers = {};
 
 	    // auto-detect authentication type and set HTTP headers accordingly
-	    if (signing.isJWTSignature(signature)) {
+	    if (signature && signing.isJWTSignature(signature)) {
 	      kwargs.headers['stream-auth-type'] = 'jwt';
 	      signature = signature.split(' ').reverse()[0];
 	    } else {
@@ -690,7 +692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {array} events     List of events to track
 	     * @return {string}           The redirect url
 	     */
-	    var url = __webpack_require__(14);
+	    var url = __webpack_require__(15);
 	    var uri = url.parse(targetUrl);
 
 	    if (!(uri.host || uri.hostname && uri.port) && !uri.isUnix) {
@@ -1864,7 +1866,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Faye = {
-	  VERSION:          '1.1.1',
+	  VERSION:          '1.1.2',
 
 	  BAYEUX_VERSION:   '1.0',
 	  ID_LENGTH:        160,
@@ -3555,8 +3557,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!this.batching) return Faye.Promise.fulfilled(this.request([message]));
 
 	    this._outbox.push(message);
-	    this._flushLargeBatch();
 	    this._promise = this._promise || new Faye.Promise();
+	    this._flushLargeBatch();
 
 	    if (message.channel === Faye.Channel.HANDSHAKE) {
 	      this.addTimeout('publish', 0.01, this._flush, this);
@@ -4230,7 +4232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var promise = new Faye.Promise();
 
 	    this.callback(function(socket) {
-	      if (!socket) return;
+	      if (!socket || socket.readyState !== 1) return;
 	      socket.send(Faye.toJSON(messages));
 	      Faye.Promise.fulfill(promise, socket);
 	    }, this);
@@ -4507,6 +4509,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  request: function(messages) {
 	    var xhrClass = Faye.ENV.XDomainRequest ? XDomainRequest : XMLHttpRequest,
 	        xhr      = new xhrClass(),
+	        id       = ++Faye.Transport.CORS._id,
 	        headers  = this._dispatcher.headers,
 	        self     = this,
 	        key;
@@ -4523,6 +4526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var cleanUp = function() {
 	      if (!xhr) return false;
+	      Faye.Transport.CORS._pending.remove(id);
 	      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
 	      xhr = null;
 	    };
@@ -4547,10 +4551,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    xhr.onprogress = function() {};
+
+	    if (xhrClass === Faye.ENV.XDomainRequest)
+	      Faye.Transport.CORS._pending.add({id: id, xhr: xhr});
+
 	    xhr.send(this.encode(messages));
 	    return xhr;
 	  }
 	}), {
+	  _id:      0,
+	  _pending: new Faye.Set(),
+
 	  isUsable: function(dispatcher, endpoint, callback, context) {
 	    if (Faye.URI.isSameOrigin(endpoint))
 	      return callback.call(context, false);
@@ -4711,6 +4722,88 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 14 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"author": {
+			"name": "Thierry Schellenbach",
+			"company": "Stream.io Inc"
+		},
+		"name": "getstream",
+		"description": "The official low-level GetStream.io client for Node.js and the browser.",
+		"main": "./src/getstream.js",
+		"homepage": "https://getstream.io/",
+		"version": "3.0.0",
+		"browser": {
+			"request": "browser-request",
+			"crypto": false,
+			"jsonwebtoken": false,
+			"./src/lib/batch_operations.js": false,
+			"qs": false,
+			"url": false
+		},
+		"config": {
+			"blanket": {
+				"pattern": "src",
+				"data-cover-never": [
+					"node_modules"
+				]
+			}
+		},
+		"devDependencies": {
+			"async": "~0.9.0",
+			"babel-core": "^5.8.25",
+			"babel-loader": "^5.3.2",
+			"blanket": "~1.1.6",
+			"bluebird": "^2.1.3",
+			"connect": "^3.0.1",
+			"coveralls": "~2.10.1",
+			"expect.js": "~0.3.1",
+			"gulp": "^3.8.7",
+			"gulp-browserify": "^0.5.0",
+			"gulp-bump": "^0.1.8",
+			"gulp-git": "git://github.com/stevelacy/gulp-git.git",
+			"gulp-jscs": "^3.0.1",
+			"gulp-jscs-stylish": "^1.2.1",
+			"gulp-jshint": "^1.6.3",
+			"gulp-mocha": "^0.4.1",
+			"gulp-shell": "^0.2.7",
+			"gulp-uglify": "~0.3.1",
+			"gulp-util": "^2.2.17",
+			"jshint-stylish": "^2.0.1",
+			"json-loader": "^0.5.4",
+			"mocha": "^1.20.1",
+			"mocha-lcov-reporter": "0.0.1",
+			"mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
+			"quickcheck": "0.0.4",
+			"serve-static": "^1.2.3",
+			"vinyl-source-stream": "^1.1.0",
+			"webpack": "^1.12.2"
+		},
+		"license": "BSD",
+		"dependencies": {
+			"Base64": "^0.3.0",
+			"browser-request": "matthisk/browser-request",
+			"faye": "^1.0.1",
+			"http-signature": "^1.0.2",
+			"jsonwebtoken": "^5.0.1",
+			"qs": "^5.2.0",
+			"request": "2.63.0"
+		},
+		"repository": {
+			"type": "git",
+			"url": "git://github.com/GetStream/stream-js.git"
+		},
+		"scripts": {
+			"test": "gulp test"
+		},
+		"engines": {
+			"node": ">=0.8 <0.11"
+		}
+	};
+
+/***/ },
+/* 15 */
 /***/ function(module, exports) {
 
 	/* (ignored) */

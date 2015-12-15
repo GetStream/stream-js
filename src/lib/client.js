@@ -188,7 +188,9 @@ StreamClient.prototype = {
      */
     var description = (this.node) ? 'node' : 'browser';
     // TODO: get the version here in a way which works in both and browserify
-    var version = 'unknown';
+
+    var version = require('../../package.json').version;
+
     return 'stream-javascript-client-' + description + '-' + version;
   },
 
@@ -301,7 +303,7 @@ StreamClient.prototype = {
     kwargs.headers = {};
 
     // auto-detect authentication type and set HTTP headers accordingly
-    if (signing.isJWTSignature(signature)) {
+    if (signature && signing.isJWTSignature(signature)) {
       kwargs.headers['stream-auth-type'] = 'jwt';
       signature = signature.split(' ').reverse()[0];
     } else {

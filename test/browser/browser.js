@@ -44,18 +44,22 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var integrationTests = __webpack_require__(1);
-	var unitTests = __webpack_require__(25);
+	'use strict';
 
+	var integrationTests = __webpack_require__(1);
+	var unitTests = __webpack_require__(20);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {var expect = __webpack_require__(3);
-	var Faye = __webpack_require__(9);
-	var stream = __webpack_require__(11);
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var expect = __webpack_require__(3);
+	var Faye = __webpack_require__(5);
+	var stream = __webpack_require__(7);
 	var isNodeEnv = typeof window === 'undefined';
+	var errors;
 
 	var READ_TIMEOUT = 2000;
 
@@ -74,12 +78,12 @@
 	  var self = this;
 	  this.timeout(4000);
 	  this.localRun = false;
-	  if (typeof (process) != "undefined" && process.env.LOCAL) {
+	  if (typeof process != "undefined" && process.env.LOCAL) {
 	    // local testing is slow as we run celery tasks in sync
 	    this.timeout(25000);
 	    this.localRun = true;
 	  }
-	  if (typeof (document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
+	  if (typeof document != "undefined" && document.location.href.indexOf('local=1') != -1) {
 	    // local testing via the browser
 	    this.timeout(25000);
 	    this.localRun = true;
@@ -91,9 +95,9 @@
 
 	  function beforeEachBrowser() {
 	    client = stream.connect('ahj2ndz7gsan');
-	    client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
+	    client = stream.connect('ahj2ndz7gsan', null, 519, { 'group': 'browserTestCycle', 'location': 'eu-west' });
 
-	    if (self.localRun){
+	    if (self.localRun) {
 	      client.baseUrl = 'http://localhost:8000/api/';
 	      client.fayeUrl = 'http://localhost:9999/faye/';
 	    }
@@ -109,18 +113,18 @@
 
 	  function beforeEachNode() {
 	    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-	    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
+	    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, { 'group': 'testCycle', 'location': 'us-east' });
 	    user1 = client.feed('user', '11');
 	    aggregated2 = client.feed('aggregated', '22');
 	    aggregated3 = client.feed('aggregated', '33');
 	    flat3 = client.feed('flat', '33');
 	    secret3 = client.feed('secret', '33');
 	    notification3 = client.feed('notification', '33');
-	    user1ReadOnly = client.feed('user', '11', null, null, {readOnly: true});
-	    user2ReadOnly = client.feed('user', '22', null, null, {readOnly: true});
+	    user1ReadOnly = client.feed('user', '11', null, null, { readOnly: true });
+	    user2ReadOnly = client.feed('user', '22', null, null, { readOnly: true });
 	  }
 
-	  var before = (isNodeEnv) ? beforeEachNode : beforeEachBrowser;
+	  var before = isNodeEnv ? beforeEachNode : beforeEachBrowser;
 
 	  beforeEach(before);
 
@@ -160,7 +164,7 @@
 	    it('heroku_overwrite', function (done) {
 	      var url = 'https://thierry:pass@getstream.io/?app_id=1';
 	      process.env.STREAM_URL = url;
-	      client = stream.connect('a','b','c');
+	      client = stream.connect('a', 'b', 'c');
 	      expect(client.apiKey).to.eql('a');
 	      expect(client.apiSecret).to.eql('b');
 	      expect(client.appId).to.eql('c');
@@ -172,7 +176,7 @@
 	      var location = 'us-east';
 	      var fullLocation = 'https://us-east-api.getstream.io/api/';
 	      options.location = location;
-	      client = stream.connect('a','b','c', options);
+	      client = stream.connect('a', 'b', 'c', options);
 	      expect(client.baseUrl).to.eql(fullLocation);
 	      expect(client.location).to.eql(location);
 	      done();
@@ -183,10 +187,10 @@
 	    var called = {};
 	    called.request = 0;
 	    called.response = 0;
-	    function callback () {
+	    function callback() {
 	      called.request += 1;
 	    };
-	    function responseCallback () {
+	    function responseCallback() {
 	      called.response += 1;
 	    };
 	    client.on('request', callback);
@@ -199,11 +203,10 @@
 	    }
 	    function second() {
 	      client.off();
-	      user1.get({'limit': 1}, third);
+	      user1.get({ 'limit': 1 }, third);
 	    }
-	    user1.get({'limit': 1}, second);
+	    user1.get({ 'limit': 1 }, second);
 	  });
-
 
 	  it('signing', function (done) {
 	    expect(user1.token).to.be.an('string');
@@ -211,56 +214,68 @@
 	  });
 
 	  it('get feed', function (done) {
-	    user1.get({'limit': 1}, function(error, response, body) {
+	    user1.get({ 'limit': 1 }, function (error, response, body) {
 	      expect(response.statusCode).to.eql(200);
-	    expect(body['results'][0]['id']).to.be.a('string');
-	    if (isNodeEnv) {
-	      var userAgent = response.req._headers['x-stream-client'];
-	      expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
-	    }
-	    done();
-	  });
+	      expect(body['results'][0]['id']).to.be.a('string');
+	      if (isNodeEnv) {
+	        var userAgent = response.req._headers['x-stream-client'];
+	        expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+	      }
+	      done();
+	    });
 	  });
 
 	  it('get wrong feed', function (done) {
-	    var getFeed = function() { client.feed('flat1');};
+	    var getFeed = function getFeed() {
+	      client.feed('flat1');
+	    };
 	    expect(getFeed).to.throwException(function (e) {
 	      expect(e).to.be.a(errors.FeedError);
-	  });
+	    });
 	    done();
 	  });
 
 	  it('get wrong format', function (done) {
-	    var getFeed = function() { client.feed('flat:1', '2');};
+	    var getFeed = function getFeed() {
+	      client.feed('flat:1', '2');
+	    };
 	    expect(getFeed).to.throwException(function (e) {
 	      expect(e).to.be.a(errors.FeedError);
-	  });
+	    });
 	    done();
 	  });
 
 	  it('get invalid format', function (done) {
 	    var invalidFormats = [];
-	    invalidFormats.push(function() { client.feed('flat 1', '2');});
-	    invalidFormats.push(function() { client.feed('flat1', '2:3');});
-	    invalidFormats.push(function() { user1.follow('flat 1', '3');});
-	    invalidFormats.push(function() { user1.follow('flat', '3 3');});
+	    invalidFormats.push(function () {
+	      client.feed('flat 1', '2');
+	    });
+	    invalidFormats.push(function () {
+	      client.feed('flat1', '2:3');
+	    });
+	    invalidFormats.push(function () {
+	      user1.follow('flat 1', '3');
+	    });
+	    invalidFormats.push(function () {
+	      user1.follow('flat', '3 3');
+	    });
 	    // verify all of the above throw an error
 	    for (var i = 0; i < invalidFormats.length; i++) {
 	      var callable = invalidFormats[i];
-	        expect(callable).to.throwException(function (e) {
+	      expect(callable).to.throwException(function (e) {
 	        expect(e).to.be.a(errors.FeedError);
-	    });
-	  }
-	  // a dash should be allowed
-	  client.feed('flat1', '2-3', 'token');
+	      });
+	    }
+	    // a dash should be allowed
+	    client.feed('flat1', '2-3', 'token');
 	    done();
 	  });
 
 	  it('add activity', function (done) {
-	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world'};
+	    var activity = { 'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world' };
 	    function get(error, response, body) {
 	      var activityId = body['id'];
-	      user1.get({'limit': 1}, function(error, response, body) {
+	      user1.get({ 'limit': 1 }, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
 	        expect(body['results'][0]['id']).to.eql(activityId);
 	        done();
@@ -270,19 +285,19 @@
 	  });
 
 	  it('add complex activity', function (done) {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	    var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	    activity['participants'] = ['Thierry', 'Tommaso'];
-	    activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
+	    activity['route'] = { 'name': 'Vondelpark', 'distance': '20' };
 	    var currentDate = new Date();
 	    activity['date'] = currentDate;
 	    var isoDate = currentDate.toISOString();
 	    function get(error, response, body) {
 	      var activityId = body['id'];
-	      user1.get({'limit': 1}, function(error, response, body) {
+	      user1.get({ 'limit': 1 }, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
 	        expect(body['results'][0]['id']).to.eql(activityId);
 	        expect(body['results'][0]['participants']).to.eql(['Thierry', 'Tommaso']);
-	        expect(body['results'][0]['route']).to.eql({'name': 'Vondelpark', 'distance': '20'});
+	        expect(body['results'][0]['route']).to.eql({ 'name': 'Vondelpark', 'distance': '20' });
 	        expect(body['results'][0]['date']).to.eql(isoDate);
 	        done();
 	      });
@@ -291,9 +306,9 @@
 	  });
 
 	  it('add activity using to', function (done) {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	    var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	    activity['participants'] = ['Thierry', 'Tommaso'];
-	    activity['route'] = {'name': 'Vondelpark', 'distance': '20'};
+	    activity['route'] = { 'name': 'Vondelpark', 'distance': '20' };
 	    activity['to'] = ['flat:33', 'user:everyone'];
 	    //flat3
 	    if (!isNodeEnv) activity['to'] = ['flat:33' + ' ' + flat3.token];
@@ -302,7 +317,7 @@
 	      var activityId = body['id'];
 	      expect(error).to.eql(null);
 	      expect(body.exception).to.eql(undefined);
-	      flat3.get({'limit': 1}, function(error, response, body) {
+	      flat3.get({ 'limit': 1 }, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
 	        expect(body['results'][0]['id']).to.eql(activityId);
 	        done();
@@ -312,17 +327,17 @@
 	  });
 
 	  it('add activity no callback', function (done) {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	    var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	    user1.addActivity(activity);
 	    done();
 	  });
 
 	  it('remove activity', function (done) {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	    var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	    function remove(error, response, body) {
 	      var activityId = body['id'];
 	      expect(response.statusCode).to.eql(201);
-	      user1.removeActivity(activityId, function(error, response, body) {
+	      user1.removeActivity(activityId, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
 	        done();
 	      });
@@ -331,15 +346,15 @@
 	  });
 
 	  it('remove activity foreign id', function (done) {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1'};
+	    var activity = { 'actor': 1, 'verb': 'add', 'object': 1, 'foreign_id': 'add:1' };
 	    var now = new Date();
-	  activity.time = now.toISOString();
+	    activity.time = now.toISOString();
 	    function remove(error, response, body) {
 	      var activityId = body['id'];
 	      expect(response.statusCode).to.eql(201);
-	      user1.removeActivity({foreignId: 'add:1'}, function(error, response, body) {
+	      user1.removeActivity({ foreignId: 'add:1' }, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
-	        user1.get({limit:10}, function(error, response, body) {
+	        user1.get({ limit: 10 }, function (error, response, body) {
 	          expect(response.statusCode).to.eql(200);
 	          expect(body['results'][0]['id']).not.to.eql(activityId);
 	          expect(body['results'][0]['foreign_id']).not.to.eql('add:1');
@@ -351,14 +366,11 @@
 	  });
 
 	  it('add activities', function (done) {
-	  var activities = [
-	    {'actor': 1, 'verb': 'tweet', 'object': 1},
-	    {'actor': 2, 'verb': 'tweet', 'object': 3},
-	  ];
+	    var activities = [{ 'actor': 1, 'verb': 'tweet', 'object': 1 }, { 'actor': 2, 'verb': 'tweet', 'object': 3 }];
 	    function get(error, response, body) {
 	      var activityIdFirst = body['activities'][0]['id'];
 	      var activityIdLast = body['activities'][1]['id'];
-	      user1.get({'limit': 2}, function(error, response, body) {
+	      user1.get({ 'limit': 2 }, function (error, response, body) {
 	        expect(response.statusCode).to.eql(200);
 	        expect(body['results'][0]['id']).to.eql(activityIdLast);
 	        expect(body['results'][1]['id']).to.eql(activityIdFirst);
@@ -372,7 +384,7 @@
 	    var activityId = null;
 	    this.timeout(9000);
 	    function add() {
-	      var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	      var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	      user1.addActivity(activity, follow);
 	    }
 	    function follow(error, response, body) {
@@ -381,14 +393,14 @@
 	    }
 	    function runCheck(error, response, body) {
 	      function check() {
-	          aggregated2.get({'limit': 1}, function(error, response, body) {
-	            expect(response.statusCode).to.eql(200);
-	            expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
-	            done();
-	          });
-	        }
+	        aggregated2.get({ 'limit': 1 }, function (error, response, body) {
+	          expect(response.statusCode).to.eql(200);
+	          expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
+	          done();
+	        });
+	      }
 	      setTimeout(check, READ_TIMEOUT);
-	     }
+	    }
 	    add();
 	  });
 
@@ -398,8 +410,8 @@
 	  });
 
 	  it('follow with copy limit', function (done) {
-	    aggregated2.follow('user', '999', { limit: 500 }, function(error, response, body) {
-	      if(error) done(error);
+	    aggregated2.follow('user', '999', { limit: 500 }, function (error, response, body) {
+	      if (error) done(error);
 	      expect(response.statusCode).to.be(201);
 	      done();
 	    });
@@ -409,22 +421,22 @@
 	    this.timeout(6000);
 	    var activityId = null;
 	    function add() {
-	    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-	    user1.addActivity(activity, follow);
-	  }
-	  function follow(error, response, body) {
-	    activityId = body['id'];
-	    aggregated2.follow('user', '11', unfollow);
-	  }
-	  function unfollow(error, response, body) {
-	    aggregated2.unfollow('user', '11', check);
-	  }
+	      var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
+	      user1.addActivity(activity, follow);
+	    }
+	    function follow(error, response, body) {
+	      activityId = body['id'];
+	      aggregated2.follow('user', '11', unfollow);
+	    }
+	    function unfollow(error, response, body) {
+	      aggregated2.unfollow('user', '11', check);
+	    }
 	    function check(error, response, body) {
-	      setTimeout(function() {
-	        aggregated2.get({'limit': 1}, function(error, response, body) {
+	      setTimeout(function () {
+	        aggregated2.get({ 'limit': 1 }, function (error, response, body) {
 	          expect(response.statusCode).to.eql(200);
 	          var firstResult = body['results'][0];
-	          var activityFound = (firstResult) ? firstResult['activities'][0]['id'] : null;
+	          var activityFound = firstResult ? firstResult['activities'][0]['id'] : null;
 	          expect(activityFound).to.not.eql(activityId);
 	          done();
 	        });
@@ -434,28 +446,28 @@
 	  });
 
 	  it('list followers', function (done) {
-	    function callback(error, response, body){
+	    function callback(error, response, body) {
 	      expect(error).to.eql(null);
 	      expect(body.exception).to.eql(undefined);
 	      done();
 	    };
-	    user1.followers({limit: '10', offset: '10'}, callback);
+	    user1.followers({ limit: '10', offset: '10' }, callback);
 	  });
 
 	  it('list following', function (done) {
-	    function callback(error, response, body){
+	    function callback(error, response, body) {
 	      expect(error).to.eql(null);
 	      expect(body.exception).to.eql(undefined);
 	      done();
 	    };
-	    user1.following({limit: '10', offset: '10'}, callback);
+	    user1.following({ limit: '10', offset: '10' }, callback);
 	  });
 
 	  it('do i follow', function (done) {
 	    function doifollow() {
-	      user1.following({'filter': ['flat:33', 'flat:44']}, callback);
+	      user1.following({ 'filter': ['flat:33', 'flat:44'] }, callback);
 	    }
-	    function callback(error, response, body){
+	    function callback(error, response, body) {
 	      expect(error).to.eql(null);
 	      expect(body.exception).to.eql(undefined);
 	      var results = body.results;
@@ -471,7 +483,7 @@
 	      expect(response.statusCode).to.eql(200);
 	      done();
 	    }
-	    user1ReadOnly.get({'limit': 2}, check);
+	    user1ReadOnly.get({ 'limit': 2 }, check);
 	  });
 
 	  it('get filtering', function (done) {
@@ -483,20 +495,20 @@
 	    var activityIdThree = null;
 
 	    function add() {
-	      var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+	      var activity = { 'actor': 1, 'verb': 'add', 'object': 1 };
 	      user1.addActivity(activity, add2);
 	    }
 
 	    function add2(error, response, body) {
 	      activityIdOne = body['id'];
-	      var activity = {'actor': 2, 'verb': 'watch', 'object': 2};
+	      var activity = { 'actor': 2, 'verb': 'watch', 'object': 2 };
 	      user1.addActivity(activity, add3);
 	    }
 
 	    function add3(error, response, body) {
 	      activityIdTwo = body['id'];
-	      var activity = {'actor': 3, 'verb': 'run', 'object': 2};
-	      user1.addActivity(activity, function(error, response, body) {
+	      var activity = { 'actor': 3, 'verb': 'run', 'object': 2 };
+	      user1.addActivity(activity, function (error, response, body) {
 	        // testing eventual consistency is not easy :)
 	        function getBound() {
 	          get(error, response, body);
@@ -507,7 +519,7 @@
 
 	    function get(error, response, body) {
 	      activityIdThree = body['id'];
-	      user1.get({'limit': 2}, check);
+	      user1.get({ 'limit': 2 }, check);
 	    }
 
 	    // no filtering
@@ -515,7 +527,7 @@
 	      expect(body['results'].length).to.eql(2);
 	      expect(body['results'][0]['id']).to.eql(activityIdThree);
 	      expect(body['results'][1]['id']).to.eql(activityIdTwo);
-	      user1.get({limit:2, offset:1}, check2);
+	      user1.get({ limit: 2, offset: 1 }, check2);
 	    }
 
 	    // offset based
@@ -523,7 +535,7 @@
 	      expect(body['results'].length).to.eql(2);
 	      expect(body['results'][0]['id']).to.eql(activityIdTwo);
 	      expect(body['results'][1]['id']).to.eql(activityIdOne);
-	      user1.get({limit:2, id_lt:activityIdTwo}, check3);
+	      user1.get({ limit: 2, id_lt: activityIdTwo }, check3);
 	    }
 
 	    // try id_lt based
@@ -534,16 +546,12 @@
 	    }
 
 	    add();
-
 	  });
 
 	  it('mark read and seen', function (done) {
 	    // add 2 activities to ensure we have new data
-	    var params = {limit: 2};
-	    var activities = [
-	      {'actor': 1, 'verb': 'add', 'object': 1},
-	      {'actor': 2, 'verb': 'test', 'object': 2}
-	    ]
+	    var params = { limit: 2 };
+	    var activities = [{ 'actor': 1, 'verb': 'add', 'object': 1 }, { 'actor': 2, 'verb': 'test', 'object': 2 }];
 	    notification3.addActivities(activities, getNotifications);
 	    // lookup the notification ids
 	    function getNotifications(error, response, body) {
@@ -551,9 +559,9 @@
 	    };
 	    // mark all seen and the first read
 	    function markRead(error, response, body) {
-	       var notificationId = body['results'][0]['id'];
-	       var params = {limit:2, mark_seen:true, mark_read: notificationId};
-	       notification3.get(params, readFeed);
+	      var notificationId = body['results'][0]['id'];
+	      var params = { limit: 2, mark_seen: true, mark_read: notificationId };
+	      notification3.get(params, readFeed);
 	    }
 	    // read the feed (should be seen and 1 unread)
 	    function readFeed(error, response, body) {
@@ -569,7 +577,6 @@
 	      expect(body['unseen']).to.eql(0);
 	      done();
 	    };
-
 	  });
 
 	  it('fayeGetClient', function (done) {
@@ -579,15 +586,14 @@
 
 	  it('fayeSubscribe', function (done) {
 	    this.timeout(6000);
-	    var client = user1.getFayeClient()
-	    var subscription = user1.subscribe(function callback() {
-	    });
-	    subscription.then(function() {
+	    var client = user1.getFayeClient();
+	    var subscription = user1.subscribe(function callback() {});
+	    subscription.then(function () {
 	      done();
-	   });
+	    });
 	  });
 
-	  it('fayeSubscribeListening', function(done) {
+	  it('fayeSubscribeListening', function (done) {
 	    this.timeout(6000);
 
 	    var testUser1 = client.feed('user', '111', 'ksBmfluIarcgjR9e6ptwqkWZWJo'),
@@ -603,33 +609,29 @@
 	      'object': 1
 	    };
 
-	    var msgCallback = function(message) {
-	      if( message && message.new && message.new.length > 0) {
+	    var msgCallback = function msgCallback(message) {
+	      if (message && message['new'] && message['new'].length > 0) {
 	        messages += 1;
 	      }
 
-	      if( messages == N_MESSAGES ) {
+	      if (messages == N_MESSAGES) {
 	        done();
 	      }
 	    };
 
-	    var httpCallback = function(error, response, body) {
-	      if(error) done(error);
-	      if(response.statusCode !== 201) done(body);
+	    var httpCallback = function httpCallback(error, response, body) {
+	      if (error) done(error);
+	      if (response.statusCode !== 201) done(body);
 	    };
 
-	    Faye.Promise.all([
-	      testUser1.subscribe(msgCallback),
-	      testUser2.subscribe(msgCallback),
-	      testUser3.subscribe(msgCallback)
-	    ]).then(function() {
+	    Faye.Promise.all([testUser1.subscribe(msgCallback), testUser2.subscribe(msgCallback), testUser3.subscribe(msgCallback)]).then(function () {
 	      testUser1.addActivity(activity, httpCallback);
 	      testUser2.addActivity(activity, httpCallback);
 	      testUser3.addActivity(activity, httpCallback);
 	    }, done);
 	  });
 
-	  it('fayeSubscribeListeningWrongToken', function(done) {
+	  it('fayeSubscribeListeningWrongToken', function (done) {
 	    this.timeout(6000);
 
 	    var testUser1 = client.feed('user', '111', 'psuPHwgwoX-PGsg780jcXdO93VM'),
@@ -642,27 +644,26 @@
 	      'object': 1
 	    };
 
-	    var httpCallback = function(error, response, body) {
-	      if(error) done(error);
-	      if(response.statusCode !== 201) done(body);
+	    var httpCallback = function httpCallback(error, response, body) {
+	      if (error) done(error);
+	      if (response.statusCode !== 201) done(body);
 	    };
 
-	    var doneYet = function(obj) {
+	    var doneYet = function doneYet(obj) {
 	      messages++;
 
-	      if(messages === 2) done();
-	    }
+	      if (messages === 2) done();
+	    };
 
-	    testUser1.subscribe(function(message) {
+	    testUser1.subscribe(function (message) {
 	      done('testUser1 should not receive any messages');
-	    }).then(function() {
+	    }).then(function () {
 	      done('testUser1 should not authenticate succefully');
 	    }, doneYet);
 
-	    testUser2.subscribe(doneYet).then(function() {
+	    testUser2.subscribe(doneYet).then(function () {
 	      testUser2.addActivity(activity, httpCallback);
 	    }, done);
-
 	  });
 
 	  it('fayeSubscribeScope', function (done) {
@@ -670,12 +671,12 @@
 	    var client = user1ReadOnly.getFayeClient();
 	    var isDone = false;
 
-	    var doneYet = function() {
-	      if(!isDone) {
+	    var doneYet = function doneYet() {
+	      if (!isDone) {
 	        done();
 	        isDone = true;
 	      }
-	    }
+	    };
 
 	    var subscription = user1ReadOnly.subscribe(doneYet);
 	    subscription.then(doneYet);
@@ -686,12 +687,12 @@
 	    var client = user1ReadOnly.getFayeClient();
 	    var isDone = false;
 
-	    var doneYet = function() {
-	      if(!isDone) {
+	    var doneYet = function doneYet() {
+	      if (!isDone) {
 	        done();
 	        isDone = true;
 	      }
-	    }
+	    };
 	    var subscription = user1ReadOnly.subscribe(doneYet);
 	    subscription.then(doneYet);
 	  });
@@ -706,44 +707,44 @@
 	    }
 	    expect(sub).to.throwException(function (e) {
 	      expect(e).to.be.a(errors.SiteError);
-	  });
-	  done();
+	    });
+	    done();
 	  });
 
-	  var wrapCB = function(expectedStatusCode, done, cb) {
-	    return function(error, response, body) {
-	      if(error) return done(error);
+	  var wrapCB = function wrapCB(expectedStatusCode, done, cb) {
+	    return function (error, response, body) {
+	      if (error) return done(error);
 	      expect(response.statusCode).to.be(expectedStatusCode);
 
-	      if( typeof cb === 'function') {
+	      if (typeof cb === 'function') {
 	        cb.apply(cb, arguments);
 	      } else {
 	        done();
 	      }
-	    }
+	    };
 	  };
 
-	  if(isNodeEnv) {
+	  if (isNodeEnv) {
 	    // Server side specific tests
 
-	    it('supports application level authentication', function(done) {
+	    it('supports application level authentication', function (done) {
 	      client.makeSignedRequest({
 	        url: 'test/auth/digest/'
 	      }, wrapCB(200, done));
 	    });
 
-	    it('fails application level authentication with wrong keys', function(done) {
-	      var client = stream.connect('aap','noot');
+	    it('fails application level authentication with wrong keys', function (done) {
+	      var client = stream.connect('aap', 'noot');
 
 	      client.makeSignedRequest({
 	        url: 'test/auth/digest/'
-	      }, function(error, response, body) {
-	        if(error) done(error);
-	        if(body.exception === 'ApiKeyException') done();
+	      }, function (error, response, body) {
+	        if (error) done(error);
+	        if (body.exception === 'ApiKeyException') done();
 	      });
 	    });
 
-	    it('supports adding activity to multiple feeds', function(done) {
+	    it('supports adding activity to multiple feeds', function (done) {
 	      var activity = {
 	        'actor': 'user:11',
 	        'verb': 'like',
@@ -754,24 +755,20 @@
 	      client.addToMany(activity, feeds, wrapCB(201, done));
 	    });
 
-	    it('supports batch following', function(done) {
+	    it('supports batch following', function (done) {
 	      this.timeout(6000);
 
-	      var follows = [
-	        {'source': 'flat:1', 'target': 'user:1'},
-	        {'source': 'flat:1', 'target': 'user:2'},
-	        {'source': 'flat:1', 'target': 'user:3'}
-	      ];
+	      var follows = [{ 'source': 'flat:1', 'target': 'user:1' }, { 'source': 'flat:1', 'target': 'user:2' }, { 'source': 'flat:1', 'target': 'user:3' }];
 
 	      client.followMany(follows, wrapCB(201, done));
 	    });
 
-	    it('no secret application auth', function() {
+	    it('no secret application auth', function () {
 	      var client = stream.connect('ahj2ndz7gsan');
 
-	      expect(function() {
-	        client.addToMany({},[])
-	      }).to.throwError(function(e) {
+	      expect(function () {
+	        client.addToMany({}, []);
+	      }).to.throwError(function (e) {
 	        expect(e).to.be.a(errors.SiteError);
 	      });
 	    });
@@ -784,43 +781,41 @@
 	      };
 	      var feeds = ['flat:33', 'user:11'];
 
-	      client.addToMany(activity, feeds).then(function(body) {
+	      client.addToMany(activity, feeds).then(function (body) {
 	        done();
 	      }, done);
 	    });
 	  } else {
 	    // Client side specific tests
 
-	    it('shouldn\'t support signed requests on the client', function() {
+	    it('shouldn\'t support signed requests on the client', function () {
 	      expect(client.makeSignedRequest).to.be(undefined);
 	    });
 	  }
 
 	  it('get promises', function (done) {
-	    user1.get({'limit': 1}).then(function(body) {
+	    user1.get({ 'limit': 1 }).then(function (body) {
 	      done();
 	    }, done);
 	  });
 
 	  it('post promises', function (done) {
-	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world'};
-	    user1.addActivity(activity).then(function(body) {
-	        done();
+	    var activity = { 'actor': 'test-various:characters', 'verb': 'add', 'object': 1, 'tweet': 'hello world' };
+	    user1.addActivity(activity).then(function (body) {
+	      done();
 	    }, done);
 	  });
 
 	  it('post promises fail', function (done) {
-	    var activity = {'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world'};
-	    var p = user1.addActivity(activity)
-	      .then(function(body) {
-	        done('expected failure');
-	      })
-	      p.catch(function(errorObj) {
-	        done();
-	      });
+	    var activity = { 'actor': 'test-various:characters', 'verb': 'add', 'object': '', 'tweet': 'hello world' };
+	    var p = user1.addActivity(activity).then(function (body) {
+	      done('expected failure');
+	    });
+	    p['catch'](function (errorObj) {
+	      done();
+	    });
 	  });
 	});
-
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
@@ -924,7 +919,7 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(module, Buffer) {(function (global, module) {
+	/* WEBPACK VAR INJECTION */(function(module) {(function (global, module) {
 
 	  var exports = module.exports;
 
@@ -2209,7 +2204,7 @@
 	  ,  true ? module : {exports: {}}
 	);
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module), __webpack_require__(5).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
 
 /***/ },
 /* 4 */
@@ -2229,1816 +2224,6 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
-	 * The buffer module from node.js, for the browser.
-	 *
-	 * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
-	 * @license  MIT
-	 */
-	/* eslint-disable no-proto */
-
-	var base64 = __webpack_require__(6)
-	var ieee754 = __webpack_require__(7)
-	var isArray = __webpack_require__(8)
-
-	exports.Buffer = Buffer
-	exports.SlowBuffer = SlowBuffer
-	exports.INSPECT_MAX_BYTES = 50
-	Buffer.poolSize = 8192 // not used by this implementation
-
-	var rootParent = {}
-
-	/**
-	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
-	 *   === true    Use Uint8Array implementation (fastest)
-	 *   === false   Use Object implementation (most compatible, even IE6)
-	 *
-	 * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
-	 * Opera 11.6+, iOS 4.2+.
-	 *
-	 * Due to various browser bugs, sometimes the Object implementation will be used even
-	 * when the browser supports typed arrays.
-	 *
-	 * Note:
-	 *
-	 *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
-	 *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
-	 *
-	 *   - Safari 5-7 lacks support for changing the `Object.prototype.constructor` property
-	 *     on objects.
-	 *
-	 *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
-	 *
-	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
-	 *     incorrect length in some situations.
-
-	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
-	 * get the Object implementation, which is slower but behaves correctly.
-	 */
-	Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global.TYPED_ARRAY_SUPPORT
-	  : typedArraySupport()
-
-	function typedArraySupport () {
-	  function Bar () {}
-	  try {
-	    var arr = new Uint8Array(1)
-	    arr.foo = function () { return 42 }
-	    arr.constructor = Bar
-	    return arr.foo() === 42 && // typed array instances can be augmented
-	        arr.constructor === Bar && // constructor can be set
-	        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-	        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
-	  } catch (e) {
-	    return false
-	  }
-	}
-
-	function kMaxLength () {
-	  return Buffer.TYPED_ARRAY_SUPPORT
-	    ? 0x7fffffff
-	    : 0x3fffffff
-	}
-
-	/**
-	 * Class: Buffer
-	 * =============
-	 *
-	 * The Buffer constructor returns instances of `Uint8Array` that are augmented
-	 * with function properties for all the node `Buffer` API functions. We use
-	 * `Uint8Array` so that square bracket notation works as expected -- it returns
-	 * a single octet.
-	 *
-	 * By augmenting the instances, we can avoid modifying the `Uint8Array`
-	 * prototype.
-	 */
-	function Buffer (arg) {
-	  if (!(this instanceof Buffer)) {
-	    // Avoid going through an ArgumentsAdaptorTrampoline in the common case.
-	    if (arguments.length > 1) return new Buffer(arg, arguments[1])
-	    return new Buffer(arg)
-	  }
-
-	  this.length = 0
-	  this.parent = undefined
-
-	  // Common case.
-	  if (typeof arg === 'number') {
-	    return fromNumber(this, arg)
-	  }
-
-	  // Slightly less common case.
-	  if (typeof arg === 'string') {
-	    return fromString(this, arg, arguments.length > 1 ? arguments[1] : 'utf8')
-	  }
-
-	  // Unusual.
-	  return fromObject(this, arg)
-	}
-
-	function fromNumber (that, length) {
-	  that = allocate(that, length < 0 ? 0 : checked(length) | 0)
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-	    for (var i = 0; i < length; i++) {
-	      that[i] = 0
-	    }
-	  }
-	  return that
-	}
-
-	function fromString (that, string, encoding) {
-	  if (typeof encoding !== 'string' || encoding === '') encoding = 'utf8'
-
-	  // Assumption: byteLength() return value is always < kMaxLength.
-	  var length = byteLength(string, encoding) | 0
-	  that = allocate(that, length)
-
-	  that.write(string, encoding)
-	  return that
-	}
-
-	function fromObject (that, object) {
-	  if (Buffer.isBuffer(object)) return fromBuffer(that, object)
-
-	  if (isArray(object)) return fromArray(that, object)
-
-	  if (object == null) {
-	    throw new TypeError('must start with number, buffer, array or string')
-	  }
-
-	  if (typeof ArrayBuffer !== 'undefined') {
-	    if (object.buffer instanceof ArrayBuffer) {
-	      return fromTypedArray(that, object)
-	    }
-	    if (object instanceof ArrayBuffer) {
-	      return fromArrayBuffer(that, object)
-	    }
-	  }
-
-	  if (object.length) return fromArrayLike(that, object)
-
-	  return fromJsonObject(that, object)
-	}
-
-	function fromBuffer (that, buffer) {
-	  var length = checked(buffer.length) | 0
-	  that = allocate(that, length)
-	  buffer.copy(that, 0, 0, length)
-	  return that
-	}
-
-	function fromArray (that, array) {
-	  var length = checked(array.length) | 0
-	  that = allocate(that, length)
-	  for (var i = 0; i < length; i += 1) {
-	    that[i] = array[i] & 255
-	  }
-	  return that
-	}
-
-	// Duplicate of fromArray() to keep fromArray() monomorphic.
-	function fromTypedArray (that, array) {
-	  var length = checked(array.length) | 0
-	  that = allocate(that, length)
-	  // Truncating the elements is probably not what people expect from typed
-	  // arrays with BYTES_PER_ELEMENT > 1 but it's compatible with the behavior
-	  // of the old Buffer constructor.
-	  for (var i = 0; i < length; i += 1) {
-	    that[i] = array[i] & 255
-	  }
-	  return that
-	}
-
-	function fromArrayBuffer (that, array) {
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    // Return an augmented `Uint8Array` instance, for best performance
-	    array.byteLength
-	    that = Buffer._augment(new Uint8Array(array))
-	  } else {
-	    // Fallback: Return an object instance of the Buffer class
-	    that = fromTypedArray(that, new Uint8Array(array))
-	  }
-	  return that
-	}
-
-	function fromArrayLike (that, array) {
-	  var length = checked(array.length) | 0
-	  that = allocate(that, length)
-	  for (var i = 0; i < length; i += 1) {
-	    that[i] = array[i] & 255
-	  }
-	  return that
-	}
-
-	// Deserialize { type: 'Buffer', data: [1,2,3,...] } into a Buffer object.
-	// Returns a zero-length buffer for inputs that don't conform to the spec.
-	function fromJsonObject (that, object) {
-	  var array
-	  var length = 0
-
-	  if (object.type === 'Buffer' && isArray(object.data)) {
-	    array = object.data
-	    length = checked(array.length) | 0
-	  }
-	  that = allocate(that, length)
-
-	  for (var i = 0; i < length; i += 1) {
-	    that[i] = array[i] & 255
-	  }
-	  return that
-	}
-
-	if (Buffer.TYPED_ARRAY_SUPPORT) {
-	  Buffer.prototype.__proto__ = Uint8Array.prototype
-	  Buffer.__proto__ = Uint8Array
-	}
-
-	function allocate (that, length) {
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    // Return an augmented `Uint8Array` instance, for best performance
-	    that = Buffer._augment(new Uint8Array(length))
-	    that.__proto__ = Buffer.prototype
-	  } else {
-	    // Fallback: Return an object instance of the Buffer class
-	    that.length = length
-	    that._isBuffer = true
-	  }
-
-	  var fromPool = length !== 0 && length <= Buffer.poolSize >>> 1
-	  if (fromPool) that.parent = rootParent
-
-	  return that
-	}
-
-	function checked (length) {
-	  // Note: cannot use `length < kMaxLength` here because that fails when
-	  // length is NaN (which is otherwise coerced to zero.)
-	  if (length >= kMaxLength()) {
-	    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
-	                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
-	  }
-	  return length | 0
-	}
-
-	function SlowBuffer (subject, encoding) {
-	  if (!(this instanceof SlowBuffer)) return new SlowBuffer(subject, encoding)
-
-	  var buf = new Buffer(subject, encoding)
-	  delete buf.parent
-	  return buf
-	}
-
-	Buffer.isBuffer = function isBuffer (b) {
-	  return !!(b != null && b._isBuffer)
-	}
-
-	Buffer.compare = function compare (a, b) {
-	  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
-	    throw new TypeError('Arguments must be Buffers')
-	  }
-
-	  if (a === b) return 0
-
-	  var x = a.length
-	  var y = b.length
-
-	  var i = 0
-	  var len = Math.min(x, y)
-	  while (i < len) {
-	    if (a[i] !== b[i]) break
-
-	    ++i
-	  }
-
-	  if (i !== len) {
-	    x = a[i]
-	    y = b[i]
-	  }
-
-	  if (x < y) return -1
-	  if (y < x) return 1
-	  return 0
-	}
-
-	Buffer.isEncoding = function isEncoding (encoding) {
-	  switch (String(encoding).toLowerCase()) {
-	    case 'hex':
-	    case 'utf8':
-	    case 'utf-8':
-	    case 'ascii':
-	    case 'binary':
-	    case 'base64':
-	    case 'raw':
-	    case 'ucs2':
-	    case 'ucs-2':
-	    case 'utf16le':
-	    case 'utf-16le':
-	      return true
-	    default:
-	      return false
-	  }
-	}
-
-	Buffer.concat = function concat (list, length) {
-	  if (!isArray(list)) throw new TypeError('list argument must be an Array of Buffers.')
-
-	  if (list.length === 0) {
-	    return new Buffer(0)
-	  }
-
-	  var i
-	  if (length === undefined) {
-	    length = 0
-	    for (i = 0; i < list.length; i++) {
-	      length += list[i].length
-	    }
-	  }
-
-	  var buf = new Buffer(length)
-	  var pos = 0
-	  for (i = 0; i < list.length; i++) {
-	    var item = list[i]
-	    item.copy(buf, pos)
-	    pos += item.length
-	  }
-	  return buf
-	}
-
-	function byteLength (string, encoding) {
-	  if (typeof string !== 'string') string = '' + string
-
-	  var len = string.length
-	  if (len === 0) return 0
-
-	  // Use a for loop to avoid recursion
-	  var loweredCase = false
-	  for (;;) {
-	    switch (encoding) {
-	      case 'ascii':
-	      case 'binary':
-	      // Deprecated
-	      case 'raw':
-	      case 'raws':
-	        return len
-	      case 'utf8':
-	      case 'utf-8':
-	        return utf8ToBytes(string).length
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return len * 2
-	      case 'hex':
-	        return len >>> 1
-	      case 'base64':
-	        return base64ToBytes(string).length
-	      default:
-	        if (loweredCase) return utf8ToBytes(string).length // assume utf8
-	        encoding = ('' + encoding).toLowerCase()
-	        loweredCase = true
-	    }
-	  }
-	}
-	Buffer.byteLength = byteLength
-
-	// pre-set for values that may exist in the future
-	Buffer.prototype.length = undefined
-	Buffer.prototype.parent = undefined
-
-	function slowToString (encoding, start, end) {
-	  var loweredCase = false
-
-	  start = start | 0
-	  end = end === undefined || end === Infinity ? this.length : end | 0
-
-	  if (!encoding) encoding = 'utf8'
-	  if (start < 0) start = 0
-	  if (end > this.length) end = this.length
-	  if (end <= start) return ''
-
-	  while (true) {
-	    switch (encoding) {
-	      case 'hex':
-	        return hexSlice(this, start, end)
-
-	      case 'utf8':
-	      case 'utf-8':
-	        return utf8Slice(this, start, end)
-
-	      case 'ascii':
-	        return asciiSlice(this, start, end)
-
-	      case 'binary':
-	        return binarySlice(this, start, end)
-
-	      case 'base64':
-	        return base64Slice(this, start, end)
-
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return utf16leSlice(this, start, end)
-
-	      default:
-	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-	        encoding = (encoding + '').toLowerCase()
-	        loweredCase = true
-	    }
-	  }
-	}
-
-	Buffer.prototype.toString = function toString () {
-	  var length = this.length | 0
-	  if (length === 0) return ''
-	  if (arguments.length === 0) return utf8Slice(this, 0, length)
-	  return slowToString.apply(this, arguments)
-	}
-
-	Buffer.prototype.equals = function equals (b) {
-	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-	  if (this === b) return true
-	  return Buffer.compare(this, b) === 0
-	}
-
-	Buffer.prototype.inspect = function inspect () {
-	  var str = ''
-	  var max = exports.INSPECT_MAX_BYTES
-	  if (this.length > 0) {
-	    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
-	    if (this.length > max) str += ' ... '
-	  }
-	  return '<Buffer ' + str + '>'
-	}
-
-	Buffer.prototype.compare = function compare (b) {
-	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
-	  if (this === b) return 0
-	  return Buffer.compare(this, b)
-	}
-
-	Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
-	  if (byteOffset > 0x7fffffff) byteOffset = 0x7fffffff
-	  else if (byteOffset < -0x80000000) byteOffset = -0x80000000
-	  byteOffset >>= 0
-
-	  if (this.length === 0) return -1
-	  if (byteOffset >= this.length) return -1
-
-	  // Negative offsets start from the end of the buffer
-	  if (byteOffset < 0) byteOffset = Math.max(this.length + byteOffset, 0)
-
-	  if (typeof val === 'string') {
-	    if (val.length === 0) return -1 // special case: looking for empty string always fails
-	    return String.prototype.indexOf.call(this, val, byteOffset)
-	  }
-	  if (Buffer.isBuffer(val)) {
-	    return arrayIndexOf(this, val, byteOffset)
-	  }
-	  if (typeof val === 'number') {
-	    if (Buffer.TYPED_ARRAY_SUPPORT && Uint8Array.prototype.indexOf === 'function') {
-	      return Uint8Array.prototype.indexOf.call(this, val, byteOffset)
-	    }
-	    return arrayIndexOf(this, [ val ], byteOffset)
-	  }
-
-	  function arrayIndexOf (arr, val, byteOffset) {
-	    var foundIndex = -1
-	    for (var i = 0; byteOffset + i < arr.length; i++) {
-	      if (arr[byteOffset + i] === val[foundIndex === -1 ? 0 : i - foundIndex]) {
-	        if (foundIndex === -1) foundIndex = i
-	        if (i - foundIndex + 1 === val.length) return byteOffset + foundIndex
-	      } else {
-	        foundIndex = -1
-	      }
-	    }
-	    return -1
-	  }
-
-	  throw new TypeError('val must be string, number or Buffer')
-	}
-
-	// `get` is deprecated
-	Buffer.prototype.get = function get (offset) {
-	  console.log('.get() is deprecated. Access using array indexes instead.')
-	  return this.readUInt8(offset)
-	}
-
-	// `set` is deprecated
-	Buffer.prototype.set = function set (v, offset) {
-	  console.log('.set() is deprecated. Access using array indexes instead.')
-	  return this.writeUInt8(v, offset)
-	}
-
-	function hexWrite (buf, string, offset, length) {
-	  offset = Number(offset) || 0
-	  var remaining = buf.length - offset
-	  if (!length) {
-	    length = remaining
-	  } else {
-	    length = Number(length)
-	    if (length > remaining) {
-	      length = remaining
-	    }
-	  }
-
-	  // must be an even number of digits
-	  var strLen = string.length
-	  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
-
-	  if (length > strLen / 2) {
-	    length = strLen / 2
-	  }
-	  for (var i = 0; i < length; i++) {
-	    var parsed = parseInt(string.substr(i * 2, 2), 16)
-	    if (isNaN(parsed)) throw new Error('Invalid hex string')
-	    buf[offset + i] = parsed
-	  }
-	  return i
-	}
-
-	function utf8Write (buf, string, offset, length) {
-	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
-	}
-
-	function asciiWrite (buf, string, offset, length) {
-	  return blitBuffer(asciiToBytes(string), buf, offset, length)
-	}
-
-	function binaryWrite (buf, string, offset, length) {
-	  return asciiWrite(buf, string, offset, length)
-	}
-
-	function base64Write (buf, string, offset, length) {
-	  return blitBuffer(base64ToBytes(string), buf, offset, length)
-	}
-
-	function ucs2Write (buf, string, offset, length) {
-	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
-	}
-
-	Buffer.prototype.write = function write (string, offset, length, encoding) {
-	  // Buffer#write(string)
-	  if (offset === undefined) {
-	    encoding = 'utf8'
-	    length = this.length
-	    offset = 0
-	  // Buffer#write(string, encoding)
-	  } else if (length === undefined && typeof offset === 'string') {
-	    encoding = offset
-	    length = this.length
-	    offset = 0
-	  // Buffer#write(string, offset[, length][, encoding])
-	  } else if (isFinite(offset)) {
-	    offset = offset | 0
-	    if (isFinite(length)) {
-	      length = length | 0
-	      if (encoding === undefined) encoding = 'utf8'
-	    } else {
-	      encoding = length
-	      length = undefined
-	    }
-	  // legacy write(string, encoding, offset, length) - remove in v0.13
-	  } else {
-	    var swap = encoding
-	    encoding = offset
-	    offset = length | 0
-	    length = swap
-	  }
-
-	  var remaining = this.length - offset
-	  if (length === undefined || length > remaining) length = remaining
-
-	  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
-	    throw new RangeError('attempt to write outside buffer bounds')
-	  }
-
-	  if (!encoding) encoding = 'utf8'
-
-	  var loweredCase = false
-	  for (;;) {
-	    switch (encoding) {
-	      case 'hex':
-	        return hexWrite(this, string, offset, length)
-
-	      case 'utf8':
-	      case 'utf-8':
-	        return utf8Write(this, string, offset, length)
-
-	      case 'ascii':
-	        return asciiWrite(this, string, offset, length)
-
-	      case 'binary':
-	        return binaryWrite(this, string, offset, length)
-
-	      case 'base64':
-	        // Warning: maxLength not taken into account in base64Write
-	        return base64Write(this, string, offset, length)
-
-	      case 'ucs2':
-	      case 'ucs-2':
-	      case 'utf16le':
-	      case 'utf-16le':
-	        return ucs2Write(this, string, offset, length)
-
-	      default:
-	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
-	        encoding = ('' + encoding).toLowerCase()
-	        loweredCase = true
-	    }
-	  }
-	}
-
-	Buffer.prototype.toJSON = function toJSON () {
-	  return {
-	    type: 'Buffer',
-	    data: Array.prototype.slice.call(this._arr || this, 0)
-	  }
-	}
-
-	function base64Slice (buf, start, end) {
-	  if (start === 0 && end === buf.length) {
-	    return base64.fromByteArray(buf)
-	  } else {
-	    return base64.fromByteArray(buf.slice(start, end))
-	  }
-	}
-
-	function utf8Slice (buf, start, end) {
-	  end = Math.min(buf.length, end)
-	  var res = []
-
-	  var i = start
-	  while (i < end) {
-	    var firstByte = buf[i]
-	    var codePoint = null
-	    var bytesPerSequence = (firstByte > 0xEF) ? 4
-	      : (firstByte > 0xDF) ? 3
-	      : (firstByte > 0xBF) ? 2
-	      : 1
-
-	    if (i + bytesPerSequence <= end) {
-	      var secondByte, thirdByte, fourthByte, tempCodePoint
-
-	      switch (bytesPerSequence) {
-	        case 1:
-	          if (firstByte < 0x80) {
-	            codePoint = firstByte
-	          }
-	          break
-	        case 2:
-	          secondByte = buf[i + 1]
-	          if ((secondByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
-	            if (tempCodePoint > 0x7F) {
-	              codePoint = tempCodePoint
-	            }
-	          }
-	          break
-	        case 3:
-	          secondByte = buf[i + 1]
-	          thirdByte = buf[i + 2]
-	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
-	            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
-	              codePoint = tempCodePoint
-	            }
-	          }
-	          break
-	        case 4:
-	          secondByte = buf[i + 1]
-	          thirdByte = buf[i + 2]
-	          fourthByte = buf[i + 3]
-	          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
-	            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
-	            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
-	              codePoint = tempCodePoint
-	            }
-	          }
-	      }
-	    }
-
-	    if (codePoint === null) {
-	      // we did not generate a valid codePoint so insert a
-	      // replacement char (U+FFFD) and advance only 1 byte
-	      codePoint = 0xFFFD
-	      bytesPerSequence = 1
-	    } else if (codePoint > 0xFFFF) {
-	      // encode to utf16 (surrogate pair dance)
-	      codePoint -= 0x10000
-	      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
-	      codePoint = 0xDC00 | codePoint & 0x3FF
-	    }
-
-	    res.push(codePoint)
-	    i += bytesPerSequence
-	  }
-
-	  return decodeCodePointsArray(res)
-	}
-
-	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
-	// the lowest limit is Chrome, with 0x10000 args.
-	// We go 1 magnitude less, for safety
-	var MAX_ARGUMENTS_LENGTH = 0x1000
-
-	function decodeCodePointsArray (codePoints) {
-	  var len = codePoints.length
-	  if (len <= MAX_ARGUMENTS_LENGTH) {
-	    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
-	  }
-
-	  // Decode in chunks to avoid "call stack size exceeded".
-	  var res = ''
-	  var i = 0
-	  while (i < len) {
-	    res += String.fromCharCode.apply(
-	      String,
-	      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
-	    )
-	  }
-	  return res
-	}
-
-	function asciiSlice (buf, start, end) {
-	  var ret = ''
-	  end = Math.min(buf.length, end)
-
-	  for (var i = start; i < end; i++) {
-	    ret += String.fromCharCode(buf[i] & 0x7F)
-	  }
-	  return ret
-	}
-
-	function binarySlice (buf, start, end) {
-	  var ret = ''
-	  end = Math.min(buf.length, end)
-
-	  for (var i = start; i < end; i++) {
-	    ret += String.fromCharCode(buf[i])
-	  }
-	  return ret
-	}
-
-	function hexSlice (buf, start, end) {
-	  var len = buf.length
-
-	  if (!start || start < 0) start = 0
-	  if (!end || end < 0 || end > len) end = len
-
-	  var out = ''
-	  for (var i = start; i < end; i++) {
-	    out += toHex(buf[i])
-	  }
-	  return out
-	}
-
-	function utf16leSlice (buf, start, end) {
-	  var bytes = buf.slice(start, end)
-	  var res = ''
-	  for (var i = 0; i < bytes.length; i += 2) {
-	    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
-	  }
-	  return res
-	}
-
-	Buffer.prototype.slice = function slice (start, end) {
-	  var len = this.length
-	  start = ~~start
-	  end = end === undefined ? len : ~~end
-
-	  if (start < 0) {
-	    start += len
-	    if (start < 0) start = 0
-	  } else if (start > len) {
-	    start = len
-	  }
-
-	  if (end < 0) {
-	    end += len
-	    if (end < 0) end = 0
-	  } else if (end > len) {
-	    end = len
-	  }
-
-	  if (end < start) end = start
-
-	  var newBuf
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    newBuf = Buffer._augment(this.subarray(start, end))
-	  } else {
-	    var sliceLen = end - start
-	    newBuf = new Buffer(sliceLen, undefined)
-	    for (var i = 0; i < sliceLen; i++) {
-	      newBuf[i] = this[i + start]
-	    }
-	  }
-
-	  if (newBuf.length) newBuf.parent = this.parent || this
-
-	  return newBuf
-	}
-
-	/*
-	 * Need to make sure that buffer isn't trying to write out of bounds.
-	 */
-	function checkOffset (offset, ext, length) {
-	  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
-	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
-	}
-
-	Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-	  var val = this[offset]
-	  var mul = 1
-	  var i = 0
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    val += this[offset + i] * mul
-	  }
-
-	  return val
-	}
-
-	Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) {
-	    checkOffset(offset, byteLength, this.length)
-	  }
-
-	  var val = this[offset + --byteLength]
-	  var mul = 1
-	  while (byteLength > 0 && (mul *= 0x100)) {
-	    val += this[offset + --byteLength] * mul
-	  }
-
-	  return val
-	}
-
-	Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 1, this.length)
-	  return this[offset]
-	}
-
-	Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length)
-	  return this[offset] | (this[offset + 1] << 8)
-	}
-
-	Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length)
-	  return (this[offset] << 8) | this[offset + 1]
-	}
-
-	Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-
-	  return ((this[offset]) |
-	      (this[offset + 1] << 8) |
-	      (this[offset + 2] << 16)) +
-	      (this[offset + 3] * 0x1000000)
-	}
-
-	Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-
-	  return (this[offset] * 0x1000000) +
-	    ((this[offset + 1] << 16) |
-	    (this[offset + 2] << 8) |
-	    this[offset + 3])
-	}
-
-	Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-	  var val = this[offset]
-	  var mul = 1
-	  var i = 0
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    val += this[offset + i] * mul
-	  }
-	  mul *= 0x80
-
-	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-	  return val
-	}
-
-	Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-
-	  var i = byteLength
-	  var mul = 1
-	  var val = this[offset + --i]
-	  while (i > 0 && (mul *= 0x100)) {
-	    val += this[offset + --i] * mul
-	  }
-	  mul *= 0x80
-
-	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-
-	  return val
-	}
-
-	Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 1, this.length)
-	  if (!(this[offset] & 0x80)) return (this[offset])
-	  return ((0xff - this[offset] + 1) * -1)
-	}
-
-	Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length)
-	  var val = this[offset] | (this[offset + 1] << 8)
-	  return (val & 0x8000) ? val | 0xFFFF0000 : val
-	}
-
-	Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 2, this.length)
-	  var val = this[offset + 1] | (this[offset] << 8)
-	  return (val & 0x8000) ? val | 0xFFFF0000 : val
-	}
-
-	Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-
-	  return (this[offset]) |
-	    (this[offset + 1] << 8) |
-	    (this[offset + 2] << 16) |
-	    (this[offset + 3] << 24)
-	}
-
-	Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-
-	  return (this[offset] << 24) |
-	    (this[offset + 1] << 16) |
-	    (this[offset + 2] << 8) |
-	    (this[offset + 3])
-	}
-
-	Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-	  return ieee754.read(this, offset, true, 23, 4)
-	}
-
-	Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 4, this.length)
-	  return ieee754.read(this, offset, false, 23, 4)
-	}
-
-	Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 8, this.length)
-	  return ieee754.read(this, offset, true, 52, 8)
-	}
-
-	Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
-	  if (!noAssert) checkOffset(offset, 8, this.length)
-	  return ieee754.read(this, offset, false, 52, 8)
-	}
-
-	function checkInt (buf, value, offset, ext, max, min) {
-	  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
-	  if (value > max || value < min) throw new RangeError('value is out of bounds')
-	  if (offset + ext > buf.length) throw new RangeError('index out of range')
-	}
-
-	Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
-
-	  var mul = 1
-	  var i = 0
-	  this[offset] = value & 0xFF
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    this[offset + i] = (value / mul) & 0xFF
-	  }
-
-	  return offset + byteLength
-	}
-
-	Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  byteLength = byteLength | 0
-	  if (!noAssert) checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
-
-	  var i = byteLength - 1
-	  var mul = 1
-	  this[offset + i] = value & 0xFF
-	  while (--i >= 0 && (mul *= 0x100)) {
-	    this[offset + i] = (value / mul) & 0xFF
-	  }
-
-	  return offset + byteLength
-	}
-
-	Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-	  this[offset] = (value & 0xff)
-	  return offset + 1
-	}
-
-	function objectWriteUInt16 (buf, value, offset, littleEndian) {
-	  if (value < 0) value = 0xffff + value + 1
-	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
-	    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-	      (littleEndian ? i : 1 - i) * 8
-	  }
-	}
-
-	Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff)
-	    this[offset + 1] = (value >>> 8)
-	  } else {
-	    objectWriteUInt16(this, value, offset, true)
-	  }
-	  return offset + 2
-	}
-
-	Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 8)
-	    this[offset + 1] = (value & 0xff)
-	  } else {
-	    objectWriteUInt16(this, value, offset, false)
-	  }
-	  return offset + 2
-	}
-
-	function objectWriteUInt32 (buf, value, offset, littleEndian) {
-	  if (value < 0) value = 0xffffffff + value + 1
-	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
-	    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-	  }
-	}
-
-	Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset + 3] = (value >>> 24)
-	    this[offset + 2] = (value >>> 16)
-	    this[offset + 1] = (value >>> 8)
-	    this[offset] = (value & 0xff)
-	  } else {
-	    objectWriteUInt32(this, value, offset, true)
-	  }
-	  return offset + 4
-	}
-
-	Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 24)
-	    this[offset + 1] = (value >>> 16)
-	    this[offset + 2] = (value >>> 8)
-	    this[offset + 3] = (value & 0xff)
-	  } else {
-	    objectWriteUInt32(this, value, offset, false)
-	  }
-	  return offset + 4
-	}
-
-	Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) {
-	    var limit = Math.pow(2, 8 * byteLength - 1)
-
-	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-	  }
-
-	  var i = 0
-	  var mul = 1
-	  var sub = value < 0 ? 1 : 0
-	  this[offset] = value & 0xFF
-	  while (++i < byteLength && (mul *= 0x100)) {
-	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-	  }
-
-	  return offset + byteLength
-	}
-
-	Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) {
-	    var limit = Math.pow(2, 8 * byteLength - 1)
-
-	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
-	  }
-
-	  var i = byteLength - 1
-	  var mul = 1
-	  var sub = value < 0 ? 1 : 0
-	  this[offset + i] = value & 0xFF
-	  while (--i >= 0 && (mul *= 0x100)) {
-	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
-	  }
-
-	  return offset + byteLength
-	}
-
-	Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
-	  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
-	  if (value < 0) value = 0xff + value + 1
-	  this[offset] = (value & 0xff)
-	  return offset + 1
-	}
-
-	Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff)
-	    this[offset + 1] = (value >>> 8)
-	  } else {
-	    objectWriteUInt16(this, value, offset, true)
-	  }
-	  return offset + 2
-	}
-
-	Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 8)
-	    this[offset + 1] = (value & 0xff)
-	  } else {
-	    objectWriteUInt16(this, value, offset, false)
-	  }
-	  return offset + 2
-	}
-
-	Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value & 0xff)
-	    this[offset + 1] = (value >>> 8)
-	    this[offset + 2] = (value >>> 16)
-	    this[offset + 3] = (value >>> 24)
-	  } else {
-	    objectWriteUInt32(this, value, offset, true)
-	  }
-	  return offset + 4
-	}
-
-	Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
-	  value = +value
-	  offset = offset | 0
-	  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
-	  if (value < 0) value = 0xffffffff + value + 1
-	  if (Buffer.TYPED_ARRAY_SUPPORT) {
-	    this[offset] = (value >>> 24)
-	    this[offset + 1] = (value >>> 16)
-	    this[offset + 2] = (value >>> 8)
-	    this[offset + 3] = (value & 0xff)
-	  } else {
-	    objectWriteUInt32(this, value, offset, false)
-	  }
-	  return offset + 4
-	}
-
-	function checkIEEE754 (buf, value, offset, ext, max, min) {
-	  if (value > max || value < min) throw new RangeError('value is out of bounds')
-	  if (offset + ext > buf.length) throw new RangeError('index out of range')
-	  if (offset < 0) throw new RangeError('index out of range')
-	}
-
-	function writeFloat (buf, value, offset, littleEndian, noAssert) {
-	  if (!noAssert) {
-	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
-	  }
-	  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-	  return offset + 4
-	}
-
-	Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
-	  return writeFloat(this, value, offset, true, noAssert)
-	}
-
-	Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
-	  return writeFloat(this, value, offset, false, noAssert)
-	}
-
-	function writeDouble (buf, value, offset, littleEndian, noAssert) {
-	  if (!noAssert) {
-	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
-	  }
-	  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-	  return offset + 8
-	}
-
-	Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
-	  return writeDouble(this, value, offset, true, noAssert)
-	}
-
-	Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
-	  return writeDouble(this, value, offset, false, noAssert)
-	}
-
-	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-	Buffer.prototype.copy = function copy (target, targetStart, start, end) {
-	  if (!start) start = 0
-	  if (!end && end !== 0) end = this.length
-	  if (targetStart >= target.length) targetStart = target.length
-	  if (!targetStart) targetStart = 0
-	  if (end > 0 && end < start) end = start
-
-	  // Copy 0 bytes; we're done
-	  if (end === start) return 0
-	  if (target.length === 0 || this.length === 0) return 0
-
-	  // Fatal error conditions
-	  if (targetStart < 0) {
-	    throw new RangeError('targetStart out of bounds')
-	  }
-	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
-	  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-
-	  // Are we oob?
-	  if (end > this.length) end = this.length
-	  if (target.length - targetStart < end - start) {
-	    end = target.length - targetStart + start
-	  }
-
-	  var len = end - start
-	  var i
-
-	  if (this === target && start < targetStart && targetStart < end) {
-	    // descending copy from end
-	    for (i = len - 1; i >= 0; i--) {
-	      target[i + targetStart] = this[i + start]
-	    }
-	  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-	    // ascending copy from start
-	    for (i = 0; i < len; i++) {
-	      target[i + targetStart] = this[i + start]
-	    }
-	  } else {
-	    target._set(this.subarray(start, start + len), targetStart)
-	  }
-
-	  return len
-	}
-
-	// fill(value, start=0, end=buffer.length)
-	Buffer.prototype.fill = function fill (value, start, end) {
-	  if (!value) value = 0
-	  if (!start) start = 0
-	  if (!end) end = this.length
-
-	  if (end < start) throw new RangeError('end < start')
-
-	  // Fill 0 bytes; we're done
-	  if (end === start) return
-	  if (this.length === 0) return
-
-	  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
-	  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
-
-	  var i
-	  if (typeof value === 'number') {
-	    for (i = start; i < end; i++) {
-	      this[i] = value
-	    }
-	  } else {
-	    var bytes = utf8ToBytes(value.toString())
-	    var len = bytes.length
-	    for (i = start; i < end; i++) {
-	      this[i] = bytes[i % len]
-	    }
-	  }
-
-	  return this
-	}
-
-	/**
-	 * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
-	 * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
-	 */
-	Buffer.prototype.toArrayBuffer = function toArrayBuffer () {
-	  if (typeof Uint8Array !== 'undefined') {
-	    if (Buffer.TYPED_ARRAY_SUPPORT) {
-	      return (new Buffer(this)).buffer
-	    } else {
-	      var buf = new Uint8Array(this.length)
-	      for (var i = 0, len = buf.length; i < len; i += 1) {
-	        buf[i] = this[i]
-	      }
-	      return buf.buffer
-	    }
-	  } else {
-	    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
-	  }
-	}
-
-	// HELPER FUNCTIONS
-	// ================
-
-	var BP = Buffer.prototype
-
-	/**
-	 * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
-	 */
-	Buffer._augment = function _augment (arr) {
-	  arr.constructor = Buffer
-	  arr._isBuffer = true
-
-	  // save reference to original Uint8Array set method before overwriting
-	  arr._set = arr.set
-
-	  // deprecated
-	  arr.get = BP.get
-	  arr.set = BP.set
-
-	  arr.write = BP.write
-	  arr.toString = BP.toString
-	  arr.toLocaleString = BP.toString
-	  arr.toJSON = BP.toJSON
-	  arr.equals = BP.equals
-	  arr.compare = BP.compare
-	  arr.indexOf = BP.indexOf
-	  arr.copy = BP.copy
-	  arr.slice = BP.slice
-	  arr.readUIntLE = BP.readUIntLE
-	  arr.readUIntBE = BP.readUIntBE
-	  arr.readUInt8 = BP.readUInt8
-	  arr.readUInt16LE = BP.readUInt16LE
-	  arr.readUInt16BE = BP.readUInt16BE
-	  arr.readUInt32LE = BP.readUInt32LE
-	  arr.readUInt32BE = BP.readUInt32BE
-	  arr.readIntLE = BP.readIntLE
-	  arr.readIntBE = BP.readIntBE
-	  arr.readInt8 = BP.readInt8
-	  arr.readInt16LE = BP.readInt16LE
-	  arr.readInt16BE = BP.readInt16BE
-	  arr.readInt32LE = BP.readInt32LE
-	  arr.readInt32BE = BP.readInt32BE
-	  arr.readFloatLE = BP.readFloatLE
-	  arr.readFloatBE = BP.readFloatBE
-	  arr.readDoubleLE = BP.readDoubleLE
-	  arr.readDoubleBE = BP.readDoubleBE
-	  arr.writeUInt8 = BP.writeUInt8
-	  arr.writeUIntLE = BP.writeUIntLE
-	  arr.writeUIntBE = BP.writeUIntBE
-	  arr.writeUInt16LE = BP.writeUInt16LE
-	  arr.writeUInt16BE = BP.writeUInt16BE
-	  arr.writeUInt32LE = BP.writeUInt32LE
-	  arr.writeUInt32BE = BP.writeUInt32BE
-	  arr.writeIntLE = BP.writeIntLE
-	  arr.writeIntBE = BP.writeIntBE
-	  arr.writeInt8 = BP.writeInt8
-	  arr.writeInt16LE = BP.writeInt16LE
-	  arr.writeInt16BE = BP.writeInt16BE
-	  arr.writeInt32LE = BP.writeInt32LE
-	  arr.writeInt32BE = BP.writeInt32BE
-	  arr.writeFloatLE = BP.writeFloatLE
-	  arr.writeFloatBE = BP.writeFloatBE
-	  arr.writeDoubleLE = BP.writeDoubleLE
-	  arr.writeDoubleBE = BP.writeDoubleBE
-	  arr.fill = BP.fill
-	  arr.inspect = BP.inspect
-	  arr.toArrayBuffer = BP.toArrayBuffer
-
-	  return arr
-	}
-
-	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
-
-	function base64clean (str) {
-	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
-	  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
-	  // Node converts strings with length < 2 to ''
-	  if (str.length < 2) return ''
-	  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
-	  while (str.length % 4 !== 0) {
-	    str = str + '='
-	  }
-	  return str
-	}
-
-	function stringtrim (str) {
-	  if (str.trim) return str.trim()
-	  return str.replace(/^\s+|\s+$/g, '')
-	}
-
-	function toHex (n) {
-	  if (n < 16) return '0' + n.toString(16)
-	  return n.toString(16)
-	}
-
-	function utf8ToBytes (string, units) {
-	  units = units || Infinity
-	  var codePoint
-	  var length = string.length
-	  var leadSurrogate = null
-	  var bytes = []
-
-	  for (var i = 0; i < length; i++) {
-	    codePoint = string.charCodeAt(i)
-
-	    // is surrogate component
-	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
-	      // last char was a lead
-	      if (!leadSurrogate) {
-	        // no lead yet
-	        if (codePoint > 0xDBFF) {
-	          // unexpected trail
-	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-	          continue
-	        } else if (i + 1 === length) {
-	          // unpaired lead
-	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-	          continue
-	        }
-
-	        // valid lead
-	        leadSurrogate = codePoint
-
-	        continue
-	      }
-
-	      // 2 leads in a row
-	      if (codePoint < 0xDC00) {
-	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-	        leadSurrogate = codePoint
-	        continue
-	      }
-
-	      // valid surrogate pair
-	      codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
-	    } else if (leadSurrogate) {
-	      // valid bmp char, but last char was a lead
-	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
-	    }
-
-	    leadSurrogate = null
-
-	    // encode utf8
-	    if (codePoint < 0x80) {
-	      if ((units -= 1) < 0) break
-	      bytes.push(codePoint)
-	    } else if (codePoint < 0x800) {
-	      if ((units -= 2) < 0) break
-	      bytes.push(
-	        codePoint >> 0x6 | 0xC0,
-	        codePoint & 0x3F | 0x80
-	      )
-	    } else if (codePoint < 0x10000) {
-	      if ((units -= 3) < 0) break
-	      bytes.push(
-	        codePoint >> 0xC | 0xE0,
-	        codePoint >> 0x6 & 0x3F | 0x80,
-	        codePoint & 0x3F | 0x80
-	      )
-	    } else if (codePoint < 0x110000) {
-	      if ((units -= 4) < 0) break
-	      bytes.push(
-	        codePoint >> 0x12 | 0xF0,
-	        codePoint >> 0xC & 0x3F | 0x80,
-	        codePoint >> 0x6 & 0x3F | 0x80,
-	        codePoint & 0x3F | 0x80
-	      )
-	    } else {
-	      throw new Error('Invalid code point')
-	    }
-	  }
-
-	  return bytes
-	}
-
-	function asciiToBytes (str) {
-	  var byteArray = []
-	  for (var i = 0; i < str.length; i++) {
-	    // Node's code seems to be doing this and not & 0x7F..
-	    byteArray.push(str.charCodeAt(i) & 0xFF)
-	  }
-	  return byteArray
-	}
-
-	function utf16leToBytes (str, units) {
-	  var c, hi, lo
-	  var byteArray = []
-	  for (var i = 0; i < str.length; i++) {
-	    if ((units -= 2) < 0) break
-
-	    c = str.charCodeAt(i)
-	    hi = c >> 8
-	    lo = c % 256
-	    byteArray.push(lo)
-	    byteArray.push(hi)
-	  }
-
-	  return byteArray
-	}
-
-	function base64ToBytes (str) {
-	  return base64.toByteArray(base64clean(str))
-	}
-
-	function blitBuffer (src, dst, offset, length) {
-	  for (var i = 0; i < length; i++) {
-	    if ((i + offset >= dst.length) || (i >= src.length)) break
-	    dst[i + offset] = src[i]
-	  }
-	  return i
-	}
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5).Buffer, (function() { return this; }())))
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-	;(function (exports) {
-		'use strict';
-
-	  var Arr = (typeof Uint8Array !== 'undefined')
-	    ? Uint8Array
-	    : Array
-
-		var PLUS   = '+'.charCodeAt(0)
-		var SLASH  = '/'.charCodeAt(0)
-		var NUMBER = '0'.charCodeAt(0)
-		var LOWER  = 'a'.charCodeAt(0)
-		var UPPER  = 'A'.charCodeAt(0)
-		var PLUS_URL_SAFE = '-'.charCodeAt(0)
-		var SLASH_URL_SAFE = '_'.charCodeAt(0)
-
-		function decode (elt) {
-			var code = elt.charCodeAt(0)
-			if (code === PLUS ||
-			    code === PLUS_URL_SAFE)
-				return 62 // '+'
-			if (code === SLASH ||
-			    code === SLASH_URL_SAFE)
-				return 63 // '/'
-			if (code < NUMBER)
-				return -1 //no match
-			if (code < NUMBER + 10)
-				return code - NUMBER + 26 + 26
-			if (code < UPPER + 26)
-				return code - UPPER
-			if (code < LOWER + 26)
-				return code - LOWER + 26
-		}
-
-		function b64ToByteArray (b64) {
-			var i, j, l, tmp, placeHolders, arr
-
-			if (b64.length % 4 > 0) {
-				throw new Error('Invalid string. Length must be a multiple of 4')
-			}
-
-			// the number of equal signs (place holders)
-			// if there are two placeholders, than the two characters before it
-			// represent one byte
-			// if there is only one, then the three characters before it represent 2 bytes
-			// this is just a cheap hack to not do indexOf twice
-			var len = b64.length
-			placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
-
-			// base64 is 4/3 + up to two characters of the original data
-			arr = new Arr(b64.length * 3 / 4 - placeHolders)
-
-			// if there are placeholders, only get up to the last complete 4 chars
-			l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-			var L = 0
-
-			function push (v) {
-				arr[L++] = v
-			}
-
-			for (i = 0, j = 0; i < l; i += 4, j += 3) {
-				tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-				push((tmp & 0xFF0000) >> 16)
-				push((tmp & 0xFF00) >> 8)
-				push(tmp & 0xFF)
-			}
-
-			if (placeHolders === 2) {
-				tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-				push(tmp & 0xFF)
-			} else if (placeHolders === 1) {
-				tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-				push((tmp >> 8) & 0xFF)
-				push(tmp & 0xFF)
-			}
-
-			return arr
-		}
-
-		function uint8ToBase64 (uint8) {
-			var i,
-				extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-				output = "",
-				temp, length
-
-			function encode (num) {
-				return lookup.charAt(num)
-			}
-
-			function tripletToBase64 (num) {
-				return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-			}
-
-			// go through the array every three bytes, we'll deal with trailing stuff later
-			for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-				temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-				output += tripletToBase64(temp)
-			}
-
-			// pad the end with zeros, but make sure to not forget the extra bytes
-			switch (extraBytes) {
-				case 1:
-					temp = uint8[uint8.length - 1]
-					output += encode(temp >> 2)
-					output += encode((temp << 4) & 0x3F)
-					output += '=='
-					break
-				case 2:
-					temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-					output += encode(temp >> 10)
-					output += encode((temp >> 4) & 0x3F)
-					output += encode((temp << 2) & 0x3F)
-					output += '='
-					break
-			}
-
-			return output
-		}
-
-		exports.toByteArray = b64ToByteArray
-		exports.fromByteArray = uint8ToBase64
-	}( false ? (this.base64js = {}) : exports))
-
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-	  var e, m
-	  var eLen = nBytes * 8 - mLen - 1
-	  var eMax = (1 << eLen) - 1
-	  var eBias = eMax >> 1
-	  var nBits = -7
-	  var i = isLE ? (nBytes - 1) : 0
-	  var d = isLE ? -1 : 1
-	  var s = buffer[offset + i]
-
-	  i += d
-
-	  e = s & ((1 << (-nBits)) - 1)
-	  s >>= (-nBits)
-	  nBits += eLen
-	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-	  m = e & ((1 << (-nBits)) - 1)
-	  e >>= (-nBits)
-	  nBits += mLen
-	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-	  if (e === 0) {
-	    e = 1 - eBias
-	  } else if (e === eMax) {
-	    return m ? NaN : ((s ? -1 : 1) * Infinity)
-	  } else {
-	    m = m + Math.pow(2, mLen)
-	    e = e - eBias
-	  }
-	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-	}
-
-	exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-	  var e, m, c
-	  var eLen = nBytes * 8 - mLen - 1
-	  var eMax = (1 << eLen) - 1
-	  var eBias = eMax >> 1
-	  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-	  var i = isLE ? 0 : (nBytes - 1)
-	  var d = isLE ? 1 : -1
-	  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-	  value = Math.abs(value)
-
-	  if (isNaN(value) || value === Infinity) {
-	    m = isNaN(value) ? 1 : 0
-	    e = eMax
-	  } else {
-	    e = Math.floor(Math.log(value) / Math.LN2)
-	    if (value * (c = Math.pow(2, -e)) < 1) {
-	      e--
-	      c *= 2
-	    }
-	    if (e + eBias >= 1) {
-	      value += rt / c
-	    } else {
-	      value += rt * Math.pow(2, 1 - eBias)
-	    }
-	    if (value * c >= 2) {
-	      e++
-	      c /= 2
-	    }
-
-	    if (e + eBias >= eMax) {
-	      m = 0
-	      e = eMax
-	    } else if (e + eBias >= 1) {
-	      m = (value * c - 1) * Math.pow(2, mLen)
-	      e = e + eBias
-	    } else {
-	      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-	      e = 0
-	    }
-	  }
-
-	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-	  e = (e << mLen) | m
-	  eLen += mLen
-	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-	  buffer[offset + i - d] |= s * 128
-	}
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	
-	/**
-	 * isArray
-	 */
-
-	var isArray = Array.isArray;
-
-	/**
-	 * toString
-	 */
-
-	var str = Object.prototype.toString;
-
-	/**
-	 * Whether or not the given `val`
-	 * is an array.
-	 *
-	 * example:
-	 *
-	 *        isArray([]);
-	 *        // > true
-	 *        isArray(arguments);
-	 *        // > false
-	 *        isArray('');
-	 *        // > false
-	 *
-	 * @param {mixed} val
-	 * @return {bool}
-	 */
-
-	module.exports = isArray || function (val) {
-	  return !! val && '[object Array]' == str.call(val);
-	};
-
-
-/***/ },
-/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, setImmediate, process) {(function() {
@@ -6815,10 +5000,10 @@
 	Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(10).setImmediate, __webpack_require__(2)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(6).setImmediate, __webpack_require__(2)))
 
 /***/ },
-/* 10 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(2).nextTick;
@@ -6897,10 +5082,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10).setImmediate, __webpack_require__(10).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6).setImmediate, __webpack_require__(6).clearImmediate))
 
 /***/ },
-/* 11 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -6908,9 +5093,11 @@
 	 * @author Thierry Schellenbach
 	 * BSD License
 	 */
-	var StreamClient = __webpack_require__(12);
-	var errors = __webpack_require__(15);
-	var request = __webpack_require__(13);
+	'use strict';
+
+	var StreamClient = __webpack_require__(8);
+	var errors = __webpack_require__(11);
+	var request = __webpack_require__(9);
 
 	function connect(apiKey, apiSecret, appId, options) {
 	  /**
@@ -6931,7 +5118,7 @@
 	   * @example <caption>where streamURL looks like</caption>
 	   * "https://thierry:pass@gestream.io/?app=1"
 	   */
-	  if (typeof (process) !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+	  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
 	    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
 	    apiKey = parts[1];
 	    apiSecret = parts[2];
@@ -6953,21 +5140,22 @@
 	module.exports.errors = errors;
 	module.exports.request = request;
 	module.exports.Client = StreamClient;
-
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 12 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {var request = __webpack_require__(13);
-	var StreamFeed = __webpack_require__(14);
-	var signing = __webpack_require__(17);
-	var errors = __webpack_require__(15);
-	var utils = __webpack_require__(16);
-	var BatchOperations = __webpack_require__(21);
-	var Promise = __webpack_require__(22);
-	var qs = __webpack_require__(23);
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var request = __webpack_require__(9);
+	var StreamFeed = __webpack_require__(10);
+	var signing = __webpack_require__(13);
+	var errors = __webpack_require__(11);
+	var utils = __webpack_require__(12);
+	var BatchOperations = __webpack_require__(15);
+	var Promise = __webpack_require__(17);
+	var qs = __webpack_require__(15);
 
 	/**
 	 * @callback requestCallback
@@ -6976,7 +5164,7 @@
 	 * @param {object} body
 	 */
 
-	var StreamClient = function() {
+	var StreamClient = function StreamClient() {
 	  /**
 	   * Client to connect to Stream api
 	   * @class StreamClient
@@ -6988,7 +5176,7 @@
 	  baseUrl: 'https://api.getstream.io/api/',
 	  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
-	  initialize: function(apiKey, apiSecret, appId, options) {
+	  initialize: function initialize(apiKey, apiSecret, appId, options) {
 	    /**
 	     * Initialize a client
 	     * @method intialize
@@ -7022,16 +5210,16 @@
 	      this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
 	    }
 
-	    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
+	    if (typeof process !== 'undefined' && process.env.LOCAL) {
 	      this.baseUrl = 'http://localhost:8000/api/';
 	    }
 
-	    if (typeof (process) !== 'undefined' && process.env.LOCAL_FAYE) {
+	    if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
 	      this.fayeUrl = 'http://localhost:9999/faye/';
 	    }
 
 	    this.handlers = {};
-	    this.browser = typeof (window) !== 'undefined';
+	    this.browser = typeof window !== 'undefined';
 	    this.node = !this.browser;
 
 	    if (this.browser && this.apiSecret) {
@@ -7039,7 +5227,7 @@
 	    }
 	  },
 
-	  on: function(event, callback) {
+	  on: function on(event, callback) {
 	    /**
 	     * Support for global event callbacks
 	     * This is useful for generic error and loading handling
@@ -7054,7 +5242,7 @@
 	    this.handlers[event] = callback;
 	  },
 
-	  off: function(key) {
+	  off: function off(key) {
 	    /**
 	     * Remove one or more event handlers
 	     * @method off
@@ -7071,7 +5259,7 @@
 	    }
 	  },
 
-	  send: function() {
+	  send: function send() {
 	    /**
 	     * Call the given handler with the arguments
 	     * @method send
@@ -7086,7 +5274,7 @@
 	    }
 	  },
 
-	  wrapPromiseTask: function(cb, fulfill, reject) {
+	  wrapPromiseTask: function wrapPromiseTask(cb, fulfill, reject) {
 	    /**
 	     * Wrap a task to be used as a promise
 	     * @method wrapPromiseTask
@@ -7104,12 +5292,12 @@
 	      if (error) {
 	        reject({
 	          error: error,
-	          response: response,
+	          response: response
 	        });
 	      } else if (!/^2/.test('' + response.statusCode)) {
 	        reject({
 	          error: body,
-	          response: response,
+	          response: response
 	        });
 	      } else {
 	        fulfill(body);
@@ -7119,7 +5307,7 @@
 	    };
 	  },
 
-	  wrapCallback: function(cb) {
+	  wrapCallback: function wrapCallback(cb) {
 	    /**
 	     * Wrap callback for HTTP request
 	     * @method wrapCallBack
@@ -7141,20 +5329,22 @@
 	    return callback;
 	  },
 
-	  userAgent: function() {
+	  userAgent: function userAgent() {
 	    /**
 	     * Get the current user agent
 	     * @method userAgent
 	     * @memberof StreamClient.prototype
 	     * @return {string} current user agent
 	     */
-	    var description = (this.node) ? 'node' : 'browser';
+	    var description = this.node ? 'node' : 'browser';
 	    // TODO: get the version here in a way which works in both and browserify
-	    var version = 'unknown';
+
+	    var version = __webpack_require__(18).version;
+
 	    return 'stream-javascript-client-' + description + '-' + version;
 	  },
 
-	  getReadOnlyToken: function(feedSlug, userId) {
+	  getReadOnlyToken: function getReadOnlyToken(feedSlug, userId) {
 	    /**
 	     * Returns a token that allows only read operations
 	     *
@@ -7170,7 +5360,7 @@
 	    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
-	  getReadWriteToken: function(feedSlug, userId) {
+	  getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
 	    /**
 	     * Returns a token that allows read and write operations
 	     *
@@ -7186,7 +5376,7 @@
 	    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
 	  },
 
-	  feed: function(feedSlug, userId, token, siteId, options) {
+	  feed: function feed(feedSlug, userId, token, siteId, options) {
 	    /**
 	     * Returns a feed object for the given feed id and token
 	     * @method feed
@@ -7231,7 +5421,7 @@
 	    return feed;
 	  },
 
-	  enrichUrl: function(relativeUrl) {
+	  enrichUrl: function enrichUrl(relativeUrl) {
 	    /**
 	     * Combines the base url with version and the relative url
 	     * @method enrichUrl
@@ -7243,7 +5433,7 @@
 	    return url;
 	  },
 
-	  enrichKwargs: function(kwargs) {
+	  enrichKwargs: function enrichKwargs(kwargs) {
 	    /**
 	     * Adds the API key and the signature
 	     * @method enrichKwargs
@@ -7263,7 +5453,7 @@
 	    kwargs.headers = {};
 
 	    // auto-detect authentication type and set HTTP headers accordingly
-	    if (signing.isJWTSignature(signature)) {
+	    if (signature && signing.isJWTSignature(signature)) {
 	      kwargs.headers['stream-auth-type'] = 'jwt';
 	      signature = signature.split(' ').reverse()[0];
 	    } else {
@@ -7275,7 +5465,7 @@
 	    return kwargs;
 	  },
 
-	  signActivity: function(activity) {
+	  signActivity: function signActivity(activity) {
 	    /**
 	     * We automatically sign the to parameter when in server side mode
 	     * @method signActivities
@@ -7286,7 +5476,7 @@
 	    return this.signActivities([activity])[0];
 	  },
 
-	  signActivities: function(activities) {
+	  signActivities: function signActivities(activities) {
 	    /**
 	     * We automatically sign the to parameter when in server side mode
 	     * @method signActivities
@@ -7317,7 +5507,7 @@
 	    return activities;
 	  },
 
-	  getFayeAuthorization: function() {
+	  getFayeAuthorization: function getFayeAuthorization() {
 	    /**
 	     * Get the authorization middleware to use Faye with getstream.io
 	     * @method getFayeAuthorization
@@ -7329,27 +5519,27 @@
 	        self = this;
 
 	    return {
-	      incoming: function(message, callback) {
+	      incoming: function incoming(message, callback) {
 	        callback(message);
 	      },
 
-	      outgoing: function(message, callback) {
+	      outgoing: function outgoing(message, callback) {
 	        if (message.subscription && self.subscriptions[message.subscription]) {
 	          var subscription = self.subscriptions[message.subscription];
 
 	          message.ext = {
 	            'user_id': subscription.userId,
 	            'api_key': apiKey,
-	            'signature': subscription.token,
+	            'signature': subscription.token
 	          };
 	        }
 
 	        callback(message);
-	      },
+	      }
 	    };
 	  },
 
-	  getFayeClient: function() {
+	  getFayeClient: function getFayeClient() {
 	    /**
 	     * Returns this client's current Faye client
 	     * @method getFayeClient
@@ -7357,7 +5547,7 @@
 	     * @private
 	     * @return {object} Faye client
 	     */
-	    var Faye = __webpack_require__(9);
+	    var Faye = __webpack_require__(5);
 	    if (this.fayeClient === null) {
 	      this.fayeClient = new Faye.Client(this.fayeUrl);
 	      var authExtension = this.getFayeAuthorization();
@@ -7367,7 +5557,7 @@
 	    return this.fayeClient;
 	  },
 
-	  get: function(kwargs, cb) {
+	  get: function get(kwargs, cb) {
 	    /**
 	     * Shorthand function for get request
 	     * @method get
@@ -7377,16 +5567,16 @@
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function(fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'get', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'GET';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
+	    }).bind(this));
 	  },
 
-	  post: function(kwargs, cb) {
+	  post: function post(kwargs, cb) {
 	    /**
 	     * Shorthand function for post request
 	     * @method post
@@ -7396,16 +5586,16 @@
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function(fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'post', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'POST';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
+	    }).bind(this));
 	  },
 
-	  delete: function(kwargs, cb) {
+	  'delete': function _delete(kwargs, cb) {
 	    /**
 	     * Shorthand function for delete request
 	     * @method delete
@@ -7415,19 +5605,19 @@
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function(fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'delete', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'DELETE';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
-	  },
+	    }).bind(this));
+	  }
 
 	};
 
 	if (qs) {
-	  StreamClient.prototype.createRedirectUrl = function(targetUrl, userId, events) {
+	  StreamClient.prototype.createRedirectUrl = function (targetUrl, userId, events) {
 	    /**
 	     * Creates a redirect url for tracking the given events in the context of
 	     * an email using Stream's analytics platform. Learn more at
@@ -7439,10 +5629,10 @@
 	     * @param  {array} events     List of events to track
 	     * @return {string}           The redirect url
 	     */
-	    var url = __webpack_require__(24);
+	    var url = __webpack_require__(19);
 	    var uri = url.parse(targetUrl);
 
-	    if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
+	    if (!(uri.host || uri.hostname && uri.port) && !uri.isUnix) {
 	      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
 	    }
 
@@ -7453,7 +5643,7 @@
 	      'authorization': authToken,
 	      'url': targetUrl,
 	      'api_key': this.apiKey,
-	      'events': JSON.stringify(events),
+	      'events': JSON.stringify(events)
 	    };
 
 	    var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
@@ -7472,11 +5662,10 @@
 	}
 
 	module.exports = StreamClient;
-
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ },
-/* 13 */
+/* 9 */
 /***/ function(module, exports) {
 
 	// Browser Request
@@ -7958,13 +6147,15 @@
 
 
 /***/ },
-/* 14 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var errors = __webpack_require__(15);
-	var utils = __webpack_require__(16);
+	'use strict';
 
-	var StreamFeed = function() {
+	var errors = __webpack_require__(11);
+	var utils = __webpack_require__(12);
+
+	var StreamFeed = function StreamFeed() {
 	  /**
 	   * Manage api calls for specific feeds
 	   * The feed object contains convenience functions such add activity, remove activity etc
@@ -7974,7 +6165,7 @@
 	};
 
 	StreamFeed.prototype = {
-	  initialize: function(client, feedSlug, userId, token) {
+	  initialize: function initialize(client, feedSlug, userId, token) {
 	    /**
 	     * Initialize a feed object
 	     * @method intialize
@@ -7998,7 +6189,7 @@
 	    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
 	  },
 
-	  addActivity: function(activity, callback) {
+	  addActivity: function addActivity(activity, callback) {
 	    /**
 	     * Adds the given activity to the feed and
 	     * calls the specified callback
@@ -8013,11 +6204,11 @@
 	    return this.client.post({
 	      url: 'feed/' + this.feedUrl + '/',
 	      body: activity,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  removeActivity: function(activityId, callback) {
+	  removeActivity: function removeActivity(activityId, callback) {
 	    /**
 	     * Removes the activity by activityId
 	     * @method removeActivity
@@ -8030,20 +6221,20 @@
 	     * @example
 	     * feed.removeActivity({'foreign_id': foreignId});
 	     */
-	    var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
+	    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
 	    var params = {};
 	    if (activityId.foreignId) {
 	      params['foreign_id'] = '1';
 	    }
 
-	    return this.client.delete({
+	    return this.client['delete']({
 	      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
 	      qs: params,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  addActivities: function(activities, callback) {
+	  addActivities: function addActivities(activities, callback) {
 	    /**
 	     * Adds the given activities to the feed and calls the specified callback
 	     * @method addActivities
@@ -8054,17 +6245,17 @@
 	     */
 	    activities = this.client.signActivities(activities);
 	    var data = {
-	      activities: activities,
+	      activities: activities
 	    };
 	    var xhr = this.client.post({
 	      url: 'feed/' + this.feedUrl + '/',
 	      body: data,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	    return xhr;
 	  },
 
-	  follow: function(targetSlug, targetUserId, options, callback) {
+	  follow: function follow(targetSlug, targetUserId, options, callback) {
 	    /**
 	     * Follows the given target feed
 	     * @method follow
@@ -8085,7 +6276,7 @@
 	    var activityCopyLimit;
 	    var last = arguments[arguments.length - 1];
 	    // callback is always the last argument
-	    callback = (last.call) ? last : undefined;
+	    callback = last.call ? last : undefined;
 	    var target = targetSlug + ':' + targetUserId;
 
 	    // check for additional options
@@ -8096,7 +6287,7 @@
 	    }
 
 	    var body = {
-	      target: target,
+	      target: target
 	    };
 
 	    if (activityCopyLimit) {
@@ -8106,11 +6297,11 @@
 	    return this.client.post({
 	      url: 'feed/' + this.feedUrl + '/following/',
 	      body: body,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  unfollow: function(targetSlug, targetUserId, callback) {
+	  unfollow: function unfollow(targetSlug, targetUserId, callback) {
 	    /**
 	     * Unfollow the given feed
 	     * @method unfollow
@@ -8124,14 +6315,14 @@
 	    utils.validateFeedSlug(targetSlug);
 	    utils.validateUserId(targetUserId);
 	    var targetFeedId = targetSlug + ':' + targetUserId;
-	    var xhr = this.client.delete({
+	    var xhr = this.client['delete']({
 	      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	    return xhr;
 	  },
 
-	  following: function(options, callback) {
+	  following: function following(options, callback) {
 	    /**
 	     * List which feeds this feed is following
 	     * @method following
@@ -8149,11 +6340,11 @@
 	    return this.client.get({
 	      url: 'feed/' + this.feedUrl + '/following/',
 	      qs: options,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  followers: function(options, callback) {
+	  followers: function followers(options, callback) {
 	    /**
 	     * List the followers of this feed
 	     * @method followers
@@ -8172,11 +6363,11 @@
 	    return this.client.get({
 	      url: 'feed/' + this.feedUrl + '/followers/',
 	      qs: options,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  get: function(options, callback) {
+	  get: function get(options, callback) {
 	    /**
 	     * Reads the feed
 	     * @method get
@@ -8198,11 +6389,11 @@
 	    return this.client.get({
 	      url: 'feed/' + this.feedUrl + '/',
 	      qs: options,
-	      signature: this.signature,
+	      signature: this.signature
 	    }, callback);
 	  },
 
-	  getFayeClient: function() {
+	  getFayeClient: function getFayeClient() {
 	    /**
 	     * Returns the current faye client object
 	     * @method getFayeClient
@@ -8213,7 +6404,7 @@
 	    return this.client.getFayeClient();
 	  },
 
-	  subscribe: function(callback) {
+	  subscribe: function subscribe(callback) {
 	    /**
 	     * Subscribes to any changes in the feed, return a promise
 	     * @method subscribe
@@ -8231,24 +6422,25 @@
 
 	    this.client.subscriptions['/' + this.notificationChannel] = {
 	      token: this.token,
-	      userId: this.notificationChannel,
+	      userId: this.notificationChannel
 	    };
 
 	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
-	  },
+	  }
 	};
 
 	module.exports = StreamFeed;
 
-
 /***/ },
-/* 15 */
+/* 11 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	var errors = module.exports;
 
-	var canCapture = (typeof Error.captureStackTrace === 'function');
-	var canStack = !!(new Error()).stack;
+	var canCapture = typeof Error.captureStackTrace === 'function';
+	var canStack = !!new Error().stack;
 
 	/**
 	 * Abstract error object
@@ -8265,7 +6457,7 @@
 	  if (canCapture) {
 	    Error.captureStackTrace(this, constructor);
 	  } else if (canStack) {
-	    this.stack = (new Error()).stack;
+	    this.stack = new Error().stack;
 	  } else {
 	    this.stack = '';
 	  }
@@ -8316,12 +6508,13 @@
 
 	errors.MissingSchemaError.prototype = new ErrorAbstract();
 
-
 /***/ },
-/* 16 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var errors = __webpack_require__(15);
+	'use strict';
+
+	var errors = __webpack_require__(11);
 	var validRe = /^[\w-]+$/;
 
 	function validateFeedId(feedId) {
@@ -8371,22 +6564,23 @@
 	exports.validateUserId = validateUserId;
 
 	function rfc3986(str) {
-	  return str.replace(/[!'()*]/g, function(c) {
+	  return str.replace(/[!'()*]/g, function (c) {
 	    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
 	  });
 	}
 
 	exports.rfc3986 = rfc3986;
 
-
 /***/ },
-/* 17 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var crypto = __webpack_require__(18);
-	var jwt = __webpack_require__(19);
+	'use strict';
+
+	var crypto = __webpack_require__(14);
+	var jwt = __webpack_require__(15);
 	var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-	var Base64 = __webpack_require__(20);
+	var Base64 = __webpack_require__(16);
 
 	function makeUrlSafe(s) {
 	  /*
@@ -8409,7 +6603,7 @@
 	}
 
 	function safeJsonParse(thing) {
-	  if (typeof (thing) === 'object') return thing;
+	  if (typeof thing === 'object') return thing;
 	  try {
 	    return JSON.parse(thing);
 	  } catch (e) {
@@ -8420,19 +6614,15 @@
 	function padString(string) {
 	  var segmentLength = 4;
 	  var diff = string.length % segmentLength;
-	  if (!diff)
-	      return string;
+	  if (!diff) return string;
 	  var padLength = segmentLength - diff;
 
-	  while (padLength--)
-	    string += '=';
+	  while (padLength--) string += '=';
 	  return string;
 	}
 
 	function toBase64(base64UrlString) {
-	  var b64str = padString(base64UrlString)
-	    .replace(/\-/g, '+')
-	    .replace(/_/g, '/');
+	  var b64str = padString(base64UrlString).replace(/\-/g, '+').replace(/_/g, '/');
 	  return b64str;
 	}
 
@@ -8443,7 +6633,7 @@
 
 	exports.headerFromJWS = headerFromJWS;
 
-	exports.sign = function(apiSecret, feedId) {
+	exports.sign = function (apiSecret, feedId) {
 	  /*
 	   * Setup sha1 based on the secret
 	   * Get the digest of the value
@@ -8466,7 +6656,7 @@
 	  return token;
 	};
 
-	exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
+	exports.JWTScopeToken = function (apiSecret, resource, action, opts) {
 	  /**
 	   * Creates the JWT token for feedId, resource and action using the apiSecret
 	   * @method JWTScopeToken
@@ -8484,7 +6674,7 @@
 	      noTimestamp = options.expireTokens ? !options.expireTokens : true;
 	  var payload = {
 	    resource: resource,
-	    action: action,
+	    action: action
 	  };
 
 	  if (options.feedId) {
@@ -8495,11 +6685,11 @@
 	    payload['user_id'] = options.userId;
 	  }
 
-	  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256', noTimestamp: noTimestamp});
+	  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', noTimestamp: noTimestamp });
 	  return token;
 	};
 
-	exports.isJWTSignature = function(signature) {
+	exports.isJWTSignature = function (signature) {
 	  /**
 	   * check if token is a valid JWT token
 	   * @method isJWTSignature
@@ -8512,21 +6702,20 @@
 	  return JWS_REGEX.test(token) && !!headerFromJWS(token);
 	};
 
-
 /***/ },
-/* 18 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 19 */
+/* 15 */
 /***/ function(module, exports) {
 
-	/* (ignored) */
+	"use strict";
 
 /***/ },
-/* 20 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function () {
@@ -8593,51 +6782,124 @@
 
 
 /***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
-
-/***/ },
-/* 22 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Promise = __webpack_require__(9).Promise;
+	'use strict';
 
-	Promise.prototype.catch = function(onRejected) {
+	var Promise = __webpack_require__(5).Promise;
+
+	Promise.prototype['catch'] = function (onRejected) {
 	  return this.then(null, onRejected);
 	};
 
 	module.exports = Promise;
 
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = {
+		"author": {
+			"name": "Thierry Schellenbach",
+			"company": "Stream.io Inc"
+		},
+		"name": "getstream",
+		"description": "The official low-level GetStream.io client for Node.js and the browser.",
+		"main": "./src/getstream.js",
+		"homepage": "https://getstream.io/",
+		"version": "3.0.0",
+		"browser": {
+			"request": "browser-request",
+			"crypto": false,
+			"jsonwebtoken": false,
+			"./src/lib/batch_operations.js": false,
+			"qs": false,
+			"url": false
+		},
+		"config": {
+			"blanket": {
+				"pattern": "src",
+				"data-cover-never": [
+					"node_modules"
+				]
+			}
+		},
+		"devDependencies": {
+			"async": "~0.9.0",
+			"babel-core": "^5.8.25",
+			"babel-loader": "^5.3.2",
+			"blanket": "~1.1.6",
+			"bluebird": "^2.1.3",
+			"connect": "^3.0.1",
+			"coveralls": "~2.10.1",
+			"expect.js": "~0.3.1",
+			"gulp": "^3.8.7",
+			"gulp-browserify": "^0.5.0",
+			"gulp-bump": "^0.1.8",
+			"gulp-git": "git://github.com/stevelacy/gulp-git.git",
+			"gulp-jscs": "^3.0.1",
+			"gulp-jscs-stylish": "^1.2.1",
+			"gulp-jshint": "^1.6.3",
+			"gulp-mocha": "^0.4.1",
+			"gulp-shell": "^0.2.7",
+			"gulp-uglify": "~0.3.1",
+			"gulp-util": "^2.2.17",
+			"jshint-stylish": "^2.0.1",
+			"json-loader": "^0.5.4",
+			"mocha": "^1.20.1",
+			"mocha-lcov-reporter": "0.0.1",
+			"mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
+			"quickcheck": "0.0.4",
+			"serve-static": "^1.2.3",
+			"vinyl-source-stream": "^1.1.0",
+			"webpack": "^1.12.2"
+		},
+		"license": "BSD",
+		"dependencies": {
+			"Base64": "^0.3.0",
+			"browser-request": "matthisk/browser-request",
+			"faye": "^1.0.1",
+			"http-signature": "^1.0.2",
+			"jsonwebtoken": "^5.0.1",
+			"qs": "^5.2.0",
+			"request": "2.63.0"
+		},
+		"repository": {
+			"type": "git",
+			"url": "git://github.com/GetStream/stream-js.git"
+		},
+		"scripts": {
+			"test": "gulp test"
+		},
+		"engines": {
+			"node": ">=0.8 <0.11"
+		}
+	};
 
 /***/ },
-/* 23 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
-
-/***/ },
-/* 25 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var expect = __webpack_require__(3);
-	var jwt = __webpack_require__(26);
-	var url = __webpack_require__(27);
-	var qs = __webpack_require__(28);
-	var qc = __webpack_require__(29);
-	var utils = __webpack_require__(16);
-	var errors = __webpack_require__(15);
-	var isNodeEnv = typeof window === 'undefined';
-	var stream = __webpack_require__(11);
+	'use strict';
 
-	var signing = signing || __webpack_require__(17);
+	var expect = __webpack_require__(3);
+	var jwt = __webpack_require__(15);
+	var url = __webpack_require__(21);
+	var qs = __webpack_require__(15);
+	var qc = __webpack_require__(22);
+	var utils = __webpack_require__(12);
+	var errors = __webpack_require__(11);
+	var isNodeEnv = typeof window === 'undefined';
+	var stream = __webpack_require__(7);
+
+	var signing = signing || __webpack_require__(13);
 
 	console.log('node is set to', isNodeEnv);
 
@@ -8651,78 +6913,106 @@
 
 	  var result = {};
 
-	  while(width--) {
+	  while (width--) {
 	    var value = qc.arbString(),
 	        maxDepth = Math.floor(Math.random() * (3 - 1) + 1);
 
-	    if(depth) {
-	      value = arbJSON(depth-1);
-	    } else if(depth === undefined) {
+	    if (depth) {
+	      value = arbJSON(depth - 1);
+	    } else if (depth === undefined) {
 	      value = arbJSON(maxDepth);
 	    }
 
-	    result[ qc.arbString() ] = value;
+	    result[qc.arbString()] = value;
 	  }
 
 	  return result;
 	}
 
 	function arbNonEmptyString() {
-	  var str = qc.arbString();
+	  var _again = true;
 
-	  return str === '' ? arbNonEmptyString() : str;
+	  _function: while (_again) {
+	    str = undefined;
+	    _again = false;
+
+	    var str = qc.arbString();
+
+	    if (str === '') {
+	      _again = true;
+	      continue _function;
+	    } else {
+	      return str;
+	    }
+	  }
 	}
 
 	function arbJWT() {
-	  return jwt.sign( arbJSON(), arbNonEmptyString(), arbJSON() );
+	  return jwt.sign(arbJSON(), arbNonEmptyString(), arbJSON());
 	}
 
-	describe('Json web token validation', function() {
+	describe('Json web token validation', function () {
 	  var validSignature = "feedname eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG5Eb2UiLCJhY3Rpb24iOiJyZWFkIn0.dfayorXXS1rAyd97BGCNgrCodPH9X3P80DPMH5b9D_A";
 	  var invalidSignature = "feedname eyJhbGiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZS.dfayorXXS1rAyd97BGCNgrCodH38PH5b9D_A";
 
-	  it('should validate valid jwts', function() {
-	    expect( signing.isJWTSignature(validSignature) ).to.be(true);
+	  it('should validate valid jwts', function () {
+	    expect(signing.isJWTSignature(validSignature)).to.be(true);
 	  });
 
-	  it('should validate unvalid jwts', function() {
-	    expect( signing.isJWTSignature(invalidSignature) ).to.be(false);
+	  it('should validate unvalid jwts', function () {
+	    expect(signing.isJWTSignature(invalidSignature)).to.be(false);
 	  });
 
-	  if(isNodeEnv) {
-	    it('should decode valid jwts headers', function() {
-	      expect( qc.forAll( propertyHeaderJSON, arbJWT ) ).to.be(true);
+	  if (isNodeEnv) {
+	    it('should decode valid jwts headers', function () {
+	      expect(qc.forAll(propertyHeaderJSON, arbJWT)).to.be(true);
 	    });
 	  }
 	});
 
-	describe('Utility functions', function() {
-	  it('should validate feed id\'s', function() {
+	describe('Utility functions', function () {
+	  it('should validate feed id\'s', function () {
 	    expect(utils.validateFeedId('flat:0')).to.be.ok();
 	  });
 
-	  it('should throw exception while validating faulty feed id',function() {
-	    expect(function() {
-	      utils.validateFeedId('b134u92fval')
-	    }).to.throwError(function(e) {
+	  it('should throw exception while validating faulty feed id', function () {
+	    expect(function () {
+	      utils.validateFeedId('b134u92fval');
+	    }).to.throwError(function (e) {
 	      expect(e).to.be.a(errors.FeedError);
 	    });
 	  });
 	});
 
+	describe('Stream client', function () {
+	  var client = stream.connect('ahj2ndz7gsan');
+	  var userAgentString = 'stream-javascript-client-' + (isNodeEnv ? 'node' : 'browser') + '-' + __webpack_require__(18).version;
+
+	  it('#userAgent()', function () {
+	    expect(client.userAgent).to.be.a(Function);
+
+	    var userAgent = client.userAgent();
+
+	    expect(userAgent).to.be(userAgentString);
+	  });
+
+	  it('#enrichKwargs() useragent', function () {
+	    expect(client.enrichKwargs).to.be.a(Function);
+
+	    var kwargs = client.enrichKwargs({});
+
+	    expect(kwargs.headers['X-Stream-Client']).to.be(userAgentString);
+	  });
+	});
+
 	if (isNodeEnv) {
-	  describe('Stream Client', function() {
+	  describe('Stream Client', function () {
 	    var client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
 
-	    it('should create email redirects', function() {
-	      var expectedParts = ['https://analytics.getstream.io/analytics/redirect/',
-	        'auth_type=jwt',
-	        'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
-	        'events=%5B%7B%22foreign_ids%22%3A%5B%22tweet%3A1%22%2C%22tweet%3A2%22%2C%22tweet%3A3%22%2C%22tweet%3A4%22%2C%22tweet%3A5%22%5D%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%2C%7B%22foreign_id%22%3A%22tweet%3A1%22%2C%22label%22%3A%22click%22%2C%22position%22%3A3%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%5D',
-	        'api_key=ahj2ndz7gsan',
-	      ];
+	    it('should create email redirects', function () {
+	      var expectedParts = ['https://analytics.getstream.io/analytics/redirect/', 'auth_type=jwt', 'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd', 'events=%5B%7B%22foreign_ids%22%3A%5B%22tweet%3A1%22%2C%22tweet%3A2%22%2C%22tweet%3A3%22%2C%22tweet%3A4%22%2C%22tweet%3A5%22%5D%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%2C%7B%22foreign_id%22%3A%22tweet%3A1%22%2C%22label%22%3A%22click%22%2C%22position%22%3A3%2C%22user_id%22%3A%22tommaso%22%2C%22location%22%3A%22email%22%2C%22feed_id%22%3A%22user%3Aglobal%22%7D%5D', 'api_key=ahj2ndz7gsan'];
 	      var engagement = { 'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global' },
-	          impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'},
+	          impression = { 'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global' },
 	          events = [impression, engagement],
 	          userId = 'tommaso',
 	          targetUrl = 'http://google.com/?a=b&c=d';
@@ -8734,7 +7024,7 @@
 	      expect(decoded).to.eql({
 	        'resource': 'redirect_and_track',
 	        'action': '*',
-	        'user_id': userId,
+	        'user_id': userId
 	      });
 
 	      for (var i = 0; i < expectedParts.length; i++) {
@@ -8742,36 +7032,22 @@
 	      }
 	    });
 
-	    it('should fail creating email redirects on invalid targets', function() {
-	      expect(function() {
+	    it('should fail creating email redirects on invalid targets', function () {
+	      expect(function () {
 	        client.createRedirectUrl('google.com', 'tommaso', []);
 	      }).to.throwException(errors.MissingSchemaError);
 	    });
-
 	  });
 	}
 
-
 /***/ },
-/* 26 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
-
-/***/ },
-/* 29 */
+/* 22 */
 /***/ function(module, exports) {
 
 	function arbBool() {

@@ -30,7 +30,8 @@ module.exports = {
     },
     module: {
       loaders: [
-        { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
+        { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader", },
+        { test: /\.json$/, loader: "json-loader", },
       ]
     },
     plugins: [new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js"))]
