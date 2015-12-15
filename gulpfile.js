@@ -82,10 +82,10 @@ gulp.task("build", function() {
   runSynchronized(['build:webpack', 'build:test', 'build:optimize']);
 });
 
+var prodWebpackConfig = Object.create(webpackConfig);
 
 gulp.task("build:webpack", function(callback) {
-    var myConfig = Object.create(webpackConfig);
-    webpack(myConfig, function(err, stats) {
+  webpack(prodWebpackConfig, function(err, stats) {
     if(err) throw new gutil.PluginError("webpack:build", err);
     gutil.log("[webpack:build]", stats.toString({
       colors: true
@@ -94,19 +94,17 @@ gulp.task("build:webpack", function(callback) {
   });
 });
 
+var testWebpackConfig = Object.create(webpackConfig);
+
+testWebpackConfig.context = process.cwd();
+testWebpackConfig.entry = './test/browser/index.js';
+testWebpackConfig.output = {
+  path: __dirname + '/test/browser',
+  filename: 'browser.js'
+};
+
 gulp.task('build:test', function(callback) {
-  webpack({
-    entry: './test/browser/index.js',
-    output : {
-      path: __dirname + '/test/browser',
-      filename: 'browser.js'
-    },
-    resolve: {
-      alias: {
-        'request': 'browser-request',
-      }
-    }
-  }, function(err, stats) {
+  webpack(testWebpackConfig, function(err, stats) {
     if(err) throw new gutil.PluginError("webpack:build:test", err);
     gutil.log("[webpack:build:test]", stats.toString({
       colors: true

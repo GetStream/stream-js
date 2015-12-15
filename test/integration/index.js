@@ -2,6 +2,7 @@ var expect = require('expect.js');
 var Faye = require('faye');
 var stream = require('../../src/getstream');
 var isNodeEnv = typeof window === 'undefined';
+var errors;
 
 var READ_TIMEOUT = 2000;
 

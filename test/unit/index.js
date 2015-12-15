@@ -74,10 +74,33 @@ describe('Utility functions', function() {
 
   it('should throw exception while validating faulty feed id',function() {
     expect(function() {
-      utils.validateFeedId('b134u92fval')
+      utils.validateFeedId('b134u92fval');
     }).to.throwError(function(e) {
       expect(e).to.be.a(errors.FeedError);
     });
+  });
+});
+
+describe('Stream client', function() {
+  var client = stream.connect('ahj2ndz7gsan');
+  var userAgentString = 'stream-javascript-client-' + (isNodeEnv ? 'node' : 'browser') + '-' + require('../../package.json').version;
+
+  it('#userAgent()', function() {
+    expect(client.userAgent).to.be.a(Function);
+
+    var userAgent = client.userAgent();
+
+    expect(userAgent)
+      .to
+      .be(userAgentString);
+  });
+
+  it('#enrichKwargs() useragent', function() {
+    expect(client.enrichKwargs).to.be.a(Function);
+
+    var kwargs = client.enrichKwargs({});
+
+    expect(kwargs.headers['X-Stream-Client']).to.be(userAgentString);
   });
 });
 
