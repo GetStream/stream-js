@@ -3,19 +3,23 @@
   <meta charset="utf-8">
   <title>Mocha Tests</title>
   <link rel="stylesheet" href="mocha.css" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="/node_modules/mocha-sauce/client.js"></script>
+  <script src="mocha.js"></script>
+  <script>mocha.setup('bdd')</script>
+  <script>
+  // add local=1 in the url to trigger local testing
+  if (document.location.href.indexOf('local=1') != -1) {
+    stream.Client.prototype.baseUrl='http://localhost:8000';
+  }
+  </script>
+  <script src="browser.js"></script>
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="/node_modules/mocha-sauce/client.js"></script>
-  <script src="/test/browser/expect.js"></script>
-  <script src="/test/browser/mocha.js"></script>
-  <script>mocha.setup('bdd')</script>
-  <script src="/dist/js/getstream.js"></script>
-  <script src="/test/integration/index.js"></script>
 
   <script>
-  	mochaSaucePlease();
+   mochaSaucePlease();
   </script>
 </body>
 </html>

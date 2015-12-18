@@ -2,13 +2,16 @@ sudo: false
 language: node_js
 node_js: "4.0"
 script:
+- gulp build
 - mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
 - npm install -g bower
 - bower install getstream
-  #node test/browser/runner.js
+- npm run sauce
 addons:
   sauce_connect: true
 env:
   global:
-  - secure: KKcEWcF2eDpiU7HaHEQyHDXB81J1T41r3TQpFxKHIZoyns3P8ualSXQZIAq2XW0Szwkixd7sRpmKG36YGiMiYHivd0SQ1FzzUDcCUqvO4Vvr4Gdws2eJbTfjNDtRQXzhRx4GhkSADYqVI8rjusQmWAO+A4scy0KI5LmDSS1JTw0=
-  - secure: Rkd2w0xYZX47FM3u4SCMvHluWtB7SlfMEc3C2/AvgZBVDmzknI5LtCAohJhmVkSZZvlhxPRgFir3CVfZeP5V3IBsIwrLeOSVDQ0FOnpvZsQt1wxCHhebVdL681ufYDB8cjwbAegaaTZjoLCzIhfX6r69f90qhI/MZ1ERebW2U9E=
+  - secure: QmxG6aSNZfZlrXcA92/NzX2GNNzcyiFMwEVi9iC2AnHhcm2/YKBtJHQy2AlMpKOON80UZuzYHpKely7jOOASJ7Blr7S4e6uiJR5lPCsW5RFxylY81z1MGhYtMu/64Yau64dFu9Uzue07jwRLVwbLp/jQgkPT3/i/G4qAsx6gK6c=
+  - secure: FlnXcxMo1nfcsW2V8N/n6ZcVsdyxGS+opiaZNhnQNRotPBgGUYeysDVAdKENV1OPMLO3RCasxtxJc9l2vwQVHN6OpuLLqfuWuqK6ZlnlTSCZNHBNSSX0JyaKpu4/Kx9NF2Q2LWMN3dP8QhMG69OIP9Pzv9R0/jpI4+HOlOSWT5Y=
+  # - secure: KKcEWcF2eDpiU7HaHEQyHDXB81J1T41r3TQpFxKHIZoyns3P8ualSXQZIAq2XW0Szwkixd7sRpmKG36YGiMiYHivd0SQ1FzzUDcCUqvO4Vvr4Gdws2eJbTfjNDtRQXzhRx4GhkSADYqVI8rjusQmWAO+A4scy0KI5LmDSS1JTw0=
+  # - secure: Rkd2w0xYZX47FM3u4SCMvHluWtB7SlfMEc3C2/AvgZBVDmzknI5LtCAohJhmVkSZZvlhxPRgFir3CVfZeP5V3IBsIwrLeOSVDQ0FOnpvZsQt1wxCHhebVdL681ufYDB8cjwbAegaaTZjoLCzIhfX6r69f90qhI/MZ1ERebW2U9E=
