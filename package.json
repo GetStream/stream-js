@@ -50,6 +50,7 @@
     "mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
     "quickcheck": "0.0.4",
     "serve-static": "^1.2.3",
+    "term-canvas": "0.0.5",
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.2"
   },

@@ -604,7 +604,7 @@
 	    };
 
 	    var msgCallback = function(message) {
-	      if( message && message.new && message.new.length > 0) {
+	      if( message && message['new'] && message['new'].length > 0) {
 	        messages += 1;
 	      }
 
@@ -814,8 +814,7 @@
 	    var p = user1.addActivity(activity)
 	      .then(function(body) {
 	        done('expected failure');
-	      })
-	      p.catch(function(errorObj) {
+	      }, function(errorObj) {
 	        done();
 	      });
 	  });
