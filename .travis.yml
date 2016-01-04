@@ -6,7 +6,7 @@ script:
 - mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
 - npm install -g bower
 - bower install getstream
-- npm run sauce
+# - npm run sauce
 addons:
   sauce_connect: true
 env:
