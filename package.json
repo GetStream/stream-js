@@ -57,7 +57,7 @@
   "license": "BSD",
   "dependencies": {
     "Base64": "^0.3.0",
-    "browser-request": "matthisk/browser-request@0.3.3",
+    "browser-request": "matthisk/browser-request",
     "faye": "^1.0.1",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
