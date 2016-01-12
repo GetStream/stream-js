@@ -101,6 +101,9 @@ gulp.task('build:test', function(callback) {
       path: __dirname + '/test/browser',
       filename: 'browser.js'
     },
+    node: {
+        fs: 'empty',
+    },
     resolve: {
       alias: {
         'request': 'browser-request',

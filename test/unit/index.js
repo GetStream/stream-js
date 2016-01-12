@@ -1,16 +1,26 @@
-var expect = require('expect.js');
-var jwt = require('jsonwebtoken');
-var url = require('url');
-var qs = require('qs');
-var qc = require('quickcheck');
-var utils = require('../../src/lib/utils');
-var errors = require('../../src/lib/errors');
-var isNodeEnv = typeof window === 'undefined';
-var stream = require('../../src/getstream');
+var expect = require('expect.js')
+  , jwt = require('jsonwebtoken')
+  , url = require('url')
+  , qs = require('qs')
+  , qc = require('quickcheck')
+  , utils = require('../../src/lib/utils')
+  , errors = require('../../src/lib/errors')
+  , signing = signing || require('../../src/lib/signing')
+  , https = require('https')
+  , stream = require('../../src/getstream')
+  , nock = require('nock');
 
-var signing = signing || require('../../src/lib/signing');
+var isNodeEnv = typeof window === 'undefined';
 
 console.log('node is set to', isNodeEnv);
+
+// Setup fake API endpoints
+
+// nock.recorder.rec();
+
+var nockApi = nock('https://api.getstream.io:443', { "encodedQueryParams" : true });
+
+// End setup
 
 function propertyHeaderJSON(jwt) {
   var json = signing.isJWTSignature(jwt);
@@ -81,9 +91,94 @@ describe('Utility functions', function() {
   });
 });
 
-if (isNodeEnv) {
-  describe('Stream Client', function() {
-    var client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+var client
+  , user1;
+
+function beforeEachBrowser() {
+  client = stream.connect('ahj2ndz7gsan');
+
+  if (self.localRun){
+    client.baseUrl = 'http://localhost:8000/api/';
+    client.fayeUrl = 'http://localhost:9999/faye/';
+  }
+
+  user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
+}
+
+function beforeEachNode() {
+  client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+  user1 = client.feed('user', '11');
+}
+
+var before = (isNodeEnv) ? beforeEachNode : beforeEachBrowser;
+
+
+describe('Stream Feed', function() {
+  client = stream.connect('ahj2ndz7gsan');
+
+  beforeEach(before);
+  
+  afterEach(function() {});
+
+  nockApi
+    // Get activities
+    .get('/api/v1.0/feed/user/11/')
+    .query({"limit":"1","api_key":"ahj2ndz7gsan","location":"unspecified"})
+    .reply(200, {"duration":"16ms","next":"/api/v1.0/feed/user/11/?id_lt=ddd6cae2-b849-11e5-8080-8000244b4595&api_key=ahj2ndz7gsan&limit=1&location=unspecified&offset=0","results":[{"actor":"many2","foreign_id":null,"id":"ddd6cae2-b849-11e5-8080-8000244b4595","object":"1","origin":null,"target":null,"time":"2016-01-11T09:58:29.863000","to":["flat:remotefeed2"],"verb":"tweet"}]}, { });
+
+  it('#get', function (done) {
+    user1.get({'limit': 1}, function(error, response, body) {
+      expect(response.statusCode).to.eql(200);
+      expect(body['results'][0]['id']).to.be.a('string');
+      
+      if (isNodeEnv) {
+         var userAgent = response.req._headers['x-stream-client'];
+         expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+      }
+
+      done();
+    });
+  });
+});
+
+describe('Stream Client', function() {
+  var activityCopyLimit = 20;
+  var follows = [
+    {'source': 'flat:1', 'target': 'user:1'},
+    {'source': 'flat:1', 'target': 'user:2'},
+    {'source': 'flat:1', 'target': 'user:3'}
+  ];
+
+  beforeEach(before);
+
+  if (isNodeEnv) {
+    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
+
+    nockApi
+      // Follow Many
+      .post('/api/v1.0/follow_many/', follows)
+      .query({ "activity_copy_limit": activityCopyLimit })
+      .reply(201, {"duration":"13ms"}, { });
+
+    it('#followMany activity_copy_limit', function(done) {
+      client.followMany(follows, activityCopyLimit, function(error, response, body) {
+          expect(error).to.be(null);
+
+          done();
+      });
+    });
+
+    nockApi
+      // Follow Many
+      .post('/api/v1.0/follow_many/', follows)
+      .reply(201, {"duration":"13ms"}, { });
+
+    it('#followMany', function(done) {
+      client.followMany(follows, null, function(error, response, body) {
+        expect(error).to.be(null);
+        done();
+      });
+    });
 
     it('should create email redirects', function() {
       var expectedParts = ['https://analytics.getstream.io/analytics/redirect/',
@@ -118,6 +213,5 @@ if (isNodeEnv) {
         client.createRedirectUrl('google.com', 'tommaso', []);
       }).to.throwException(errors.MissingSchemaError);
     });
-
-  });
-}
+  }
+});

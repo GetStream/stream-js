@@ -24,19 +24,31 @@ module.exports = {
     }, callback);
   },
 
-  followMany: function(follows, callback)  {
+  followMany: function(follows, activityCopyLimit, callback)  {
     /**
      * Follow multiple feeds with one API call
      * @method followMany
      * @memberof StreamClient.prototype
      * @since 2.3.0
      * @param  {Array}   follows  The follow relations to create
-     * @param  {requestCallback} callback Callback called on completion
+     * @param  {number}  [activityCopyLimit] How many activities should be copied from the target feed
+     * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
      */
+    var qs = {};
+
+    if(activityCopyLimit && typeof activityCopyLimit !== 'number') {
+      throw new TypeError('Activity copy limit should be a number');
+    }
+
+    if(activityCopyLimit) {
+      qs['activity_copy_limit'] = activityCopyLimit;
+    }
+
     return this.makeSignedRequest({
       url: 'follow_many/',
       body: follows,
+      qs: qs,
     }, callback);
   },
 
