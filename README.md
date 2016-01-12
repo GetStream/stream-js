@@ -148,7 +148,7 @@ user1 = client.feed('user', '1', readonlyToken);
 
 ### Faye
 
-Stream uses Faye for realtime notifications. Below is quick quide to subcribing to feed changes
+Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick quide to subcribing to feed changes
 
 ```javascript
 var stream = require('getstream');
@@ -160,11 +160,16 @@ user1 = client.feed('user', '1');
 client = stream.connect('YOUR_API_KEY', null, 'SITE_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
-user1.subscribe(function callback() {
+var subscription = user1.subscribe(function callback() {
 	/* callback */
 });
 // now whenever something changes to the feed user 1
 // the callback will be called
+
+// To cancel a subscription you can call cancel on the
+// object returned from a subscribe call.
+// This will remove the listener from this channel.
+subscription.cancel();
 ```
 
 
