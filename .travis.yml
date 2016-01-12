@@ -3,7 +3,7 @@ language: node_js
 node_js: "4.0"
 script:
 - gulp build
-- mocha test/unit/index.js
+- gulp test
 - mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
 - npm install -g bower
 - bower install getstream

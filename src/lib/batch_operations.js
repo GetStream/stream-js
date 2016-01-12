@@ -37,11 +37,11 @@ module.exports = {
      */
     var qs = {};
 
-    if(activityCopyLimit && typeof activityCopyLimit !== 'number') {
+    if (activityCopyLimit && typeof activityCopyLimit !== 'number') {
       throw new TypeError('Activity copy limit should be a number');
     }
 
-    if(activityCopyLimit) {
+    if (activityCopyLimit) {
       qs['activity_copy_limit'] = activityCopyLimit;
     }
 
