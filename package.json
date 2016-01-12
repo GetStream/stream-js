@@ -57,12 +57,12 @@
   "license": "BSD",
   "dependencies": {
     "Base64": "^0.3.0",
-    "browser-request": "matthisk/browser-request",
+    "browser-request": "matthisk/browser-request@0.3.3",
     "faye": "^1.0.1",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
-    "qs": "^5.2.0",
-    "request": "2.63.0"
+    "qs": "^6.0.1",
+    "request": "2.67.0"
   },
   "repository": {
     "type": "git",
