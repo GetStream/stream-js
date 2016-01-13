@@ -2,6 +2,14 @@
  Change history
 ================
 
+
+3.1.0
+=====
+:release-date: ....
+:by: Matthisk Heimensen
+
+* Added support for activity_copy_limit to limit the amount of activities copied by client.followMany
+
 3.0.0
 =====
 :release-date: ....

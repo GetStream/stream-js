@@ -48,9 +48,11 @@
     "mocha": "^1.20.1",
     "mocha-lcov-reporter": "0.0.1",
     "mocha-sauce": "git://github.com/pbakaus/mocha-sauce.git",
+    "nock": "^5.2.1",
     "quickcheck": "0.0.4",
     "serve-static": "^1.2.3",
     "term-canvas": "0.0.5",
+    "sinon": "^1.17.2",
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.2"
   },
