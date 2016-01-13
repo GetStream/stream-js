@@ -314,6 +314,37 @@ describe('Stream client', function () {
     user1.addActivities(activities, get);
   });
 
+  it('update activities', function (done) {
+    var activities = [
+      {'actor': 1, 'verb': 'tweet', 'object': 1},
+      {'actor': 2, 'verb': 'tweet', 'object': 3},
+    ];
+
+    user1.addActivities(activities)
+      .then(function(body) {
+        var activityId1 = body['activities'][0]['id']
+          , activityId2 = body['activities'][1]['id'];
+
+        var activity1 = {
+          'id': activityId1,
+          'object': 11
+        };
+
+        var activity2 = {
+          'id': activityId2,
+          'object': 22
+        };
+
+        var activities = [activity1, activity2];
+
+        return client.updateActivities(activities);
+      })
+      .then(function(body) {
+        console.log('body', body);
+      })
+      .catch(done);
+  });
+
   it('follow', function (done) {
     var activityId = null;
     this.timeout(9000);

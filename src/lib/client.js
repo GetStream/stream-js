@@ -224,6 +224,38 @@ StreamClient.prototype = {
     return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
   },
 
+  updateActivities: function(activities) {
+    /**
+     * Updates all supplied activities on the getstream-io api
+     * @param  {array} activities list of activities to update
+     * @return {Promise}
+     */
+    if (! activities instanceof Array) {
+      throw new TypeError('The activities argument should be an Array');
+    }
+
+    activities = this.signActivities(activities);
+
+    var data = {
+      activities: activities,
+    };
+
+    return this.client.post({
+      url: 'activities/',
+      body: data,
+      signature: this.signature,
+    }, callback);
+  },
+  
+  updateActivity: function(activity) {
+    /**
+     * Updates one activity on the getstream-io api
+     * @param  {object} activity The activity to update
+     * @return {Promise}          
+     */
+     return this.updateActivities([activity]);
+  },
+
   feed: function(feedSlug, userId, token, siteId, options) {
     /**
      * Returns a feed object for the given feed id and token
