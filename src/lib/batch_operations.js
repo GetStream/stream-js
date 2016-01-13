@@ -24,7 +24,7 @@ module.exports = {
     }, callback);
   },
 
-  followMany: function(follows, activityCopyLimit, callback)  {
+  followMany: function(follows, callbackOrActivityCopyLimit, callback)  {
     /**
      * Follow multiple feeds with one API call
      * @method followMany
@@ -35,10 +35,14 @@ module.exports = {
      * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
      */
-    var qs = {};
+    var activityCopyLimit, qs = {};
 
-    if (activityCopyLimit && typeof activityCopyLimit !== 'number') {
-      throw new TypeError('Activity copy limit should be a number');
+    if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'number') {
+      activityCopyLimit = callbackOrActivityCopyLimit;
+    }
+
+    if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'function') {
+      callback = callbackOrActivityCopyLimit;
     }
 
     if (activityCopyLimit) {

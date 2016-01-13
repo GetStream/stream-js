@@ -174,7 +174,7 @@ describe('Stream Client', function() {
       .reply(201, {"duration":"13ms"}, { });
 
     it('#followMany', function(done) {
-      client.followMany(follows, null, function(error, response, body) {
+      client.followMany(follows, function(error, response, body) {
         expect(error).to.be(null);
         done();
       });
