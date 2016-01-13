@@ -187,7 +187,6 @@ StreamClient.prototype = {
      * @return {string} current user agent
      */
     var description = (this.node) ? 'node' : 'browser';
-    // TODO: get the version here in a way which works in both and browserify
 
     var version = require('../../package.json').version;
 
