@@ -9,6 +9,9 @@
 :by: Matthisk Heimensen
 
 * Added support for activity_copy_limit to limit the amount of activities copied by client.followMany
+* dependency request updated to 2.67.0
+* dependency qs updated to 6.0.1
+
 
 3.0.0
 =====
