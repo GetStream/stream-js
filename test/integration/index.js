@@ -54,8 +54,8 @@ describe('Stream client', function () {
   }
 
   function beforeEachNode() {
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
+    client = stream.connect('ata9p5qqy7th', 'vskczs6wmuss5svwdkfsntuz486rgetu2w9q4g9f86c2umfrh5pth2vujyg8wvwn');
+    client = stream.connect('ata9p5qqy7th', 'vskczs6wmuss5svwdkfsntuz486rgetu2w9q4g9f86c2umfrh5pth2vujyg8wvwn', 6744, {'group': 'testCycle', 'location': 'us-east'});
     user1 = client.feed('user', '11');
     aggregated2 = client.feed('aggregated', '22');
     aggregated3 = client.feed('aggregated', '33');
@@ -322,27 +322,29 @@ describe('Stream client', function () {
 
     user1.addActivities(activities)
       .then(function(body) {
-        var activityId1 = body['activities'][0]['id']
-          , activityId2 = body['activities'][1]['id'];
+        var activity = body['activities'][0];
 
-        var activity1 = {
-          'id': activityId1,
-          'object': 11
-        };
+        activity['answer'] = 10;
+        delete activity.time;
+        delete activity.foreign_id;
+        delete activity.to;
+        delete activity.target;
+        delete activity.origin;
 
-        var activity2 = {
-          'id': activityId2,
-          'object': 22
-        };
+        console.log('activity', activity);
 
-        var activities = [activity1, activity2];
+        var activities = [activity];
 
         return client.updateActivities(activities);
       })
       .then(function(body) {
-        console.log('body', body);
+        var activity = body['activities'][0];
+        expect(activity.answer).to.be(10);
+        done();
       })
-      .catch(done);
+      .catch(function(reason) {
+        done(reason.error);
+      });
   });
 
   it('follow', function (done) {
