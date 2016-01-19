@@ -53,7 +53,7 @@ gulp.task('lint', function() {
 
 // run the mocha tests
 gulp.task('mocha', function () {
-    return gulp.src(['./test/integration/index.js', './test/unit/index.js'], {read: false})
+    return gulp.src(['./test/unit/index.js'], {read: false})
         .pipe(mocha())
         .once('end', function () {
             process.exit();
@@ -100,6 +100,9 @@ gulp.task('build:test', function(callback) {
     output : {
       path: __dirname + '/test/browser',
       filename: 'browser.js'
+    },
+    node: {
+        fs: 'empty',
     },
     resolve: {
       alias: {

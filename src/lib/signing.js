@@ -110,7 +110,7 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
     payload['user_id'] = options.userId;
   }
 
-  var token = jwt.sign(payload, apiSecret, {algorithm: 'HS256', noTimestamp: noTimestamp});
+  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', noTimestamp: noTimestamp });
   return token;
 };
 

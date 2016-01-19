@@ -150,7 +150,6 @@ describe('Stream client', function () {
     user1.get({'limit': 1}, second);
   });
 
-
   it('signing', function (done) {
     expect(user1.token).to.be.an('string');
     done();
@@ -742,7 +741,20 @@ describe('Stream client', function () {
         {'source': 'flat:1', 'target': 'user:3'}
       ];
 
-      client.followMany(follows, wrapCB(201, done));
+      client.followMany(follows, null, wrapCB(201, done));
+    });
+
+    it('supports batch following with activity_copy_limit', function(done) {
+      var follows = [
+        {'source': 'flat:1', 'target': 'user:1'},
+        {'source': 'flat:1', 'target': 'user:2'},
+        {'source': 'flat:1', 'target': 'user:3'}
+      ];
+
+      client.followMany(follows, 20, wrapCB(201, done, function(error, response, body) {
+        expect(response.req.path.indexOf('activity_copy_limit=20')).to.not.be(0);
+        done();
+      }));
     });
 
     it('no secret application auth', function() {
