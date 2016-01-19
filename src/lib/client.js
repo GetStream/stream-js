@@ -465,6 +465,7 @@ StreamClient.prototype = {
   updateActivities: function(activities, callback) {
     /**
      * Updates all supplied activities on the getstream-io api
+     * @since  3.1.0
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
@@ -488,6 +489,7 @@ StreamClient.prototype = {
   updateActivity: function(activity) {
     /**
      * Updates one activity on the getstream-io api
+     * @since  3.1.0
      * @param  {object} activity The activity to update
      * @return {Promise}          
      */
