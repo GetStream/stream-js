@@ -330,8 +330,6 @@ describe('Stream client', function () {
         delete activity.target;
         delete activity.origin;
 
-        console.log('activity', activity);
-
         var activities = [activity];
 
         return client.updateActivities(activities);
@@ -345,6 +343,129 @@ describe('Stream client', function () {
         done(reason.error);
       });
   });
+
+  it('update activity illegal foreign id', function(done) {
+    var activity = {
+      'actor': 1,
+      'verb': 'tweet',
+      'object': 2,
+    };
+
+    user1.addActivity(activity)
+      .catch(done)
+      .then(function(body) {
+        var activity = body;
+        
+        delete activity.duration;
+        delete activity.to;
+        delete activity.time;
+
+        activity['foreign_id'] = 'aap';
+
+        return client.updateActivity(activity);
+      })
+      .then(function() {
+        done('Expected InputException');
+      })
+      .catch(function(reason) {
+        expect(reason.error.code).to.be(4);
+        expect(reason.error.exception).to.be('InputException')
+        done();
+      });
+    });
+
+    it('update activity illegal time', function(done) {
+      var activity = {
+        'actor': 1,
+        'verb': 'tweet',
+        'object': 2,
+      };
+
+      user1.addActivity(activity)
+        .catch(done)
+        .then(function(body) {
+          var activity = body;
+          
+          delete activity.duration;
+          delete activity.to;
+
+          activity['time'] = 'aap';
+
+          return client.updateActivity(activity);
+        })
+        .then(function() {
+          done('Expected InputException');
+        })
+        .catch(function(reason) {
+          expect(reason.error.code).to.be(4);
+          expect(reason.error.exception).to.be('InputException')
+          done();
+        });
+    });
+
+    it('update activity illegal to field', function(done) {
+      var activity = {
+        'actor': 1,
+        'verb': 'tweet',
+        'object': 2,
+      };
+
+      user1.addActivity(activity)
+        .catch(done)
+        .then(function(body) {
+          var activity = body;
+          
+          delete activity.duration;
+          delete activity.time;
+
+          activity['to'] = ['to:something'];
+
+          return client.updateActivity(activity);
+        })
+        .then(function() {
+          done('Expected InputException');
+        })
+        .catch(function(reason) {
+          expect(reason.error.code).to.be(4);
+          expect(reason.error.exception).to.be('InputException')
+          done();
+        });
+    });
+
+    it('updating many activities', function(done) {
+      var activities = [];
+      for(var i = 0; i < 10; i++) {
+        activities.push({
+          'verb': 'do',
+          'object': 'object:' + i,
+          'actor': 'user:' + i,
+        });
+      }
+
+      user1.addActivities(activities)
+        .then(function(body) {
+          var activitiesCreated = body['activities'];
+
+          for(var j = 0; j < activitiesCreated.length; j++) {
+            activitiesCreated[j]['answer'] = 100;
+          }
+
+          return client.updateActivities(activitiesCreated);
+        })
+        .then(function(body) {
+          return user1.get({ limit: 10 });
+        })
+        .then(function(body) {
+          var activitiesUpdated = body['results'];
+
+          for(var n = 0; n < activitiesUpdated.length; n++) {
+            expect(activitiesUpdated[n]['answer']).to.be(100);
+          }
+
+          done();
+        })
+        .catch(done);
+    });
 
   it('follow', function (done) {
     var activityId = null;
