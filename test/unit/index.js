@@ -180,6 +180,24 @@ describe('Stream Client', function() {
       });
     });
 
+    it('#updateActivities', function() {
+      expect(function() {
+        client.updateActivities('A-String-Thing');
+      }).to.throwException(function(e) {
+        expect(e).to.be.a(TypeError);
+      });
+    });
+
+    it('#updateActivity', function() {
+      var activity = {
+        'verb': 'do',
+        'actor': 'user:1',
+        'object': 'object:1'
+      };
+
+      client.updateActivity([activity]);
+    });
+
     it('should create email redirects', function() {
       var expectedParts = ['https://analytics.getstream.io/analytics/redirect/',
         'auth_type=jwt',
