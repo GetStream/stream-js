@@ -469,7 +469,7 @@ StreamClient.prototype = {
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
-    if (! activities instanceof Array) {
+    if (! (activities instanceof Array)) {
       throw new TypeError('The activities argument should be an Array');
     }
 
