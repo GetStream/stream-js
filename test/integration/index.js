@@ -20,24 +20,35 @@ describe('Stream client', function () {
   var self = this;
   this.timeout(4000);
   this.localRun = false;
+
   if (typeof (process) != "undefined" && process.env.LOCAL) {
     // local testing is slow as we run celery tasks in sync
     this.timeout(25000);
     this.localRun = true;
   }
+
   if (typeof (document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
     // local testing via the browser
     this.timeout(25000);
     this.localRun = true;
   }
+
+  var API_KEY = 'ahj2ndz7gsan'
+    , API_SECRET = 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy';
+
+  if (this.localRun && isNodeEnv) {
+    API_KEY = process.env.STREAM_API_KEY || API_KEY;
+    API_SECRET = process.env.STREAM_API_SECRET || API_SECRET;
+  }
+
   console.log('node is set to ', isNodeEnv);
   errors = stream.errors;
 
   var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
 
   function beforeEachBrowser() {
-    client = stream.connect('ahj2ndz7gsan');
-    client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
+    client = stream.connect(API_KEY);
+    client = stream.connect(API_KEY, null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
 
     if (self.localRun){
       client.baseUrl = 'http://localhost:8000/api/';
@@ -54,8 +65,8 @@ describe('Stream client', function () {
   }
 
   function beforeEachNode() {
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 6744, {'group': 'testCycle', 'location': 'us-east'});
+    client = stream.connect(API_KEY, API_SECRET);
+    client = stream.connect(API_KEY, API_SECRET, 6744, {'group': 'testCycle', 'location': 'us-east'});
     user1 = client.feed('user', '11');
     aggregated2 = client.feed('aggregated', '22');
     aggregated3 = client.feed('aggregated', '33');
@@ -464,6 +475,17 @@ describe('Stream client', function () {
 
           done();
         })
+        .catch(done);
+    });
+
+    it('#updateActivity', function(done) {
+      var activity = {
+        'verb': 'do',
+        'actor': 'user:1',
+        'object': 'object:1'
+      };
+
+      client.updateActivity([activity])
         .catch(done);
     });
 
