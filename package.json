@@ -51,15 +51,15 @@
     "nock": "^5.2.1",
     "quickcheck": "0.0.4",
     "serve-static": "^1.2.3",
-    "term-canvas": "0.0.5",
     "sinon": "^1.17.2",
+    "term-canvas": "0.0.5",
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.2"
   },
   "license": "BSD",
   "dependencies": {
     "Base64": "^0.3.0",
-    "browser-request": "matthisk/browser-request",
+    "browser-request": "matthisk/browser-request#v0.3.3",
     "faye": "^1.0.1",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
