@@ -70,7 +70,7 @@ gulp.task('cov', function () {
 
 // run the tests
 gulp.task('test', function () {
-    runSynchronized(['lint', 'mocha']);
+    runSynchronized(['mocha']);
     return;
 });
 
