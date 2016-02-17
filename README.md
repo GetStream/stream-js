@@ -32,6 +32,10 @@ bower install getstream
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/parse/dist/js/getstream.js)
 
+#### Using with React Native
+
+For use with React Native be sure to use webpack as your bundler. For a bootstrap project for React native and webpack see this [project](https://github.com/jhabdas/react-native-webpack-starter-kit)
+
 ### Usage
 
 ```javascript
