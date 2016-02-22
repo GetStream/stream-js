@@ -5,17 +5,19 @@
 
 3.1.0
 =====
-:release-date: ....
+:release-date: 2016-02-22
 :by: Matthisk Heimensen
 
+* Added support for update_activity API
 * Added support for activity_copy_limit to limit the amount of activities copied by client.followMany
 * dependency request updated to 2.67.0
 * dependency qs updated to 6.0.1
+* dependency faye updated to 1.1.2
 
 
 3.0.0
 =====
-:release-date: ....
+:release-date: 2015-10-28
 :by: Matthisk Heimensen
 
 * Breaking change: Functions performing an XHR Request no longer return the request object, instead they return a Promise
