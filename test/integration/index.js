@@ -4,6 +4,7 @@ var stream = require('../../src/getstream');
 var isNodeEnv = typeof window === 'undefined';
 
 var READ_TIMEOUT = 2000;
+var errors;
 
 describe('Stream client', function () {
   /*
@@ -20,42 +21,53 @@ describe('Stream client', function () {
   var self = this;
   this.timeout(4000);
   this.localRun = false;
+
   if (typeof (process) != "undefined" && process.env.LOCAL) {
     // local testing is slow as we run celery tasks in sync
     this.timeout(25000);
     this.localRun = true;
   }
+
   if (typeof (document) != "undefined" && document.location.href.indexOf('local=1') != -1) {
     // local testing via the browser
     this.timeout(25000);
     this.localRun = true;
   }
+
+  var API_KEY = 'q56mdvdzreye'
+    , API_SECRET = 'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf';
+
+  if (this.localRun && isNodeEnv) {
+    API_KEY = process.env.STREAM_API_KEY || API_KEY;
+    API_SECRET = process.env.STREAM_API_SECRET || API_SECRET;
+  }
+
   console.log('node is set to ', isNodeEnv);
   errors = stream.errors;
 
   var client, user1, aggregated2, aggregated3, flat3, secret3, notification3, user1ReadOnly, user2ReadOnly;
 
   function beforeEachBrowser() {
-    client = stream.connect('ahj2ndz7gsan');
-    client = stream.connect('ahj2ndz7gsan', null, 519, {'group': 'browserTestCycle', 'location': 'eu-west'});
+    client = stream.connect(API_KEY);
+    client = stream.connect(API_KEY, null, 9498, {'group': 'browserTestCycle', 'location': 'eu-west'});
 
     if (self.localRun){
       client.baseUrl = 'http://localhost:8000/api/';
       client.fayeUrl = 'http://localhost:9999/faye/';
     }
 
-    user1 = client.feed('user', '11', 'YHEtoaiaB03gBR9px6vX4HCRVKk');
-    aggregated2 = client.feed('aggregated', '22', 'HxAmzOcePOz0vAIpyEolPl5NEfA');
+    user1 = client.feed('user', '11', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIxMSJ9.9OP-WR_b4-1CEh_CLw8ZR-ZCuDuIVNQITjab8np739Q');
+    aggregated2 = client.feed('aggregated', '22', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6ImFnZ3JlZ2F0ZWQyMiJ9.pYTcr0BU99CWaD4Sd5BEjBvGzgOy3rxkvDDeAOWhi10');
     aggregated3 = client.feed('aggregated', '33', 'YxCkg56vpnabvHPNLCHK7Se36FY');
-    flat3 = client.feed('flat', '33', 'MqPLN1eA_7l5iYrJ8zMyImkY8V0');
-    secret3 = client.feed('secret', '33', 'fo8mzeoxsa1if2te5KWJtOF-cZw');
-    notification3 = client.feed('notification', '33', 'h2YC_zy7fcHQUAJc5kNhZaH9Kp0');
-    user1ReadOnly = client.feed('user', '11', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmZWVkX2lkIjoidXNlcjExIiwicmVzb3VyY2UiOiIqIiwiYWN0aW9uIjoicmVhZCIsImlhdCI6MTQzMzkzODYyMX0.8FAc6ja0Gb2IBZjBIJ7NnsbtMHpGtDpreej-z84NPOQ');
+    flat3 = client.feed('flat', '33', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6ImFnZ3JlZ2F0ZWQzMyJ9.G8Fdpdv5B4Q2WoE5ko6KAMk2qKgES2QLJK1gdotAAC0');
+    secret3 = client.feed('secret', '33', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InNlY3JldDMzIn0.mtcy0oTLtvcxVDo4ikp53DLSxxgZ22V23B7d6S5QHUg');
+    notification3 = client.feed('notification', '33', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6Im5vdGlmaWNhdGlvbjMzIn0.80RDMlGD3pSics5Rbm5b89lnbwm2fqaOZ0q9fMYXCk4');
+    user1ReadOnly = client.feed('user', '11', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiJyZWFkIiwiZmVlZF9pZCI6InVzZXIxMSJ9.nMvaxLCTpmJTmJqEjsGtB8j90ZoVTXQEiL7OjO7GOBo');
   }
 
   function beforeEachNode() {
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy');
-    client = stream.connect('ahj2ndz7gsan', 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy', 519, {'group': 'testCycle', 'location': 'us-east'});
+    client = stream.connect(API_KEY, API_SECRET);
+    client = stream.connect(API_KEY, API_SECRET, 9498, {'group': 'testCycle', 'location': 'us-east'});
     user1 = client.feed('user', '11');
     aggregated2 = client.feed('aggregated', '22');
     aggregated3 = client.feed('aggregated', '33');
@@ -129,12 +141,15 @@ describe('Stream client', function () {
     var called = {};
     called.request = 0;
     called.response = 0;
+
     function callback () {
       called.request += 1;
-    };
+    }
+
     function responseCallback () {
       called.response += 1;
-    };
+    }
+
     client.on('request', callback);
     client.on('response', responseCallback);
 
@@ -158,12 +173,12 @@ describe('Stream client', function () {
   it('get feed', function (done) {
     user1.get({'limit': 1}, function(error, response, body) {
       expect(response.statusCode).to.eql(200);
-    expect(body['results'][0]['id']).to.be.a('string');
-    if (isNodeEnv) {
-      var userAgent = response.req._headers['x-stream-client'];
-      expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
-    }
-    done();
+      expect(body['results'][0]['id']).to.be.a('string');
+      if (isNodeEnv) {
+        var userAgent = response.req._headers['x-stream-client'];
+        expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+      }
+      done();
   });
   });
 
@@ -312,6 +327,176 @@ describe('Stream client', function () {
     }
     user1.addActivities(activities, get);
   });
+
+  if (isNodeEnv) {
+    it('update activities', function (done) {
+      var activities = [
+        {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'update_activity_1'},
+        {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'update_activity_1'},
+      ];
+
+      user1.addActivities(activities)
+        .then(function(body) {
+          var activity = body['activities'][0];
+
+          activity['answer'] = 10;
+          delete activity.to;
+          delete activity.target;
+          delete activity.origin;
+
+          var activities = [activity];
+
+          return client.updateActivities(activities);
+        })
+        .then(function(body) {
+          var activity = body['activities'][0];
+          expect(activity.answer).to.be(10);
+          done();
+        })
+        .catch(function(reason) {
+          done(reason.error);
+        });
+    });
+
+    it('update activity illegal foreign id', function(done) {
+      var activity = {
+        'actor': 1,
+        'verb': 'tweet',
+        'object': 2,
+      };
+
+      user1.addActivity(activity)
+        .catch(done)
+        .then(function(body) {
+          var activity = body;
+          
+          delete activity.id;
+          delete activity.duration;
+          delete activity.to;
+          delete activity.time;
+
+          activity['foreign_id'] = 'aap';
+
+          return client.updateActivity(activity);
+        })
+        .then(function() {
+          done('Expected InputException');
+        })
+        .catch(function(reason) {
+          expect(reason.error.code).to.be(4);
+          expect(reason.error.exception).to.be('InputException')
+          done();
+        });
+      });
+
+      it('update activity illegal time', function(done) {
+        var activity = {
+          'actor': 1,
+          'verb': 'tweet',
+          'object': 2,
+        };
+
+        user1.addActivity(activity)
+          .catch(done)
+          .then(function(body) {
+            var activity = body;
+            
+            delete activity.duration;
+            delete activity.to;
+
+            activity['time'] = 'aap';
+
+            return client.updateActivity(activity);
+          })
+          .then(function() {
+            done('Expected InputException');
+          })
+          .catch(function(reason) {
+            expect(reason.error.code).to.be(4);
+            expect(reason.error.exception).to.be('InputException')
+            done();
+          });
+      });
+
+      it('update activity illegal to field', function(done) {
+        var activity = {
+          'actor': 1,
+          'verb': 'tweet',
+          'object': 2,
+        };
+
+        user1.addActivity(activity)
+          .catch(done)
+          .then(function(body) {
+            var activity = body;
+            
+            delete activity.duration;
+            delete activity.time;
+
+            activity['to'] = ['to:something'];
+
+            return client.updateActivity(activity);
+          })
+          .then(function() {
+            done('Expected InputException');
+          })
+          .catch(function(reason) {
+            expect(reason.error.code).to.be(4);
+            expect(reason.error.exception).to.be('InputException')
+            done();
+          });
+      });
+
+      it('updating many activities', function(done) {
+        var activities = [];
+        for(var i = 0; i < 10; i++) {
+          activities.push({
+            'verb': 'do',
+            'object': 'object:' + i,
+            'actor': 'user:' + i,
+            'foreign_id': 'update_activities_' + i
+          });
+        }
+
+        user1.addActivities(activities)
+          .then(function(body) {
+            var activitiesCreated = body['activities'];
+
+            for(var j = 0; j < activitiesCreated.length; j++) {
+              activitiesCreated[j]['answer'] = 100;
+            }
+
+            return client.updateActivities(activitiesCreated);
+          })
+          .then(function(body) {
+            return user1.get({ limit: 10 });
+          })
+          .then(function(body) {
+            var activitiesUpdated = body['results'];
+
+            for(var n = 0; n < activitiesUpdated.length; n++) {
+              expect(activitiesUpdated[n]['answer']).to.be(100);
+            }
+
+            done();
+          })
+          .catch(done);
+      });
+
+      it('#updateActivity', function(done) {
+        var activity = {
+          'verb': 'do',
+          'actor': 'user:1',
+          'object': 'object:1',
+          'time': new Date().toISOString(),
+          'foreign_id': 'update_activity_11'
+        };
+
+        client.updateActivity(activity)
+          .then(function() { done(); }, done);
+      });
+
+  }
 
   it('follow', function (done) {
     var activityId = null;
@@ -524,20 +709,17 @@ describe('Stream client', function () {
 
   it('fayeSubscribe', function (done) {
     this.timeout(6000);
-    var client = user1.getFayeClient()
-    var subscription = user1.subscribe(function callback() {
-    });
-    subscription.then(function() {
-      done();
-   });
+
+    user1.subscribe(function callback() {})
+      .then(function() { done(); }, done);
   });
 
   it('fayeSubscribeListening', function(done) {
     this.timeout(6000);
 
-    var testUser1 = client.feed('user', '111', 'ksBmfluIarcgjR9e6ptwqkWZWJo'),
-        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM'),
-        testUser3 = client.feed('user', '333', '7e4xHA0y1Pn6_iZAv7nu0ujuMXg');
+    var testUser1 = client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIxMTEifQ.QHiPXFufxIjMnQbMoyfdKbdE82u7UFswPVVobhOL0G0'),
+        testUser2 = client.feed('user', '222', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY'),
+        testUser3 = client.feed('user', '333', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIzMzMifQ.atyOocKSyZIjisssKaVjDI4Ct18T0hK7PjkEnPvWxTk');
 
     var subscribes = [],
         messages = 0,
@@ -577,8 +759,10 @@ describe('Stream client', function () {
   it('fayeSubscribeListeningWrongToken', function(done) {
     this.timeout(6000);
 
-    var testUser1 = client.feed('user', '111', 'psuPHwgwoX-PGsg780jcXdO93VM'),
-        testUser2 = client.feed('user', '222', 'psuPHwgwoX-PGsg780jcXdO93VM');
+    // Invalid token:
+    var testUser1 = client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY'),
+    // Valid token:
+        testUser2 = client.feed('user', '222', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY');
 
     var messages = 0,
         activity = {

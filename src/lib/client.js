@@ -462,6 +462,40 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
+  updateActivities: function(activities, callback) {
+    /**
+     * Updates all supplied activities on the getstream-io api
+     * @since  3.1.0
+     * @param  {array} activities list of activities to update
+     * @return {Promise}
+     */
+    if (! (activities instanceof Array)) {
+      throw new TypeError('The activities argument should be an Array');
+    }
+
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
+
+    var data = {
+      activities: activities,
+    };
+
+    return this.post({
+      url: 'activities/',
+      body: data,
+      signature: authToken,
+    }, callback);
+  },
+  
+  updateActivity: function(activity) {
+    /**
+     * Updates one activity on the getstream-io api
+     * @since  3.1.0
+     * @param  {object} activity The activity to update
+     * @return {Promise}          
+     */
+     return this.updateActivities([activity]);
+  },
+
 };
 
 if (qs) {
