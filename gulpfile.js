@@ -1,19 +1,15 @@
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var jshint = require('gulp-jshint');
-var jscs = require('gulp-jscs');
-var stylish = require('gulp-jscs-stylish');
-var mocha = require('gulp-mocha');
-var fs = require('fs');
-var git = require('gulp-git');
-var shell = require('gulp-shell');
-var uglify = require('gulp-uglify');
-var bump = require('gulp-bump');
-var async = require('async');
-var source = require('vinyl-source-stream');
-var webpack = require("webpack");
-var webpackConfig = require('./webpack.config.js');
-var child_process = require('child_process');
+var gulp = require('gulp')
+  , gutil = require('gulp-util')
+  , jshint = require('gulp-jshint')
+  , jscs = require('gulp-jscs')
+  , stylish = require('gulp-jscs-stylish')
+  , mocha = require('gulp-mocha')
+  , fs = require('fs')
+  , uglify = require('gulp-uglify')
+  , async = require('async')
+  , webpack = require("webpack")
+  , webpackConfig = require('./webpack.config.js')
+  , child_process = require('child_process');
 
 
 gulp.task('default', function() {
@@ -23,7 +19,6 @@ gulp.task('default', function() {
     gulp.run('test');
   });
 });
-
 
 function runSynchronized(tasks, callback){
     var sync = tasks.map(function(task){
@@ -39,7 +34,6 @@ function runSynchronized(tasks, callback){
 /*
  * Testing related tasks
  */
-
 
 // check for jshint and jscs errors
 gulp.task('lint', function() {
@@ -124,22 +118,6 @@ gulp.task("build:optimize", function(callback) {
   .pipe(gulp.dest('./dist/js_min'));
 });
 
-gulp.task('bump_package', function () {
-  return gulp.src(['./package.json'])
-    .pipe(bump())
-    .pipe(gulp.dest('./'));
-});
-
-gulp.task('bump', function () {
-  runSynchronized(['bump_package', 'write_bower']);
-  return;
-});
-
-gulp.task('npm', function (done) {
-  require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' })
-    .on('close', done);
-});
-
 // release to bower
 gulp.task('write_bower', function () {
 	var packageJSON = require('./package.json');
@@ -163,35 +141,4 @@ gulp.task('docs', function(done) {
     }
     done();
   });
-});
-
-gulp.task('tag', function () {
-  var pkg = require('./package.json');
-  var v = 'v' + pkg.version;
-  var message = 'Release ' + v;
-
-  //git.tag(v, message, false, gutil.log);
-  //git.commit('updated bower and npm', {args: '-a'});
-  //git.push('origin', 'master', {args: '--tags'}).end();
-});
-
-// full release flow
-gulp.task('release', function () {
-	/*
-	 * Instructions
-	 * First you bump
-	 * Then you build
-	 * You commit the changes
-	 * You tag using the syntax v1.0.1
-	 * You push
-	 * Npm publish .
-	 */
-	runSynchronized(['bump', 'build', 'tag']);
-    return;
-});
-
-// full publish flow
-gulp.task('publish', function () {
-	runSynchronized(['build', 'test', 'release']);
-    return;
 });

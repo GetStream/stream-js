@@ -196,3 +196,13 @@ mocha test/cov.js -R html-cov > cov.html
 
   [Stream]: https://getstream.io/
   [GetStream.io]: http://getstream.io/docs/
+
+Releasing
+------------
+
+Make sure your working directory is clean. And run:
+
+```bash
+npm version [ major | minor | patch ]
+npm publish
+```

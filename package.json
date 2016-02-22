@@ -37,13 +37,10 @@
     "expect.js": "~0.3.1",
     "gulp": "^3.8.7",
     "gulp-browserify": "^0.5.0",
-    "gulp-bump": "^0.1.8",
-    "gulp-git": "git://github.com/stevelacy/gulp-git.git",
     "gulp-jscs": "^3.0.1",
     "gulp-jscs-stylish": "^1.2.1",
     "gulp-jshint": "^1.6.3",
     "gulp-mocha": "^0.4.1",
-    "gulp-shell": "^0.2.7",
     "gulp-uglify": "~0.3.1",
     "gulp-util": "^2.2.17",
     "jshint-stylish": "^2.0.1",
@@ -55,7 +52,6 @@
     "serve-static": "^1.2.3",
     "sinon": "^1.17.2",
     "term-canvas": "0.0.5",
-    "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.2"
   },
   "license": "BSD",
@@ -77,7 +73,7 @@
     "integration-tests": "./node_modules/.bin/mocha test/integration/index.js",
     "sauce": "node test/saucelabs.js",
     "preversion": "npm run integration-tests",
-    "version": "gulp build && git add -A dist && git checkout test",
+    "version": "gulp build && git add dist && git checkout test",
     "postversion": "./bin/postversion.sh"
   },
   "engines": {
