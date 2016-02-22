@@ -2,7 +2,7 @@ stream-js
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
-[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
+[![Test Coverage](https://codeclimate.com/repos/56c5da683cd0d60708005f6a/badges/d78857bcd0f820d531de/coverage.svg)](https://codeclimate.com/repos/56c5da683cd0d60708005f6a/coverage)
 [![Dependencies up to date](https://david-dm.org/GetStream/stream-js.png)](https://david-dm.org/getstream/stream-js)
 
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
@@ -31,6 +31,10 @@ bower install getstream
 #### Install for parse cloud code
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/parse/dist/js/getstream.js)
+
+#### Using with React Native
+
+For use with React Native be sure to use webpack as your bundler. For a bootstrap project for React native and webpack see this [project](https://github.com/jhabdas/react-native-webpack-starter-kit)
 
 ### Usage
 
