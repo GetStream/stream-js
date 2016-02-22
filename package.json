@@ -75,7 +75,10 @@
   "scripts": {
     "test": "gulp test",
     "integration-tests": "./node_modules/.bin/mocha test/integration/index.js",
-    "sauce": "node test/saucelabs.js"
+    "sauce": "node test/saucelabs.js",
+    "preversion": "npm run integration-tests",
+    "version": "gulp build && git add -A dist",
+    "postversion": "./bin/postversion.sh"
   },
   "engines": {
     "node": ">=0.8 <0.11"
