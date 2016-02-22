@@ -7,7 +7,7 @@
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./src/getstream.js",
   "homepage": "https://getstream.io/",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "browser": {
     "request": "browser-request",
     "crypto": false,

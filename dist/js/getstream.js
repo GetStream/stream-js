@@ -673,6 +673,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
 	    }).bind(this));
+	  },
+
+	  updateActivities: function updateActivities(activities, callback) {
+	    /**
+	     * Updates all supplied activities on the getstream-io api
+	     * @since  3.1.0
+	     * @param  {array} activities list of activities to update
+	     * @return {Promise}
+	     */
+	    if (!(activities instanceof Array)) {
+	      throw new TypeError('The activities argument should be an Array');
+	    }
+
+	    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
+
+	    var data = {
+	      activities: activities
+	    };
+
+	    return this.post({
+	      url: 'activities/',
+	      body: data,
+	      signature: authToken
+	    }, callback);
+	  },
+
+	  updateActivity: function updateActivity(activity) {
+	    /**
+	     * Updates one activity on the getstream-io api
+	     * @since  3.1.0
+	     * @param  {object} activity The activity to update
+	     * @return {Promise}          
+	     */
+	    return this.updateActivities([activity]);
 	  }
 
 	};
@@ -690,7 +724,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {array} events     List of events to track
 	     * @return {string}           The redirect url
 	     */
-	    var url = __webpack_require__(14);
+	    var url = __webpack_require__(15);
 	    var uri = url.parse(targetUrl);
 
 	    if (!(uri.host || uri.hostname && uri.port) && !uri.isUnix) {
@@ -1759,7 +1793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string} signature - Signature to check
 	   * @return {boolean}
 	   */
-	  var token = signature.split(' ')[1];
+	  var token = signature.split(' ')[1] || signature;
 	  return JWS_REGEX.test(token) && !!headerFromJWS(token);
 	};
 
@@ -1864,7 +1898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Faye = {
-	  VERSION:          '1.1.1',
+	  VERSION:          '1.1.2',
 
 	  BAYEUX_VERSION:   '1.0',
 	  ID_LENGTH:        160,
@@ -3555,8 +3589,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!this.batching) return Faye.Promise.fulfilled(this.request([message]));
 
 	    this._outbox.push(message);
-	    this._flushLargeBatch();
 	    this._promise = this._promise || new Faye.Promise();
+	    this._flushLargeBatch();
 
 	    if (message.channel === Faye.Channel.HANDSHAKE) {
 	      this.addTimeout('publish', 0.01, this._flush, this);
@@ -4230,7 +4264,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var promise = new Faye.Promise();
 
 	    this.callback(function(socket) {
-	      if (!socket) return;
+	      if (!socket || socket.readyState !== 1) return;
 	      socket.send(Faye.toJSON(messages));
 	      Faye.Promise.fulfill(promise, socket);
 	    }, this);
@@ -4507,6 +4541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  request: function(messages) {
 	    var xhrClass = Faye.ENV.XDomainRequest ? XDomainRequest : XMLHttpRequest,
 	        xhr      = new xhrClass(),
+	        id       = ++Faye.Transport.CORS._id,
 	        headers  = this._dispatcher.headers,
 	        self     = this,
 	        key;
@@ -4523,6 +4558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var cleanUp = function() {
 	      if (!xhr) return false;
+	      Faye.Transport.CORS._pending.remove(id);
 	      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
 	      xhr = null;
 	    };
@@ -4547,10 +4583,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    xhr.onprogress = function() {};
+
+	    if (xhrClass === Faye.ENV.XDomainRequest)
+	      Faye.Transport.CORS._pending.add({id: id, xhr: xhr});
+
 	    xhr.send(this.encode(messages));
 	    return xhr;
 	  }
 	}), {
+	  _id:      0,
+	  _pending: new Faye.Set(),
+
 	  isUsable: function(dispatcher, endpoint, callback, context) {
 	    if (Faye.URI.isSameOrigin(endpoint))
 	      return callback.call(context, false);
@@ -4631,86 +4674,92 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(1).nextTick;
-	var apply = Function.prototype.apply;
-	var slice = Array.prototype.slice;
-	var immediateIds = {};
-	var nextImmediateId = 0;
-
 	// DOM APIs, for completeness
 
-	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-	};
-	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-	};
-	exports.clearTimeout =
-	exports.clearInterval = function(timeout) { timeout.close(); };
+	if (typeof setTimeout !== 'undefined') exports.setTimeout = function() { return setTimeout.apply(window, arguments); };
+	if (typeof clearTimeout !== 'undefined') exports.clearTimeout = function() { clearTimeout.apply(window, arguments); };
+	if (typeof setInterval !== 'undefined') exports.setInterval = function() { return setInterval.apply(window, arguments); };
+	if (typeof clearInterval !== 'undefined') exports.clearInterval = function() { clearInterval.apply(window, arguments); };
 
-	function Timeout(id, clearFn) {
-	  this._id = id;
-	  this._clearFn = clearFn;
-	}
-	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
-	};
+	// TODO: Change to more effiecient list approach used in Node.js
+	// For now, we just implement the APIs using the primitives above.
 
-	// Does not start the time, just sets up the members needed.
-	exports.enroll = function(item, msecs) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = msecs;
+	exports.enroll = function(item, delay) {
+	  item._timeoutID = setTimeout(item._onTimeout, delay);
 	};
 
 	exports.unenroll = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = -1;
+	  clearTimeout(item._timeoutID);
 	};
 
-	exports._unrefActive = exports.active = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-
-	  var msecs = item._idleTimeout;
-	  if (msecs >= 0) {
-	    item._idleTimeoutId = setTimeout(function onTimeout() {
-	      if (item._onTimeout)
-	        item._onTimeout();
-	    }, msecs);
-	  }
+	exports.active = function(item) {
+	  // our naive impl doesn't care (correctness is still preserved)
 	};
 
-	// That's not how node.js implements it but the exposed api is the same.
-	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-	  var id = nextImmediateId++;
-	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+	exports.setImmediate = __webpack_require__(14).nextTick;
 
-	  immediateIds[id] = true;
-
-	  nextTick(function onNextTick() {
-	    if (immediateIds[id]) {
-	      // fn.call() is faster so we optimize for the common use-case
-	      // @see http://jsperf.com/call-apply-segu
-	      if (args) {
-	        fn.apply(null, args);
-	      } else {
-	        fn.call(null);
-	      }
-	      // Prevent ids from leaking
-	      exports.clearImmediate(id);
-	    }
-	  });
-
-	  return id;
-	};
-
-	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-	  delete immediateIds[id];
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13).setImmediate, __webpack_require__(13).clearImmediate))
 
 /***/ },
 /* 14 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+
+	process.nextTick = (function () {
+	    var canSetImmediate = typeof window !== 'undefined'
+	    && window.setImmediate;
+	    var canPost = typeof window !== 'undefined'
+	    && window.postMessage && window.addEventListener
+	    ;
+
+	    if (canSetImmediate) {
+	        return function (f) { return window.setImmediate(f) };
+	    }
+
+	    if (canPost) {
+	        var queue = [];
+	        window.addEventListener('message', function (ev) {
+	            var source = ev.source;
+	            if ((source === window || source === null) && ev.data === 'process-tick') {
+	                ev.stopPropagation();
+	                if (queue.length > 0) {
+	                    var fn = queue.shift();
+	                    fn();
+	                }
+	            }
+	        }, true);
+
+	        return function nextTick(fn) {
+	            queue.push(fn);
+	            window.postMessage('process-tick', '*');
+	        };
+	    }
+
+	    return function nextTick(fn) {
+	        setTimeout(fn, 0);
+	    };
+	})();
+
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	}
+
+	// TODO(shtylman)
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
