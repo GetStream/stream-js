@@ -70,7 +70,7 @@
   },
   "scripts": {
     "test": "gulp test",
-    "integration-tests": "./node_modules/.bin/mocha test/integration/index.js",
+    "integration-tests": "./node_modules/.bin/mocha test/integration/index.js --bail",
     "sauce": "node test/saucelabs.js",
     "preversion": "npm run integration-tests",
     "version": "gulp build && git add dist && git checkout test",
