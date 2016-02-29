@@ -1168,6 +1168,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	// Return whether a URL is a cross-domain request.
 	function is_crossDomain(url) {
+	  // Fix for React Native. CORS does noet exist in that environment
+	  if (! window.location) {
+	    return false;
+	  }
+
 	  var rurl = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/
 
 	  // jQuery #8138, IE may throw an exception when accessing
