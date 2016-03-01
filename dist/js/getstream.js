@@ -840,7 +840,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if(typeof options.json !== 'boolean')
 	      options.body = JSON.stringify(options.json)
-	    else if(typeof options.body !== 'string')
+	    else if(typeof options.body !== 'string' && options.body !== null)
 	      options.body = JSON.stringify(options.body)
 	  }
 	  
@@ -976,19 +976,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    request.log.debug('State change', {'state':xhr.readyState, 'id':xhr.id, 'timed_out':timed_out})
 
-	    if(xhr.readyState === XHR.OPENED) {
+	    if(xhr.readyState === 1) {
 	      request.log.debug('Request started', {'id':xhr.id})
 	    }
 
-	    else if(xhr.readyState === XHR.HEADERS_RECEIVED)
+	    else if(xhr.readyState === 2)
 	      on_response()
 
-	    else if(xhr.readyState === XHR.LOADING) {
+	    else if(xhr.readyState === 3) {
 	      on_response()
 	      on_loading()
 	    }
 
-	    else if(xhr.readyState === XHR.DONE) {
+	    else if(xhr.readyState === 4) {
 	      on_response()
 	      on_loading()
 	      on_end()
