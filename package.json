@@ -72,7 +72,7 @@
     "test": "gulp test",
     "integration-tests": "./node_modules/.bin/mocha test/integration/index.js --bail",
     "sauce": "node test/saucelabs.js",
-    "preversion": "npm run integration-tests",
+    "preversion": "npm test",
     "version": "gulp build && git add dist && git checkout test",
     "postversion": "./bin/postversion.sh"
   },
