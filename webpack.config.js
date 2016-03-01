@@ -25,7 +25,7 @@ module.exports = {
     },
     resolve: {
       alias: {
-        'request': 'browser-request'
+        'request': 'xmlhttp-request'
       }
     },
     module: {

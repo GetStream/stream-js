@@ -2,6 +2,15 @@
  Change history
 ================
 
+3.1.2
+=====
+:release-date: 2016-03-01
+:by: Matthisk Heimensen
+
+* Stream-JS is now compatible with React-Native
+* dependency browser-request fork changed to xmlhttp-request hosted on npm
+
+
 3.1.1
 =====
 :release-date: 2016-02-29

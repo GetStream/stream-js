@@ -9,7 +9,7 @@
   "homepage": "https://getstream.io/",
   "version": "3.1.1",
   "browser": {
-    "request": "browser-request",
+    "request": "xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
     "./src/lib/batch_operations.js": false,
@@ -57,7 +57,7 @@
   "license": "BSD",
   "dependencies": {
     "Base64": "^0.3.0",
-    "browser-request": "matthisk/browser-request#v0.3.4",
+    "xmlhttp-request": "^v0.4.0",
     "faye": "^1.1.2",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
