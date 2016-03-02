@@ -58,7 +58,7 @@
   "dependencies": {
     "Base64": "^0.3.0",
     "xmlhttp-request": "^v0.4.0",
-    "faye": "^1.1.2",
+    "faye": "faye/faye#72a6d4d2fcfc4e8be730892ca0109dd09d96b5fa",
     "http-signature": "^1.0.2",
     "jsonwebtoken": "^5.0.1",
     "qs": "^6.0.1",
