@@ -4,7 +4,7 @@ node_js: '4.0'
 script:
 - gulp build
 - gulp test
-- mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/.bin/codeclimate-test-reporter
+- mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
 - npm install -g bower
 - bower install getstream
 addons:
@@ -13,4 +13,3 @@ env:
   global:
   - secure: QmxG6aSNZfZlrXcA92/NzX2GNNzcyiFMwEVi9iC2AnHhcm2/YKBtJHQy2AlMpKOON80UZuzYHpKely7jOOASJ7Blr7S4e6uiJR5lPCsW5RFxylY81z1MGhYtMu/64Yau64dFu9Uzue07jwRLVwbLp/jQgkPT3/i/G4qAsx6gK6c=
   - secure: FlnXcxMo1nfcsW2V8N/n6ZcVsdyxGS+opiaZNhnQNRotPBgGUYeysDVAdKENV1OPMLO3RCasxtxJc9l2vwQVHN6OpuLLqfuWuqK6ZlnlTSCZNHBNSSX0JyaKpu4/Kx9NF2Q2LWMN3dP8QhMG69OIP9Pzv9R0/jpI4+HOlOSWT5Y=
-  - secure: ItcYTMYfbZWgQvNLTMSgbPypkj/0R9lx/+UO3ssV9Z5mR8x7UGl9dOK2591+/BjeOWVAdxMFwCNeW/Zopf+ICv7y4cVjEfsn8UHOO0QwTVjnWyQr068FZJgqUs23W7eADkHNkK33wj9A2e0M4kIo4CMg55wiYcVWdKvgTMX3BFg=
