@@ -6,6 +6,8 @@ var utils = require('./utils');
 var BatchOperations = require('./batch_operations');
 var Promise = require('./promise');
 var qs = require('qs');
+var url = require('url');
+var Faye = require('faye');
 
 /**
  * @callback requestCallback
@@ -395,7 +397,6 @@ StreamClient.prototype = {
      * @private
      * @return {object} Faye client
      */
-    var Faye = require('faye');
     if (this.fayeClient === null) {
       this.fayeClient = new Faye.Client(this.fayeUrl);
       var authExtension = this.getFayeAuthorization();
@@ -510,8 +511,7 @@ if (qs) {
      * @param  {string} userId    User id to track
      * @param  {array} events     List of events to track
      * @return {string}           The redirect url
-     */
-    var url = require('url');
+     */    
     var uri = url.parse(targetUrl);
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {

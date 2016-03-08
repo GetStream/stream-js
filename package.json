@@ -16,6 +16,14 @@
     "qs": false,
     "url": false
   },
+  "react-native": {
+    "request": "xmlhttp-request",
+    "crypto": false,
+    "jsonwebtoken": false,
+    "./src/lib/batch_operations.js": false,
+    "qs": false,
+    "url": false
+  },
   "config": {
     "blanket": {
       "pattern": "src",
