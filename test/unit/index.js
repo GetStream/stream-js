@@ -239,8 +239,8 @@ describe('Stream Client', function() {
           done(err); 
         } else if (response.statusCode !== 200) {
           done('Expecting a status code of 200 but got ' + response.statusCode);
-        } else if (response.request.uri.hostname.indexOf('google.nl') === -1) {
-          done('Did not follow redirect to google.nl');
+        } else if (response.request.uri.hostname.indexOf('google') === -1) {
+          done('Did not follow redirect to google');
         } else {
           done();        
         }
