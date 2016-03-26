@@ -148,7 +148,7 @@ readonlyToken = client.getReadOnlyToken('user', '1');
 // passed to client via template or api and initialized as such
 user1 = client.feed('user', '1', readonlyToken);
 
-// Create redirect uri's
+// Create redirect urls
 var impression = {
     'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
     'user_data': 'tommaso', 
