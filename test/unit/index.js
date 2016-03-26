@@ -8,6 +8,7 @@ var expect = require('expect.js')
   , signing = signing || require('../../src/lib/signing')
   , https = require('https')
   , stream = require('../../src/getstream')
+  , request = require('request')
   , nock = require('nock');
 
 var isNodeEnv = typeof window === 'undefined';
@@ -224,6 +225,26 @@ describe('Stream Client', function() {
       for (var i = 0; i < expectedParts.length; i++) {
         expect(redirectUrl).to.contain(expectedParts[i]);
       }
+    });
+
+    it('should follow redirect urls', function(done) {
+      var events = []
+        , userId = 'tommaso'
+        , targetUrl = 'http://google.com/?a=b&c=d';
+
+      var redirectUrl = client.createRedirectUrl(targetUrl, userId, events);
+
+      request(redirectUrl, function(err, response) {
+        if (err) { 
+          done(err); 
+        } else if (response.statusCode !== 200) {
+          done('Expecting a status code of 200 but got ' + response.statusCode);
+        } else if (response.request.uri.hostname.indexOf('google.nl') === -1) {
+          done('Did not follow redirect to google.nl');
+        } else {
+          done();        
+        }
+      });
     });
 
     it('should fail creating email redirects on invalid targets', function() {
