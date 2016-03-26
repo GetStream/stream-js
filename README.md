@@ -1,4 +1,4 @@
-stream-js
+Stream-js
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
@@ -147,6 +147,25 @@ user1 = client.feed('user', '1', token);
 readonlyToken = client.getReadOnlyToken('user', '1');
 // passed to client via template or api and initialized as such
 user1 = client.feed('user', '1', readonlyToken);
+
+// Create redirect uri's
+var impression = {
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 'user:global'
+};
+var engagement = {
+    'content': 'tweet:2', 
+    'label': 'click',
+    'position': 1, 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 
+    'user:global'
+};
+var events = [impression, engagement];
+var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 
 ```
 
