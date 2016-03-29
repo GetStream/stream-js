@@ -95,6 +95,10 @@ user1.follow('flat', '42');
 // Stop following another feed
 user1.unfollow('flat', '42');
 
+// Stop following another feed while keeping previously published activities
+// from that feed
+user1.unfollow('flat', '42', { keepHistory: true });
+
 // Follow another feed without copying the history
 user1.follow('flat', '42', { limit: 0 });
 

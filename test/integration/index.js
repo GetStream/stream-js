@@ -539,16 +539,16 @@ describe('Stream client', function () {
     this.timeout(6000);
     var activityId = null;
     function add() {
-    var activity = {'actor': 1, 'verb': 'add', 'object': 1};
-    user1.addActivity(activity, follow);
-  }
-  function follow(error, response, body) {
-    activityId = body['id'];
-    aggregated2.follow('user', '11', unfollow);
-  }
-  function unfollow(error, response, body) {
-    aggregated2.unfollow('user', '11', check);
-  }
+      var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+      user1.addActivity(activity, follow);
+    }
+    function follow(error, response, body) {
+      activityId = body['id'];
+      aggregated2.follow('user', '11', unfollow);
+    }
+    function unfollow(error, response, body) {
+      aggregated2.unfollow('user', '11', check);
+    }
     function check(error, response, body) {
       setTimeout(function() {
         aggregated2.get({'limit': 1}, function(error, response, body) {
@@ -560,6 +560,45 @@ describe('Stream client', function () {
         });
       }, READ_TIMEOUT);
     }
+    add();
+  });
+
+  it('unfollow keep_history', function(done) {
+    this.timeout(6000);
+
+    var activityId = null;
+    function add() {
+      var activity = {'actor': 1, 'verb': 'add', 'object': 1};
+      user1.addActivity(activity, follow);
+    }
+
+    function follow(error, response, body) {
+      if (error) return done(error);
+
+      activityId = body['id'];
+      flat3.follow('user', '11', unfollow);
+    }
+
+    function unfollow(error, response, body) {
+      if(error) return done(error);
+
+      flat3.unfollow('user', '11', { keepHistory: true }, check);
+    }
+
+    function check(error, response, body) {
+      if(error) return done(error);
+
+      setTimeout(function() {
+        flat3.get({ 'limit': 1 }, function(error, response, body) {
+          expect(response.statusCode).to.eql(200);
+          var firstResult = body['results'][0];
+          var activityFound = (firstResult) ? firstResult['id'] : null;
+          expect(activityFound).to.eql(activityId);
+          done();
+        });
+      }, READ_TIMEOUT);
+    }
+
     add();
   });
 

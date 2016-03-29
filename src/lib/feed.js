@@ -147,22 +147,31 @@ StreamFeed.prototype = {
     }, callback);
   },
 
-  unfollow: function(targetSlug, targetUserId, callback) {
+  unfollow: function(targetSlug, targetUserId, optionsOrCallback, callback) {
     /**
      * Unfollow the given feed
      * @method unfollow
      * @memberof StreamFeed.prototype
      * @param  {string}   targetSlug   Slug of the target feed
      * @param  {string}   targetUserId [description]
+     * @param  {requestCallback|object} optionsOrCallback
+     * @param  {boolean}  optionOrCallback.keepHistory when provided the activities from target
+     *                                                 feed will not be kept in the feed
      * @param  {requestCallback} callback     Callback to call on completion
      * @return {object}                XHR request object
      * @example feed.unfollow('user', '2', callback);
      */
+    var options = {}, qs = {};
+    if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
+    if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
+    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
+
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
     var targetFeedId = targetSlug + ':' + targetUserId;
     var xhr = this.client.delete({
       url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+      qs: qs,
       signature: this.signature,
     }, callback);
     return xhr;
