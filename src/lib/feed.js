@@ -164,7 +164,7 @@ StreamFeed.prototype = {
     var options = {}, qs = {};
     if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
     if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
-    if (typeof options.keepHistory === 'boolean') qs['keep_history'] = options.keepHistory;
+    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
 
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
