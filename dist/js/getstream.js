@@ -62,8 +62,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var StreamClient = __webpack_require__(2);
-	var errors = __webpack_require__(5);
-	var request = __webpack_require__(3);
+	var errors = __webpack_require__(4);
+	var request = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"request\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 
 	function connect(apiKey, apiSecret, appId, options) {
 	  /**
@@ -211,14 +211,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
-	var request = __webpack_require__(3);
-	var StreamFeed = __webpack_require__(4);
-	var signing = __webpack_require__(7);
-	var errors = __webpack_require__(5);
-	var utils = __webpack_require__(6);
-	var BatchOperations = __webpack_require__(9);
-	var Promise = __webpack_require__(11);
-	var qs = __webpack_require__(9);
+	var request = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"request\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var StreamFeed = __webpack_require__(3);
+	var signing = __webpack_require__(6);
+	var errors = __webpack_require__(4);
+	var utils = __webpack_require__(5);
+	var BatchOperations = __webpack_require__(8);
+	var Promise = __webpack_require__(10);
+	var qs = __webpack_require__(8);
+	var url = __webpack_require__(14);
+	var Faye = __webpack_require__(11);
 
 	/**
 	 * @callback requestCallback
@@ -608,7 +610,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     * @return {object} Faye client
 	     */
-	    var Faye = __webpack_require__(12);
 	    if (this.fayeClient === null) {
 	      this.fayeClient = new Faye.Client(this.fayeUrl);
 	      var authExtension = this.getFayeAuthorization();
@@ -724,7 +725,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {array} events     List of events to track
 	     * @return {string}           The redirect url
 	     */
-	    var url = __webpack_require__(15);
 	    var uri = url.parse(targetUrl);
 
 	    if (!(uri.host || uri.hostname && uri.port) && !uri.isUnix) {
@@ -761,499 +761,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
-
-	// Browser Request
-	//
-	// Licensed under the Apache License, Version 2.0 (the "License");
-	// you may not use this file except in compliance with the License.
-	// You may obtain a copy of the License at
-	//
-	//     http://www.apache.org/licenses/LICENSE-2.0
-	//
-	// Unless required by applicable law or agreed to in writing, software
-	// distributed under the License is distributed on an "AS IS" BASIS,
-	// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	// See the License for the specific language governing permissions and
-	// limitations under the License.
-
-	var XHR = XMLHttpRequest
-	if (!XHR) throw new Error('missing XMLHttpRequest')
-	request.log = {
-	  'trace': noop, 'debug': noop, 'info': noop, 'warn': noop, 'error': noop
-	}
-
-	var DEFAULT_TIMEOUT = 3 * 60 * 1000 // 3 minutes
-
-	//
-	// request
-	//
-
-	function request(options, callback) {
-	  // The entry-point to the API: prep the options object and pass the real work to run_xhr.
-	  if(typeof callback !== 'function')
-	    throw new Error('Bad callback given: ' + callback)
-
-	  if(!options)
-	    throw new Error('No options given')
-
-	  var options_onResponse = options.onResponse; // Save this for later.
-
-	  if(typeof options === 'string')
-	    options = {'uri':options};
-	  else
-	    options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
-
-	  options.onResponse = options_onResponse // And put it back.
-
-	  if (options.verbose) request.log = getLogger();
-
-	  if(options.url) {
-	    options.uri = options.url;
-	    delete options.url;
-	  }
-
-	  if(!options.uri && options.uri !== "")
-	    throw new Error("options.uri is a required argument");
-
-	  if(typeof options.uri != "string")
-	    throw new Error("options.uri must be a string");
-
-	  var unsupported_options = ['proxy', '_redirectsFollowed', 'maxRedirects', 'followRedirect']
-	  for (var i = 0; i < unsupported_options.length; i++)
-	    if(options[ unsupported_options[i] ])
-	      throw new Error("options." + unsupported_options[i] + " is not supported")
-
-	  options.callback = callback
-	  options.method = options.method || 'GET';
-	  options.headers = options.headers || {};
-	  options.body    = options.body || null
-	  options.timeout = options.timeout || request.DEFAULT_TIMEOUT
-
-	  if(options.headers.host)
-	    throw new Error("Options.headers.host is not supported");
-
-	  if(options.json) {
-	    options.headers.accept = options.headers.accept || 'application/json'
-	    if(options.method !== 'GET')
-	      options.headers['content-type'] = 'application/json'
-
-	    if(typeof options.json !== 'boolean')
-	      options.body = JSON.stringify(options.json)
-	    else if(typeof options.body !== 'string' && options.body !== null)
-	      options.body = JSON.stringify(options.body)
-	  }
-	  
-	  //BEGIN QS Hack
-	  var serialize = function(obj) {
-	    var str = [];
-	    for(var p in obj)
-	      if (obj.hasOwnProperty(p)) {
-	        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-	      }
-	    return str.join("&");
-	  }
-	  
-	  if(options.qs){
-	    var qs = (typeof options.qs == 'string')? options.qs : serialize(options.qs);
-	    if(options.uri.indexOf('?') !== -1){ //no get params
-	        options.uri = options.uri+'&'+qs;
-	    }else{ //existing get params
-	        options.uri = options.uri+'?'+qs;
-	    }
-	  }
-	  //END QS Hack
-	  
-	  //BEGIN FORM Hack
-	  var multipart = function(obj) {
-	    //todo: support file type (useful?)
-	    var result = {};
-	    result.boundry = '-------------------------------'+Math.floor(Math.random()*1000000000);
-	    var lines = [];
-	    for(var p in obj){
-	        if (obj.hasOwnProperty(p)) {
-	            lines.push(
-	                '--'+result.boundry+"\n"+
-	                'Content-Disposition: form-data; name="'+p+'"'+"\n"+
-	                "\n"+
-	                obj[p]+"\n"
-	            );
-	        }
-	    }
-	    lines.push( '--'+result.boundry+'--' );
-	    result.body = lines.join('');
-	    result.length = result.body.length;
-	    result.type = 'multipart/form-data; boundary='+result.boundry;
-	    return result;
-	  }
-	  
-	  if(options.form){
-	    if(typeof options.form == 'string') throw('form name unsupported');
-	    if(options.method === 'POST'){
-	        var encoding = (options.encoding || 'application/x-www-form-urlencoded').toLowerCase();
-	        options.headers['content-type'] = encoding;
-	        switch(encoding){
-	            case 'application/x-www-form-urlencoded':
-	                options.body = serialize(options.form).replace(/%20/g, "+");
-	                break;
-	            case 'multipart/form-data':
-	                var multi = multipart(options.form);
-	                //options.headers['content-length'] = multi.length;
-	                options.body = multi.body;
-	                options.headers['content-type'] = multi.type;
-	                break;
-	            default : throw new Error('unsupported encoding:'+encoding);
-	        }
-	    }
-	  }
-	  //END FORM Hack
-
-	  // If onResponse is boolean true, call back immediately when the response is known,
-	  // not when the full request is complete.
-	  options.onResponse = options.onResponse || noop
-	  if(options.onResponse === true) {
-	    options.onResponse = callback
-	    options.callback = noop
-	  }
-
-	  // XXX Browsers do not like this.
-	  //if(options.body)
-	  //  options.headers['content-length'] = options.body.length;
-
-	  // HTTP basic authentication
-	  if(!options.headers.authorization && options.auth)
-	    options.headers.authorization = 'Basic ' + b64_enc(options.auth.username + ':' + options.auth.password);
-
-	  return run_xhr(options)
-	}
-
-	var req_seq = 0
-	function run_xhr(options) {
-	  var xhr = new XHR
-	    , timed_out = false
-	    , is_cors = is_crossDomain(options.uri)
-	    , supports_cors = ('withCredentials' in xhr)
-
-	  req_seq += 1
-	  xhr.seq_id = req_seq
-	  xhr.id = req_seq + ': ' + options.method + ' ' + options.uri
-	  xhr._id = xhr.id // I know I will type "_id" from habit all the time.
-
-	  if(is_cors && !supports_cors) {
-	    var cors_err = new Error('Browser does not support cross-origin request: ' + options.uri)
-	    cors_err.cors = 'unsupported'
-	    return options.callback(cors_err, xhr)
-	  }
-
-	  xhr.timeoutTimer = setTimeout(too_late, options.timeout)
-	  function too_late() {
-	    timed_out = true
-	    var er = new Error('ETIMEDOUT')
-	    er.code = 'ETIMEDOUT'
-	    er.duration = options.timeout
-
-	    request.log.error('Timeout', { 'id':xhr._id, 'milliseconds':options.timeout })
-	    return options.callback(er, xhr)
-	  }
-
-	  // Some states can be skipped over, so remember what is still incomplete.
-	  var did = {'response':false, 'loading':false, 'end':false}
-
-	  xhr.onreadystatechange = on_state_change
-	  xhr.open(options.method, options.uri, true) // asynchronous
-	  if(is_cors)
-	    xhr.withCredentials = !! options.withCredentials
-
-	  for (var key in options.headers)
-	    xhr.setRequestHeader(key, options.headers[key])
-
-	  xhr.send(options.body)
-	  return xhr
-
-	  function on_state_change(event) {
-	    if(timed_out)
-	      return request.log.debug('Ignoring timed out state change', {'state':xhr.readyState, 'id':xhr.id})
-
-	    request.log.debug('State change', {'state':xhr.readyState, 'id':xhr.id, 'timed_out':timed_out})
-
-	    if(xhr.readyState === 1) {
-	      request.log.debug('Request started', {'id':xhr.id})
-	    }
-
-	    else if(xhr.readyState === 2)
-	      on_response()
-
-	    else if(xhr.readyState === 3) {
-	      on_response()
-	      on_loading()
-	    }
-
-	    else if(xhr.readyState === 4) {
-	      on_response()
-	      on_loading()
-	      on_end()
-	    }
-	  }
-
-	  function on_response() {
-	    if(did.response)
-	      return
-
-	    did.response = true
-	    request.log.debug('Got response', {'id':xhr.id, 'status':xhr.status})
-	    clearTimeout(xhr.timeoutTimer)
-	    xhr.statusCode = xhr.status // Node request compatibility
-
-	    // Detect failed CORS requests.
-	    if(is_cors && xhr.statusCode == 0) {
-	      var cors_err = new Error('CORS request rejected: ' + options.uri)
-	      cors_err.cors = 'rejected'
-
-	      // Do not process this request further.
-	      did.loading = true
-	      did.end = true
-
-	      return options.callback(cors_err, xhr)
-	    }
-
-	    options.onResponse(null, xhr)
-	  }
-
-	  function on_loading() {
-	    if(did.loading)
-	      return
-
-	    did.loading = true
-	    request.log.debug('Response body loading', {'id':xhr.id})
-	    // TODO: Maybe simulate "data" events by watching xhr.responseText
-	  }
-
-	  function on_end() {
-	    if(did.end)
-	      return
-
-	    did.end = true
-	    request.log.debug('Request done', {'id':xhr.id})
-
-	    xhr.body = xhr.responseText
-	    if(options.json) {
-	      try        { xhr.body = JSON.parse(xhr.responseText) }
-	      catch (er) { return options.callback(er, xhr)        }
-	    }
-
-	    options.callback(null, xhr, xhr.body)
-	  }
-
-	} // request
-
-	request.withCredentials = false;
-	request.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
-
-	//
-	// defaults
-	//
-
-	request.defaults = function(options, requester) {
-	  var def = function (method) {
-	    var d = function (params, callback) {
-	      if(typeof params === 'string')
-	        params = {'uri': params};
-	      else {
-	        params = JSON.parse(JSON.stringify(params));
-	      }
-	      for (var i in options) {
-	        if (params[i] === undefined) params[i] = options[i]
-	      }
-	      return method(params, callback)
-	    }
-	    return d
-	  }
-	  var de = def(request)
-	  de.get = def(request.get)
-	  de.post = def(request.post)
-	  de.put = def(request.put)
-	  de.head = def(request.head)
-	  return de
-	}
-
-	//
-	// HTTP method shortcuts
-	//
-
-	var shortcuts = [ 'get', 'put', 'post', 'head' ];
-	shortcuts.forEach(function(shortcut) {
-	  var method = shortcut.toUpperCase();
-	  var func   = shortcut.toLowerCase();
-
-	  request[func] = function(opts) {
-	    if(typeof opts === 'string')
-	      opts = {'method':method, 'uri':opts};
-	    else {
-	      opts = JSON.parse(JSON.stringify(opts));
-	      opts.method = method;
-	    }
-
-	    var args = [opts].concat(Array.prototype.slice.apply(arguments, [1]));
-	    return request.apply(this, args);
-	  }
-	})
-
-	//
-	// CouchDB shortcut
-	//
-
-	request.couch = function(options, callback) {
-	  if(typeof options === 'string')
-	    options = {'uri':options}
-
-	  // Just use the request API to do JSON.
-	  options.json = true
-	  if(options.body)
-	    options.json = options.body
-	  delete options.body
-
-	  callback = callback || noop
-
-	  var xhr = request(options, couch_handler)
-	  return xhr
-
-	  function couch_handler(er, resp, body) {
-	    if(er)
-	      return callback(er, resp, body)
-
-	    if((resp.statusCode < 200 || resp.statusCode > 299) && body.error) {
-	      // The body is a Couch JSON object indicating the error.
-	      er = new Error('CouchDB error: ' + (body.error.reason || body.error.error))
-	      for (var key in body)
-	        er[key] = body[key]
-	      return callback(er, resp, body);
-	    }
-
-	    return callback(er, resp, body);
-	  }
-	}
-
-	//
-	// Utility
-	//
-
-	function noop() {}
-
-	function getLogger() {
-	  var logger = {}
-	    , levels = ['trace', 'debug', 'info', 'warn', 'error']
-	    , level, i
-
-	  for(i = 0; i < levels.length; i++) {
-	    level = levels[i]
-
-	    logger[level] = noop
-	    if(typeof console !== 'undefined' && console && console[level])
-	      logger[level] = formatted(console, level)
-	  }
-
-	  return logger
-	}
-
-	function formatted(obj, method) {
-	  return formatted_logger
-
-	  function formatted_logger(str, context) {
-	    if(typeof context === 'object')
-	      str += ' ' + JSON.stringify(context)
-
-	    return obj[method].call(obj, str)
-	  }
-	}
-
-	// Return whether a URL is a cross-domain request.
-	function is_crossDomain(url) {
-	  // Fix for React Native. CORS does noet exist in that environment
-	  if (! window.location) {
-	    return false;
-	  }
-
-	  var rurl = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/
-
-	  // jQuery #8138, IE may throw an exception when accessing
-	  // a field from window.location if document.domain has been set
-	  var ajaxLocation
-	  try { ajaxLocation = location.href }
-	  catch (e) {
-	    // Use the href attribute of an A element since IE will modify it given document.location
-	    ajaxLocation = document.createElement( "a" );
-	    ajaxLocation.href = "";
-	    ajaxLocation = ajaxLocation.href;
-	  }
-
-	  var ajaxLocParts = rurl.exec(ajaxLocation.toLowerCase()) || []
-	    , parts = rurl.exec(url.toLowerCase() )
-
-	  var result = !!(
-	    parts &&
-	    (  parts[1] != ajaxLocParts[1]
-	    || parts[2] != ajaxLocParts[2]
-	    || (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (ajaxLocParts[3] || (ajaxLocParts[1] === "http:" ? 80 : 443))
-	    )
-	  )
-
-	  //console.debug('is_crossDomain('+url+') -> ' + result)
-	  return result
-	}
-
-	// MIT License from http://phpjs.org/functions/base64_encode:358
-	function b64_enc (data) {
-	    // Encodes string using MIME base64 algorithm
-	    var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-	    var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, enc="", tmp_arr = [];
-
-	    if (!data) {
-	        return data;
-	    }
-
-	    // assume utf8 data
-	    // data = this.utf8_encode(data+'');
-
-	    do { // pack three octets into four hexets
-	        o1 = data.charCodeAt(i++);
-	        o2 = data.charCodeAt(i++);
-	        o3 = data.charCodeAt(i++);
-
-	        bits = o1<<16 | o2<<8 | o3;
-
-	        h1 = bits>>18 & 0x3f;
-	        h2 = bits>>12 & 0x3f;
-	        h3 = bits>>6 & 0x3f;
-	        h4 = bits & 0x3f;
-
-	        // use hexets to index into b64, and append result to encoded string
-	        tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
-	    } while (i < data.length);
-
-	    enc = tmp_arr.join('');
-
-	    switch (data.length % 3) {
-	        case 1:
-	            enc = enc.slice(0, -2) + '==';
-	        break;
-	        case 2:
-	            enc = enc.slice(0, -1) + '=';
-	        break;
-	    }
-
-	    return enc;
-	}
-	module.exports = request;
-
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var errors = __webpack_require__(5);
-	var utils = __webpack_require__(6);
+	var errors = __webpack_require__(4);
+	var utils = __webpack_require__(5);
 
 	var StreamFeed = function StreamFeed() {
 	  /**
@@ -1401,22 +914,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  unfollow: function unfollow(targetSlug, targetUserId, callback) {
+	  unfollow: function unfollow(targetSlug, targetUserId, optionsOrCallback, callback) {
 	    /**
 	     * Unfollow the given feed
 	     * @method unfollow
 	     * @memberof StreamFeed.prototype
 	     * @param  {string}   targetSlug   Slug of the target feed
 	     * @param  {string}   targetUserId [description]
+	     * @param  {requestCallback|object} optionsOrCallback
+	     * @param  {boolean}  optionOrCallback.keepHistory when provided the activities from target
+	     *                                                 feed will not be kept in the feed
 	     * @param  {requestCallback} callback     Callback to call on completion
 	     * @return {object}                XHR request object
 	     * @example feed.unfollow('user', '2', callback);
 	     */
+	    var options = {},
+	        qs = {};
+	    if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
+	    if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
+	    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
+
 	    utils.validateFeedSlug(targetSlug);
 	    utils.validateUserId(targetUserId);
 	    var targetFeedId = targetSlug + ':' + targetUserId;
 	    var xhr = this.client['delete']({
 	      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+	      qs: qs,
 	      signature: this.signature
 	    }, callback);
 	    return xhr;
@@ -1532,7 +1055,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = StreamFeed;
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1609,12 +1132,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	errors.MissingSchemaError.prototype = new ErrorAbstract();
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var errors = __webpack_require__(5);
+	var errors = __webpack_require__(4);
 	var validRe = /^[\w-]+$/;
 
 	function validateFeedId(feedId) {
@@ -1672,15 +1195,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.rfc3986 = rfc3986;
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var crypto = __webpack_require__(8);
-	var jwt = __webpack_require__(9);
+	var crypto = __webpack_require__(7);
+	var jwt = __webpack_require__(8);
 	var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-	var Base64 = __webpack_require__(10);
+	var Base64 = __webpack_require__(9);
 
 	function makeUrlSafe(s) {
 	  /*
@@ -1803,19 +1326,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function () {
@@ -1882,12 +1405,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Promise = __webpack_require__(12).Promise;
+	var Promise = __webpack_require__(11).Promise;
 
 	Promise.prototype['catch'] = function (onRejected) {
 	  return this.then(null, onRejected);
@@ -1896,7 +1419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Promise;
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, setImmediate, process) {(function() {
@@ -4673,10 +4196,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
 
 	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(13).setImmediate, __webpack_require__(1)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12).setImmediate, __webpack_require__(1)))
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// DOM APIs, for completeness
@@ -4701,11 +4224,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // our naive impl doesn't care (correctness is still preserved)
 	};
 
-	exports.setImmediate = __webpack_require__(14).nextTick;
+	exports.setImmediate = __webpack_require__(13).nextTick;
 
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -4764,7 +4287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
