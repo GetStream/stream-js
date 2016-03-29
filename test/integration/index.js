@@ -563,7 +563,7 @@ describe('Stream client', function () {
     add();
   });
 
-  it('unfollow keep_history=0', function(done) {
+  it('unfollow keep_history', function(done) {
     this.timeout(6000);
 
     var activityId = null;
@@ -592,7 +592,7 @@ describe('Stream client', function () {
         flat3.get({ 'limit': 1 }, function(error, response, body) {
           expect(response.statusCode).to.eql(200);
           var firstResult = body['results'][0];
-          var activityFound = (firstResult) ? firstResult['activities'][0]['id'] : null;
+          var activityFound = (firstResult) ? firstResult['id'] : null;
           expect(activityFound).to.eql(activityId);
           done();
         });
