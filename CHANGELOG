@@ -2,6 +2,13 @@
  Change history
 ================
 
+3.2.0
+=====
+:release-date: 2016-03-30
+:by: Tommaso Barbugli
+
+* Added support for keep_history parameter on unfollow
+
 3.1.2
 =====
 :release-date: 2016-03-01
