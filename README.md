@@ -222,6 +222,7 @@ Releasing
 Make sure your working directory is clean. And run:
 
 ```bash
+npm install
 npm version [ major | minor | patch ]
 npm publish
 ```
