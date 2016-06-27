@@ -127,7 +127,7 @@ StreamFeed.prototype = {
 
     // check for additional options
     if (options && !options.call) {
-      if (options.limit) {
+      if (typeof options.limit !== "undefined" && options.limit !== null) {
         activityCopyLimit = options.limit;
       }
     }
@@ -136,7 +136,7 @@ StreamFeed.prototype = {
       target: target,
     };
 
-    if (activityCopyLimit) {
+    if (typeof activityCopyLimit !== "undefined" && activityCopyLimit !== null) {
       body['activity_copy_limit'] = activityCopyLimit;
     }
 
