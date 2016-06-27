@@ -64,12 +64,12 @@
   },
   "license": "BSD",
   "dependencies": {
-    "Base64": "^0.3.0",
-    "xmlhttp-request": "^v0.4.0",
-    "faye": "^1.1.2",
-    "http-signature": "^1.0.2",
-    "jsonwebtoken": "^5.0.1",
-    "qs": "^6.0.1",
+    "Base64": "0.3.0",
+    "xmlhttp-request": "0.4.0",
+    "faye": "1.1.2",
+    "http-signature": "1.0.2",
+    "jsonwebtoken": "5.0.1",
+    "qs": "6.0.1",
     "request": "2.67.0"
   },
   "repository": {
