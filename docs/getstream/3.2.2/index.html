@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3>getstream 3.2.2</h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Stream-js</h1><p><a href="https://travis-ci.org/GetStream/stream-js"><img src="https://travis-ci.org/GetStream/stream-js.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/r/GetStream/stream-js?branch=master"><img src="https://img.shields.io/coveralls/GetStream/stream-js.svg" alt="Coverage Status"></a>
+<a href="https://david-dm.org/getstream/stream-js"><img src="https://david-dm.org/GetStream/stream-js.png" alt="Dependencies up to date"></a></p>
+<p>stream-js is the official JavaScript client for <a href="https://getstream.io/">Stream</a>, a web service for building scalable newsfeeds and activity streams.
+The full documentation is available on <a href="http://getstream.io/docs/">GetStream.io/docs</a>. Note that there is also a <a href="https://github.com/getstream/stream-node">higher level Node integration</a> which hooks into your ORM.</p>
+<h3>Installation</h3><h4>Install from NPM</h4><pre class="prettyprint source lang-bash"><code>npm install getstream</code></pre><h4>Install using bower</h4><pre class="prettyprint source lang-bash"><code>bower install getstream</code></pre><h4>Install by downloading the JS file</h4><p><a href="https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js">JS</a> /
+<a href="https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js">Minified JS</a></p>
+<h4>Using with React Native</h4><p>For use with React Native be sure to use webpack as your bundler. For a bootstrap project for React native and webpack see this <a href="https://github.com/jhabdas/react-native-webpack-starter-kit">project</a></p>
+<h3>Usage</h3><pre class="prettyprint source lang-javascript"><code>var stream = require('getstream');
+// Instantiate a new client (server side)
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+// Optionally supply the app identifier and an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
+// Instantiate a new client (client side)
+client = stream.connect('YOUR_API_KEY');
+// Find your API keys here https://getstream.io/dashboard/
+
+// Instantiate a feed object server side
+user1 = client.feed('user', '1');
+// Instantiate a feed object client side
+// Generate a feed's token using server side signing
+user1 = client.feed('user', '1', 'FEED_TOKEN');
+
+// Get activities from 5 to 10 (slow pagination)
+user1.get({limit:5, offset:5}, callback);
+// (Recommended & faster) Filter on an id less than a given UUID
+user1.get({limit:5, id_lt:&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;});
+
+// All API calls are performed asynchronous and return a Promise object
+user1.get({limit:5, id_lt:&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;})
+    .then(function(body) { /* on success */ })
+    .catch(function(reason) { /* on failure, reason.error contains an explanation */ });
+
+// Create a new activity
+activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
+user1.addActivity(activity);
+// Create a bit more complex activity
+activity = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1',
+    'course': {'name': 'Golden Gate park', 'distance': 10},
+    'participants': ['Thierry', 'Tommaso'],
+    'started_at': new Date()
+};
+user1.addActivity(activity);
+
+// Remove an activity by its id
+user1.removeActivity(&quot;e561de8f-00f1-11e4-b400-0cc47a024be0&quot;);
+// or remove by the foreign id
+user1.removeActivity({foreignId: 'tweet:1'});
+
+// mark a notification feed as read
+notification1 = client.feed('notification', '1');
+var params = {mark_read: true};
+notification1.get(params);
+
+// mark a notification feed as seen
+var params = {mark_seen:true};
+notification1.get(params);
+
+// Follow another feed
+user1.follow('flat', '42');
+
+// Stop following another feed
+user1.unfollow('flat', '42');
+
+// Stop following another feed while keeping previously published activities
+// from that feed
+user1.unfollow('flat', '42', { keepHistory: true });
+
+// Follow another feed without copying the history
+user1.follow('flat', '42', { limit: 0 });
+
+// List followers, following
+user1.followers({limit: '10', offset: '10'});
+user1.following({limit: '10', offset: '0'});
+
+// all methods support callback as the last argument
+user1.follow('flat', '42');
+
+// adding multiple activities
+activities = [
+    {'actor': 1, 'verb': 'tweet', 'object': 1},
+    {'actor': 2, 'verb': 'tweet', 'object': 3},
+];
+user1.addActivities(activities);
+
+// specifying additional feeds to push the activity to using the to param
+// especially usefull for notification style feeds
+to = ['user:2', 'user:3'];
+activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
+user1.addActivity(activity);
+
+// adding one activity to multiple feeds
+var feeds = ['flat:1', 'flat:2', 'flat:3', 'flat:4'];
+activity = {
+  'actor': 'User:2',
+  'verb': 'pin',
+  'object': 'Place:42',
+  'target': 'Board:1'
+};
+
+client.addToMany(activity, feeds);
+
+// Batch create follow relations (let flat:1 follow user:1, user:2 and user:3 feeds in one single request)
+var follows = [
+  {'source': 'flat:1', 'target': 'user:1'},
+  {'source': 'flat:1', 'target': 'user:2'},
+  {'source': 'flat:1', 'target': 'user:3'}
+];
+
+client.followMany(follows);
+
+// creating a feed token server side
+token = user1.token;
+// passed to client via template or api and initialized as such
+user1 = client.feed('user', '1', token);
+
+// creating a read-only feed token server side
+readonlyToken = client.getReadOnlyToken('user', '1');
+// passed to client via template or api and initialized as such
+user1 = client.feed('user', '1', readonlyToken);
+
+// Create redirect urls
+var impression = {
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 'user:global'
+};
+var engagement = {
+    'content': 'tweet:2', 
+    'label': 'click',
+    'position': 1, 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 
+    'user:global'
+};
+var events = [impression, engagement];
+var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);</code></pre><h3>Faye</h3><p>Stream uses <a href="http://faye.jcoglan.com/browser.html">Faye</a> for realtime notifications. Below is quick quide to subcribing to feed changes</p>
+<pre class="prettyprint source lang-javascript"><code>var stream = require('getstream');
+// NOTE: the site id is needed for subscribing
+// server side example:
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'SITE_ID');
+user1 = client.feed('user', '1');
+// same two lines but client side (generate the feed token server side)
+client = stream.connect('YOUR_API_KEY', null, 'SITE_ID');
+user1 = client.feed('user', '1', 'feedtoken');
+// subscribe to the changes
+var subscription = user1.subscribe(function callback() {
+    /* callback */
+});
+// now whenever something changes to the feed user 1
+// the callback will be called
+
+// To cancel a subscription you can call cancel on the
+// object returned from a subscribe call.
+// This will remove the listener from this channel.
+subscription.cancel();</code></pre><p>Docs are available on <a href="http://getstream.io/docs/">GetStream.io</a>.</p>
+<h2>Contributing</h2><p>First, make sure you can run the test suite. Tests are run via Mocha</p>
+<pre class="prettyprint source lang-bash"><code>mocha test/integration/index.js test/unit/index.js
+# browser version (needs to be build through gulp build:test)
+test/browser/test.html
+# coverage
+mocha test/cov.js -R html-cov > cov.html</code></pre><h2>Releasing</h2><p>Make sure your working directory is clean. And run:</p>
+<pre class="prettyprint source lang-bash"><code>npm install
+npm version [ major | minor | patch ]
+npm publish</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-stream.html">stream</a></li></ul><h3>Classes</h3><ul><li><a href="StreamClient.html">StreamClient</a></li><li><a href="StreamFeed.html">StreamFeed</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Jun 27 2016 09:33:21 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
