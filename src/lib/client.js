@@ -206,8 +206,7 @@ StreamClient.prototype = {
      * @example
      * client.getReadOnlyToken('user', '1');
      */
-    var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
+    return this.feed(feedSlug, userId).getReadOnlyToken();
   },
 
   getReadWriteToken: function(feedSlug, userId) {
@@ -222,8 +221,7 @@ StreamClient.prototype = {
      * @example
      * client.getReadWriteToken('user', '1');
      */
-    var feedId = '' + feedSlug + userId;
-    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
+    return this.feed(feedSlug, userId).getReadWriteToken();
   },
 
   feed: function(feedSlug, userId, token, siteId, options) {
