@@ -1,6 +1,33 @@
-var errors = require('./errors');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: lib/feed.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: lib/feed.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var errors = require('./errors');
 var utils = require('./utils');
-var signing = require('./signing');
 
 var StreamFeed = function() {
   /**
@@ -127,8 +154,8 @@ StreamFeed.prototype = {
     var target = targetSlug + ':' + targetUserId;
 
     // check for additional options
-    if (options && !options.call) {
-      if (typeof options.limit !== "undefined" && options.limit !== null) {
+    if (options &amp;&amp; !options.call) {
+      if (options.limit) {
         activityCopyLimit = options.limit;
       }
     }
@@ -137,7 +164,7 @@ StreamFeed.prototype = {
       target: target,
     };
 
-    if (typeof activityCopyLimit !== "undefined" && activityCopyLimit !== null) {
+    if (activityCopyLimit) {
       body['activity_copy_limit'] = activityCopyLimit;
     }
 
@@ -165,7 +192,7 @@ StreamFeed.prototype = {
     var options = {}, qs = {};
     if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
     if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
-    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
+    if (typeof options.keepHistory === 'boolean' &amp;&amp; options.keepHistory) qs['keep_history'] = '1';
 
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
@@ -189,7 +216,7 @@ StreamFeed.prototype = {
      * @return {Promise} Promise object
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
-    if (options !== undefined && options.filter) {
+    if (options !== undefined &amp;&amp; options.filter) {
       options.filter = options.filter.join(',');
     }
 
@@ -212,7 +239,7 @@ StreamFeed.prototype = {
      * @example
      * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
      */
-    if (options !== undefined && options.filter) {
+    if (options !== undefined &amp;&amp; options.filter) {
       options.filter = options.filter.join(',');
     }
 
@@ -234,11 +261,11 @@ StreamFeed.prototype = {
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
-    if (options && options['mark_read'] && options['mark_read'].join) {
+    if (options &amp;&amp; options['mark_read'] &amp;&amp; options['mark_read'].join) {
       options['mark_read'] = options['mark_read'].join(',');
     }
 
-    if (options && options['mark_seen'] && options['mark_seen'].join) {
+    if (options &amp;&amp; options['mark_seen'] &amp;&amp; options['mark_seen'].join) {
       options['mark_seen'] = options['mark_seen'].join(',');
     }
 
@@ -283,38 +310,29 @@ StreamFeed.prototype = {
 
     return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
   },
-
-  getReadOnlyToken: function() {
-    /**
-     * Returns a token that allows only read operations
-     *
-     * @method getReadOnlyToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadOnlyToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
-  },
-
-  getReadWriteToken: function() {
-    /**
-     * Returns a token that allows read and write operations
-     *
-     * @method getReadWriteToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadWriteToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.client.expireTokens });
-  },
 };
 
 module.exports = StreamFeed;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-stream.html">stream</a></li></ul><h3>Classes</h3><ul><li><a href="StreamClient.html">StreamClient</a></li><li><a href="StreamFeed.html">StreamFeed</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Mon Jun 27 2016 19:05:45 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
