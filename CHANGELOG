@@ -2,6 +2,21 @@
  Change history
 ================
 
+3.4.0
+=====
+:released-date: 2016-06-28
+:by: Matthisk Heimensen
+
+* add getReadOnlyToken and getReadWriteToken method to feed instances
+* Update Faye to 1.2.0
+
+3.3.0
+=====
+:released-date: 2016-06-27
+:by: Tommaso Barbugli
+
+* Pin down all dependencies
+
 3.2.0
 =====
 :release-date: 2016-03-30
