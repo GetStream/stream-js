@@ -1,7 +1,7 @@
 var expect = require('expect.js');
-var Faye = require('faye');
 var stream = require('../../src/getstream');
 var isNodeEnv = typeof window === 'undefined';
+var Promise = require('faye/src/util/promise');
 
 var READ_TIMEOUT = 2000;
 var errors;
@@ -784,7 +784,7 @@ describe('Stream client', function () {
       if(response.statusCode !== 201) done(body);
     };
 
-    Faye.Promise.all([
+    Promise.all([
       testUser1.subscribe(msgCallback),
       testUser2.subscribe(msgCallback),
       testUser3.subscribe(msgCallback)
