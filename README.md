@@ -144,7 +144,7 @@ token = user1.token;
 user1 = client.feed('user', '1', token);
 
 // creating a read-only feed token server side
-readonlyToken = client.getReadOnlyToken('user', '1');
+readonlyToken = client.feed('user', '1').getReadOnlyToken();
 // passed to client via template or api and initialized as such
 user1 = client.feed('user', '1', readonlyToken);
 
