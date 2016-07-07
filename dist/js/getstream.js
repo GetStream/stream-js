@@ -311,6 +311,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.fayeUrl = 'http://localhost:9999/faye/';
 	    }
 
+	    if (typeof process !== 'undefined' && process.env.STREAM_BASE_URL) {
+	      this.baseUrl = process.env.STREAM_BASE_URL;
+	    }
+
 	    this.handlers = {};
 	    this.browser = typeof window !== 'undefined';
 	    this.node = !this.browser;
