@@ -115,12 +115,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	// shim for using process in browser
 
 	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	(function () {
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
+	    }
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
+	    }
+	  }
+	} ())
 	var queue = [];
 	var draining = false;
 	var currentQueue;
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -136,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = setTimeout(cleanUpNextTick);
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
 	    draining = true;
 
 	    var len = queue.length;
@@ -153,7 +181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    clearTimeout(timeout);
+	    cachedClearTimeout(timeout);
 	}
 
 	process.nextTick = function (fun) {
@@ -165,7 +193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
+	        cachedSetTimeout(drainQueue, 0);
 	    }
 	};
 
@@ -220,7 +248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Promise = __webpack_require__(11);
 	var qs = __webpack_require__(9);
 	var url = __webpack_require__(15);
-	var Faye = __webpack_require__(12);
+	var Faye = __webpack_require__(16);
 
 	/**
 	 * @callback requestCallback
@@ -281,6 +309,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
 	      this.fayeUrl = 'http://localhost:9999/faye/';
+	    }
+
+	    if (typeof process !== 'undefined' && process.env.STREAM_BASE_URL) {
+	      this.baseUrl = process.env.STREAM_BASE_URL;
 	    }
 
 	    this.handlers = {};
@@ -419,8 +451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @example
 	     * client.getReadOnlyToken('user', '1');
 	     */
-	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.expireTokens });
+	    return this.feed(feedSlug, userId).getReadOnlyToken();
 	  },
 
 	  getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
@@ -435,8 +466,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @example
 	     * client.getReadWriteToken('user', '1');
 	     */
-	    var feedId = '' + feedSlug + userId;
-	    return signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.expireTokens });
+	    return this.feed(feedSlug, userId).getReadWriteToken();
 	  },
 
 	  feed: function feed(feedSlug, userId, token, siteId, options) {
@@ -1254,6 +1284,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var errors = __webpack_require__(5);
 	var utils = __webpack_require__(6);
+	var signing = __webpack_require__(7);
 
 	var StreamFeed = function StreamFeed() {
 	  /**
@@ -1381,7 +1412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // check for additional options
 	    if (options && !options.call) {
-	      if (options.limit) {
+	      if (typeof options.limit !== "undefined" && options.limit !== null) {
 	        activityCopyLimit = options.limit;
 	      }
 	    }
@@ -1390,7 +1421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      target: target
 	    };
 
-	    if (activityCopyLimit) {
+	    if (typeof activityCopyLimit !== "undefined" && activityCopyLimit !== null) {
 	      body['activity_copy_limit'] = activityCopyLimit;
 	    }
 
@@ -1536,6 +1567,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+	  },
+
+	  getReadOnlyToken: function getReadOnlyToken() {
+	    /**
+	     * Returns a token that allows only read operations
+	     *
+	     * @method getReadOnlyToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadOnlyToken('user', '1');
+	     */
+	    var feedId = '' + this.slug + this.userId;
+	    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
+	  },
+
+	  getReadWriteToken: function getReadWriteToken() {
+	    /**
+	     * Returns a token that allows read and write operations
+	     *
+	     * @method getReadWriteToken
+	     * @memberof StreamClient.prototype
+	     * @param {string} feedSlug - The feed slug to get a read only token for
+	     * @param {string} userId - The user identifier
+	     * @return {string} token
+	     * @example
+	     * client.getReadWriteToken('user', '1');
+	     */
+	    var feedId = '' + this.slug + this.userId;
+	    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.client.expireTokens });
 	  }
 	};
 
@@ -1897,11 +1960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Promise = __webpack_require__(12).Promise;
-
-	Promise.prototype['catch'] = function (onRejected) {
-	  return this.then(null, onRejected);
-	};
+	var Promise = __webpack_require__(12);
 
 	module.exports = Promise;
 
@@ -1909,70 +1968,1115 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global, setImmediate, process) {(function() {
 	'use strict';
 
+	var asap = __webpack_require__(13);
+
+	var PENDING   = 0,
+	    FULFILLED = 1,
+	    REJECTED  = 2;
+
+	var RETURN = function(x) { return x },
+	    THROW  = function(x) { throw  x };
+
+	var Promise = function(task) {
+	  this._state       = PENDING;
+	  this._onFulfilled = [];
+	  this._onRejected  = [];
+
+	  if (typeof task !== 'function') return;
+	  var self = this;
+
+	  task(function(value)  { fulfill(self, value) },
+	       function(reason) { reject(self, reason) });
+	};
+
+	Promise.prototype.then = function(onFulfilled, onRejected) {
+	  var next = new Promise();
+	  registerOnFulfilled(this, onFulfilled, next);
+	  registerOnRejected(this, onRejected, next);
+	  return next;
+	};
+
+	Promise.prototype.catch = function(onRejected) {
+	  return this.then(null, onRejected);
+	};
+
+	var registerOnFulfilled = function(promise, onFulfilled, next) {
+	  if (typeof onFulfilled !== 'function') onFulfilled = RETURN;
+	  var handler = function(value) { invoke(onFulfilled, value, next) };
+
+	  if (promise._state === PENDING) {
+	    promise._onFulfilled.push(handler);
+	  } else if (promise._state === FULFILLED) {
+	    handler(promise._value);
+	  }
+	};
+
+	var registerOnRejected = function(promise, onRejected, next) {
+	  if (typeof onRejected !== 'function') onRejected = THROW;
+	  var handler = function(reason) { invoke(onRejected, reason, next) };
+
+	  if (promise._state === PENDING) {
+	    promise._onRejected.push(handler);
+	  } else if (promise._state === REJECTED) {
+	    handler(promise._reason);
+	  }
+	};
+
+	var invoke = function(fn, value, next) {
+	  asap(function() { _invoke(fn, value, next) });
+	};
+
+	var _invoke = function(fn, value, next) {
+	  var outcome;
+
+	  try {
+	    outcome = fn(value);
+	  } catch (error) {
+	    return reject(next, error);
+	  }
+
+	  if (outcome === next) {
+	    reject(next, new TypeError('Recursive promise chain detected'));
+	  } else {
+	    fulfill(next, outcome);
+	  }
+	};
+
+	var fulfill = function(promise, value) {
+	  var called = false, type, then;
+
+	  try {
+	    type = typeof value;
+	    then = value !== null && (type === 'function' || type === 'object') && value.then;
+
+	    if (typeof then !== 'function') return _fulfill(promise, value);
+
+	    then.call(value, function(v) {
+	      if (!(called ^ (called = true))) return;
+	      fulfill(promise, v);
+	    }, function(r) {
+	      if (!(called ^ (called = true))) return;
+	      reject(promise, r);
+	    });
+	  } catch (error) {
+	    if (!(called ^ (called = true))) return;
+	    reject(promise, error);
+	  }
+	};
+
+	var _fulfill = function(promise, value) {
+	  if (promise._state !== PENDING) return;
+
+	  promise._state      = FULFILLED;
+	  promise._value      = value;
+	  promise._onRejected = [];
+
+	  var onFulfilled = promise._onFulfilled, fn;
+	  while (fn = onFulfilled.shift()) fn(value);
+	};
+
+	var reject = function(promise, reason) {
+	  if (promise._state !== PENDING) return;
+
+	  promise._state       = REJECTED;
+	  promise._reason      = reason;
+	  promise._onFulfilled = [];
+
+	  var onRejected = promise._onRejected, fn;
+	  while (fn = onRejected.shift()) fn(reason);
+	};
+
+	Promise.resolve = Promise.accept = Promise.fulfill = function(value) {
+	  return new Promise(function(resolve, reject) { resolve(value) });
+	};
+
+	Promise.reject = function(reason) {
+	  return new Promise(function(resolve, reject) { reject(reason) });
+	};
+
+	Promise.all = function(promises) {
+	  return new Promise(function(resolve, reject) {
+	    var list = [], n = promises.length, i;
+
+	    if (n === 0) return resolve(list);
+
+	    for (i = 0; i < n; i++) (function(promise, i) {
+	      Promise.resolve(promise).then(function(value) {
+	        list[i] = value;
+	        if (--n === 0) resolve(list);
+	      }, reject);
+	    })(promises[i], i);
+	  });
+	};
+
+	Promise.race = function(promises) {
+	  return new Promise(function(resolve, reject) {
+	    for (var i = 0, n = promises.length; i < n; i++)
+	      Promise.resolve(promises[i]).then(resolve, reject);
+	  });
+	};
+
+	Promise.deferred = Promise.pending = function() {
+	  var tuple = {};
+
+	  tuple.promise = new Promise(function(resolve, reject) {
+	    tuple.fulfill = tuple.resolve = resolve;
+	    tuple.reject  = reject;
+	  });
+	  return tuple;
+	};
+
+	module.exports = Promise;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	// rawAsap provides everything we need except exception management.
+	var rawAsap = __webpack_require__(14);
+	// RawTasks are recycled to reduce GC churn.
+	var freeTasks = [];
+	// We queue errors to ensure they are thrown in right order (FIFO).
+	// Array-as-queue is good enough here, since we are just dealing with exceptions.
+	var pendingErrors = [];
+	var requestErrorThrow = rawAsap.makeRequestCallFromTimer(throwFirstError);
+
+	function throwFirstError() {
+	    if (pendingErrors.length) {
+	        throw pendingErrors.shift();
+	    }
+	}
+
+	/**
+	 * Calls a task as soon as possible after returning, in its own event, with priority
+	 * over other events like animation, reflow, and repaint. An error thrown from an
+	 * event will not interrupt, nor even substantially slow down the processing of
+	 * other events, but will be rather postponed to a lower priority event.
+	 * @param {{call}} task A callable object, typically a function that takes no
+	 * arguments.
+	 */
+	module.exports = asap;
+	function asap(task) {
+	    var rawTask;
+	    if (freeTasks.length) {
+	        rawTask = freeTasks.pop();
+	    } else {
+	        rawTask = new RawTask();
+	    }
+	    rawTask.task = task;
+	    rawAsap(rawTask);
+	}
+
+	// We wrap tasks with recyclable task objects.  A task object implements
+	// `call`, just like a function.
+	function RawTask() {
+	    this.task = null;
+	}
+
+	// The sole purpose of wrapping the task is to catch the exception and recycle
+	// the task object after its single use.
+	RawTask.prototype.call = function () {
+	    try {
+	        this.task.call();
+	    } catch (error) {
+	        if (asap.onerror) {
+	            // This hook exists purely for testing purposes.
+	            // Its name will be periodically randomized to break any code that
+	            // depends on its existence.
+	            asap.onerror(error);
+	        } else {
+	            // In a web browser, exceptions are not fatal. However, to avoid
+	            // slowing down the queue of pending tasks, we rethrow the error in a
+	            // lower priority turn.
+	            pendingErrors.push(error);
+	            requestErrorThrow();
+	        }
+	    } finally {
+	        this.task = null;
+	        freeTasks[freeTasks.length] = this;
+	    }
+	};
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
+
+	// Use the fastest means possible to execute a task in its own turn, with
+	// priority over other events including IO, animation, reflow, and redraw
+	// events in browsers.
+	//
+	// An exception thrown by a task will permanently interrupt the processing of
+	// subsequent tasks. The higher level `asap` function ensures that if an
+	// exception is thrown by a task, that the task queue will continue flushing as
+	// soon as possible, but if you use `rawAsap` directly, you are responsible to
+	// either ensure that no exceptions are thrown from your task, or to manually
+	// call `rawAsap.requestFlush` if an exception is thrown.
+	module.exports = rawAsap;
+	function rawAsap(task) {
+	    if (!queue.length) {
+	        requestFlush();
+	        flushing = true;
+	    }
+	    // Equivalent to push, but avoids a function call.
+	    queue[queue.length] = task;
+	}
+
+	var queue = [];
+	// Once a flush has been requested, no further calls to `requestFlush` are
+	// necessary until the next `flush` completes.
+	var flushing = false;
+	// `requestFlush` is an implementation-specific method that attempts to kick
+	// off a `flush` event as quickly as possible. `flush` will attempt to exhaust
+	// the event queue before yielding to the browser's own event loop.
+	var requestFlush;
+	// The position of the next task to execute in the task queue. This is
+	// preserved between calls to `flush` so that it can be resumed if
+	// a task throws an exception.
+	var index = 0;
+	// If a task schedules additional tasks recursively, the task queue can grow
+	// unbounded. To prevent memory exhaustion, the task queue will periodically
+	// truncate already-completed tasks.
+	var capacity = 1024;
+
+	// The flush function processes all tasks that have been scheduled with
+	// `rawAsap` unless and until one of those tasks throws an exception.
+	// If a task throws an exception, `flush` ensures that its state will remain
+	// consistent and will resume where it left off when called again.
+	// However, `flush` does not make any arrangements to be called again if an
+	// exception is thrown.
+	function flush() {
+	    while (index < queue.length) {
+	        var currentIndex = index;
+	        // Advance the index before calling the task. This ensures that we will
+	        // begin flushing on the next task the task throws an error.
+	        index = index + 1;
+	        queue[currentIndex].call();
+	        // Prevent leaking memory for long chains of recursive calls to `asap`.
+	        // If we call `asap` within tasks scheduled by `asap`, the queue will
+	        // grow, but to avoid an O(n) walk for every task we execute, we don't
+	        // shift tasks off the queue after they have been executed.
+	        // Instead, we periodically shift 1024 tasks off the queue.
+	        if (index > capacity) {
+	            // Manually shift all values starting at the index back to the
+	            // beginning of the queue.
+	            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
+	                queue[scan] = queue[scan + index];
+	            }
+	            queue.length -= index;
+	            index = 0;
+	        }
+	    }
+	    queue.length = 0;
+	    index = 0;
+	    flushing = false;
+	}
+
+	// `requestFlush` is implemented using a strategy based on data collected from
+	// every available SauceLabs Selenium web driver worker at time of writing.
+	// https://docs.google.com/spreadsheets/d/1mG-5UYGup5qxGdEMWkhP6BWCz053NUb2E1QoUTU16uA/edit#gid=783724593
+
+	// Safari 6 and 6.1 for desktop, iPad, and iPhone are the only browsers that
+	// have WebKitMutationObserver but not un-prefixed MutationObserver.
+	// Must use `global` instead of `window` to work in both frames and web
+	// workers. `global` is a provision of Browserify, Mr, Mrs, or Mop.
+	var BrowserMutationObserver = global.MutationObserver || global.WebKitMutationObserver;
+
+	// MutationObservers are desirable because they have high priority and work
+	// reliably everywhere they are implemented.
+	// They are implemented in all modern browsers.
+	//
+	// - Android 4-4.3
+	// - Chrome 26-34
+	// - Firefox 14-29
+	// - Internet Explorer 11
+	// - iPad Safari 6-7.1
+	// - iPhone Safari 7-7.1
+	// - Safari 6-7
+	if (typeof BrowserMutationObserver === "function") {
+	    requestFlush = makeRequestCallFromMutationObserver(flush);
+
+	// MessageChannels are desirable because they give direct access to the HTML
+	// task queue, are implemented in Internet Explorer 10, Safari 5.0-1, and Opera
+	// 11-12, and in web workers in many engines.
+	// Although message channels yield to any queued rendering and IO tasks, they
+	// would be better than imposing the 4ms delay of timers.
+	// However, they do not work reliably in Internet Explorer or Safari.
+
+	// Internet Explorer 10 is the only browser that has setImmediate but does
+	// not have MutationObservers.
+	// Although setImmediate yields to the browser's renderer, it would be
+	// preferrable to falling back to setTimeout since it does not have
+	// the minimum 4ms penalty.
+	// Unfortunately there appears to be a bug in Internet Explorer 10 Mobile (and
+	// Desktop to a lesser extent) that renders both setImmediate and
+	// MessageChannel useless for the purposes of ASAP.
+	// https://github.com/kriskowal/q/issues/396
+
+	// Timers are implemented universally.
+	// We fall back to timers in workers in most engines, and in foreground
+	// contexts in the following browsers.
+	// However, note that even this simple case requires nuances to operate in a
+	// broad spectrum of browsers.
+	//
+	// - Firefox 3-13
+	// - Internet Explorer 6-9
+	// - iPad Safari 4.3
+	// - Lynx 2.8.7
+	} else {
+	    requestFlush = makeRequestCallFromTimer(flush);
+	}
+
+	// `requestFlush` requests that the high priority event queue be flushed as
+	// soon as possible.
+	// This is useful to prevent an error thrown in a task from stalling the event
+	// queue if the exception handled by Node.js’s
+	// `process.on("uncaughtException")` or by a domain.
+	rawAsap.requestFlush = requestFlush;
+
+	// To request a high priority event, we induce a mutation observer by toggling
+	// the text of a text node between "1" and "-1".
+	function makeRequestCallFromMutationObserver(callback) {
+	    var toggle = 1;
+	    var observer = new BrowserMutationObserver(callback);
+	    var node = document.createTextNode("");
+	    observer.observe(node, {characterData: true});
+	    return function requestCall() {
+	        toggle = -toggle;
+	        node.data = toggle;
+	    };
+	}
+
+	// The message channel technique was discovered by Malte Ubl and was the
+	// original foundation for this library.
+	// http://www.nonblocking.io/2011/06/windownexttick.html
+
+	// Safari 6.0.5 (at least) intermittently fails to create message ports on a
+	// page's first load. Thankfully, this version of Safari supports
+	// MutationObservers, so we don't need to fall back in that case.
+
+	// function makeRequestCallFromMessageChannel(callback) {
+	//     var channel = new MessageChannel();
+	//     channel.port1.onmessage = callback;
+	//     return function requestCall() {
+	//         channel.port2.postMessage(0);
+	//     };
+	// }
+
+	// For reasons explained above, we are also unable to use `setImmediate`
+	// under any circumstances.
+	// Even if we were, there is another bug in Internet Explorer 10.
+	// It is not sufficient to assign `setImmediate` to `requestFlush` because
+	// `setImmediate` must be called *by name* and therefore must be wrapped in a
+	// closure.
+	// Never forget.
+
+	// function makeRequestCallFromSetImmediate(callback) {
+	//     return function requestCall() {
+	//         setImmediate(callback);
+	//     };
+	// }
+
+	// Safari 6.0 has a problem where timers will get lost while the user is
+	// scrolling. This problem does not impact ASAP because Safari 6.0 supports
+	// mutation observers, so that implementation is used instead.
+	// However, if we ever elect to use timers in Safari, the prevalent work-around
+	// is to add a scroll event listener that calls for a flush.
+
+	// `setTimeout` does not call the passed callback if the delay is less than
+	// approximately 7 in web workers in Firefox 8 through 18, and sometimes not
+	// even then.
+
+	function makeRequestCallFromTimer(callback) {
+	    return function requestCall() {
+	        // We dispatch a timeout with a specified delay of 0 for engines that
+	        // can reliably accommodate that request. This will usually be snapped
+	        // to a 4 milisecond delay, but once we're flushing, there's no delay
+	        // between events.
+	        var timeoutHandle = setTimeout(handleTimer, 0);
+	        // However, since this timer gets frequently dropped in Firefox
+	        // workers, we enlist an interval handle that will try to fire
+	        // an event 20 times per second until it succeeds.
+	        var intervalHandle = setInterval(handleTimer, 50);
+
+	        function handleTimer() {
+	            // Whichever timer succeeds will cancel both timers and
+	            // execute the callback.
+	            clearTimeout(timeoutHandle);
+	            clearInterval(intervalHandle);
+	            callback();
+	        }
+	    };
+	}
+
+	// This is for `asap.js` only.
+	// Its name will be periodically randomized to break any code that depends on
+	// its existence.
+	rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
+
+	// ASAP was originally a nextTick shim included in Q. This was factored out
+	// into this ASAP package. It was later adapted to RSVP which made further
+	// amendments. These decisions, particularly to marginalize MessageChannel and
+	// to capture the MutationObserver implementation in a closure, were integrated
+	// back into ASAP proper.
+	// https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	/* (ignored) */
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var constants = __webpack_require__(17),
+	    Logging   = __webpack_require__(18);
+
 	var Faye = {
-	  VERSION:          '1.1.2',
+	  VERSION:    constants.VERSION,
+
+	  Client:     __webpack_require__(20),
+	  Scheduler:  __webpack_require__(45)
+	};
+
+	Logging.wrapper = Faye;
+
+	module.exports = Faye;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	  VERSION:          '1.2.0',
 
 	  BAYEUX_VERSION:   '1.0',
 	  ID_LENGTH:        160,
 	  JSONP_CALLBACK:   'jsonpcallback',
 	  CONNECTION_TYPES: ['long-polling', 'cross-origin-long-polling', 'callback-polling', 'websocket', 'eventsource', 'in-process'],
 
-	  MANDATORY_CONNECTION_TYPES: ['long-polling', 'callback-polling', 'in-process'],
+	  MANDATORY_CONNECTION_TYPES: ['long-polling', 'callback-polling', 'in-process']
+	};
 
-	  ENV: (typeof window !== 'undefined') ? window : global,
 
-	  extend: function(dest, source, overwrite) {
-	    if (!source) return dest;
-	    for (var key in source) {
-	      if (!source.hasOwnProperty(key)) continue;
-	      if (dest.hasOwnProperty(key) && overwrite === false) continue;
-	      if (dest[key] !== source[key])
-	        dest[key] = source[key];
-	    }
-	    return dest;
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var toJSON = __webpack_require__(19);
+
+	var Logging = {
+	  LOG_LEVELS: {
+	    fatal:  4,
+	    error:  3,
+	    warn:   2,
+	    info:   1,
+	    debug:  0
 	  },
 
-	  random: function(bitlength) {
-	    bitlength = bitlength || this.ID_LENGTH;
-	    var maxLength = Math.ceil(bitlength * Math.log(2) / Math.log(36));
-	    var string = csprng(bitlength, 36);
-	    while (string.length < maxLength) string = '0' + string;
+	  writeLog: function(messageArgs, level) {
+	    var logger = Logging.logger || (Logging.wrapper || Logging).logger;
+	    if (!logger) return;
+
+	    var args   = Array.prototype.slice.apply(messageArgs),
+	        banner = '[Faye',
+	        klass  = this.className,
+
+	        message = args.shift().replace(/\?/g, function() {
+	          try {
+	            return toJSON(args.shift());
+	          } catch (error) {
+	            return '[Object]';
+	          }
+	        });
+
+	    if (klass) banner += '.' + klass;
+	    banner += '] ';
+
+	    if (typeof logger[level] === 'function')
+	      logger[level](banner + message);
+	    else if (typeof logger === 'function')
+	      logger(banner + message);
+	  }
+	};
+
+	for (var key in Logging.LOG_LEVELS)
+	  (function(level) {
+	    Logging[level] = function() {
+	      this.writeLog(arguments, level);
+	    };
+	  })(key);
+
+	module.exports = Logging;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// http://assanka.net/content/tech/2009/09/02/json2-js-vs-prototype/
+
+	module.exports = function(object) {
+	  return JSON.stringify(object, function(key, value) {
+	    return (this[key] instanceof Array) ? this[key] : value;
+	  });
+	};
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var asap            = __webpack_require__(13),
+	    Class           = __webpack_require__(21),
+	    Promise         = __webpack_require__(12),
+	    URI             = __webpack_require__(23),
+	    array           = __webpack_require__(24),
+	    browser         = __webpack_require__(25),
+	    constants       = __webpack_require__(17),
+	    extend          = __webpack_require__(22),
+	    validateOptions = __webpack_require__(26),
+	    Deferrable      = __webpack_require__(27),
+	    Logging         = __webpack_require__(18),
+	    Publisher       = __webpack_require__(28),
+	    Channel         = __webpack_require__(30),
+	    Dispatcher      = __webpack_require__(32),
+	    Error           = __webpack_require__(46),
+	    Extensible      = __webpack_require__(47),
+	    Publication     = __webpack_require__(48),
+	    Subscription    = __webpack_require__(49);
+
+	var Client = Class({ className: 'Client',
+	  UNCONNECTED:        1,
+	  CONNECTING:         2,
+	  CONNECTED:          3,
+	  DISCONNECTED:       4,
+
+	  HANDSHAKE:          'handshake',
+	  RETRY:              'retry',
+	  NONE:               'none',
+
+	  CONNECTION_TIMEOUT: 60,
+
+	  DEFAULT_ENDPOINT:   '/bayeux',
+	  INTERVAL:           0,
+
+	  initialize: function(endpoint, options) {
+	    this.info('New client created for ?', endpoint);
+	    options = options || {};
+
+	    validateOptions(options, ['interval', 'timeout', 'endpoints', 'proxy', 'retry', 'scheduler', 'websocketExtensions', 'tls', 'ca']);
+
+	    this._channels   = new Channel.Set();
+	    this._dispatcher = Dispatcher.create(this, endpoint || this.DEFAULT_ENDPOINT, options);
+
+	    this._messageId = 0;
+	    this._state     = this.UNCONNECTED;
+
+	    this._responseCallbacks = {};
+
+	    this._advice = {
+	      reconnect: this.RETRY,
+	      interval:  1000 * (options.interval || this.INTERVAL),
+	      timeout:   1000 * (options.timeout  || this.CONNECTION_TIMEOUT)
+	    };
+	    this._dispatcher.timeout = this._advice.timeout / 1000;
+
+	    this._dispatcher.bind('message', this._receiveMessage, this);
+
+	    if (browser.Event && global.onbeforeunload !== undefined)
+	      browser.Event.on(global, 'beforeunload', function() {
+	        if (array.indexOf(this._dispatcher._disabled, 'autodisconnect') < 0)
+	          this.disconnect();
+	      }, this);
+	  },
+
+	  addWebsocketExtension: function(extension) {
+	    return this._dispatcher.addWebsocketExtension(extension);
+	  },
+
+	  disable: function(feature) {
+	    return this._dispatcher.disable(feature);
+	  },
+
+	  setHeader: function(name, value) {
+	    return this._dispatcher.setHeader(name, value);
+	  },
+
+	  // Request
+	  // MUST include:  * channel
+	  //                * version
+	  //                * supportedConnectionTypes
+	  // MAY include:   * minimumVersion
+	  //                * ext
+	  //                * id
+	  //
+	  // Success Response                             Failed Response
+	  // MUST include:  * channel                     MUST include:  * channel
+	  //                * version                                    * successful
+	  //                * supportedConnectionTypes                   * error
+	  //                * clientId                    MAY include:   * supportedConnectionTypes
+	  //                * successful                                 * advice
+	  // MAY include:   * minimumVersion                             * version
+	  //                * advice                                     * minimumVersion
+	  //                * ext                                        * ext
+	  //                * id                                         * id
+	  //                * authSuccessful
+	  handshake: function(callback, context) {
+	    if (this._advice.reconnect === this.NONE) return;
+	    if (this._state !== this.UNCONNECTED) return;
+
+	    this._state = this.CONNECTING;
+	    var self = this;
+
+	    this.info('Initiating handshake with ?', URI.stringify(this._dispatcher.endpoint));
+	    this._dispatcher.selectTransport(constants.MANDATORY_CONNECTION_TYPES);
+
+	    this._sendMessage({
+	      channel:                  Channel.HANDSHAKE,
+	      version:                  constants.BAYEUX_VERSION,
+	      supportedConnectionTypes: this._dispatcher.getConnectionTypes()
+
+	    }, {}, function(response) {
+
+	      if (response.successful) {
+	        this._state = this.CONNECTED;
+	        this._dispatcher.clientId  = response.clientId;
+
+	        this._dispatcher.selectTransport(response.supportedConnectionTypes);
+
+	        this.info('Handshake successful: ?', this._dispatcher.clientId);
+
+	        this.subscribe(this._channels.getKeys(), true);
+	        if (callback) asap(function() { callback.call(context) });
+
+	      } else {
+	        this.info('Handshake unsuccessful');
+	        global.setTimeout(function() { self.handshake(callback, context) }, this._dispatcher.retry * 1000);
+	        this._state = this.UNCONNECTED;
+	      }
+	    }, this);
+	  },
+
+	  // Request                              Response
+	  // MUST include:  * channel             MUST include:  * channel
+	  //                * clientId                           * successful
+	  //                * connectionType                     * clientId
+	  // MAY include:   * ext                 MAY include:   * error
+	  //                * id                                 * advice
+	  //                                                     * ext
+	  //                                                     * id
+	  //                                                     * timestamp
+	  connect: function(callback, context) {
+	    if (this._advice.reconnect === this.NONE) return;
+	    if (this._state === this.DISCONNECTED) return;
+
+	    if (this._state === this.UNCONNECTED)
+	      return this.handshake(function() { this.connect(callback, context) }, this);
+
+	    this.callback(callback, context);
+	    if (this._state !== this.CONNECTED) return;
+
+	    this.info('Calling deferred actions for ?', this._dispatcher.clientId);
+	    this.setDeferredStatus('succeeded');
+	    this.setDeferredStatus('unknown');
+
+	    if (this._connectRequest) return;
+	    this._connectRequest = true;
+
+	    this.info('Initiating connection for ?', this._dispatcher.clientId);
+
+	    this._sendMessage({
+	      channel:        Channel.CONNECT,
+	      clientId:       this._dispatcher.clientId,
+	      connectionType: this._dispatcher.connectionType
+
+	    }, {}, this._cycleConnection, this);
+	  },
+
+	  // Request                              Response
+	  // MUST include:  * channel             MUST include:  * channel
+	  //                * clientId                           * successful
+	  // MAY include:   * ext                                * clientId
+	  //                * id                  MAY include:   * error
+	  //                                                     * ext
+	  //                                                     * id
+	  disconnect: function() {
+	    if (this._state !== this.CONNECTED) return;
+	    this._state = this.DISCONNECTED;
+
+	    this.info('Disconnecting ?', this._dispatcher.clientId);
+	    var promise = new Publication();
+
+	    this._sendMessage({
+	      channel:  Channel.DISCONNECT,
+	      clientId: this._dispatcher.clientId
+
+	    }, {}, function(response) {
+	      if (response.successful) {
+	        this._dispatcher.close();
+	        promise.setDeferredStatus('succeeded');
+	      } else {
+	        promise.setDeferredStatus('failed', Error.parse(response.error));
+	      }
+	    }, this);
+
+	    this.info('Clearing channel listeners for ?', this._dispatcher.clientId);
+	    this._channels = new Channel.Set();
+
+	    return promise;
+	  },
+
+	  // Request                              Response
+	  // MUST include:  * channel             MUST include:  * channel
+	  //                * clientId                           * successful
+	  //                * subscription                       * clientId
+	  // MAY include:   * ext                                * subscription
+	  //                * id                  MAY include:   * error
+	  //                                                     * advice
+	  //                                                     * ext
+	  //                                                     * id
+	  //                                                     * timestamp
+	  subscribe: function(channel, callback, context) {
+	    if (channel instanceof Array)
+	      return array.map(channel, function(c) {
+	        return this.subscribe(c, callback, context);
+	      }, this);
+
+	    var subscription = new Subscription(this, channel, callback, context),
+	        force        = (callback === true),
+	        hasSubscribe = this._channels.hasSubscription(channel);
+
+	    if (hasSubscribe && !force) {
+	      this._channels.subscribe([channel], subscription);
+	      subscription.setDeferredStatus('succeeded');
+	      return subscription;
+	    }
+
+	    this.connect(function() {
+	      this.info('Client ? attempting to subscribe to ?', this._dispatcher.clientId, channel);
+	      if (!force) this._channels.subscribe([channel], subscription);
+
+	      this._sendMessage({
+	        channel:      Channel.SUBSCRIBE,
+	        clientId:     this._dispatcher.clientId,
+	        subscription: channel
+
+	      }, {}, function(response) {
+	        if (!response.successful) {
+	          subscription.setDeferredStatus('failed', Error.parse(response.error));
+	          return this._channels.unsubscribe(channel, subscription);
+	        }
+
+	        var channels = [].concat(response.subscription);
+	        this.info('Subscription acknowledged for ? to ?', this._dispatcher.clientId, channels);
+	        subscription.setDeferredStatus('succeeded');
+	      }, this);
+	    }, this);
+
+	    return subscription;
+	  },
+
+	  // Request                              Response
+	  // MUST include:  * channel             MUST include:  * channel
+	  //                * clientId                           * successful
+	  //                * subscription                       * clientId
+	  // MAY include:   * ext                                * subscription
+	  //                * id                  MAY include:   * error
+	  //                                                     * advice
+	  //                                                     * ext
+	  //                                                     * id
+	  //                                                     * timestamp
+	  unsubscribe: function(channel, subscription) {
+	    if (channel instanceof Array)
+	      return array.map(channel, function(c) {
+	        return this.unsubscribe(c, subscription);
+	      }, this);
+
+	    var dead = this._channels.unsubscribe(channel, subscription);
+	    if (!dead) return;
+
+	    this.connect(function() {
+	      this.info('Client ? attempting to unsubscribe from ?', this._dispatcher.clientId, channel);
+
+	      this._sendMessage({
+	        channel:      Channel.UNSUBSCRIBE,
+	        clientId:     this._dispatcher.clientId,
+	        subscription: channel
+
+	      }, {}, function(response) {
+	        if (!response.successful) return;
+
+	        var channels = [].concat(response.subscription);
+	        this.info('Unsubscription acknowledged for ? from ?', this._dispatcher.clientId, channels);
+	      }, this);
+	    }, this);
+	  },
+
+	  // Request                              Response
+	  // MUST include:  * channel             MUST include:  * channel
+	  //                * data                               * successful
+	  // MAY include:   * clientId            MAY include:   * id
+	  //                * id                                 * error
+	  //                * ext                                * ext
+	  publish: function(channel, data, options) {
+	    validateOptions(options || {}, ['attempts', 'deadline']);
+	    var publication = new Publication();
+
+	    this.connect(function() {
+	      this.info('Client ? queueing published message to ?: ?', this._dispatcher.clientId, channel, data);
+
+	      this._sendMessage({
+	        channel:  channel,
+	        data:     data,
+	        clientId: this._dispatcher.clientId
+
+	      }, options, function(response) {
+	        if (response.successful)
+	          publication.setDeferredStatus('succeeded');
+	        else
+	          publication.setDeferredStatus('failed', Error.parse(response.error));
+	      }, this);
+	    }, this);
+
+	    return publication;
+	  },
+
+	  _sendMessage: function(message, options, callback, context) {
+	    message.id = this._generateMessageId();
+
+	    var timeout = this._advice.timeout
+	                ? 1.2 * this._advice.timeout / 1000
+	                : 1.2 * this._dispatcher.retry;
+
+	    this.pipeThroughExtensions('outgoing', message, null, function(message) {
+	      if (!message) return;
+	      if (callback) this._responseCallbacks[message.id] = [callback, context];
+	      this._dispatcher.sendMessage(message, timeout, options || {});
+	    }, this);
+	  },
+
+	  _generateMessageId: function() {
+	    this._messageId += 1;
+	    if (this._messageId >= Math.pow(2,32)) this._messageId = 0;
+	    return this._messageId.toString(36);
+	  },
+
+	  _receiveMessage: function(message) {
+	    var id = message.id, callback;
+
+	    if (message.successful !== undefined) {
+	      callback = this._responseCallbacks[id];
+	      delete this._responseCallbacks[id];
+	    }
+
+	    this.pipeThroughExtensions('incoming', message, null, function(message) {
+	      if (!message) return;
+	      if (message.advice) this._handleAdvice(message.advice);
+	      this._deliverMessage(message);
+	      if (callback) callback[0].call(callback[1], message);
+	    }, this);
+	  },
+
+	  _handleAdvice: function(advice) {
+	    extend(this._advice, advice);
+	    this._dispatcher.timeout = this._advice.timeout / 1000;
+
+	    if (this._advice.reconnect === this.HANDSHAKE && this._state !== this.DISCONNECTED) {
+	      this._state = this.UNCONNECTED;
+	      this._dispatcher.clientId = null;
+	      this._cycleConnection();
+	    }
+	  },
+
+	  _deliverMessage: function(message) {
+	    if (!message.channel || message.data === undefined) return;
+	    this.info('Client ? calling listeners for ? with ?', this._dispatcher.clientId, message.channel, message.data);
+	    this._channels.distributeMessage(message);
+	  },
+
+	  _cycleConnection: function() {
+	    if (this._connectRequest) {
+	      this._connectRequest = null;
+	      this.info('Closed connection for ?', this._dispatcher.clientId);
+	    }
+	    var self = this;
+	    global.setTimeout(function() { self.connect() }, this._advice.interval);
+	  }
+	});
+
+	extend(Client.prototype, Deferrable);
+	extend(Client.prototype, Publisher);
+	extend(Client.prototype, Logging);
+	extend(Client.prototype, Extensible);
+
+	module.exports = Client;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var extend = __webpack_require__(22);
+
+	module.exports = function(parent, methods) {
+	  if (typeof parent !== 'function') {
+	    methods = parent;
+	    parent  = Object;
+	  }
+
+	  var klass = function() {
+	    if (!this.initialize) return this;
+	    return this.initialize.apply(this, arguments) || this;
+	  };
+
+	  var bridge = function() {};
+	  bridge.prototype = parent.prototype;
+
+	  klass.prototype = new bridge();
+	  extend(klass.prototype, methods);
+
+	  return klass;
+	};
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = function(dest, source, overwrite) {
+	  if (!source) return dest;
+	  for (var key in source) {
+	    if (!source.hasOwnProperty(key)) continue;
+	    if (dest.hasOwnProperty(key) && overwrite === false) continue;
+	    if (dest[key] !== source[key])
+	      dest[key] = source[key];
+	  }
+	  return dest;
+	};
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {
+	  isURI: function(uri) {
+	    return uri && uri.protocol && uri.host && uri.path;
+	  },
+
+	  isSameOrigin: function(uri) {
+	    return uri.protocol === location.protocol &&
+	           uri.hostname === location.hostname &&
+	           uri.port     === location.port;
+	  },
+
+	  parse: function(url) {
+	    if (typeof url !== 'string') return url;
+	    var uri = {}, parts, query, pairs, i, n, data;
+
+	    var consume = function(name, pattern) {
+	      url = url.replace(pattern, function(match) {
+	        uri[name] = match;
+	        return '';
+	      });
+	      uri[name] = uri[name] || '';
+	    };
+
+	    consume('protocol', /^[a-z]+\:/i);
+	    consume('host',     /^\/\/[^\/\?#]+/);
+
+	    if (!/^\//.test(url) && !uri.host)
+	      url = location.pathname.replace(/[^\/]*$/, '') + url;
+
+	    consume('pathname', /^[^\?#]*/);
+	    consume('search',   /^\?[^#]*/);
+	    consume('hash',     /^#.*/);
+
+	    uri.protocol = uri.protocol || location.protocol;
+
+	    if (uri.host) {
+	      uri.host     = uri.host.substr(2);
+	      parts        = uri.host.split(':');
+	      uri.hostname = parts[0];
+	      uri.port     = parts[1] || '';
+	    } else {
+	      uri.host     = location.host;
+	      uri.hostname = location.hostname;
+	      uri.port     = location.port;
+	    }
+
+	    uri.pathname = uri.pathname || '/';
+	    uri.path = uri.pathname + uri.search;
+
+	    query = uri.search.replace(/^\?/, '');
+	    pairs = query ? query.split('&') : [];
+	    data  = {};
+
+	    for (i = 0, n = pairs.length; i < n; i++) {
+	      parts = pairs[i].split('=');
+	      data[decodeURIComponent(parts[0] || '')] = decodeURIComponent(parts[1] || '');
+	    }
+
+	    uri.query = data;
+
+	    uri.href = this.stringify(uri);
+	    return uri;
+	  },
+
+	  stringify: function(uri) {
+	    var string = uri.protocol + '//' + uri.hostname;
+	    if (uri.port) string += ':' + uri.port;
+	    string += uri.pathname + this.queryString(uri.query) + (uri.hash || '');
 	    return string;
 	  },
 
-	  validateOptions: function(options, validKeys) {
-	    for (var key in options) {
-	      if (this.indexOf(validKeys, key) < 0)
-	        throw new Error('Unrecognized option: ' + key);
+	  queryString: function(query) {
+	    var pairs = [];
+	    for (var key in query) {
+	      if (!query.hasOwnProperty(key)) continue;
+	      pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key]));
 	    }
-	  },
+	    if (pairs.length === 0) return '';
+	    return '?' + pairs.join('&');
+	  }
+	};
 
-	  clientIdFromMessages: function(messages) {
-	    var connect = this.filter([].concat(messages), function(message) {
-	      return message.channel === '/meta/connect';
-	    });
-	    return connect[0] && connect[0].clientId;
-	  },
 
-	  copyObject: function(object) {
-	    var clone, i, key;
-	    if (object instanceof Array) {
-	      clone = [];
-	      i = object.length;
-	      while (i--) clone[i] = Faye.copyObject(object[i]);
-	      return clone;
-	    } else if (typeof object === 'object') {
-	      clone = (object === null) ? null : {};
-	      for (key in object) clone[key] = Faye.copyObject(object[key]);
-	      return clone;
-	    } else {
-	      return object;
-	    }
-	  },
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
 
+	'use strict';
+
+	module.exports = {
 	  commonElement: function(lista, listb) {
 	    for (var i = 0, n = lista.length; i < n; i++) {
 	      if (this.indexOf(listb, lista[i]) !== -1)
@@ -2042,45 +3146,184 @@ return /******/ (function(modules) { // webpackBootstrap
 	      loop();
 	    };
 	    resume();
+	  }
+	};
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Event = {
+	  _registry: [],
+
+	  on: function(element, eventName, callback, context) {
+	    var wrapped = function() { callback.call(context) };
+
+	    if (element.addEventListener)
+	      element.addEventListener(eventName, wrapped, false);
+	    else
+	      element.attachEvent('on' + eventName, wrapped);
+
+	    this._registry.push({
+	      _element:   element,
+	      _type:      eventName,
+	      _callback:  callback,
+	      _context:     context,
+	      _handler:   wrapped
+	    });
 	  },
 
-	  // http://assanka.net/content/tech/2009/09/02/json2-js-vs-prototype/
-	  toJSON: function(object) {
-	    if (!this.stringify) return JSON.stringify(object);
+	  detach: function(element, eventName, callback, context) {
+	    var i = this._registry.length, register;
+	    while (i--) {
+	      register = this._registry[i];
 
-	    return this.stringify(object, function(key, value) {
-	      return (this[key] instanceof Array) ? this[key] : value;
-	    });
+	      if ((element    && element    !== register._element)  ||
+	          (eventName  && eventName  !== register._type)     ||
+	          (callback   && callback   !== register._callback) ||
+	          (context    && context    !== register._context))
+	        continue;
+
+	      if (register._element.removeEventListener)
+	        register._element.removeEventListener(register._type, register._handler, false);
+	      else
+	        register._element.detachEvent('on' + register._type, register._handler);
+
+	      this._registry.splice(i,1);
+	      register = null;
+	    }
 	  }
 	};
 
-	if (true)
-	  module.exports = Faye;
-	else if (typeof window !== 'undefined')
-	  window.Faye = Faye;
+	if (global.onunload !== undefined)
+	  Event.on(global, 'unload', Event.detach, Event);
 
-	Faye.Class = function(parent, methods) {
-	  if (typeof parent !== 'function') {
-	    methods = parent;
-	    parent  = Object;
-	  }
-
-	  var klass = function() {
-	    if (!this.initialize) return this;
-	    return this.initialize.apply(this, arguments) || this;
-	  };
-
-	  var bridge = function() {};
-	  bridge.prototype = parent.prototype;
-
-	  klass.prototype = new bridge();
-	  Faye.extend(klass.prototype, methods);
-
-	  return klass;
+	module.exports = {
+	  Event: Event
 	};
 
-	(function() {
-	var EventEmitter = Faye.EventEmitter = function() {};
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var array = __webpack_require__(24);
+
+	module.exports = function(options, validKeys) {
+	  for (var key in options) {
+	    if (array.indexOf(validKeys, key) < 0)
+	      throw new Error('Unrecognized option: ' + key);
+	  }
+	};
+
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Promise   = __webpack_require__(12);
+
+	module.exports = {
+	  then: function(callback, errback) {
+	    var self = this;
+	    if (!this._promise)
+	      this._promise = new Promise(function(resolve, reject) {
+	        self._resolve = resolve;
+	        self._reject  = reject;
+	      });
+
+	    if (arguments.length === 0)
+	      return this._promise;
+	    else
+	      return this._promise.then(callback, errback);
+	  },
+
+	  callback: function(callback, context) {
+	    return this.then(function(value) { callback.call(context, value) });
+	  },
+
+	  errback: function(callback, context) {
+	    return this.then(null, function(reason) { callback.call(context, reason) });
+	  },
+
+	  timeout: function(seconds, message) {
+	    this.then();
+	    var self = this;
+	    this._timer = global.setTimeout(function() {
+	      self._reject(message);
+	    }, seconds * 1000);
+	  },
+
+	  setDeferredStatus: function(status, value) {
+	    if (this._timer) global.clearTimeout(this._timer);
+
+	    this.then();
+
+	    if (status === 'succeeded')
+	      this._resolve(value);
+	    else if (status === 'failed')
+	      this._reject(value);
+	    else
+	      delete this._promise;
+	  }
+	};
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var extend       = __webpack_require__(22),
+	    EventEmitter = __webpack_require__(29);
+
+	var Publisher = {
+	  countListeners: function(eventType) {
+	    return this.listeners(eventType).length;
+	  },
+
+	  bind: function(eventType, listener, context) {
+	    var slice   = Array.prototype.slice,
+	        handler = function() { listener.apply(context, slice.call(arguments)) };
+
+	    this._listeners = this._listeners || [];
+	    this._listeners.push([eventType, listener, context, handler]);
+	    return this.on(eventType, handler);
+	  },
+
+	  unbind: function(eventType, listener, context) {
+	    this._listeners = this._listeners || [];
+	    var n = this._listeners.length, tuple;
+
+	    while (n--) {
+	      tuple = this._listeners[n];
+	      if (tuple[0] !== eventType) continue;
+	      if (listener && (tuple[1] !== listener || tuple[2] !== context)) continue;
+	      this._listeners.splice(n, 1);
+	      this.removeListener(eventType, tuple[3]);
+	    }
+	  }
+	};
+
+	extend(Publisher, EventEmitter.prototype);
+	Publisher.trigger = Publisher.emit;
+
+	module.exports = Publisher;
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
 
 	/*
 	Copyright Joyent, Inc. and other Node contributors. All rights reserved.
@@ -2117,6 +3360,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return -1;
 	}
 
+	function EventEmitter() {}
+	module.exports = EventEmitter;
 
 	EventEmitter.prototype.emit = function(type) {
 	  // If there is no 'error' event listener then throw.
@@ -2252,198 +3497,780 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return this._events[type];
 	};
 
-	})();
 
-	Faye.Namespace = Faye.Class({
-	  initialize: function() {
-	    this._used = {};
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Class     = __webpack_require__(21),
+	    extend    = __webpack_require__(22),
+	    Publisher = __webpack_require__(28),
+	    Grammar   = __webpack_require__(31);
+
+	var Channel = Class({
+	  initialize: function(name) {
+	    this.id = this.name = name;
 	  },
 
-	  exists: function(id) {
-	    return this._used.hasOwnProperty(id);
+	  push: function(message) {
+	    this.trigger('message', message);
 	  },
 
-	  generate: function() {
-	    var name = Faye.random();
-	    while (this._used.hasOwnProperty(name))
-	      name = Faye.random();
-	    return this._used[name] = name;
-	  },
-
-	  release: function(id) {
-	    delete this._used[id];
+	  isUnused: function() {
+	    return this.countListeners('message') === 0;
 	  }
 	});
 
-	(function() {
+	extend(Channel.prototype, Publisher);
+
+	extend(Channel, {
+	  HANDSHAKE:    '/meta/handshake',
+	  CONNECT:      '/meta/connect',
+	  SUBSCRIBE:    '/meta/subscribe',
+	  UNSUBSCRIBE:  '/meta/unsubscribe',
+	  DISCONNECT:   '/meta/disconnect',
+
+	  META:         'meta',
+	  SERVICE:      'service',
+
+	  expand: function(name) {
+	    var segments = this.parse(name),
+	        channels = ['/**', name];
+
+	    var copy = segments.slice();
+	    copy[copy.length - 1] = '*';
+	    channels.push(this.unparse(copy));
+
+	    for (var i = 1, n = segments.length; i < n; i++) {
+	      copy = segments.slice(0, i);
+	      copy.push('**');
+	      channels.push(this.unparse(copy));
+	    }
+
+	    return channels;
+	  },
+
+	  isValid: function(name) {
+	    return Grammar.CHANNEL_NAME.test(name) ||
+	           Grammar.CHANNEL_PATTERN.test(name);
+	  },
+
+	  parse: function(name) {
+	    if (!this.isValid(name)) return null;
+	    return name.split('/').slice(1);
+	  },
+
+	  unparse: function(segments) {
+	    return '/' + segments.join('/');
+	  },
+
+	  isMeta: function(name) {
+	    var segments = this.parse(name);
+	    return segments ? (segments[0] === this.META) : null;
+	  },
+
+	  isService: function(name) {
+	    var segments = this.parse(name);
+	    return segments ? (segments[0] === this.SERVICE) : null;
+	  },
+
+	  isSubscribable: function(name) {
+	    if (!this.isValid(name)) return null;
+	    return !this.isMeta(name) && !this.isService(name);
+	  },
+
+	  Set: Class({
+	    initialize: function() {
+	      this._channels = {};
+	    },
+
+	    getKeys: function() {
+	      var keys = [];
+	      for (var key in this._channels) keys.push(key);
+	      return keys;
+	    },
+
+	    remove: function(name) {
+	      delete this._channels[name];
+	    },
+
+	    hasSubscription: function(name) {
+	      return this._channels.hasOwnProperty(name);
+	    },
+
+	    subscribe: function(names, subscription) {
+	      var name;
+	      for (var i = 0, n = names.length; i < n; i++) {
+	        name = names[i];
+	        var channel = this._channels[name] = this._channels[name] || new Channel(name);
+	        channel.bind('message', subscription);
+	      }
+	    },
+
+	    unsubscribe: function(name, subscription) {
+	      var channel = this._channels[name];
+	      if (!channel) return false;
+	      channel.unbind('message', subscription);
+
+	      if (channel.isUnused()) {
+	        this.remove(name);
+	        return true;
+	      } else {
+	        return false;
+	      }
+	    },
+
+	    distributeMessage: function(message) {
+	      var channels = Channel.expand(message.channel);
+
+	      for (var i = 0, n = channels.length; i < n; i++) {
+	        var channel = this._channels[channels[i]];
+	        if (channel) channel.trigger('message', message);
+	      }
+	    }
+	  })
+	});
+
+	module.exports = Channel;
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
 	'use strict';
 
-	var timeout = setTimeout, defer;
-
-	if (typeof setImmediate === 'function')
-	  defer = function(fn) { setImmediate(fn) };
-	else if (typeof process === 'object' && process.nextTick)
-	  defer = function(fn) { process.nextTick(fn) };
-	else
-	  defer = function(fn) { timeout(fn, 0) };
-
-	var PENDING   = 0,
-	    FULFILLED = 1,
-	    REJECTED  = 2;
-
-	var RETURN = function(x) { return x },
-	    THROW  = function(x) { throw  x };
-
-	var Promise = function(task) {
-	  this._state       = PENDING;
-	  this._onFulfilled = [];
-	  this._onRejected  = [];
-
-	  if (typeof task !== 'function') return;
-	  var self = this;
-
-	  task(function(value)  { fulfill(self, value) },
-	       function(reason) { reject(self, reason) });
+	module.exports = {
+	  CHANNEL_NAME:     /^\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*$/,
+	  CHANNEL_PATTERN:  /^(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*\/\*{1,2}$/,
+	  ERROR:            /^([0-9][0-9][0-9]:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*(,(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)*:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*|[0-9][0-9][0-9]::(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)$/,
+	  VERSION:          /^([0-9])+(\.(([a-z]|[A-Z])|[0-9])(((([a-z]|[A-Z])|[0-9])|\-|\_))*)*$/
 	};
 
-	Promise.prototype.then = function(onFulfilled, onRejected) {
-	  var next = new Promise();
-	  registerOnFulfilled(this, onFulfilled, next);
-	  registerOnRejected(this, onRejected, next);
-	  return next;
-	};
 
-	var registerOnFulfilled = function(promise, onFulfilled, next) {
-	  if (typeof onFulfilled !== 'function') onFulfilled = RETURN;
-	  var handler = function(value) { invoke(onFulfilled, value, next) };
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
 
-	  if (promise._state === PENDING) {
-	    promise._onFulfilled.push(handler);
-	  } else if (promise._state === FULFILLED) {
-	    handler(promise._value);
-	  }
-	};
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var registerOnRejected = function(promise, onRejected, next) {
-	  if (typeof onRejected !== 'function') onRejected = THROW;
-	  var handler = function(reason) { invoke(onRejected, reason, next) };
+	var Class     = __webpack_require__(21),
+	    URI       = __webpack_require__(23),
+	    cookies   = __webpack_require__(33),
+	    extend    = __webpack_require__(22),
+	    Logging   = __webpack_require__(18),
+	    Publisher = __webpack_require__(28),
+	    Transport = __webpack_require__(34),
+	    Scheduler = __webpack_require__(45);
 
-	  if (promise._state === PENDING) {
-	    promise._onRejected.push(handler);
-	  } else if (promise._state === REJECTED) {
-	    handler(promise._reason);
-	  }
-	};
+	var Dispatcher = Class({ className: 'Dispatcher',
+	  MAX_REQUEST_SIZE: 2048,
+	  DEFAULT_RETRY:    5,
 
-	var invoke = function(fn, value, next) {
-	  defer(function() { _invoke(fn, value, next) });
-	};
+	  UP:   1,
+	  DOWN: 2,
 
-	var _invoke = function(fn, value, next) {
-	  var outcome;
+	  initialize: function(client, endpoint, options) {
+	    this._client     = client;
+	    this.endpoint    = URI.parse(endpoint);
+	    this._alternates = options.endpoints || {};
 
-	  try {
-	    outcome = fn(value);
-	  } catch (error) {
-	    return reject(next, error);
-	  }
+	    this.cookies      = cookies.CookieJar && new cookies.CookieJar();
+	    this._disabled    = [];
+	    this._envelopes   = {};
+	    this.headers      = {};
+	    this.retry        = options.retry || this.DEFAULT_RETRY;
+	    this._scheduler   = options.scheduler || Scheduler;
+	    this._state       = 0;
+	    this.transports   = {};
+	    this.wsExtensions = [];
 
-	  if (outcome === next) {
-	    reject(next, new TypeError('Recursive promise chain detected'));
-	  } else {
-	    fulfill(next, outcome);
-	  }
-	};
+	    this.proxy = options.proxy || {};
+	    if (typeof this._proxy === 'string') this._proxy = {origin: this._proxy};
 
-	var fulfill = Promise.fulfill = Promise.resolve = function(promise, value) {
-	  var called = false, type, then;
+	    var exts = options.websocketExtensions;
+	    if (exts) {
+	      exts = [].concat(exts);
+	      for (var i = 0, n = exts.length; i < n; i++)
+	        this.addWebsocketExtension(exts[i]);
+	    }
 
-	  try {
-	    type = typeof value;
-	    then = value !== null && (type === 'function' || type === 'object') && value.then;
+	    this.tls = options.tls || {};
+	    this.tls.ca = this.tls.ca || options.ca;
 
-	    if (typeof then !== 'function') return _fulfill(promise, value);
+	    for (var type in this._alternates)
+	      this._alternates[type] = URI.parse(this._alternates[type]);
 
-	    then.call(value, function(v) {
-	      if (!(called ^ (called = true))) return;
-	      fulfill(promise, v);
-	    }, function(r) {
-	      if (!(called ^ (called = true))) return;
-	      reject(promise, r);
+	    this.maxRequestSize = this.MAX_REQUEST_SIZE;
+	  },
+
+	  endpointFor: function(connectionType) {
+	    return this._alternates[connectionType] || this.endpoint;
+	  },
+
+	  addWebsocketExtension: function(extension) {
+	    this.wsExtensions.push(extension);
+	  },
+
+	  disable: function(feature) {
+	    this._disabled.push(feature);
+	  },
+
+	  setHeader: function(name, value) {
+	    this.headers[name] = value;
+	  },
+
+	  close: function() {
+	    var transport = this._transport;
+	    delete this._transport;
+	    if (transport) transport.close();
+	  },
+
+	  getConnectionTypes: function() {
+	    return Transport.getConnectionTypes();
+	  },
+
+	  selectTransport: function(transportTypes) {
+	    Transport.get(this, transportTypes, this._disabled, function(transport) {
+	      this.debug('Selected ? transport for ?', transport.connectionType, URI.stringify(transport.endpoint));
+
+	      if (transport === this._transport) return;
+	      if (this._transport) this._transport.close();
+
+	      this._transport = transport;
+	      this.connectionType = transport.connectionType;
+	    }, this);
+	  },
+
+	  sendMessage: function(message, timeout, options) {
+	    options = options || {};
+
+	    var id       = message.id,
+	        attempts = options.attempts,
+	        deadline = options.deadline && new Date().getTime() + (options.deadline * 1000),
+	        envelope = this._envelopes[id],
+	        scheduler;
+
+	    if (!envelope) {
+	      scheduler = new this._scheduler(message, {timeout: timeout, interval: this.retry, attempts: attempts, deadline: deadline});
+	      envelope  = this._envelopes[id] = {message: message, scheduler: scheduler};
+	    }
+
+	    this._sendEnvelope(envelope);
+	  },
+
+	  _sendEnvelope: function(envelope) {
+	    if (!this._transport) return;
+	    if (envelope.request || envelope.timer) return;
+
+	    var message   = envelope.message,
+	        scheduler = envelope.scheduler,
+	        self      = this;
+
+	    if (!scheduler.isDeliverable()) {
+	      scheduler.abort();
+	      delete this._envelopes[message.id];
+	      return;
+	    }
+
+	    envelope.timer = global.setTimeout(function() {
+	      self.handleError(message);
+	    }, scheduler.getTimeout() * 1000);
+
+	    scheduler.send();
+	    envelope.request = this._transport.sendMessage(message);
+	  },
+
+	  handleResponse: function(reply) {
+	    var envelope = this._envelopes[reply.id];
+
+	    if (reply.successful !== undefined && envelope) {
+	      envelope.scheduler.succeed();
+	      delete this._envelopes[reply.id];
+	      global.clearTimeout(envelope.timer);
+	    }
+
+	    this.trigger('message', reply);
+
+	    if (this._state === this.UP) return;
+	    this._state = this.UP;
+	    this._client.trigger('transport:up');
+	  },
+
+	  handleError: function(message, immediate) {
+	    var envelope = this._envelopes[message.id],
+	        request  = envelope && envelope.request,
+	        self     = this;
+
+	    if (!request) return;
+
+	    request.then(function(req) {
+	      if (req && req.abort) req.abort();
 	    });
-	  } catch (error) {
-	    if (!(called ^ (called = true))) return;
-	    reject(promise, error);
+
+	    var scheduler = envelope.scheduler;
+	    scheduler.fail();
+
+	    global.clearTimeout(envelope.timer);
+	    envelope.request = envelope.timer = null;
+
+	    if (immediate) {
+	      this._sendEnvelope(envelope);
+	    } else {
+	      envelope.timer = global.setTimeout(function() {
+	        envelope.timer = null;
+	        self._sendEnvelope(envelope);
+	      }, scheduler.getInterval() * 1000);
+	    }
+
+	    if (this._state === this.DOWN) return;
+	    this._state = this.DOWN;
+	    this._client.trigger('transport:down');
+	  }
+	});
+
+	Dispatcher.create = function(client, endpoint, options) {
+	  return new Dispatcher(client, endpoint, options);
+	};
+
+	extend(Dispatcher.prototype, Publisher);
+	extend(Dispatcher.prototype, Logging);
+
+	module.exports = Dispatcher;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = {};
+
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Transport = __webpack_require__(35);
+
+	Transport.register('websocket', __webpack_require__(37));
+	Transport.register('eventsource', __webpack_require__(41));
+	Transport.register('long-polling', __webpack_require__(42));
+	Transport.register('cross-origin-long-polling', __webpack_require__(43));
+	Transport.register('callback-polling', __webpack_require__(44));
+
+	module.exports = Transport;
+
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var Class    = __webpack_require__(21),
+	    Cookie   = __webpack_require__(33).Cookie,
+	    Promise  = __webpack_require__(12),
+	    URI      = __webpack_require__(23),
+	    array    = __webpack_require__(24),
+	    extend   = __webpack_require__(22),
+	    Logging  = __webpack_require__(18),
+	    Timeouts = __webpack_require__(36),
+	    Channel  = __webpack_require__(30);
+
+	var Transport = extend(Class({ className: 'Transport',
+	  DEFAULT_PORTS:    {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
+	  SECURE_PROTOCOLS: ['https:', 'wss:'],
+	  MAX_DELAY:        0,
+
+	  batching:  true,
+
+	  initialize: function(dispatcher, endpoint) {
+	    this._dispatcher = dispatcher;
+	    this.endpoint    = endpoint;
+	    this._outbox     = [];
+	    this._proxy      = extend({}, this._dispatcher.proxy);
+
+	    if (!this._proxy.origin && typeof process !== 'undefined') {
+	      this._proxy.origin = array.indexOf(this.SECURE_PROTOCOLS, this.endpoint.protocol) >= 0
+	                         ? (process.env.HTTPS_PROXY || process.env.https_proxy)
+	                         : (process.env.HTTP_PROXY  || process.env.http_proxy);
+	    }
+	  },
+
+	  close: function() {},
+
+	  encode: function(messages) {
+	    return '';
+	  },
+
+	  sendMessage: function(message) {
+	    this.debug('Client ? sending message to ?: ?',
+	               this._dispatcher.clientId, URI.stringify(this.endpoint), message);
+
+	    if (!this.batching) return Promise.resolve(this.request([message]));
+
+	    this._outbox.push(message);
+	    this._flushLargeBatch();
+
+	    if (message.channel === Channel.HANDSHAKE)
+	      return this._publish(0.01);
+
+	    if (message.channel === Channel.CONNECT)
+	      this._connectMessage = message;
+
+	    return this._publish(this.MAX_DELAY);
+	  },
+
+	  _makePromise: function() {
+	    var self = this;
+
+	    this._requestPromise = this._requestPromise || new Promise(function(resolve) {
+	      self._resolvePromise = resolve;
+	    });
+	  },
+
+	  _publish: function(delay) {
+	    this._makePromise();
+
+	    this.addTimeout('publish', delay, function() {
+	      this._flush();
+	      delete this._requestPromise;
+	    }, this);
+
+	    return this._requestPromise;
+	  },
+
+	  _flush: function() {
+	    this.removeTimeout('publish');
+
+	    if (this._outbox.length > 1 && this._connectMessage)
+	      this._connectMessage.advice = {timeout: 0};
+
+	    this._resolvePromise(this.request(this._outbox));
+
+	    this._connectMessage = null;
+	    this._outbox = [];
+	  },
+
+	  _flushLargeBatch: function() {
+	    var string = this.encode(this._outbox);
+	    if (string.length < this._dispatcher.maxRequestSize) return;
+	    var last = this._outbox.pop();
+
+	    this._makePromise();
+	    this._flush();
+
+	    if (last) this._outbox.push(last);
+	  },
+
+	  _receive: function(replies) {
+	    if (!replies) return;
+	    replies = [].concat(replies);
+
+	    this.debug('Client ? received from ? via ?: ?',
+	               this._dispatcher.clientId, URI.stringify(this.endpoint), this.connectionType, replies);
+
+	    for (var i = 0, n = replies.length; i < n; i++)
+	      this._dispatcher.handleResponse(replies[i]);
+	  },
+
+	  _handleError: function(messages, immediate) {
+	    messages = [].concat(messages);
+
+	    this.debug('Client ? failed to send to ? via ?: ?',
+	               this._dispatcher.clientId, URI.stringify(this.endpoint), this.connectionType, messages);
+
+	    for (var i = 0, n = messages.length; i < n; i++)
+	      this._dispatcher.handleError(messages[i]);
+	  },
+
+	  _getCookies: function() {
+	    var cookies = this._dispatcher.cookies,
+	        url     = URI.stringify(this.endpoint);
+
+	    if (!cookies) return '';
+
+	    return array.map(cookies.getCookiesSync(url), function(cookie) {
+	      return cookie.cookieString();
+	    }).join('; ');
+	  },
+
+	  _storeCookies: function(setCookie) {
+	    var cookies = this._dispatcher.cookies,
+	        url     = URI.stringify(this.endpoint),
+	        cookie;
+
+	    if (!setCookie || !cookies) return;
+	    setCookie = [].concat(setCookie);
+
+	    for (var i = 0, n = setCookie.length; i < n; i++) {
+	      cookie = Cookie.parse(setCookie[i]);
+	      cookies.setCookieSync(cookie, url);
+	    }
+	  }
+
+	}), {
+	  get: function(dispatcher, allowed, disabled, callback, context) {
+	    var endpoint = dispatcher.endpoint;
+
+	    array.asyncEach(this._transports, function(pair, resume) {
+	      var connType     = pair[0], klass = pair[1],
+	          connEndpoint = dispatcher.endpointFor(connType);
+
+	      if (array.indexOf(disabled, connType) >= 0)
+	        return resume();
+
+	      if (array.indexOf(allowed, connType) < 0) {
+	        klass.isUsable(dispatcher, connEndpoint, function() {});
+	        return resume();
+	      }
+
+	      klass.isUsable(dispatcher, connEndpoint, function(isUsable) {
+	        if (!isUsable) return resume();
+	        var transport = klass.hasOwnProperty('create') ? klass.create(dispatcher, connEndpoint) : new klass(dispatcher, connEndpoint);
+	        callback.call(context, transport);
+	      });
+	    }, function() {
+	      throw new Error('Could not find a usable connection type for ' + URI.stringify(endpoint));
+	    });
+	  },
+
+	  register: function(type, klass) {
+	    this._transports.push([type, klass]);
+	    klass.prototype.connectionType = type;
+	  },
+
+	  getConnectionTypes: function() {
+	    return array.map(this._transports, function(t) { return t[0] });
+	  },
+
+	  _transports: []
+	});
+
+	extend(Transport.prototype, Logging);
+	extend(Transport.prototype, Timeouts);
+
+	module.exports = Transport;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	module.exports = {
+	  addTimeout: function(name, delay, callback, context) {
+	    this._timeouts = this._timeouts || {};
+	    if (this._timeouts.hasOwnProperty(name)) return;
+	    var self = this;
+	    this._timeouts[name] = global.setTimeout(function() {
+	      delete self._timeouts[name];
+	      callback.call(context);
+	    }, 1000 * delay);
+	  },
+
+	  removeTimeout: function(name) {
+	    this._timeouts = this._timeouts || {};
+	    var timeout = this._timeouts[name];
+	    if (!timeout) return;
+	    global.clearTimeout(timeout);
+	    delete this._timeouts[name];
+	  },
+
+	  removeAllTimeouts: function() {
+	    this._timeouts = this._timeouts || {};
+	    for (var name in this._timeouts) this.removeTimeout(name);
 	  }
 	};
 
-	var _fulfill = function(promise, value) {
-	  if (promise._state !== PENDING) return;
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-	  promise._state      = FULFILLED;
-	  promise._value      = value;
-	  promise._onRejected = [];
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
 
-	  var onFulfilled = promise._onFulfilled, fn;
-	  while (fn = onFulfilled.shift()) fn(value);
-	};
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var reject = Promise.reject = function(promise, reason) {
-	  if (promise._state !== PENDING) return;
+	var Class      = __webpack_require__(21),
+	    Promise    = __webpack_require__(12),
+	    Set        = __webpack_require__(38),
+	    URI        = __webpack_require__(23),
+	    browser    = __webpack_require__(25),
+	    copyObject = __webpack_require__(39),
+	    extend     = __webpack_require__(22),
+	    toJSON     = __webpack_require__(19),
+	    ws         = __webpack_require__(40),
+	    Deferrable = __webpack_require__(27),
+	    Transport  = __webpack_require__(35);
 
-	  promise._state       = REJECTED;
-	  promise._reason      = reason;
-	  promise._onFulfilled = [];
+	var WebSocket = extend(Class(Transport, {
+	  UNCONNECTED:  1,
+	  CONNECTING:   2,
+	  CONNECTED:    3,
 
-	  var onRejected = promise._onRejected, fn;
-	  while (fn = onRejected.shift()) fn(reason);
-	};
+	  batching:     false,
 
-	Promise.all = function(promises) {
-	  return new Promise(function(fulfill, reject) {
-	    var list = [],
-	         n   = promises.length,
-	         i;
+	  isUsable: function(callback, context) {
+	    this.callback(function() { callback.call(context, true) });
+	    this.errback(function() { callback.call(context, false) });
+	    this.connect();
+	  },
 
-	    if (n === 0) return fulfill(list);
+	  request: function(messages) {
+	    this._pending = this._pending || new Set();
+	    for (var i = 0, n = messages.length; i < n; i++) this._pending.add(messages[i]);
 
-	    for (i = 0; i < n; i++) (function(promise, i) {
-	      Promise.fulfilled(promise).then(function(value) {
-	        list[i] = value;
-	        if (--n === 0) fulfill(list);
-	      }, reject);
-	    })(promises[i], i);
-	  });
-	};
+	    var self = this;
 
-	Promise.defer = defer;
+	    var promise = new Promise(function(resolve, reject) {
+	      self.callback(function(socket) {
+	        if (!socket || socket.readyState !== 1) return;
+	        socket.send(toJSON(messages));
+	        resolve(socket);
+	      });
 
-	Promise.deferred = Promise.pending = function() {
-	  var tuple = {};
+	      self.connect();
+	    });
 
-	  tuple.promise = new Promise(function(fulfill, reject) {
-	    tuple.fulfill = tuple.resolve = fulfill;
-	    tuple.reject  = reject;
-	  });
-	  return tuple;
-	};
+	    return {
+	      abort: function() { promise.then(function(ws) { ws.close() }) }
+	    };
+	  },
 
-	Promise.fulfilled = Promise.resolved = function(value) {
-	  return new Promise(function(fulfill, reject) { fulfill(value) });
-	};
+	  connect: function() {
+	    if (WebSocket._unloaded) return;
 
-	Promise.rejected = function(reason) {
-	  return new Promise(function(fulfill, reject) { reject(reason) });
-	};
+	    this._state = this._state || this.UNCONNECTED;
+	    if (this._state !== this.UNCONNECTED) return;
+	    this._state = this.CONNECTING;
 
-	if (typeof Faye === 'undefined')
-	  module.exports = Promise;
-	else
-	  Faye.Promise = Promise;
+	    var socket = this._createSocket();
+	    if (!socket) return this.setDeferredStatus('failed');
 
-	})();
+	    var self = this;
 
-	Faye.Set = Faye.Class({
+	    socket.onopen = function() {
+	      if (socket.headers) self._storeCookies(socket.headers['set-cookie']);
+	      self._socket = socket;
+	      self._state = self.CONNECTED;
+	      self._everConnected = true;
+	      self._ping();
+	      self.setDeferredStatus('succeeded', socket);
+	    };
+
+	    var closed = false;
+	    socket.onclose = socket.onerror = function() {
+	      if (closed) return;
+	      closed = true;
+
+	      var wasConnected = (self._state === self.CONNECTED);
+	      socket.onopen = socket.onclose = socket.onerror = socket.onmessage = null;
+
+	      delete self._socket;
+	      self._state = self.UNCONNECTED;
+	      self.removeTimeout('ping');
+
+	      var pending = self._pending ? self._pending.toArray() : [];
+	      delete self._pending;
+
+	      if (wasConnected || self._everConnected) {
+	        self.setDeferredStatus('unknown');
+	        self._handleError(pending, wasConnected);
+	      } else {
+	        self.setDeferredStatus('failed');
+	      }
+	    };
+
+	    socket.onmessage = function(event) {
+	      var replies;
+	      try { replies = JSON.parse(event.data) } catch (error) {}
+
+	      if (!replies) return;
+
+	      replies = [].concat(replies);
+
+	      for (var i = 0, n = replies.length; i < n; i++) {
+	        if (replies[i].successful === undefined) continue;
+	        self._pending.remove(replies[i]);
+	      }
+	      self._receive(replies);
+	    };
+	  },
+
+	  close: function() {
+	    if (!this._socket) return;
+	    this._socket.close();
+	  },
+
+	  _createSocket: function() {
+	    var url        = WebSocket.getSocketUrl(this.endpoint),
+	        headers    = this._dispatcher.headers,
+	        extensions = this._dispatcher.wsExtensions,
+	        cookie     = this._getCookies(),
+	        tls        = this._dispatcher.tls,
+	        options    = {extensions: extensions, headers: headers, proxy: this._proxy, tls: tls};
+
+	    if (cookie !== '') options.headers['Cookie'] = cookie;
+
+	    return ws.create(url, [], options);
+	  },
+
+	  _ping: function() {
+	    if (!this._socket || this._socket.readyState !== 1) return;
+	    this._socket.send('[]');
+	    this.addTimeout('ping', this._dispatcher.timeout / 2, this._ping, this);
+	  }
+
+	}), {
+	  PROTOCOLS: {
+	    'http:':  'ws:',
+	    'https:': 'wss:'
+	  },
+
+	  create: function(dispatcher, endpoint) {
+	    var sockets = dispatcher.transports.websocket = dispatcher.transports.websocket || {};
+	    sockets[endpoint.href] = sockets[endpoint.href] || new this(dispatcher, endpoint);
+	    return sockets[endpoint.href];
+	  },
+
+	  getSocketUrl: function(endpoint) {
+	    endpoint = copyObject(endpoint);
+	    endpoint.protocol = this.PROTOCOLS[endpoint.protocol];
+	    return URI.stringify(endpoint);
+	  },
+
+	  isUsable: function(dispatcher, endpoint, callback, context) {
+	    this.create(dispatcher, endpoint).isUsable(callback, context);
+	  }
+	});
+
+	extend(WebSocket.prototype, Deferrable);
+
+	if (browser.Event && global.onbeforeunload !== undefined)
+	  browser.Event.on(global, 'beforeunload', function() { WebSocket._unloaded = true });
+
+	module.exports = WebSocket;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Class = __webpack_require__(21);
+
+	module.exports = Class({
 	  initialize: function() {
 	    this._index = {};
 	  },
@@ -2490,90 +4317,465 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	Faye.URI = {
-	  isURI: function(uri) {
-	    return uri && uri.protocol && uri.host && uri.path;
-	  },
 
-	  isSameOrigin: function(uri) {
-	    var location = Faye.ENV.location;
-	    return uri.protocol === location.protocol &&
-	           uri.hostname === location.hostname &&
-	           uri.port     === location.port;
-	  },
+/***/ },
+/* 39 */
+/***/ function(module, exports) {
 
-	  parse: function(url) {
-	    if (typeof url !== 'string') return url;
-	    var uri = {}, parts, query, pairs, i, n, data;
+	'use strict';
 
-	    var consume = function(name, pattern) {
-	      url = url.replace(pattern, function(match) {
-	        uri[name] = match;
-	        return '';
-	      });
-	      uri[name] = uri[name] || '';
-	    };
-
-	    consume('protocol', /^[a-z]+\:/i);
-	    consume('host',     /^\/\/[^\/\?#]+/);
-
-	    if (!/^\//.test(url) && !uri.host)
-	      url = Faye.ENV.location.pathname.replace(/[^\/]*$/, '') + url;
-
-	    consume('pathname', /^[^\?#]*/);
-	    consume('search',   /^\?[^#]*/);
-	    consume('hash',     /^#.*/);
-
-	    uri.protocol = uri.protocol || Faye.ENV.location.protocol;
-
-	    if (uri.host) {
-	      uri.host     = uri.host.substr(2);
-	      parts        = uri.host.split(':');
-	      uri.hostname = parts[0];
-	      uri.port     = parts[1] || '';
-	    } else {
-	      uri.host     = Faye.ENV.location.host;
-	      uri.hostname = Faye.ENV.location.hostname;
-	      uri.port     = Faye.ENV.location.port;
-	    }
-
-	    uri.pathname = uri.pathname || '/';
-	    uri.path = uri.pathname + uri.search;
-
-	    query = uri.search.replace(/^\?/, '');
-	    pairs = query ? query.split('&') : [];
-	    data  = {};
-
-	    for (i = 0, n = pairs.length; i < n; i++) {
-	      parts = pairs[i].split('=');
-	      data[decodeURIComponent(parts[0] || '')] = decodeURIComponent(parts[1] || '');
-	    }
-
-	    uri.query = data;
-
-	    uri.href = this.stringify(uri);
-	    return uri;
-	  },
-
-	  stringify: function(uri) {
-	    var string = uri.protocol + '//' + uri.hostname;
-	    if (uri.port) string += ':' + uri.port;
-	    string += uri.pathname + this.queryString(uri.query) + (uri.hash || '');
-	    return string;
-	  },
-
-	  queryString: function(query) {
-	    var pairs = [];
-	    for (var key in query) {
-	      if (!query.hasOwnProperty(key)) continue;
-	      pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key]));
-	    }
-	    if (pairs.length === 0) return '';
-	    return '?' + pairs.join('&');
+	var copyObject = function(object) {
+	  var clone, i, key;
+	  if (object instanceof Array) {
+	    clone = [];
+	    i = object.length;
+	    while (i--) clone[i] = copyObject(object[i]);
+	    return clone;
+	  } else if (typeof object === 'object') {
+	    clone = (object === null) ? null : {};
+	    for (key in object) clone[key] = copyObject(object[key]);
+	    return clone;
+	  } else {
+	    return object;
 	  }
 	};
 
-	Faye.Error = Faye.Class({
+	module.exports = copyObject;
+
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var WS = global.MozWebSocket || global.WebSocket;
+
+	module.exports = {
+	  create: function(url, protocols, options) {
+	    return new WS(url);
+	  }
+	};
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Class      = __webpack_require__(21),
+	    URI        = __webpack_require__(23),
+	    copyObject = __webpack_require__(39),
+	    extend     = __webpack_require__(22),
+	    Deferrable = __webpack_require__(27),
+	    Transport  = __webpack_require__(35),
+	    XHR        = __webpack_require__(42);
+
+	var EventSource = extend(Class(Transport, {
+	  initialize: function(dispatcher, endpoint) {
+	    Transport.prototype.initialize.call(this, dispatcher, endpoint);
+	    if (!global.EventSource) return this.setDeferredStatus('failed');
+
+	    this._xhr = new XHR(dispatcher, endpoint);
+
+	    endpoint = copyObject(endpoint);
+	    endpoint.pathname += '/' + dispatcher.clientId;
+
+	    var socket = new global.EventSource(URI.stringify(endpoint)),
+	        self   = this;
+
+	    socket.onopen = function() {
+	      self._everConnected = true;
+	      self.setDeferredStatus('succeeded');
+	    };
+
+	    socket.onerror = function() {
+	      if (self._everConnected) {
+	        self._handleError([]);
+	      } else {
+	        self.setDeferredStatus('failed');
+	        socket.close();
+	      }
+	    };
+
+	    socket.onmessage = function(event) {
+	      var replies;
+	      try { replies = JSON.parse(event.data) } catch (error) {}
+
+	      if (replies)
+	        self._receive(replies);
+	      else
+	        self._handleError([]);
+	    };
+
+	    this._socket = socket;
+	  },
+
+	  close: function() {
+	    if (!this._socket) return;
+	    this._socket.onopen = this._socket.onerror = this._socket.onmessage = null;
+	    this._socket.close();
+	    delete this._socket;
+	  },
+
+	  isUsable: function(callback, context) {
+	    this.callback(function() { callback.call(context, true) });
+	    this.errback(function() { callback.call(context, false) });
+	  },
+
+	  encode: function(messages) {
+	    return this._xhr.encode(messages);
+	  },
+
+	  request: function(messages) {
+	    return this._xhr.request(messages);
+	  }
+
+	}), {
+	  isUsable: function(dispatcher, endpoint, callback, context) {
+	    var id = dispatcher.clientId;
+	    if (!id) return callback.call(context, false);
+
+	    XHR.isUsable(dispatcher, endpoint, function(usable) {
+	      if (!usable) return callback.call(context, false);
+	      this.create(dispatcher, endpoint).isUsable(callback, context);
+	    }, this);
+	  },
+
+	  create: function(dispatcher, endpoint) {
+	    var sockets = dispatcher.transports.eventsource = dispatcher.transports.eventsource || {},
+	        id      = dispatcher.clientId;
+
+	    var url = copyObject(endpoint);
+	    url.pathname += '/' + (id || '');
+	    url = URI.stringify(url);
+
+	    sockets[url] = sockets[url] || new this(dispatcher, endpoint);
+	    return sockets[url];
+	  }
+	});
+
+	extend(EventSource.prototype, Deferrable);
+
+	module.exports = EventSource;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Class     = __webpack_require__(21),
+	    URI       = __webpack_require__(23),
+	    browser   = __webpack_require__(25),
+	    extend    = __webpack_require__(22),
+	    toJSON    = __webpack_require__(19),
+	    Transport = __webpack_require__(35);
+
+	var XHR = extend(Class(Transport, {
+	  encode: function(messages) {
+	    return toJSON(messages);
+	  },
+
+	  request: function(messages) {
+	    var href = this.endpoint.href,
+	        self = this,
+	        xhr;
+
+	    // Prefer XMLHttpRequest over ActiveXObject if they both exist
+	    if (global.XMLHttpRequest) {
+	      xhr = new XMLHttpRequest();
+	    } else if (global.ActiveXObject) {
+	      xhr = new ActiveXObject('Microsoft.XMLHTTP');
+	    } else {
+	      return this._handleError(messages);
+	    }
+
+	    xhr.open('POST', href, true);
+	    xhr.setRequestHeader('Content-Type', 'application/json');
+	    xhr.setRequestHeader('Pragma', 'no-cache');
+	    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+	    var headers = this._dispatcher.headers;
+	    for (var key in headers) {
+	      if (!headers.hasOwnProperty(key)) continue;
+	      xhr.setRequestHeader(key, headers[key]);
+	    }
+
+	    var abort = function() { xhr.abort() };
+	    if (global.onbeforeunload !== undefined)
+	      browser.Event.on(global, 'beforeunload', abort);
+
+	    xhr.onreadystatechange = function() {
+	      if (!xhr || xhr.readyState !== 4) return;
+
+	      var replies    = null,
+	          status     = xhr.status,
+	          text       = xhr.responseText,
+	          successful = (status >= 200 && status < 300) || status === 304 || status === 1223;
+
+	      if (global.onbeforeunload !== undefined)
+	        browser.Event.detach(global, 'beforeunload', abort);
+
+	      xhr.onreadystatechange = function() {};
+	      xhr = null;
+
+	      if (!successful) return self._handleError(messages);
+
+	      try {
+	        replies = JSON.parse(text);
+	      } catch (error) {}
+
+	      if (replies)
+	        self._receive(replies);
+	      else
+	        self._handleError(messages);
+	    };
+
+	    xhr.send(this.encode(messages));
+	    return xhr;
+	  }
+	}), {
+	  isUsable: function(dispatcher, endpoint, callback, context) {
+	    var usable = (navigator.product === 'ReactNative')
+	              || URI.isSameOrigin(endpoint);
+
+	    callback.call(context, usable);
+	  }
+	});
+
+	module.exports = XHR;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Class     = __webpack_require__(21),
+	    Set       = __webpack_require__(38),
+	    URI       = __webpack_require__(23),
+	    extend    = __webpack_require__(22),
+	    toJSON    = __webpack_require__(19),
+	    Transport = __webpack_require__(35);
+
+	var CORS = extend(Class(Transport, {
+	  encode: function(messages) {
+	    return 'message=' + encodeURIComponent(toJSON(messages));
+	  },
+
+	  request: function(messages) {
+	    var xhrClass = global.XDomainRequest ? XDomainRequest : XMLHttpRequest,
+	        xhr      = new xhrClass(),
+	        id       = ++CORS._id,
+	        headers  = this._dispatcher.headers,
+	        self     = this,
+	        key;
+
+	    xhr.open('POST', URI.stringify(this.endpoint), true);
+
+	    if (xhr.setRequestHeader) {
+	      xhr.setRequestHeader('Pragma', 'no-cache');
+	      for (key in headers) {
+	        if (!headers.hasOwnProperty(key)) continue;
+	        xhr.setRequestHeader(key, headers[key]);
+	      }
+	    }
+
+	    var cleanUp = function() {
+	      if (!xhr) return false;
+	      CORS._pending.remove(id);
+	      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
+	      xhr = null;
+	    };
+
+	    xhr.onload = function() {
+	      var replies;
+	      try { replies = JSON.parse(xhr.responseText) } catch (error) {}
+
+	      cleanUp();
+
+	      if (replies)
+	        self._receive(replies);
+	      else
+	        self._handleError(messages);
+	    };
+
+	    xhr.onerror = xhr.ontimeout = function() {
+	      cleanUp();
+	      self._handleError(messages);
+	    };
+
+	    xhr.onprogress = function() {};
+
+	    if (xhrClass === global.XDomainRequest)
+	      CORS._pending.add({id: id, xhr: xhr});
+
+	    xhr.send(this.encode(messages));
+	    return xhr;
+	  }
+	}), {
+	  _id:      0,
+	  _pending: new Set(),
+
+	  isUsable: function(dispatcher, endpoint, callback, context) {
+	    if (URI.isSameOrigin(endpoint))
+	      return callback.call(context, false);
+
+	    if (global.XDomainRequest)
+	      return callback.call(context, endpoint.protocol === location.protocol);
+
+	    if (global.XMLHttpRequest) {
+	      var xhr = new XMLHttpRequest();
+	      return callback.call(context, xhr.withCredentials !== undefined);
+	    }
+	    return callback.call(context, false);
+	  }
+	});
+
+	module.exports = CORS;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var Class      = __webpack_require__(21),
+	    URI        = __webpack_require__(23),
+	    copyObject = __webpack_require__(39),
+	    extend     = __webpack_require__(22),
+	    toJSON     = __webpack_require__(19),
+	    Transport  = __webpack_require__(35);
+
+	var JSONP = extend(Class(Transport, {
+	 encode: function(messages) {
+	    var url = copyObject(this.endpoint);
+	    url.query.message = toJSON(messages);
+	    url.query.jsonp   = '__jsonp' + JSONP._cbCount + '__';
+	    return URI.stringify(url);
+	  },
+
+	  request: function(messages) {
+	    var head         = document.getElementsByTagName('head')[0],
+	        script       = document.createElement('script'),
+	        callbackName = JSONP.getCallbackName(),
+	        endpoint     = copyObject(this.endpoint),
+	        self         = this;
+
+	    endpoint.query.message = toJSON(messages);
+	    endpoint.query.jsonp   = callbackName;
+
+	    var cleanup = function() {
+	      if (!global[callbackName]) return false;
+	      global[callbackName] = undefined;
+	      try { delete global[callbackName] } catch (error) {}
+	      script.parentNode.removeChild(script);
+	    };
+
+	    global[callbackName] = function(replies) {
+	      cleanup();
+	      self._receive(replies);
+	    };
+
+	    script.type = 'text/javascript';
+	    script.src  = URI.stringify(endpoint);
+	    head.appendChild(script);
+
+	    script.onerror = function() {
+	      cleanup();
+	      self._handleError(messages);
+	    };
+
+	    return {abort: cleanup};
+	  }
+	}), {
+	  _cbCount: 0,
+
+	  getCallbackName: function() {
+	    this._cbCount += 1;
+	    return '__jsonp' + this._cbCount + '__';
+	  },
+
+	  isUsable: function(dispatcher, endpoint, callback, context) {
+	    callback.call(context, true);
+	  }
+	});
+
+	module.exports = JSONP;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var extend = __webpack_require__(22);
+
+	var Scheduler = function(message, options) {
+	  this.message  = message;
+	  this.options  = options;
+	  this.attempts = 0;
+	};
+
+	extend(Scheduler.prototype, {
+	  getTimeout: function() {
+	    return this.options.timeout;
+	  },
+
+	  getInterval: function() {
+	    return this.options.interval;
+	  },
+
+	  isDeliverable: function() {
+	    var attempts = this.options.attempts,
+	        made     = this.attempts,
+	        deadline = this.options.deadline,
+	        now      = new Date().getTime();
+
+	    if (attempts !== undefined && made >= attempts)
+	      return false;
+
+	    if (deadline !== undefined && now > deadline)
+	      return false;
+
+	    return true;
+	  },
+
+	  send: function() {
+	    this.attempts += 1;
+	  },
+
+	  succeed: function() {},
+
+	  fail: function() {},
+
+	  abort: function() {}
+	});
+
+	module.exports = Scheduler;
+
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Class   = __webpack_require__(21),
+	    Grammar = __webpack_require__(31);
+
+	var Error = Class({
 	  initialize: function(code, params, message) {
 	    this.code    = code;
 	    this.params  = Array.prototype.slice.call(params);
@@ -2587,227 +4789,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	Faye.Error.parse = function(message) {
+	Error.parse = function(message) {
 	  message = message || '';
-	  if (!Faye.Grammar.ERROR.test(message)) return new this(null, [], message);
+	  if (!Grammar.ERROR.test(message)) return new Error(null, [], message);
 
 	  var parts   = message.split(':'),
 	      code    = parseInt(parts[0]),
 	      params  = parts[1].split(','),
 	      message = parts[2];
 
-	  return new this(code, params, message);
+	  return new Error(code, params, message);
 	};
 
-
-
-
-	Faye.Error.versionMismatch = function() {
-	  return new this(300, arguments, 'Version mismatch').toString();
+	// http://code.google.com/p/cometd/wiki/BayeuxCodes
+	var errors = {
+	  versionMismatch:  [300, 'Version mismatch'],
+	  conntypeMismatch: [301, 'Connection types not supported'],
+	  extMismatch:      [302, 'Extension mismatch'],
+	  badRequest:       [400, 'Bad request'],
+	  clientUnknown:    [401, 'Unknown client'],
+	  parameterMissing: [402, 'Missing required parameter'],
+	  channelForbidden: [403, 'Forbidden channel'],
+	  channelUnknown:   [404, 'Unknown channel'],
+	  channelInvalid:   [405, 'Invalid channel'],
+	  extUnknown:       [406, 'Unknown extension'],
+	  publishFailed:    [407, 'Failed to publish'],
+	  serverError:      [500, 'Internal server error']
 	};
 
-	Faye.Error.conntypeMismatch = function() {
-	  return new this(301, arguments, 'Connection types not supported').toString();
-	};
+	for (var name in errors)
+	  (function(name) {
+	    Error[name] = function() {
+	      return new Error(errors[name][0], arguments, errors[name][1]).toString();
+	    };
+	  })(name);
 
-	Faye.Error.extMismatch = function() {
-	  return new this(302, arguments, 'Extension mismatch').toString();
-	};
-
-	Faye.Error.badRequest = function() {
-	  return new this(400, arguments, 'Bad request').toString();
-	};
-
-	Faye.Error.clientUnknown = function() {
-	  return new this(401, arguments, 'Unknown client').toString();
-	};
-
-	Faye.Error.parameterMissing = function() {
-	  return new this(402, arguments, 'Missing required parameter').toString();
-	};
-
-	Faye.Error.channelForbidden = function() {
-	  return new this(403, arguments, 'Forbidden channel').toString();
-	};
-
-	Faye.Error.channelUnknown = function() {
-	  return new this(404, arguments, 'Unknown channel').toString();
-	};
-
-	Faye.Error.channelInvalid = function() {
-	  return new this(405, arguments, 'Invalid channel').toString();
-	};
-
-	Faye.Error.extUnknown = function() {
-	  return new this(406, arguments, 'Unknown extension').toString();
-	};
-
-	Faye.Error.publishFailed = function() {
-	  return new this(407, arguments, 'Failed to publish').toString();
-	};
-
-	Faye.Error.serverError = function() {
-	  return new this(500, arguments, 'Internal server error').toString();
-	};
+	module.exports = Error;
 
 
-	Faye.Deferrable = {
-	  then: function(callback, errback) {
-	    var self = this;
-	    if (!this._promise)
-	      this._promise = new Faye.Promise(function(fulfill, reject) {
-	        self._fulfill = fulfill;
-	        self._reject  = reject;
-	      });
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
 
-	    if (arguments.length === 0)
-	      return this._promise;
-	    else
-	      return this._promise.then(callback, errback);
-	  },
+	'use strict';
 
-	  callback: function(callback, context) {
-	    return this.then(function(value) { callback.call(context, value) });
-	  },
+	var extend  = __webpack_require__(22),
+	    Logging = __webpack_require__(18);
 
-	  errback: function(callback, context) {
-	    return this.then(null, function(reason) { callback.call(context, reason) });
-	  },
-
-	  timeout: function(seconds, message) {
-	    this.then();
-	    var self = this;
-	    this._timer = Faye.ENV.setTimeout(function() {
-	      self._reject(message);
-	    }, seconds * 1000);
-	  },
-
-	  setDeferredStatus: function(status, value) {
-	    if (this._timer) Faye.ENV.clearTimeout(this._timer);
-
-	    this.then();
-
-	    if (status === 'succeeded')
-	      this._fulfill(value);
-	    else if (status === 'failed')
-	      this._reject(value);
-	    else
-	      delete this._promise;
-	  }
-	};
-
-	Faye.Publisher = {
-	  countListeners: function(eventType) {
-	    return this.listeners(eventType).length;
-	  },
-
-	  bind: function(eventType, listener, context) {
-	    var slice   = Array.prototype.slice,
-	        handler = function() { listener.apply(context, slice.call(arguments)) };
-
-	    this._listeners = this._listeners || [];
-	    this._listeners.push([eventType, listener, context, handler]);
-	    return this.on(eventType, handler);
-	  },
-
-	  unbind: function(eventType, listener, context) {
-	    this._listeners = this._listeners || [];
-	    var n = this._listeners.length, tuple;
-
-	    while (n--) {
-	      tuple = this._listeners[n];
-	      if (tuple[0] !== eventType) continue;
-	      if (listener && (tuple[1] !== listener || tuple[2] !== context)) continue;
-	      this._listeners.splice(n, 1);
-	      this.removeListener(eventType, tuple[3]);
-	    }
-	  }
-	};
-
-	Faye.extend(Faye.Publisher, Faye.EventEmitter.prototype);
-	Faye.Publisher.trigger = Faye.Publisher.emit;
-
-	Faye.Timeouts = {
-	  addTimeout: function(name, delay, callback, context) {
-	    this._timeouts = this._timeouts || {};
-	    if (this._timeouts.hasOwnProperty(name)) return;
-	    var self = this;
-	    this._timeouts[name] = Faye.ENV.setTimeout(function() {
-	      delete self._timeouts[name];
-	      callback.call(context);
-	    }, 1000 * delay);
-	  },
-
-	  removeTimeout: function(name) {
-	    this._timeouts = this._timeouts || {};
-	    var timeout = this._timeouts[name];
-	    if (!timeout) return;
-	    Faye.ENV.clearTimeout(timeout);
-	    delete this._timeouts[name];
-	  },
-
-	  removeAllTimeouts: function() {
-	    this._timeouts = this._timeouts || {};
-	    for (var name in this._timeouts) this.removeTimeout(name);
-	  }
-	};
-
-	Faye.Logging = {
-	  LOG_LEVELS: {
-	    fatal:  4,
-	    error:  3,
-	    warn:   2,
-	    info:   1,
-	    debug:  0
-	  },
-
-	  writeLog: function(messageArgs, level) {
-	    if (!Faye.logger) return;
-
-	    var args   = Array.prototype.slice.apply(messageArgs),
-	        banner = '[Faye',
-	        klass  = this.className,
-
-	        message = args.shift().replace(/\?/g, function() {
-	          try {
-	            return Faye.toJSON(args.shift());
-	          } catch (e) {
-	            return '[Object]';
-	          }
-	        });
-
-	    for (var key in Faye) {
-	      if (klass) continue;
-	      if (typeof Faye[key] !== 'function') continue;
-	      if (this instanceof Faye[key]) klass = key;
-	    }
-	    if (klass) banner += '.' + klass;
-	    banner += '] ';
-
-	    if (typeof Faye.logger[level] === 'function')
-	      Faye.logger[level](banner + message);
-	    else if (typeof Faye.logger === 'function')
-	      Faye.logger(banner + message);
-	  }
-	};
-
-	(function() {
-	  for (var key in Faye.Logging.LOG_LEVELS)
-	    (function(level) {
-	      Faye.Logging[level] = function() {
-	        this.writeLog(arguments, level);
-	      };
-	    })(key);
-	})();
-
-	Faye.Grammar = {
-	  CHANNEL_NAME:     /^\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*$/,
-	  CHANNEL_PATTERN:  /^(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*\/\*{1,2}$/,
-	  ERROR:            /^([0-9][0-9][0-9]:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*(,(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)*:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*|[0-9][0-9][0-9]::(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)$/,
-	  VERSION:          /^([0-9])+(\.(([a-z]|[A-Z])|[0-9])(((([a-z]|[A-Z])|[0-9])|\-|\_))*)*$/
-	};
-
-	Faye.Extensible = {
+	var Extensible = {
 	  addExtension: function(extension) {
 	    this._extensions = this._extensions || [];
 	    this._extensions.push(extension);
@@ -2846,146 +4875,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 
-	Faye.extend(Faye.Extensible, Faye.Logging);
+	extend(Extensible, Logging);
 
-	Faye.Channel = Faye.Class({
-	  initialize: function(name) {
-	    this.id = this.name = name;
-	  },
+	module.exports = Extensible;
 
-	  push: function(message) {
-	    this.trigger('message', message);
-	  },
 
-	  isUnused: function() {
-	    return this.countListeners('message') === 0;
-	  }
-	});
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
 
-	Faye.extend(Faye.Channel.prototype, Faye.Publisher);
+	'use strict';
 
-	Faye.extend(Faye.Channel, {
-	  HANDSHAKE:    '/meta/handshake',
-	  CONNECT:      '/meta/connect',
-	  SUBSCRIBE:    '/meta/subscribe',
-	  UNSUBSCRIBE:  '/meta/unsubscribe',
-	  DISCONNECT:   '/meta/disconnect',
+	var Class      = __webpack_require__(21),
+	    Deferrable = __webpack_require__(27);
 
-	  META:         'meta',
-	  SERVICE:      'service',
+	module.exports = Class(Deferrable);
 
-	  expand: function(name) {
-	    var segments = this.parse(name),
-	        channels = ['/**', name];
 
-	    var copy = segments.slice();
-	    copy[copy.length - 1] = '*';
-	    channels.push(this.unparse(copy));
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
 
-	    for (var i = 1, n = segments.length; i < n; i++) {
-	      copy = segments.slice(0, i);
-	      copy.push('**');
-	      channels.push(this.unparse(copy));
-	    }
+	'use strict';
 
-	    return channels;
-	  },
+	var Class      = __webpack_require__(21),
+	    extend     = __webpack_require__(22),
+	    Deferrable = __webpack_require__(27);
 
-	  isValid: function(name) {
-	    return Faye.Grammar.CHANNEL_NAME.test(name) ||
-	           Faye.Grammar.CHANNEL_PATTERN.test(name);
-	  },
-
-	  parse: function(name) {
-	    if (!this.isValid(name)) return null;
-	    return name.split('/').slice(1);
-	  },
-
-	  unparse: function(segments) {
-	    return '/' + segments.join('/');
-	  },
-
-	  isMeta: function(name) {
-	    var segments = this.parse(name);
-	    return segments ? (segments[0] === this.META) : null;
-	  },
-
-	  isService: function(name) {
-	    var segments = this.parse(name);
-	    return segments ? (segments[0] === this.SERVICE) : null;
-	  },
-
-	  isSubscribable: function(name) {
-	    if (!this.isValid(name)) return null;
-	    return !this.isMeta(name) && !this.isService(name);
-	  },
-
-	  Set: Faye.Class({
-	    initialize: function() {
-	      this._channels = {};
-	    },
-
-	    getKeys: function() {
-	      var keys = [];
-	      for (var key in this._channels) keys.push(key);
-	      return keys;
-	    },
-
-	    remove: function(name) {
-	      delete this._channels[name];
-	    },
-
-	    hasSubscription: function(name) {
-	      return this._channels.hasOwnProperty(name);
-	    },
-
-	    subscribe: function(names, callback, context) {
-	      var name;
-	      for (var i = 0, n = names.length; i < n; i++) {
-	        name = names[i];
-	        var channel = this._channels[name] = this._channels[name] || new Faye.Channel(name);
-	        if (callback) channel.bind('message', callback, context);
-	      }
-	    },
-
-	    unsubscribe: function(name, callback, context) {
-	      var channel = this._channels[name];
-	      if (!channel) return false;
-	      channel.unbind('message', callback, context);
-
-	      if (channel.isUnused()) {
-	        this.remove(name);
-	        return true;
-	      } else {
-	        return false;
-	      }
-	    },
-
-	    distributeMessage: function(message) {
-	      var channels = Faye.Channel.expand(message.channel);
-
-	      for (var i = 0, n = channels.length; i < n; i++) {
-	        var channel = this._channels[channels[i]];
-	        if (channel) channel.trigger('message', message.data);
-	      }
-	    }
-	  })
-	});
-
-	Faye.Publication = Faye.Class(Faye.Deferrable);
-
-	Faye.Subscription = Faye.Class({
+	var Subscription = Class({
 	  initialize: function(client, channels, callback, context) {
 	    this._client    = client;
 	    this._channels  = channels;
 	    this._callback  = callback;
-	    this._context     = context;
+	    this._context   = context;
 	    this._cancelled = false;
+	  },
+
+	  withChannel: function(callback, context) {
+	    this._withChannel = [callback, context];
+	    return this;
+	  },
+
+	  apply: function(context, args) {
+	    var message = args[0];
+
+	    if (this._callback)
+	      this._callback.call(this._context, message.data);
+
+	    if (this._withChannel)
+	      this._withChannel[0].call(this._withChannel[1], message.channel, message.data);
 	  },
 
 	  cancel: function() {
 	    if (this._cancelled) return;
-	    this._client.unsubscribe(this._channels, this._callback, this._context);
+	    this._client.unsubscribe(this._channels, this);
 	    this._cancelled = true;
 	  },
 
@@ -2994,1790 +4937,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	Faye.extend(Faye.Subscription.prototype, Faye.Deferrable);
+	extend(Subscription.prototype, Deferrable);
 
-	Faye.Client = Faye.Class({
-	  UNCONNECTED:        1,
-	  CONNECTING:         2,
-	  CONNECTED:          3,
-	  DISCONNECTED:       4,
+	module.exports = Subscription;
 
-	  HANDSHAKE:          'handshake',
-	  RETRY:              'retry',
-	  NONE:               'none',
-
-	  CONNECTION_TIMEOUT: 60,
-
-	  DEFAULT_ENDPOINT:   '/bayeux',
-	  INTERVAL:           0,
-
-	  initialize: function(endpoint, options) {
-	    this.info('New client created for ?', endpoint);
-	    options = options || {};
-
-	    Faye.validateOptions(options, ['interval', 'timeout', 'endpoints', 'proxy', 'retry', 'scheduler', 'websocketExtensions', 'tls', 'ca']);
-
-	    this._endpoint   = endpoint || this.DEFAULT_ENDPOINT;
-	    this._channels   = new Faye.Channel.Set();
-	    this._dispatcher = new Faye.Dispatcher(this, this._endpoint, options);
-
-	    this._messageId = 0;
-	    this._state     = this.UNCONNECTED;
-
-	    this._responseCallbacks = {};
-
-	    this._advice = {
-	      reconnect: this.RETRY,
-	      interval:  1000 * (options.interval || this.INTERVAL),
-	      timeout:   1000 * (options.timeout  || this.CONNECTION_TIMEOUT)
-	    };
-	    this._dispatcher.timeout = this._advice.timeout / 1000;
-
-	    this._dispatcher.bind('message', this._receiveMessage, this);
-
-	    if (Faye.Event && Faye.ENV.onbeforeunload !== undefined)
-	      Faye.Event.on(Faye.ENV, 'beforeunload', function() {
-	        if (Faye.indexOf(this._dispatcher._disabled, 'autodisconnect') < 0)
-	          this.disconnect();
-	      }, this);
-	  },
-
-	  addWebsocketExtension: function(extension) {
-	    return this._dispatcher.addWebsocketExtension(extension);
-	  },
-
-	  disable: function(feature) {
-	    return this._dispatcher.disable(feature);
-	  },
-
-	  setHeader: function(name, value) {
-	    return this._dispatcher.setHeader(name, value);
-	  },
-
-	  // Request
-	  // MUST include:  * channel
-	  //                * version
-	  //                * supportedConnectionTypes
-	  // MAY include:   * minimumVersion
-	  //                * ext
-	  //                * id
-	  //
-	  // Success Response                             Failed Response
-	  // MUST include:  * channel                     MUST include:  * channel
-	  //                * version                                    * successful
-	  //                * supportedConnectionTypes                   * error
-	  //                * clientId                    MAY include:   * supportedConnectionTypes
-	  //                * successful                                 * advice
-	  // MAY include:   * minimumVersion                             * version
-	  //                * advice                                     * minimumVersion
-	  //                * ext                                        * ext
-	  //                * id                                         * id
-	  //                * authSuccessful
-	  handshake: function(callback, context) {
-	    if (this._advice.reconnect === this.NONE) return;
-	    if (this._state !== this.UNCONNECTED) return;
-
-	    this._state = this.CONNECTING;
-	    var self = this;
-
-	    this.info('Initiating handshake with ?', Faye.URI.stringify(this._endpoint));
-	    this._dispatcher.selectTransport(Faye.MANDATORY_CONNECTION_TYPES);
-
-	    this._sendMessage({
-	      channel:                  Faye.Channel.HANDSHAKE,
-	      version:                  Faye.BAYEUX_VERSION,
-	      supportedConnectionTypes: this._dispatcher.getConnectionTypes()
-
-	    }, {}, function(response) {
-
-	      if (response.successful) {
-	        this._state = this.CONNECTED;
-	        this._dispatcher.clientId  = response.clientId;
-
-	        this._dispatcher.selectTransport(response.supportedConnectionTypes);
-
-	        this.info('Handshake successful: ?', this._dispatcher.clientId);
-
-	        this.subscribe(this._channels.getKeys(), true);
-	        if (callback) Faye.Promise.defer(function() { callback.call(context) });
-
-	      } else {
-	        this.info('Handshake unsuccessful');
-	        Faye.ENV.setTimeout(function() { self.handshake(callback, context) }, this._dispatcher.retry * 1000);
-	        this._state = this.UNCONNECTED;
-	      }
-	    }, this);
-	  },
-
-	  // Request                              Response
-	  // MUST include:  * channel             MUST include:  * channel
-	  //                * clientId                           * successful
-	  //                * connectionType                     * clientId
-	  // MAY include:   * ext                 MAY include:   * error
-	  //                * id                                 * advice
-	  //                                                     * ext
-	  //                                                     * id
-	  //                                                     * timestamp
-	  connect: function(callback, context) {
-	    if (this._advice.reconnect === this.NONE) return;
-	    if (this._state === this.DISCONNECTED) return;
-
-	    if (this._state === this.UNCONNECTED)
-	      return this.handshake(function() { this.connect(callback, context) }, this);
-
-	    this.callback(callback, context);
-	    if (this._state !== this.CONNECTED) return;
-
-	    this.info('Calling deferred actions for ?', this._dispatcher.clientId);
-	    this.setDeferredStatus('succeeded');
-	    this.setDeferredStatus('unknown');
-
-	    if (this._connectRequest) return;
-	    this._connectRequest = true;
-
-	    this.info('Initiating connection for ?', this._dispatcher.clientId);
-
-	    this._sendMessage({
-	      channel:        Faye.Channel.CONNECT,
-	      clientId:       this._dispatcher.clientId,
-	      connectionType: this._dispatcher.connectionType
-
-	    }, {}, this._cycleConnection, this);
-	  },
-
-	  // Request                              Response
-	  // MUST include:  * channel             MUST include:  * channel
-	  //                * clientId                           * successful
-	  // MAY include:   * ext                                * clientId
-	  //                * id                  MAY include:   * error
-	  //                                                     * ext
-	  //                                                     * id
-	  disconnect: function() {
-	    if (this._state !== this.CONNECTED) return;
-	    this._state = this.DISCONNECTED;
-
-	    this.info('Disconnecting ?', this._dispatcher.clientId);
-	    var promise = new Faye.Publication();
-
-	    this._sendMessage({
-	      channel:  Faye.Channel.DISCONNECT,
-	      clientId: this._dispatcher.clientId
-
-	    }, {}, function(response) {
-	      if (response.successful) {
-	        this._dispatcher.close();
-	        promise.setDeferredStatus('succeeded');
-	      } else {
-	        promise.setDeferredStatus('failed', Faye.Error.parse(response.error));
-	      }
-	    }, this);
-
-	    this.info('Clearing channel listeners for ?', this._dispatcher.clientId);
-	    this._channels = new Faye.Channel.Set();
-
-	    return promise;
-	  },
-
-	  // Request                              Response
-	  // MUST include:  * channel             MUST include:  * channel
-	  //                * clientId                           * successful
-	  //                * subscription                       * clientId
-	  // MAY include:   * ext                                * subscription
-	  //                * id                  MAY include:   * error
-	  //                                                     * advice
-	  //                                                     * ext
-	  //                                                     * id
-	  //                                                     * timestamp
-	  subscribe: function(channel, callback, context) {
-	    if (channel instanceof Array)
-	      return Faye.map(channel, function(c) {
-	        return this.subscribe(c, callback, context);
-	      }, this);
-
-	    var subscription = new Faye.Subscription(this, channel, callback, context),
-	        force        = (callback === true),
-	        hasSubscribe = this._channels.hasSubscription(channel);
-
-	    if (hasSubscribe && !force) {
-	      this._channels.subscribe([channel], callback, context);
-	      subscription.setDeferredStatus('succeeded');
-	      return subscription;
-	    }
-
-	    this.connect(function() {
-	      this.info('Client ? attempting to subscribe to ?', this._dispatcher.clientId, channel);
-	      if (!force) this._channels.subscribe([channel], callback, context);
-
-	      this._sendMessage({
-	        channel:      Faye.Channel.SUBSCRIBE,
-	        clientId:     this._dispatcher.clientId,
-	        subscription: channel
-
-	      }, {}, function(response) {
-	        if (!response.successful) {
-	          subscription.setDeferredStatus('failed', Faye.Error.parse(response.error));
-	          return this._channels.unsubscribe(channel, callback, context);
-	        }
-
-	        var channels = [].concat(response.subscription);
-	        this.info('Subscription acknowledged for ? to ?', this._dispatcher.clientId, channels);
-	        subscription.setDeferredStatus('succeeded');
-	      }, this);
-	    }, this);
-
-	    return subscription;
-	  },
-
-	  // Request                              Response
-	  // MUST include:  * channel             MUST include:  * channel
-	  //                * clientId                           * successful
-	  //                * subscription                       * clientId
-	  // MAY include:   * ext                                * subscription
-	  //                * id                  MAY include:   * error
-	  //                                                     * advice
-	  //                                                     * ext
-	  //                                                     * id
-	  //                                                     * timestamp
-	  unsubscribe: function(channel, callback, context) {
-	    if (channel instanceof Array)
-	      return Faye.map(channel, function(c) {
-	        return this.unsubscribe(c, callback, context);
-	      }, this);
-
-	    var dead = this._channels.unsubscribe(channel, callback, context);
-	    if (!dead) return;
-
-	    this.connect(function() {
-	      this.info('Client ? attempting to unsubscribe from ?', this._dispatcher.clientId, channel);
-
-	      this._sendMessage({
-	        channel:      Faye.Channel.UNSUBSCRIBE,
-	        clientId:     this._dispatcher.clientId,
-	        subscription: channel
-
-	      }, {}, function(response) {
-	        if (!response.successful) return;
-
-	        var channels = [].concat(response.subscription);
-	        this.info('Unsubscription acknowledged for ? from ?', this._dispatcher.clientId, channels);
-	      }, this);
-	    }, this);
-	  },
-
-	  // Request                              Response
-	  // MUST include:  * channel             MUST include:  * channel
-	  //                * data                               * successful
-	  // MAY include:   * clientId            MAY include:   * id
-	  //                * id                                 * error
-	  //                * ext                                * ext
-	  publish: function(channel, data, options) {
-	    Faye.validateOptions(options || {}, ['attempts', 'deadline']);
-	    var publication = new Faye.Publication();
-
-	    this.connect(function() {
-	      this.info('Client ? queueing published message to ?: ?', this._dispatcher.clientId, channel, data);
-
-	      this._sendMessage({
-	        channel:  channel,
-	        data:     data,
-	        clientId: this._dispatcher.clientId
-
-	      }, options, function(response) {
-	        if (response.successful)
-	          publication.setDeferredStatus('succeeded');
-	        else
-	          publication.setDeferredStatus('failed', Faye.Error.parse(response.error));
-	      }, this);
-	    }, this);
-
-	    return publication;
-	  },
-
-	  _sendMessage: function(message, options, callback, context) {
-	    message.id = this._generateMessageId();
-
-	    var timeout = this._advice.timeout
-	                ? 1.2 * this._advice.timeout / 1000
-	                : 1.2 * this._dispatcher.retry;
-
-	    this.pipeThroughExtensions('outgoing', message, null, function(message) {
-	      if (!message) return;
-	      if (callback) this._responseCallbacks[message.id] = [callback, context];
-	      this._dispatcher.sendMessage(message, timeout, options || {});
-	    }, this);
-	  },
-
-	  _generateMessageId: function() {
-	    this._messageId += 1;
-	    if (this._messageId >= Math.pow(2,32)) this._messageId = 0;
-	    return this._messageId.toString(36);
-	  },
-
-	  _receiveMessage: function(message) {
-	    var id = message.id, callback;
-
-	    if (message.successful !== undefined) {
-	      callback = this._responseCallbacks[id];
-	      delete this._responseCallbacks[id];
-	    }
-
-	    this.pipeThroughExtensions('incoming', message, null, function(message) {
-	      if (!message) return;
-	      if (message.advice) this._handleAdvice(message.advice);
-	      this._deliverMessage(message);
-	      if (callback) callback[0].call(callback[1], message);
-	    }, this);
-	  },
-
-	  _handleAdvice: function(advice) {
-	    Faye.extend(this._advice, advice);
-	    this._dispatcher.timeout = this._advice.timeout / 1000;
-
-	    if (this._advice.reconnect === this.HANDSHAKE && this._state !== this.DISCONNECTED) {
-	      this._state = this.UNCONNECTED;
-	      this._dispatcher.clientId = null;
-	      this._cycleConnection();
-	    }
-	  },
-
-	  _deliverMessage: function(message) {
-	    if (!message.channel || message.data === undefined) return;
-	    this.info('Client ? calling listeners for ? with ?', this._dispatcher.clientId, message.channel, message.data);
-	    this._channels.distributeMessage(message);
-	  },
-
-	  _cycleConnection: function() {
-	    if (this._connectRequest) {
-	      this._connectRequest = null;
-	      this.info('Closed connection for ?', this._dispatcher.clientId);
-	    }
-	    var self = this;
-	    Faye.ENV.setTimeout(function() { self.connect() }, this._advice.interval);
-	  }
-	});
-
-	Faye.extend(Faye.Client.prototype, Faye.Deferrable);
-	Faye.extend(Faye.Client.prototype, Faye.Publisher);
-	Faye.extend(Faye.Client.prototype, Faye.Logging);
-	Faye.extend(Faye.Client.prototype, Faye.Extensible);
-
-	Faye.Dispatcher = Faye.Class({
-	  MAX_REQUEST_SIZE: 2048,
-	  DEFAULT_RETRY:    5,
-
-	  UP:   1,
-	  DOWN: 2,
-
-	  initialize: function(client, endpoint, options) {
-	    this._client     = client;
-	    this.endpoint    = Faye.URI.parse(endpoint);
-	    this._alternates = options.endpoints || {};
-
-	    this.cookies      = Faye.Cookies && new Faye.Cookies.CookieJar();
-	    this._disabled    = [];
-	    this._envelopes   = {};
-	    this.headers      = {};
-	    this.retry        = options.retry || this.DEFAULT_RETRY;
-	    this._scheduler   = options.scheduler || Faye.Scheduler;
-	    this._state       = 0;
-	    this.transports   = {};
-	    this.wsExtensions = [];
-
-	    this.proxy = options.proxy || {};
-	    if (typeof this._proxy === 'string') this._proxy = {origin: this._proxy};
-
-	    var exts = options.websocketExtensions;
-	    if (exts) {
-	      exts = [].concat(exts);
-	      for (var i = 0, n = exts.length; i < n; i++)
-	        this.addWebsocketExtension(exts[i]);
-	    }
-
-	    this.tls = options.tls || {};
-	    this.tls.ca = this.tls.ca || options.ca;
-
-	    for (var type in this._alternates)
-	      this._alternates[type] = Faye.URI.parse(this._alternates[type]);
-
-	    this.maxRequestSize = this.MAX_REQUEST_SIZE;
-	  },
-
-	  endpointFor: function(connectionType) {
-	    return this._alternates[connectionType] || this.endpoint;
-	  },
-
-	  addWebsocketExtension: function(extension) {
-	    this.wsExtensions.push(extension);
-	  },
-
-	  disable: function(feature) {
-	    this._disabled.push(feature);
-	  },
-
-	  setHeader: function(name, value) {
-	    this.headers[name] = value;
-	  },
-
-	  close: function() {
-	    var transport = this._transport;
-	    delete this._transport;
-	    if (transport) transport.close();
-	  },
-
-	  getConnectionTypes: function() {
-	    return Faye.Transport.getConnectionTypes();
-	  },
-
-	  selectTransport: function(transportTypes) {
-	    Faye.Transport.get(this, transportTypes, this._disabled, function(transport) {
-	      this.debug('Selected ? transport for ?', transport.connectionType, Faye.URI.stringify(transport.endpoint));
-
-	      if (transport === this._transport) return;
-	      if (this._transport) this._transport.close();
-
-	      this._transport = transport;
-	      this.connectionType = transport.connectionType;
-	    }, this);
-	  },
-
-	  sendMessage: function(message, timeout, options) {
-	    options = options || {};
-
-	    var id       = message.id,
-	        attempts = options.attempts,
-	        deadline = options.deadline && new Date().getTime() + (options.deadline * 1000),
-	        envelope = this._envelopes[id],
-	        scheduler;
-
-	    if (!envelope) {
-	      scheduler = new this._scheduler(message, {timeout: timeout, interval: this.retry, attempts: attempts, deadline: deadline});
-	      envelope  = this._envelopes[id] = {message: message, scheduler: scheduler};
-	    }
-
-	    this._sendEnvelope(envelope);
-	  },
-
-	  _sendEnvelope: function(envelope) {
-	    if (!this._transport) return;
-	    if (envelope.request || envelope.timer) return;
-
-	    var message   = envelope.message,
-	        scheduler = envelope.scheduler,
-	        self      = this;
-
-	    if (!scheduler.isDeliverable()) {
-	      scheduler.abort();
-	      delete this._envelopes[message.id];
-	      return;
-	    }
-
-	    envelope.timer = Faye.ENV.setTimeout(function() {
-	      self.handleError(message);
-	    }, scheduler.getTimeout() * 1000);
-
-	    scheduler.send();
-	    envelope.request = this._transport.sendMessage(message);
-	  },
-
-	  handleResponse: function(reply) {
-	    var envelope = this._envelopes[reply.id];
-
-	    if (reply.successful !== undefined && envelope) {
-	      envelope.scheduler.succeed();
-	      delete this._envelopes[reply.id];
-	      Faye.ENV.clearTimeout(envelope.timer);
-	    }
-
-	    this.trigger('message', reply);
-
-	    if (this._state === this.UP) return;
-	    this._state = this.UP;
-	    this._client.trigger('transport:up');
-	  },
-
-	  handleError: function(message, immediate) {
-	    var envelope = this._envelopes[message.id],
-	        request  = envelope && envelope.request,
-	        self     = this;
-
-	    if (!request) return;
-
-	    request.then(function(req) {
-	      if (req && req.abort) req.abort();
-	    });
-
-	    var scheduler = envelope.scheduler;
-	    scheduler.fail();
-
-	    Faye.ENV.clearTimeout(envelope.timer);
-	    envelope.request = envelope.timer = null;
-
-	    if (immediate) {
-	      this._sendEnvelope(envelope);
-	    } else {
-	      envelope.timer = Faye.ENV.setTimeout(function() {
-	        envelope.timer = null;
-	        self._sendEnvelope(envelope);
-	      }, scheduler.getInterval() * 1000);
-	    }
-
-	    if (this._state === this.DOWN) return;
-	    this._state = this.DOWN;
-	    this._client.trigger('transport:down');
-	  }
-	});
-
-	Faye.extend(Faye.Dispatcher.prototype, Faye.Publisher);
-	Faye.extend(Faye.Dispatcher.prototype, Faye.Logging);
-
-	Faye.Scheduler = function(message, options) {
-	  this.message  = message;
-	  this.options  = options;
-	  this.attempts = 0;
-	};
-
-	Faye.extend(Faye.Scheduler.prototype, {
-	  getTimeout: function() {
-	    return this.options.timeout;
-	  },
-
-	  getInterval: function() {
-	    return this.options.interval;
-	  },
-
-	  isDeliverable: function() {
-	    var attempts = this.options.attempts,
-	        made     = this.attempts,
-	        deadline = this.options.deadline,
-	        now      = new Date().getTime();
-
-	    if (attempts !== undefined && made >= attempts)
-	      return false;
-
-	    if (deadline !== undefined && now > deadline)
-	      return false;
-
-	    return true;
-	  },
-
-	  send: function() {
-	    this.attempts += 1;
-	  },
-
-	  succeed: function() {},
-
-	  fail: function() {},
-
-	  abort: function() {}
-	});
-
-	Faye.Transport = Faye.extend(Faye.Class({
-	  DEFAULT_PORTS:    {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
-	  SECURE_PROTOCOLS: ['https:', 'wss:'],
-	  MAX_DELAY:        0,
-
-	  batching:  true,
-
-	  initialize: function(dispatcher, endpoint) {
-	    this._dispatcher = dispatcher;
-	    this.endpoint    = endpoint;
-	    this._outbox     = [];
-	    this._proxy      = Faye.extend({}, this._dispatcher.proxy);
-
-	    if (!this._proxy.origin && Faye.NodeAdapter) {
-	      this._proxy.origin = Faye.indexOf(this.SECURE_PROTOCOLS, this.endpoint.protocol) >= 0
-	                         ? (process.env.HTTPS_PROXY || process.env.https_proxy)
-	                         : (process.env.HTTP_PROXY  || process.env.http_proxy);
-	    }
-	  },
-
-	  close: function() {},
-
-	  encode: function(messages) {
-	    return '';
-	  },
-
-	  sendMessage: function(message) {
-	    this.debug('Client ? sending message to ?: ?',
-	               this._dispatcher.clientId, Faye.URI.stringify(this.endpoint), message);
-
-	    if (!this.batching) return Faye.Promise.fulfilled(this.request([message]));
-
-	    this._outbox.push(message);
-	    this._promise = this._promise || new Faye.Promise();
-	    this._flushLargeBatch();
-
-	    if (message.channel === Faye.Channel.HANDSHAKE) {
-	      this.addTimeout('publish', 0.01, this._flush, this);
-	      return this._promise;
-	    }
-
-	    if (message.channel === Faye.Channel.CONNECT)
-	      this._connectMessage = message;
-
-	    this.addTimeout('publish', this.MAX_DELAY, this._flush, this);
-	    return this._promise;
-	  },
-
-	  _flush: function() {
-	    this.removeTimeout('publish');
-
-	    if (this._outbox.length > 1 && this._connectMessage)
-	      this._connectMessage.advice = {timeout: 0};
-
-	    Faye.Promise.fulfill(this._promise, this.request(this._outbox));
-	    delete this._promise;
-
-	    this._connectMessage = null;
-	    this._outbox = [];
-	  },
-
-	  _flushLargeBatch: function() {
-	    var string = this.encode(this._outbox);
-	    if (string.length < this._dispatcher.maxRequestSize) return;
-	    var last = this._outbox.pop();
-	    this._flush();
-	    if (last) this._outbox.push(last);
-	  },
-
-	  _receive: function(replies) {
-	    if (!replies) return;
-	    replies = [].concat(replies);
-
-	    this.debug('Client ? received from ? via ?: ?',
-	               this._dispatcher.clientId, Faye.URI.stringify(this.endpoint), this.connectionType, replies);
-
-	    for (var i = 0, n = replies.length; i < n; i++)
-	      this._dispatcher.handleResponse(replies[i]);
-	  },
-
-	  _handleError: function(messages, immediate) {
-	    messages = [].concat(messages);
-
-	    this.debug('Client ? failed to send to ? via ?: ?',
-	               this._dispatcher.clientId, Faye.URI.stringify(this.endpoint), this.connectionType, messages);
-
-	    for (var i = 0, n = messages.length; i < n; i++)
-	      this._dispatcher.handleError(messages[i]);
-	  },
-
-	  _getCookies: function() {
-	    var cookies = this._dispatcher.cookies,
-	        url     = Faye.URI.stringify(this.endpoint);
-
-	    if (!cookies) return '';
-
-	    return Faye.map(cookies.getCookiesSync(url), function(cookie) {
-	      return cookie.cookieString();
-	    }).join('; ');
-	  },
-
-	  _storeCookies: function(setCookie) {
-	    var cookies = this._dispatcher.cookies,
-	        url     = Faye.URI.stringify(this.endpoint),
-	        cookie;
-
-	    if (!setCookie || !cookies) return;
-	    setCookie = [].concat(setCookie);
-
-	    for (var i = 0, n = setCookie.length; i < n; i++) {
-	      cookie = Faye.Cookies.Cookie.parse(setCookie[i]);
-	      cookies.setCookieSync(cookie, url);
-	    }
-	  }
-
-	}), {
-	  get: function(dispatcher, allowed, disabled, callback, context) {
-	    var endpoint = dispatcher.endpoint;
-
-	    Faye.asyncEach(this._transports, function(pair, resume) {
-	      var connType     = pair[0], klass = pair[1],
-	          connEndpoint = dispatcher.endpointFor(connType);
-
-	      if (Faye.indexOf(disabled, connType) >= 0)
-	        return resume();
-
-	      if (Faye.indexOf(allowed, connType) < 0) {
-	        klass.isUsable(dispatcher, connEndpoint, function() {});
-	        return resume();
-	      }
-
-	      klass.isUsable(dispatcher, connEndpoint, function(isUsable) {
-	        if (!isUsable) return resume();
-	        var transport = klass.hasOwnProperty('create') ? klass.create(dispatcher, connEndpoint) : new klass(dispatcher, connEndpoint);
-	        callback.call(context, transport);
-	      });
-	    }, function() {
-	      throw new Error('Could not find a usable connection type for ' + Faye.URI.stringify(endpoint));
-	    });
-	  },
-
-	  register: function(type, klass) {
-	    this._transports.push([type, klass]);
-	    klass.prototype.connectionType = type;
-	  },
-
-	  getConnectionTypes: function() {
-	    return Faye.map(this._transports, function(t) { return t[0] });
-	  },
-
-	  _transports: []
-	});
-
-	Faye.extend(Faye.Transport.prototype, Faye.Logging);
-	Faye.extend(Faye.Transport.prototype, Faye.Timeouts);
-
-	Faye.Event = {
-	  _registry: [],
-
-	  on: function(element, eventName, callback, context) {
-	    var wrapped = function() { callback.call(context) };
-
-	    if (element.addEventListener)
-	      element.addEventListener(eventName, wrapped, false);
-	    else
-	      element.attachEvent('on' + eventName, wrapped);
-
-	    this._registry.push({
-	      _element:   element,
-	      _type:      eventName,
-	      _callback:  callback,
-	      _context:     context,
-	      _handler:   wrapped
-	    });
-	  },
-
-	  detach: function(element, eventName, callback, context) {
-	    var i = this._registry.length, register;
-	    while (i--) {
-	      register = this._registry[i];
-
-	      if ((element    && element    !== register._element)   ||
-	          (eventName  && eventName  !== register._type)      ||
-	          (callback   && callback   !== register._callback)  ||
-	          (context      && context      !== register._context))
-	        continue;
-
-	      if (register._element.removeEventListener)
-	        register._element.removeEventListener(register._type, register._handler, false);
-	      else
-	        register._element.detachEvent('on' + register._type, register._handler);
-
-	      this._registry.splice(i,1);
-	      register = null;
-	    }
-	  }
-	};
-
-	if (Faye.ENV.onunload !== undefined) Faye.Event.on(Faye.ENV, 'unload', Faye.Event.detach, Faye.Event);
-
-	/*
-	    json2.js
-	    2013-05-26
-
-	    Public Domain.
-
-	    NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-
-	    See http://www.JSON.org/js.html
-
-
-	    This code should be minified before deployment.
-	    See http://javascript.crockford.com/jsmin.html
-
-	    USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
-	    NOT CONTROL.
-
-
-	    This file creates a global JSON object containing two methods: stringify
-	    and parse.
-
-	        JSON.stringify(value, replacer, space)
-	            value       any JavaScript value, usually an object or array.
-
-	            replacer    an optional parameter that determines how object
-	                        values are stringified for objects. It can be a
-	                        function or an array of strings.
-
-	            space       an optional parameter that specifies the indentation
-	                        of nested structures. If it is omitted, the text will
-	                        be packed without extra whitespace. If it is a number,
-	                        it will specify the number of spaces to indent at each
-	                        level. If it is a string (such as '\t' or '&nbsp;'),
-	                        it contains the characters used to indent at each level.
-
-	            This method produces a JSON text from a JavaScript value.
-
-	            When an object value is found, if the object contains a toJSON
-	            method, its toJSON method will be called and the result will be
-	            stringified. A toJSON method does not serialize: it returns the
-	            value represented by the name/value pair that should be serialized,
-	            or undefined if nothing should be serialized. The toJSON method
-	            will be passed the key associated with the value, and this will be
-	            bound to the value
-
-	            For example, this would serialize Dates as ISO strings.
-
-	                Date.prototype.toJSON = function (key) {
-	                    function f(n) {
-	                        // Format integers to have at least two digits.
-	                        return n < 10 ? '0' + n : n;
-	                    }
-
-	                    return this.getUTCFullYear()   + '-' +
-	                         f(this.getUTCMonth() + 1) + '-' +
-	                         f(this.getUTCDate())      + 'T' +
-	                         f(this.getUTCHours())     + ':' +
-	                         f(this.getUTCMinutes())   + ':' +
-	                         f(this.getUTCSeconds())   + 'Z';
-	                };
-
-	            You can provide an optional replacer method. It will be passed the
-	            key and value of each member, with this bound to the containing
-	            object. The value that is returned from your method will be
-	            serialized. If your method returns undefined, then the member will
-	            be excluded from the serialization.
-
-	            If the replacer parameter is an array of strings, then it will be
-	            used to select the members to be serialized. It filters the results
-	            such that only members with keys listed in the replacer array are
-	            stringified.
-
-	            Values that do not have JSON representations, such as undefined or
-	            functions, will not be serialized. Such values in objects will be
-	            dropped; in arrays they will be replaced with null. You can use
-	            a replacer function to replace those with JSON values.
-	            JSON.stringify(undefined) returns undefined.
-
-	            The optional space parameter produces a stringification of the
-	            value that is filled with line breaks and indentation to make it
-	            easier to read.
-
-	            If the space parameter is a non-empty string, then that string will
-	            be used for indentation. If the space parameter is a number, then
-	            the indentation will be that many spaces.
-
-	            Example:
-
-	            text = JSON.stringify(['e', {pluribus: 'unum'}]);
-	            // text is '["e",{"pluribus":"unum"}]'
-
-
-	            text = JSON.stringify(['e', {pluribus: 'unum'}], null, '\t');
-	            // text is '[\n\t"e",\n\t{\n\t\t"pluribus": "unum"\n\t}\n]'
-
-	            text = JSON.stringify([new Date()], function (key, value) {
-	                return this[key] instanceof Date ?
-	                    'Date(' + this[key] + ')' : value;
-	            });
-	            // text is '["Date(---current time---)"]'
-
-
-	        JSON.parse(text, reviver)
-	            This method parses a JSON text to produce an object or array.
-	            It can throw a SyntaxError exception.
-
-	            The optional reviver parameter is a function that can filter and
-	            transform the results. It receives each of the keys and values,
-	            and its return value is used instead of the original value.
-	            If it returns what it received, then the structure is not modified.
-	            If it returns undefined then the member is deleted.
-
-	            Example:
-
-	            // Parse the text. Values that look like ISO date strings will
-	            // be converted to Date objects.
-
-	            myData = JSON.parse(text, function (key, value) {
-	                var a;
-	                if (typeof value === 'string') {
-	                    a =
-	/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
-	                    if (a) {
-	                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
-	                            +a[5], +a[6]));
-	                    }
-	                }
-	                return value;
-	            });
-
-	            myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
-	                var d;
-	                if (typeof value === 'string' &&
-	                        value.slice(0, 5) === 'Date(' &&
-	                        value.slice(-1) === ')') {
-	                    d = new Date(value.slice(5, -1));
-	                    if (d) {
-	                        return d;
-	                    }
-	                }
-	                return value;
-	            });
-
-
-	    This is a reference implementation. You are free to copy, modify, or
-	    redistribute.
-	*/
-
-	/*jslint evil: true, regexp: true */
-
-	/*members "", "\b", "\t", "\n", "\f", "\r", "\"", JSON, "\\", apply,
-	    call, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,
-	    getUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,
-	    lastIndex, length, parse, prototype, push, replace, slice, stringify,
-	    test, toJSON, toString, valueOf
-	*/
-
-
-	// Create a JSON object only if one does not already exist. We create the
-	// methods in a closure to avoid creating global variables.
-
-	if (typeof JSON !== 'object') {
-	    JSON = {};
-	}
-
-	(function () {
-	    'use strict';
-
-	    function f(n) {
-	        // Format integers to have at least two digits.
-	        return n < 10 ? '0' + n : n;
-	    }
-
-	    if (typeof Date.prototype.toJSON !== 'function') {
-
-	        Date.prototype.toJSON = function () {
-
-	            return isFinite(this.valueOf())
-	                ? this.getUTCFullYear()     + '-' +
-	                    f(this.getUTCMonth() + 1) + '-' +
-	                    f(this.getUTCDate())      + 'T' +
-	                    f(this.getUTCHours())     + ':' +
-	                    f(this.getUTCMinutes())   + ':' +
-	                    f(this.getUTCSeconds())   + 'Z'
-	                : null;
-	        };
-
-	        String.prototype.toJSON      =
-	            Number.prototype.toJSON  =
-	            Boolean.prototype.toJSON = function () {
-	                return this.valueOf();
-	            };
-	    }
-
-	    var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-	        escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-	        gap,
-	        indent,
-	        meta = {    // table of character substitutions
-	            '\b': '\\b',
-	            '\t': '\\t',
-	            '\n': '\\n',
-	            '\f': '\\f',
-	            '\r': '\\r',
-	            '"' : '\\"',
-	            '\\': '\\\\'
-	        },
-	        rep;
-
-
-	    function quote(string) {
-
-	// If the string contains no control characters, no quote characters, and no
-	// backslash characters, then we can safely slap some quotes around it.
-	// Otherwise we must also replace the offending characters with safe escape
-	// sequences.
-
-	        escapable.lastIndex = 0;
-	        return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
-	            var c = meta[a];
-	            return typeof c === 'string'
-	                ? c
-	                : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-	        }) + '"' : '"' + string + '"';
-	    }
-
-
-	    function str(key, holder) {
-
-	// Produce a string from holder[key].
-
-	        var i,          // The loop counter.
-	            k,          // The member key.
-	            v,          // The member value.
-	            length,
-	            mind = gap,
-	            partial,
-	            value = holder[key];
-
-	// If the value has a toJSON method, call it to obtain a replacement value.
-
-	        if (value && typeof value === 'object' &&
-	                typeof value.toJSON === 'function') {
-	            value = value.toJSON(key);
-	        }
-
-	// If we were called with a replacer function, then call the replacer to
-	// obtain a replacement value.
-
-	        if (typeof rep === 'function') {
-	            value = rep.call(holder, key, value);
-	        }
-
-	// What happens next depends on the value's type.
-
-	        switch (typeof value) {
-	        case 'string':
-	            return quote(value);
-
-	        case 'number':
-
-	// JSON numbers must be finite. Encode non-finite numbers as null.
-
-	            return isFinite(value) ? String(value) : 'null';
-
-	        case 'boolean':
-	        case 'null':
-
-	// If the value is a boolean or null, convert it to a string. Note:
-	// typeof null does not produce 'null'. The case is included here in
-	// the remote chance that this gets fixed someday.
-
-	            return String(value);
-
-	// If the type is 'object', we might be dealing with an object or an array or
-	// null.
-
-	        case 'object':
-
-	// Due to a specification blunder in ECMAScript, typeof null is 'object',
-	// so watch out for that case.
-
-	            if (!value) {
-	                return 'null';
-	            }
-
-	// Make an array to hold the partial results of stringifying this object value.
-
-	            gap += indent;
-	            partial = [];
-
-	// Is the value an array?
-
-	            if (Object.prototype.toString.apply(value) === '[object Array]') {
-
-	// The value is an array. Stringify every element. Use null as a placeholder
-	// for non-JSON values.
-
-	                length = value.length;
-	                for (i = 0; i < length; i += 1) {
-	                    partial[i] = str(i, value) || 'null';
-	                }
-
-	// Join all of the elements together, separated with commas, and wrap them in
-	// brackets.
-
-	                v = partial.length === 0
-	                    ? '[]'
-	                    : gap
-	                    ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']'
-	                    : '[' + partial.join(',') + ']';
-	                gap = mind;
-	                return v;
-	            }
-
-	// If the replacer is an array, use it to select the members to be stringified.
-
-	            if (rep && typeof rep === 'object') {
-	                length = rep.length;
-	                for (i = 0; i < length; i += 1) {
-	                    if (typeof rep[i] === 'string') {
-	                        k = rep[i];
-	                        v = str(k, value);
-	                        if (v) {
-	                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-	                        }
-	                    }
-	                }
-	            } else {
-
-	// Otherwise, iterate through all of the keys in the object.
-
-	                for (k in value) {
-	                    if (Object.prototype.hasOwnProperty.call(value, k)) {
-	                        v = str(k, value);
-	                        if (v) {
-	                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
-	                        }
-	                    }
-	                }
-	            }
-
-	// Join all of the member texts together, separated with commas,
-	// and wrap them in braces.
-
-	            v = partial.length === 0
-	                ? '{}'
-	                : gap
-	                ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}'
-	                : '{' + partial.join(',') + '}';
-	            gap = mind;
-	            return v;
-	        }
-	    }
-
-	// If the JSON object does not yet have a stringify method, give it one.
-
-	    Faye.stringify = function (value, replacer, space) {
-
-	// The stringify method takes a value and an optional replacer, and an optional
-	// space parameter, and returns a JSON text. The replacer can be a function
-	// that can replace values, or an array of strings that will select the keys.
-	// A default replacer method can be provided. Use of the space parameter can
-	// produce text that is more easily readable.
-
-	        var i;
-	        gap = '';
-	        indent = '';
-
-	// If the space parameter is a number, make an indent string containing that
-	// many spaces.
-
-	        if (typeof space === 'number') {
-	            for (i = 0; i < space; i += 1) {
-	                indent += ' ';
-	            }
-
-	// If the space parameter is a string, it will be used as the indent string.
-
-	        } else if (typeof space === 'string') {
-	            indent = space;
-	        }
-
-	// If there is a replacer, it must be a function or an array.
-	// Otherwise, throw an error.
-
-	        rep = replacer;
-	        if (replacer && typeof replacer !== 'function' &&
-	                (typeof replacer !== 'object' ||
-	                typeof replacer.length !== 'number')) {
-	            throw new Error('JSON.stringify');
-	        }
-
-	// Make a fake root object containing our value under the key of ''.
-	// Return the result of stringifying the value.
-
-	        return str('', {'': value});
-	    };
-
-	    if (typeof JSON.stringify !== 'function') {
-	        JSON.stringify = Faye.stringify;
-	    }
-
-	// If the JSON object does not yet have a parse method, give it one.
-
-	    if (typeof JSON.parse !== 'function') {
-	        JSON.parse = function (text, reviver) {
-
-	// The parse method takes a text and an optional reviver function, and returns
-	// a JavaScript value if the text is a valid JSON text.
-
-	            var j;
-
-	            function walk(holder, key) {
-
-	// The walk method is used to recursively walk the resulting structure so
-	// that modifications can be made.
-
-	                var k, v, value = holder[key];
-	                if (value && typeof value === 'object') {
-	                    for (k in value) {
-	                        if (Object.prototype.hasOwnProperty.call(value, k)) {
-	                            v = walk(value, k);
-	                            if (v !== undefined) {
-	                                value[k] = v;
-	                            } else {
-	                                delete value[k];
-	                            }
-	                        }
-	                    }
-	                }
-	                return reviver.call(holder, key, value);
-	            }
-
-
-	// Parsing happens in four stages. In the first stage, we replace certain
-	// Unicode characters with escape sequences. JavaScript handles many characters
-	// incorrectly, either silently deleting them, or treating them as line endings.
-
-	            text = String(text);
-	            cx.lastIndex = 0;
-	            if (cx.test(text)) {
-	                text = text.replace(cx, function (a) {
-	                    return '\\u' +
-	                        ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-	                });
-	            }
-
-	// In the second stage, we run the text against regular expressions that look
-	// for non-JSON patterns. We are especially concerned with '()' and 'new'
-	// because they can cause invocation, and '=' because it can cause mutation.
-	// But just to be safe, we want to reject all unexpected forms.
-
-	// We split the second stage into 4 regexp operations in order to work around
-	// crippling inefficiencies in IE's and Safari's regexp engines. First we
-	// replace the JSON backslash pairs with '@' (a non-JSON character). Second, we
-	// replace all simple value tokens with ']' characters. Third, we delete all
-	// open brackets that follow a colon or comma or that begin the text. Finally,
-	// we look to see that the remaining characters are only whitespace or ']' or
-	// ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
-
-	            if (/^[\],:{}\s]*$/
-	                    .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
-	                        .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-	                        .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-
-	// In the third stage we use the eval function to compile the text into a
-	// JavaScript structure. The '{' operator is subject to a syntactic ambiguity
-	// in JavaScript: it can begin a block or an object literal. We wrap the text
-	// in parens to eliminate the ambiguity.
-
-	                j = eval('(' + text + ')');
-
-	// In the optional fourth stage, we recursively walk the new structure, passing
-	// each name/value pair to a reviver function for possible transformation.
-
-	                return typeof reviver === 'function'
-	                    ? walk({'': j}, '')
-	                    : j;
-	            }
-
-	// If the text is not JSON parseable, then a SyntaxError is thrown.
-
-	            throw new SyntaxError('JSON.parse');
-	        };
-	    }
-	}());
-
-	Faye.Transport.WebSocket = Faye.extend(Faye.Class(Faye.Transport, {
-	  UNCONNECTED:  1,
-	  CONNECTING:   2,
-	  CONNECTED:    3,
-
-	  batching:     false,
-
-	  isUsable: function(callback, context) {
-	    this.callback(function() { callback.call(context, true) });
-	    this.errback(function() { callback.call(context, false) });
-	    this.connect();
-	  },
-
-	  request: function(messages) {
-	    this._pending = this._pending || new Faye.Set();
-	    for (var i = 0, n = messages.length; i < n; i++) this._pending.add(messages[i]);
-
-	    var promise = new Faye.Promise();
-
-	    this.callback(function(socket) {
-	      if (!socket || socket.readyState !== 1) return;
-	      socket.send(Faye.toJSON(messages));
-	      Faye.Promise.fulfill(promise, socket);
-	    }, this);
-
-	    this.connect();
-
-	    return {
-	      abort: function() { promise.then(function(ws) { ws.close() }) }
-	    };
-	  },
-
-	  connect: function() {
-	    if (Faye.Transport.WebSocket._unloaded) return;
-
-	    this._state = this._state || this.UNCONNECTED;
-	    if (this._state !== this.UNCONNECTED) return;
-	    this._state = this.CONNECTING;
-
-	    var socket = this._createSocket();
-	    if (!socket) return this.setDeferredStatus('failed');
-
-	    var self = this;
-
-	    socket.onopen = function() {
-	      if (socket.headers) self._storeCookies(socket.headers['set-cookie']);
-	      self._socket = socket;
-	      self._state = self.CONNECTED;
-	      self._everConnected = true;
-	      self._ping();
-	      self.setDeferredStatus('succeeded', socket);
-	    };
-
-	    var closed = false;
-	    socket.onclose = socket.onerror = function() {
-	      if (closed) return;
-	      closed = true;
-
-	      var wasConnected = (self._state === self.CONNECTED);
-	      socket.onopen = socket.onclose = socket.onerror = socket.onmessage = null;
-
-	      delete self._socket;
-	      self._state = self.UNCONNECTED;
-	      self.removeTimeout('ping');
-	      self.setDeferredStatus('unknown');
-
-	      var pending = self._pending ? self._pending.toArray() : [];
-	      delete self._pending;
-
-	      if (wasConnected) {
-	        self._handleError(pending, true);
-	      } else if (self._everConnected) {
-	        self._handleError(pending);
-	      } else {
-	        self.setDeferredStatus('failed');
-	      }
-	    };
-
-	    socket.onmessage = function(event) {
-	      var replies = JSON.parse(event.data);
-	      if (!replies) return;
-
-	      replies = [].concat(replies);
-
-	      for (var i = 0, n = replies.length; i < n; i++) {
-	        if (replies[i].successful === undefined) continue;
-	        self._pending.remove(replies[i]);
-	      }
-	      self._receive(replies);
-	    };
-	  },
-
-	  close: function() {
-	    if (!this._socket) return;
-	    this._socket.close();
-	  },
-
-	  _createSocket: function() {
-	    var url        = Faye.Transport.WebSocket.getSocketUrl(this.endpoint),
-	        headers    = this._dispatcher.headers,
-	        extensions = this._dispatcher.wsExtensions,
-	        cookie     = this._getCookies(),
-	        tls        = this._dispatcher.tls,
-	        options    = {extensions: extensions, headers: headers, proxy: this._proxy, tls: tls};
-
-	    if (cookie !== '') options.headers['Cookie'] = cookie;
-
-	    if (Faye.WebSocket)        return new Faye.WebSocket.Client(url, [], options);
-	    if (Faye.ENV.MozWebSocket) return new MozWebSocket(url);
-	    if (Faye.ENV.WebSocket)    return new WebSocket(url);
-	  },
-
-	  _ping: function() {
-	    if (!this._socket) return;
-	    this._socket.send('[]');
-	    this.addTimeout('ping', this._dispatcher.timeout / 2, this._ping, this);
-	  }
-
-	}), {
-	  PROTOCOLS: {
-	    'http:':  'ws:',
-	    'https:': 'wss:'
-	  },
-
-	  create: function(dispatcher, endpoint) {
-	    var sockets = dispatcher.transports.websocket = dispatcher.transports.websocket || {};
-	    sockets[endpoint.href] = sockets[endpoint.href] || new this(dispatcher, endpoint);
-	    return sockets[endpoint.href];
-	  },
-
-	  getSocketUrl: function(endpoint) {
-	    endpoint = Faye.copyObject(endpoint);
-	    endpoint.protocol = this.PROTOCOLS[endpoint.protocol];
-	    return Faye.URI.stringify(endpoint);
-	  },
-
-	  isUsable: function(dispatcher, endpoint, callback, context) {
-	    this.create(dispatcher, endpoint).isUsable(callback, context);
-	  }
-	});
-
-	Faye.extend(Faye.Transport.WebSocket.prototype, Faye.Deferrable);
-	Faye.Transport.register('websocket', Faye.Transport.WebSocket);
-
-	if (Faye.Event && Faye.ENV.onbeforeunload !== undefined)
-	  Faye.Event.on(Faye.ENV, 'beforeunload', function() {
-	    Faye.Transport.WebSocket._unloaded = true;
-	  });
-
-	Faye.Transport.EventSource = Faye.extend(Faye.Class(Faye.Transport, {
-	  initialize: function(dispatcher, endpoint) {
-	    Faye.Transport.prototype.initialize.call(this, dispatcher, endpoint);
-	    if (!Faye.ENV.EventSource) return this.setDeferredStatus('failed');
-
-	    this._xhr = new Faye.Transport.XHR(dispatcher, endpoint);
-
-	    endpoint = Faye.copyObject(endpoint);
-	    endpoint.pathname += '/' + dispatcher.clientId;
-
-	    var socket = new EventSource(Faye.URI.stringify(endpoint)),
-	        self   = this;
-
-	    socket.onopen = function() {
-	      self._everConnected = true;
-	      self.setDeferredStatus('succeeded');
-	    };
-
-	    socket.onerror = function() {
-	      if (self._everConnected) {
-	        self._handleError([]);
-	      } else {
-	        self.setDeferredStatus('failed');
-	        socket.close();
-	      }
-	    };
-
-	    socket.onmessage = function(event) {
-	      self._receive(JSON.parse(event.data));
-	    };
-
-	    this._socket = socket;
-	  },
-
-	  close: function() {
-	    if (!this._socket) return;
-	    this._socket.onopen = this._socket.onerror = this._socket.onmessage = null;
-	    this._socket.close();
-	    delete this._socket;
-	  },
-
-	  isUsable: function(callback, context) {
-	    this.callback(function() { callback.call(context, true) });
-	    this.errback(function() { callback.call(context, false) });
-	  },
-
-	  encode: function(messages) {
-	    return this._xhr.encode(messages);
-	  },
-
-	  request: function(messages) {
-	    return this._xhr.request(messages);
-	  }
-
-	}), {
-	  isUsable: function(dispatcher, endpoint, callback, context) {
-	    var id = dispatcher.clientId;
-	    if (!id) return callback.call(context, false);
-
-	    Faye.Transport.XHR.isUsable(dispatcher, endpoint, function(usable) {
-	      if (!usable) return callback.call(context, false);
-	      this.create(dispatcher, endpoint).isUsable(callback, context);
-	    }, this);
-	  },
-
-	  create: function(dispatcher, endpoint) {
-	    var sockets = dispatcher.transports.eventsource = dispatcher.transports.eventsource || {},
-	        id      = dispatcher.clientId;
-
-	    var url = Faye.copyObject(endpoint);
-	    url.pathname += '/' + (id || '');
-	    url = Faye.URI.stringify(url);
-
-	    sockets[url] = sockets[url] || new this(dispatcher, endpoint);
-	    return sockets[url];
-	  }
-	});
-
-	Faye.extend(Faye.Transport.EventSource.prototype, Faye.Deferrable);
-	Faye.Transport.register('eventsource', Faye.Transport.EventSource);
-
-	Faye.Transport.XHR = Faye.extend(Faye.Class(Faye.Transport, {
-	  encode: function(messages) {
-	    return Faye.toJSON(messages);
-	  },
-
-	  request: function(messages) {
-	    var href = this.endpoint.href,
-	        xhr  = Faye.ENV.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest(),
-	        self = this;
-
-	    xhr.open('POST', href, true);
-	    xhr.setRequestHeader('Content-Type', 'application/json');
-	    xhr.setRequestHeader('Pragma', 'no-cache');
-	    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-	    var headers = this._dispatcher.headers;
-	    for (var key in headers) {
-	      if (!headers.hasOwnProperty(key)) continue;
-	      xhr.setRequestHeader(key, headers[key]);
-	    }
-
-	    var abort = function() { xhr.abort() };
-	    if (Faye.ENV.onbeforeunload !== undefined) Faye.Event.on(Faye.ENV, 'beforeunload', abort);
-
-	    xhr.onreadystatechange = function() {
-	      if (!xhr || xhr.readyState !== 4) return;
-
-	      var replies    = null,
-	          status     = xhr.status,
-	          text       = xhr.responseText,
-	          successful = (status >= 200 && status < 300) || status === 304 || status === 1223;
-
-	      if (Faye.ENV.onbeforeunload !== undefined) Faye.Event.detach(Faye.ENV, 'beforeunload', abort);
-	      xhr.onreadystatechange = function() {};
-	      xhr = null;
-
-	      if (!successful) return self._handleError(messages);
-
-	      try {
-	        replies = JSON.parse(text);
-	      } catch (e) {}
-
-	      if (replies)
-	        self._receive(replies);
-	      else
-	        self._handleError(messages);
-	    };
-
-	    xhr.send(this.encode(messages));
-	    return xhr;
-	  }
-	}), {
-	  isUsable: function(dispatcher, endpoint, callback, context) {
-	    callback.call(context, Faye.URI.isSameOrigin(endpoint));
-	  }
-	});
-
-	Faye.Transport.register('long-polling', Faye.Transport.XHR);
-
-	Faye.Transport.CORS = Faye.extend(Faye.Class(Faye.Transport, {
-	  encode: function(messages) {
-	    return 'message=' + encodeURIComponent(Faye.toJSON(messages));
-	  },
-
-	  request: function(messages) {
-	    var xhrClass = Faye.ENV.XDomainRequest ? XDomainRequest : XMLHttpRequest,
-	        xhr      = new xhrClass(),
-	        id       = ++Faye.Transport.CORS._id,
-	        headers  = this._dispatcher.headers,
-	        self     = this,
-	        key;
-
-	    xhr.open('POST', Faye.URI.stringify(this.endpoint), true);
-
-	    if (xhr.setRequestHeader) {
-	      xhr.setRequestHeader('Pragma', 'no-cache');
-	      for (key in headers) {
-	        if (!headers.hasOwnProperty(key)) continue;
-	        xhr.setRequestHeader(key, headers[key]);
-	      }
-	    }
-
-	    var cleanUp = function() {
-	      if (!xhr) return false;
-	      Faye.Transport.CORS._pending.remove(id);
-	      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
-	      xhr = null;
-	    };
-
-	    xhr.onload = function() {
-	      var replies = null;
-	      try {
-	        replies = JSON.parse(xhr.responseText);
-	      } catch (e) {}
-
-	      cleanUp();
-
-	      if (replies)
-	        self._receive(replies);
-	      else
-	        self._handleError(messages);
-	    };
-
-	    xhr.onerror = xhr.ontimeout = function() {
-	      cleanUp();
-	      self._handleError(messages);
-	    };
-
-	    xhr.onprogress = function() {};
-
-	    if (xhrClass === Faye.ENV.XDomainRequest)
-	      Faye.Transport.CORS._pending.add({id: id, xhr: xhr});
-
-	    xhr.send(this.encode(messages));
-	    return xhr;
-	  }
-	}), {
-	  _id:      0,
-	  _pending: new Faye.Set(),
-
-	  isUsable: function(dispatcher, endpoint, callback, context) {
-	    if (Faye.URI.isSameOrigin(endpoint))
-	      return callback.call(context, false);
-
-	    if (Faye.ENV.XDomainRequest)
-	      return callback.call(context, endpoint.protocol === Faye.ENV.location.protocol);
-
-	    if (Faye.ENV.XMLHttpRequest) {
-	      var xhr = new Faye.ENV.XMLHttpRequest();
-	      return callback.call(context, xhr.withCredentials !== undefined);
-	    }
-	    return callback.call(context, false);
-	  }
-	});
-
-	Faye.Transport.register('cross-origin-long-polling', Faye.Transport.CORS);
-
-	Faye.Transport.JSONP = Faye.extend(Faye.Class(Faye.Transport, {
-	 encode: function(messages) {
-	    var url = Faye.copyObject(this.endpoint);
-	    url.query.message = Faye.toJSON(messages);
-	    url.query.jsonp   = '__jsonp' + Faye.Transport.JSONP._cbCount + '__';
-	    return Faye.URI.stringify(url);
-	  },
-
-	  request: function(messages) {
-	    var head         = document.getElementsByTagName('head')[0],
-	        script       = document.createElement('script'),
-	        callbackName = Faye.Transport.JSONP.getCallbackName(),
-	        endpoint     = Faye.copyObject(this.endpoint),
-	        self         = this;
-
-	    endpoint.query.message = Faye.toJSON(messages);
-	    endpoint.query.jsonp   = callbackName;
-
-	    var cleanup = function() {
-	      if (!Faye.ENV[callbackName]) return false;
-	      Faye.ENV[callbackName] = undefined;
-	      try { delete Faye.ENV[callbackName] } catch (e) {}
-	      script.parentNode.removeChild(script);
-	    };
-
-	    Faye.ENV[callbackName] = function(replies) {
-	      cleanup();
-	      self._receive(replies);
-	    };
-
-	    script.type = 'text/javascript';
-	    script.src  = Faye.URI.stringify(endpoint);
-	    head.appendChild(script);
-
-	    script.onerror = function() {
-	      cleanup();
-	      self._handleError(messages);
-	    };
-
-	    return {abort: cleanup};
-	  }
-	}), {
-	  _cbCount: 0,
-
-	  getCallbackName: function() {
-	    this._cbCount += 1;
-	    return '__jsonp' + this._cbCount + '__';
-	  },
-
-	  isUsable: function(dispatcher, endpoint, callback, context) {
-	    callback.call(context, true);
-	  }
-	});
-
-	Faye.Transport.register('callback-polling', Faye.Transport.JSONP);
-
-	})();
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(13).setImmediate, __webpack_require__(1)))
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// DOM APIs, for completeness
-
-	if (typeof setTimeout !== 'undefined') exports.setTimeout = function() { return setTimeout.apply(window, arguments); };
-	if (typeof clearTimeout !== 'undefined') exports.clearTimeout = function() { clearTimeout.apply(window, arguments); };
-	if (typeof setInterval !== 'undefined') exports.setInterval = function() { return setInterval.apply(window, arguments); };
-	if (typeof clearInterval !== 'undefined') exports.clearInterval = function() { clearInterval.apply(window, arguments); };
-
-	// TODO: Change to more effiecient list approach used in Node.js
-	// For now, we just implement the APIs using the primitives above.
-
-	exports.enroll = function(item, delay) {
-	  item._timeoutID = setTimeout(item._onTimeout, delay);
-	};
-
-	exports.unenroll = function(item) {
-	  clearTimeout(item._timeoutID);
-	};
-
-	exports.active = function(item) {
-	  // our naive impl doesn't care (correctness is still preserved)
-	};
-
-	exports.setImmediate = __webpack_require__(14).nextTick;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-
-	var process = module.exports = {};
-
-	process.nextTick = (function () {
-	    var canSetImmediate = typeof window !== 'undefined'
-	    && window.setImmediate;
-	    var canPost = typeof window !== 'undefined'
-	    && window.postMessage && window.addEventListener
-	    ;
-
-	    if (canSetImmediate) {
-	        return function (f) { return window.setImmediate(f) };
-	    }
-
-	    if (canPost) {
-	        var queue = [];
-	        window.addEventListener('message', function (ev) {
-	            var source = ev.source;
-	            if ((source === window || source === null) && ev.data === 'process-tick') {
-	                ev.stopPropagation();
-	                if (queue.length > 0) {
-	                    var fn = queue.shift();
-	                    fn();
-	                }
-	            }
-	        }, true);
-
-	        return function nextTick(fn) {
-	            queue.push(fn);
-	            window.postMessage('process-tick', '*');
-	        };
-	    }
-
-	    return function nextTick(fn) {
-	        setTimeout(fn, 0);
-	    };
-	})();
-
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	}
-
-	// TODO(shtylman)
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-
-
-/***/ },
-/* 15 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
 
 /***/ }
 /******/ ])

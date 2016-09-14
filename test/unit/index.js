@@ -252,5 +252,49 @@ describe('Stream Client', function() {
         client.createRedirectUrl('google.com', 'tommaso', []);
       }).to.throwException(errors.MissingSchemaError);
     });
+
+    it('getReadOnlyToken', function() {
+      var token = client.getReadOnlyToken('user', 'test');
+
+      expect(token).not.to.be(undefined);
+
+      var feedId = 'usertest';
+      var expected = signing.JWTScopeToken(client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: client.expireTokens });
+
+      expect(token).to.be(expected);
+    });
+
+    it('getReadWriteToken', function() {
+      var token = client.getReadWriteToken('user', 'test');
+
+      expect(token).not.to.be(undefined);
+
+      var feedId = 'usertest';
+      var expected = signing.JWTScopeToken(client.apiSecret, '*', '*', { feedId: feedId, expireTokens: client.expireTokens });
+
+      expect(token).to.be(expected);
+    });
+
+    it('feed getReadOnlyToken', function() {
+      var token = client.feed('user', 'test').getReadOnlyToken();
+
+      expect(token).not.to.be(undefined);
+
+      var feedId = 'usertest';
+      var expected = signing.JWTScopeToken(client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: client.expireTokens });
+
+      expect(token).to.be(expected);
+    });
+
+    it('feed getReadWriteToken', function() {
+      var token = client.feed('user', 'test').getReadWriteToken();
+
+      expect(token).not.to.be(undefined);
+
+      var feedId = 'usertest';
+      var expected = signing.JWTScopeToken(client.apiSecret, '*', '*', { feedId: feedId, expireTokens: client.expireTokens });
+
+      expect(token).to.be(expected);
+    });
   }
 });
