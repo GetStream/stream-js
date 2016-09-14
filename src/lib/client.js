@@ -8,8 +8,6 @@ var Promise = require('./promise');
 var qs = require('qs');
 var url = require('url');
 var Faye = require('faye');
-var http = require('http');
-var https = require('https');
 
 /**
  * @callback requestCallback
@@ -18,15 +16,6 @@ var https = require('https');
  * @param {object} body
  */
 
-var httpsAgent = new https.Agent({
-  keepAlive: true,
-  keepAliveMsecs: 3000,
-});
-
-var httpAgent = new http.Agent({
-  keepAlive: true,
-  keepAliveMsecs: 3000,
-});
 
 var StreamClient = function() {
   /**
@@ -90,7 +79,22 @@ StreamClient.prototype = {
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
 
-    this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+    if (!this.browser) {
+      var http = require('http');
+      var https = require('https');
+
+      var httpsAgent = new https.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      var httpAgent = new http.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+    }
 
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
@@ -312,7 +316,10 @@ StreamClient.prototype = {
       kwargs.qs = {};
     }
 
-    kwargs.agent = this.requestAgent;
+    if (!this.browser) {
+      kwargs.agent = this.requestAgent;
+    }
+
     kwargs.qs.api_key = this.apiKey;
     kwargs.qs.location = this.group;
     kwargs.json = true;
