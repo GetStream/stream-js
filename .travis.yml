@@ -1,13 +1,20 @@
 sudo: false
 language: node_js
-node_js: 
+node_js:
 - '4.1'
 - '4.2'
 - '4.3'
 - '5.5'
 - '5.6'
 - '5.7'
+- '6.7'
+env:
+- LATESTPACKAGES=ncu -a -u
+- LATESTPACKAGES=whoami
 script:
+- npm install npm-check-updates
+- $LATESTPACKAGES
+- npm install
 - gulp build
 - gulp test
 - mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
