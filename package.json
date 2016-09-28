@@ -62,7 +62,7 @@
     "term-canvas": ">=0.0.5",
     "webpack": ">=1.12.2"
   },
-  "license": "BSD",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "Base64": ">=0.3.0",
     "xmlhttp-request": ">=0.4.0",
