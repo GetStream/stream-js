@@ -9,7 +9,7 @@ env:
 matrix:
   include:
   - node_js: 6.7
-    env: LATESTPACKAGES=ncu -a -u LATEST=1
+    env: LATESTPACKAGES="ncu -a -u" LATEST=1
 script:
 - npm install npm-check-updates
 - $LATESTPACKAGES
