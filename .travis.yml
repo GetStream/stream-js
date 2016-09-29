@@ -4,16 +4,12 @@ node_js:
 - '4.6'
 - '5.7'
 - '6.7'
+env:
+- LATESTPACKAGES=whoami
 matrix:
   include:
   - node_js: 6.7
     env: LATESTPACKAGES=ncu -a -u LATEST=1
-  - node_js: 6.7
-    env: LATESTPACKAGES=whoami LATEST=0
-  - node_js: 5.7
-    env: LATESTPACKAGES=whoami LATEST=0
-  - node_js: 4.6
-    env: LATESTPACKAGES=whoami LATEST=0
 script:
 - npm install npm-check-updates
 - $LATESTPACKAGES
