@@ -169,7 +169,7 @@ var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', event
 
 ```
 
-### Faye
+### Realtime (Faye)
 
 Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick quide to subcribing to feed changes
 
