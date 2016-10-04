@@ -16,6 +16,7 @@ var Faye = require('faye');
  * @param {object} body
  */
 
+
 var StreamClient = function() {
   /**
    * Client to connect to Stream api
@@ -77,6 +78,23 @@ StreamClient.prototype = {
     this.handlers = {};
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
+
+    if (!this.browser) {
+      var http = require('http');
+      var https = require('https');
+
+      var httpsAgent = new https.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      var httpAgent = new http.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+    }
 
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
@@ -298,7 +316,11 @@ StreamClient.prototype = {
       kwargs.qs = {};
     }
 
-    kwargs.qs['api_key'] = this.apiKey;
+    if (!this.browser) {
+      kwargs.agent = this.requestAgent;
+    }
+
+    kwargs.qs.api_key = this.apiKey;
     kwargs.qs.location = this.group;
     kwargs.json = true;
     var signature = kwargs.signature || this.signature;
