@@ -79,13 +79,14 @@ gulp.task("build", function() {
 
 gulp.task("build:webpack", function(callback) {
     var myConfig = Object.create(webpackConfig);
+    
     webpack(myConfig, function(err, stats) {
-    if(err) throw new gutil.PluginError("webpack:build", err);
-    gutil.log("[webpack:build]", stats.toString({
-      colors: true
-    }));
-    callback();
-  });
+        if(err) throw new gutil.PluginError("webpack:build", err);
+        gutil.log("[webpack:build]", stats.toString({
+          colors: true
+        }));
+        callback();
+    });
 });
 
 gulp.task('build:test', function(callback) {

@@ -1,5 +1,6 @@
 var path = require("path");
 var webpack = require("webpack");
+var RewirePlugin = require("rewire-webpack");
 
 module.exports = {
     context: __dirname + "/src",
@@ -33,5 +34,11 @@ module.exports = {
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
     },
-    plugins: [new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js"))]
+    plugins: [
+        new webpack.DefinePlugin({
+          IS_BROWSER_ENV: true,
+        }),
+        new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
+        new RewirePlugin(),
+    ]
 };
