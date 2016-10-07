@@ -19,6 +19,6 @@ script:
 - ./node_modules/.bin/webpack
 - npm test
 - ./bin/coveralls.sh
-- ./node_modules/.bin/eslint
+- ./node_modules/.bin/eslint src/**/*.js
 - npm install -g bower
 - bower install getstream
