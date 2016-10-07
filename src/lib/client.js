@@ -9,6 +9,8 @@ var qs = require('qs');
 var url = require('url');
 var Faye = require('faye');
 
+
+
 /**
  * @callback requestCallback
  * @param {object} [errors]
@@ -384,6 +386,7 @@ StreamClient.prototype = {
             'api_key': apiKey,
             'signature': subscription.token,
           };
+
         }
 
         callback(message);

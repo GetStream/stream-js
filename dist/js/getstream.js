@@ -59,6 +59,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @author Thierry Schellenbach
 	 * BSD License
 	 */
+	'use strict';
+
 	var StreamClient = __webpack_require__(2);
 	var errors = __webpack_require__(5);
 	var request = __webpack_require__(3);
@@ -111,6 +113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	// shim for using process in browser
+
 	var process = module.exports = {};
 
 	// cached from whatever global is present so that test runners that stub it
@@ -121,84 +124,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
 	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
 	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
 	    }
+	  }
 	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-
-
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-
-
-
-	}
 	var queue = [];
 	var draining = false;
 	var currentQueue;
@@ -223,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = runTimeout(cleanUpNextTick);
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
 	    draining = true;
 
 	    var len = queue.length;
@@ -240,7 +181,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    runClearTimeout(timeout);
+	    cachedClearTimeout(timeout);
 	}
 
 	process.nextTick = function (fun) {
@@ -252,7 +193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
+	        cachedSetTimeout(drainQueue, 0);
 	    }
 	};
 
@@ -296,7 +237,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {var request = __webpack_require__(3);
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	var request = __webpack_require__(3);
 	var StreamFeed = __webpack_require__(4);
 	var signing = __webpack_require__(7);
 	var errors = __webpack_require__(5);
@@ -314,7 +257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {object} body
 	 */
 
-	var StreamClient = function () {
+	var StreamClient = function StreamClient() {
 	  /**
 	   * Client to connect to Stream api
 	   * @class StreamClient
@@ -326,7 +269,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  baseUrl: 'https://api.getstream.io/api/',
 	  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
-	  initialize: function (apiKey, apiSecret, appId, options) {
+	  initialize: function initialize(apiKey, apiSecret, appId, options) {
 	    /**
 	     * Initialize a client
 	     * @method intialize
@@ -381,7 +324,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 
-	  on: function (event, callback) {
+	  on: function on(event, callback) {
 	    /**
 	     * Support for global event callbacks
 	     * This is useful for generic error and loading handling
@@ -396,7 +339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.handlers[event] = callback;
 	  },
 
-	  off: function (key) {
+	  off: function off(key) {
 	    /**
 	     * Remove one or more event handlers
 	     * @method off
@@ -413,7 +356,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 
-	  send: function () {
+	  send: function send() {
 	    /**
 	     * Call the given handler with the arguments
 	     * @method send
@@ -428,7 +371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 
-	  wrapPromiseTask: function (cb, fulfill, reject) {
+	  wrapPromiseTask: function wrapPromiseTask(cb, fulfill, reject) {
 	    /**
 	     * Wrap a task to be used as a promise
 	     * @method wrapPromiseTask
@@ -461,7 +404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 
-	  wrapCallback: function (cb) {
+	  wrapCallback: function wrapCallback(cb) {
 	    /**
 	     * Wrap callback for HTTP request
 	     * @method wrapCallBack
@@ -483,7 +426,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return callback;
 	  },
 
-	  userAgent: function () {
+	  userAgent: function userAgent() {
 	    /**
 	     * Get the current user agent
 	     * @method userAgent
@@ -496,7 +439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return 'stream-javascript-client-' + description + '-' + version;
 	  },
 
-	  getReadOnlyToken: function (feedSlug, userId) {
+	  getReadOnlyToken: function getReadOnlyToken(feedSlug, userId) {
 	    /**
 	     * Returns a token that allows only read operations
 	     *
@@ -511,7 +454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.feed(feedSlug, userId).getReadOnlyToken();
 	  },
 
-	  getReadWriteToken: function (feedSlug, userId) {
+	  getReadWriteToken: function getReadWriteToken(feedSlug, userId) {
 	    /**
 	     * Returns a token that allows read and write operations
 	     *
@@ -526,7 +469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.feed(feedSlug, userId).getReadWriteToken();
 	  },
 
-	  feed: function (feedSlug, userId, token, siteId, options) {
+	  feed: function feed(feedSlug, userId, token, siteId, options) {
 	    /**
 	     * Returns a feed object for the given feed id and token
 	     * @method feed
@@ -571,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return feed;
 	  },
 
-	  enrichUrl: function (relativeUrl) {
+	  enrichUrl: function enrichUrl(relativeUrl) {
 	    /**
 	     * Combines the base url with version and the relative url
 	     * @method enrichUrl
@@ -583,7 +526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return url;
 	  },
 
-	  enrichKwargs: function (kwargs) {
+	  enrichKwargs: function enrichKwargs(kwargs) {
 	    /**
 	     * Adds the API key and the signature
 	     * @method enrichKwargs
@@ -615,7 +558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return kwargs;
 	  },
 
-	  signActivity: function (activity) {
+	  signActivity: function signActivity(activity) {
 	    /**
 	     * We automatically sign the to parameter when in server side mode
 	     * @method signActivities
@@ -626,7 +569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.signActivities([activity])[0];
 	  },
 
-	  signActivities: function (activities) {
+	  signActivities: function signActivities(activities) {
 	    /**
 	     * We automatically sign the to parameter when in server side mode
 	     * @method signActivities
@@ -657,7 +600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return activities;
 	  },
 
-	  getFayeAuthorization: function () {
+	  getFayeAuthorization: function getFayeAuthorization() {
 	    /**
 	     * Get the authorization middleware to use Faye with getstream.io
 	     * @method getFayeAuthorization
@@ -669,11 +612,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self = this;
 
 	    return {
-	      incoming: function (message, callback) {
+	      incoming: function incoming(message, callback) {
 	        callback(message);
 	      },
 
-	      outgoing: function (message, callback) {
+	      outgoing: function outgoing(message, callback) {
 	        if (message.subscription && self.subscriptions[message.subscription]) {
 	          var subscription = self.subscriptions[message.subscription];
 
@@ -689,7 +632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  },
 
-	  getFayeClient: function () {
+	  getFayeClient: function getFayeClient() {
 	    /**
 	     * Returns this client's current Faye client
 	     * @method getFayeClient
@@ -706,7 +649,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.fayeClient;
 	  },
 
-	  get: function (kwargs, cb) {
+	  get: function get(kwargs, cb) {
 	    /**
 	     * Shorthand function for get request
 	     * @method get
@@ -716,16 +659,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function (fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'get', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'GET';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
+	    }).bind(this));
 	  },
 
-	  post: function (kwargs, cb) {
+	  post: function post(kwargs, cb) {
 	    /**
 	     * Shorthand function for post request
 	     * @method post
@@ -735,16 +678,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function (fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'post', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'POST';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
+	    }).bind(this));
 	  },
 
-	  delete: function (kwargs, cb) {
+	  'delete': function _delete(kwargs, cb) {
 	    /**
 	     * Shorthand function for delete request
 	     * @method delete
@@ -754,16 +697,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param  {requestCallback} cb     Callback to call on completion
 	     * @return {Promise}                Promise object
 	     */
-	    return new Promise(function (fulfill, reject) {
+	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'delete', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'DELETE';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
-	    }.bind(this));
+	    }).bind(this));
 	  },
 
-	  updateActivities: function (activities, callback) {
+	  updateActivities: function updateActivities(activities, callback) {
 	    /**
 	     * Updates all supplied activities on the getstream-io api
 	     * @since  3.1.0
@@ -787,7 +730,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  updateActivity: function (activity) {
+	  updateActivity: function updateActivity(activity) {
 	    /**
 	     * Updates one activity on the getstream-io api
 	     * @since  3.1.0
@@ -1337,11 +1280,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var errors = __webpack_require__(5);
 	var utils = __webpack_require__(6);
 	var signing = __webpack_require__(7);
 
-	var StreamFeed = function () {
+	var StreamFeed = function StreamFeed() {
 	  /**
 	   * Manage api calls for specific feeds
 	   * The feed object contains convenience functions such add activity, remove activity etc
@@ -1351,7 +1296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	StreamFeed.prototype = {
-	  initialize: function (client, feedSlug, userId, token) {
+	  initialize: function initialize(client, feedSlug, userId, token) {
 	    /**
 	     * Initialize a feed object
 	     * @method intialize
@@ -1375,7 +1320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
 	  },
 
-	  addActivity: function (activity, callback) {
+	  addActivity: function addActivity(activity, callback) {
 	    /**
 	     * Adds the given activity to the feed and
 	     * calls the specified callback
@@ -1394,7 +1339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  removeActivity: function (activityId, callback) {
+	  removeActivity: function removeActivity(activityId, callback) {
 	    /**
 	     * Removes the activity by activityId
 	     * @method removeActivity
@@ -1413,14 +1358,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      params['foreign_id'] = '1';
 	    }
 
-	    return this.client.delete({
+	    return this.client['delete']({
 	      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
 	      qs: params,
 	      signature: this.signature
 	    }, callback);
 	  },
 
-	  addActivities: function (activities, callback) {
+	  addActivities: function addActivities(activities, callback) {
 	    /**
 	     * Adds the given activities to the feed and calls the specified callback
 	     * @method addActivities
@@ -1441,7 +1386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return xhr;
 	  },
 
-	  follow: function (targetSlug, targetUserId, options, callback) {
+	  follow: function follow(targetSlug, targetUserId, options, callback) {
 	    /**
 	     * Follows the given target feed
 	     * @method follow
@@ -1487,7 +1432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  unfollow: function (targetSlug, targetUserId, optionsOrCallback, callback) {
+	  unfollow: function unfollow(targetSlug, targetUserId, optionsOrCallback, callback) {
 	    /**
 	     * Unfollow the given feed
 	     * @method unfollow
@@ -1510,7 +1455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    utils.validateFeedSlug(targetSlug);
 	    utils.validateUserId(targetUserId);
 	    var targetFeedId = targetSlug + ':' + targetUserId;
-	    var xhr = this.client.delete({
+	    var xhr = this.client['delete']({
 	      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
 	      qs: qs,
 	      signature: this.signature
@@ -1518,7 +1463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return xhr;
 	  },
 
-	  following: function (options, callback) {
+	  following: function following(options, callback) {
 	    /**
 	     * List which feeds this feed is following
 	     * @method following
@@ -1540,7 +1485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  followers: function (options, callback) {
+	  followers: function followers(options, callback) {
 	    /**
 	     * List the followers of this feed
 	     * @method followers
@@ -1563,7 +1508,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  get: function (options, callback) {
+	  get: function get(options, callback) {
 	    /**
 	     * Reads the feed
 	     * @method get
@@ -1589,7 +1534,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, callback);
 	  },
 
-	  getFayeClient: function () {
+	  getFayeClient: function getFayeClient() {
 	    /**
 	     * Returns the current faye client object
 	     * @method getFayeClient
@@ -1600,7 +1545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.client.getFayeClient();
 	  },
 
-	  subscribe: function (callback) {
+	  subscribe: function subscribe(callback) {
 	    /**
 	     * Subscribes to any changes in the feed, return a promise
 	     * @method subscribe
@@ -1624,7 +1569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
 	  },
 
-	  getReadOnlyToken: function () {
+	  getReadOnlyToken: function getReadOnlyToken() {
 	    /**
 	     * Returns a token that allows only read operations
 	     *
@@ -1640,7 +1585,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
 	  },
 
-	  getReadWriteToken: function () {
+	  getReadWriteToken: function getReadWriteToken() {
 	    /**
 	     * Returns a token that allows read and write operations
 	     *
@@ -1662,6 +1607,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ },
 /* 5 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	var errors = module.exports;
 
@@ -1738,6 +1685,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var errors = __webpack_require__(5);
 	var validRe = /^[\w-]+$/;
 
@@ -1798,6 +1747,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	var crypto = __webpack_require__(8);
 	var jwt = __webpack_require__(9);
@@ -1934,7 +1885,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports) {
 
-	
+	"use strict";
 
 /***/ },
 /* 10 */
@@ -1942,7 +1893,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	;(function () {
 
-	  var object =  true ? exports : self; // #8: web workers
+	  var object =  true ? exports : this; // #8: web workers
 	  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
 	  function InvalidCharacterError(message) {
@@ -2007,6 +1958,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var Promise = __webpack_require__(12);
 
 	module.exports = Promise;
@@ -2034,7 +1987,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (typeof task !== 'function') return;
 	  var self = this;
 
-	  task(function(value)  { resolve(self, value) },
+	  task(function(value)  { fulfill(self, value) },
 	       function(reason) { reject(self, reason) });
 	};
 
@@ -2087,22 +2040,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (outcome === next) {
 	    reject(next, new TypeError('Recursive promise chain detected'));
 	  } else {
-	    resolve(next, outcome);
+	    fulfill(next, outcome);
 	  }
 	};
 
-	var resolve = function(promise, value) {
+	var fulfill = function(promise, value) {
 	  var called = false, type, then;
 
 	  try {
 	    type = typeof value;
 	    then = value !== null && (type === 'function' || type === 'object') && value.then;
 
-	    if (typeof then !== 'function') return fulfill(promise, value);
+	    if (typeof then !== 'function') return _fulfill(promise, value);
 
 	    then.call(value, function(v) {
 	      if (!(called ^ (called = true))) return;
-	      resolve(promise, v);
+	      fulfill(promise, v);
 	    }, function(r) {
 	      if (!(called ^ (called = true))) return;
 	      reject(promise, r);
@@ -2113,7 +2066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 
-	var fulfill = function(promise, value) {
+	var _fulfill = function(promise, value) {
 	  if (promise._state !== PENDING) return;
 
 	  promise._state      = FULFILLED;
@@ -2135,7 +2088,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  while (fn = onRejected.shift()) fn(reason);
 	};
 
-	Promise.resolve = function(value) {
+	Promise.resolve = Promise.accept = Promise.fulfill = function(value) {
 	  return new Promise(function(resolve, reject) { resolve(value) });
 	};
 
@@ -2169,7 +2122,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var tuple = {};
 
 	  tuple.promise = new Promise(function(resolve, reject) {
-	    tuple.resolve = resolve;
+	    tuple.fulfill = tuple.resolve = resolve;
 	    tuple.reject  = reject;
 	  });
 	  return tuple;
@@ -2332,12 +2285,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	// Safari 6 and 6.1 for desktop, iPad, and iPhone are the only browsers that
 	// have WebKitMutationObserver but not un-prefixed MutationObserver.
-	// Must use `global` or `self` instead of `window` to work in both frames and web
+	// Must use `global` instead of `window` to work in both frames and web
 	// workers. `global` is a provision of Browserify, Mr, Mrs, or Mop.
-
-	/* globals self */
-	var scope = typeof global !== "undefined" ? global : self;
-	var BrowserMutationObserver = scope.MutationObserver || scope.WebKitMutationObserver;
+	var BrowserMutationObserver = global.MutationObserver || global.WebKitMutationObserver;
 
 	// MutationObservers are desirable because they have high priority and work
 	// reliably everywhere they are implemented.
@@ -2512,7 +2462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	module.exports = {
-	  VERSION:          '1.2.2',
+	  VERSION:          '1.2.0',
 
 	  BAYEUX_VERSION:   '1.0',
 	  ID_LENGTH:        160,
@@ -3935,8 +3885,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Channel  = __webpack_require__(30);
 
 	var Transport = extend(Class({ className: 'Transport',
-	  DEFAULT_PORTS: {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
-	  MAX_DELAY:     0,
+	  DEFAULT_PORTS:    {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
+	  SECURE_PROTOCOLS: ['https:', 'wss:'],
+	  MAX_DELAY:        0,
 
 	  batching:  true,
 
@@ -3946,8 +3897,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._outbox     = [];
 	    this._proxy      = extend({}, this._dispatcher.proxy);
 
-	    if (!this._proxy.origin)
-	      this._proxy.origin = this._findProxy();
+	    if (!this._proxy.origin && typeof process !== 'undefined') {
+	      this._proxy.origin = array.indexOf(this.SECURE_PROTOCOLS, this.endpoint.protocol) >= 0
+	                         ? (process.env.HTTPS_PROXY || process.env.https_proxy)
+	                         : (process.env.HTTP_PROXY  || process.env.http_proxy);
+	    }
 	  },
 
 	  close: function() {},
@@ -4060,35 +4014,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      cookie = Cookie.parse(setCookie[i]);
 	      cookies.setCookieSync(cookie, url);
 	    }
-	  },
-
-	  _findProxy: function() {
-	    if (typeof process === 'undefined') return undefined;
-
-	    var protocol = this.endpoint.protocol;
-	    if (!protocol) return undefined;
-
-	    var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
-	        upcase = name.toUpperCase(),
-	        env    = process.env,
-	        keys, proxy;
-
-	    if (name === 'http_proxy' && env.REQUEST_METHOD) {
-	      keys = Object.keys(env).filter(function(k) { return /^http_proxy$/i.test(k) });
-	      if (keys.length === 1) {
-	        if (keys[0] === name && env[upcase] === undefined)
-	          proxy = env[name];
-	      } else if (keys.length > 1) {
-	        proxy = env[name];
-	      }
-	      proxy = proxy || env['CGI_' + upcase];
-	    } else {
-	      proxy = env[name] || env[upcase];
-	      if (proxy && !env[name])
-	        console.warn('The environment variable ' + upcase +
-	                     ' is discouraged. Use ' + name + '.');
-	    }
-	    return proxy;
 	  }
 
 	}), {

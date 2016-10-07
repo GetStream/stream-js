@@ -1,13 +1,20 @@
-var stream = require('../../../src/getstream')
-  , config = require('./config');
+var config = require('./config')
+  , rewire = require('rewire')
+  , stream = rewire('../../../src/getstream')
+  , StreamClient = require('./mocks').StreamClient;
 
 function beforeEachBrowser() {
     this.client = stream.connect(config.API_KEY);
     this.client = stream.connect(config.API_KEY, null, 9498);
+
+    this.client = new StreamClient(config.API_KEY);
+    this.client = new StreamClient(config.API_KEY, null, 9498);
 }
 
 function beforeEachNode() {
     this.client = stream.connect(config.API_KEY, config.API_SECRET);
+    
+    this.client = new StreamClient(config.API_KEY, config.API_SECRET);
 }
 
 module.exports = {

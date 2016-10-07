@@ -66,6 +66,6 @@ describe('Stream Client (browser)', function() {
         var feed = this.client.feed('user','jaap', '123456789');
 
         expect(feed).to.be.a(StreamFeed);
-    });         
+    });
 
 });
