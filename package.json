@@ -18,7 +18,7 @@
     "test-integration-browser": "./node_modules/.bin/mocha test/integration/common test/integration/browser",
     "generate-docs": "jsdoc -c .jsdoc",
     "coverage": "./node_modules/.bin/istanbul bin/run-node-unit-tests.js",
-    "preversion": "npm test",
+    "preversion": "npm test && npm run test-integration-node",
     "version": "./bin/version.sh && git add dist && git checkout test",
     "postversion": "./bin/postversion.sh"
   },

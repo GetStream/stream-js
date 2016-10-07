@@ -365,6 +365,8 @@ describe('Stream Feed (Common)', function() {
     describe('#subscribe', function() {
 
         it('(1) throws', function() {
+            td.replace(this.client, 'appId', 0);            
+
             function throws() {
                 feed.subscribe();
             }
