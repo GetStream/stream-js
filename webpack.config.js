@@ -50,6 +50,9 @@ module.exports = {
     },
     module: {
       loaders: [
+          // We do not use ES6 in our library but one of our dependencies does
+          // so please do not remove this line or we will distribute ES6 code
+          // to all browsers:
         { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"}
       ]
     },
