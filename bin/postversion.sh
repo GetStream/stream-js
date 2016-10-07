@@ -3,7 +3,7 @@ set -e
 gulp docs
 git add docs/getstream/
 git commit -m 'update docs'
-gulp write_bower
+node ./bin/bower-up.js
 git add bower.json
 git commit -m 'publish new version on Bower' 
 git push origin master
