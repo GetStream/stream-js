@@ -34,7 +34,7 @@ module.exports = function(config) {
         },
         'SL_IE_13': {
             base: 'SauceLabs',
-            browserName: 'edge',
+            browserName: 'microsoftedge',
             platform: 'Windows 10',
         },
     };
