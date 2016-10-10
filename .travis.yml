@@ -7,12 +7,19 @@ node_js:
 - '4.6'
 - '5.7'
 - '6.7'
+env:
+  global:
+    - RUN_ESLINT="no"
+matrix:
+  include:
+  - node_js: 6.7
+    env: RUN_ESLINT="yes"
 script:
 - npm install npm-check-updates
 - npm install
 - ./node_modules/.bin/webpack
 - npm test
 - ./bin/coveralls.sh
-- ./node_modules/.bin/eslint src/**/*.js
+- if [ "$RUN_ESLINT" == "yes" ]; then ./node_modules/.bin/eslint src/**/*.js; fi
 - npm install -g bower
 - bower install getstream
