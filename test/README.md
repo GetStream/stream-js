@@ -3,6 +3,9 @@ Testing & stream-js
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
+[![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
 # Lint
 
