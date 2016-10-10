@@ -6,14 +6,11 @@ node_js:
 - '4.0'
 - '4.6'
 - '5.7'
-- '6.7'
+- '6.7' 
+  RUN_ESLINT="yes"
 env:
   global:
     - RUN_ESLINT="no"
-matrix:
-  include:
-  - node_js: 6.7
-    env: RUN_ESLINT="yes"
 script:
 - npm install npm-check-updates
 - npm install
