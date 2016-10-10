@@ -3,13 +3,9 @@ language: node_js
 node_js:
 - '0.11'
 - '0.12'
-- '4.0'
 - '4.6'
 - '5.7'
 - '6.7' 
-env:
-  global:
-    - RUN_ESLINT="no"
 script:
 - npm install npm-check-updates
 - npm install
