@@ -1,11 +1,9 @@
-var init = require('../utils/hooks').init
-  , beforeEach = require('../utils/hooks').beforeEach
+var beforeEach = require('../utils/hooks').beforeEach
   , stream = require('../../../src/getstream')
   , expect = require('expect.js');
 
 describe('Stream client (Heroku)', function() {
 
-    init.call(this);
     beforeEach(beforeEach);
 
     it('heroku', function(done) {
