@@ -5,13 +5,13 @@ node_js:
 - '0.12'
 - '4.6'
 - '5.7'
-- '6.7' 
+- '6.7'
+env:
+- BROWSER_TESTS="no"
+matrix:
+ include:
+ - node_js: 6.7
+   env: BROWSER_TESTS="yes"
 script:
-- npm install npm-check-updates
-- npm install
-- ./node_modules/.bin/webpack
-- npm test
-- ./bin/coveralls.sh
-- if [ "$(node --version)" == "v6.7.0" ]; then ./node_modules/.bin/eslint src/**/*.js; fi
-- npm install -g bower
-- bower install getstream
+- if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-unit-browser; fi
