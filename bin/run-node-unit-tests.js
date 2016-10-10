@@ -20,6 +20,7 @@ testDirs.forEach(function(dir) {
      });
 });
 
+/* istanbul ignore next */
 mocha.run(function(failures) {
     process.on('exit', function() {
         process.exit(failures);
