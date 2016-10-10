@@ -15,6 +15,7 @@ function ErrorAbstract(msg, constructor) {
 
   Error.call(this, this.message);
 
+  /* istanbul ignore else */
   if (canCapture) {
     Error.captureStackTrace(this, constructor);
   } else if (canStack) {
