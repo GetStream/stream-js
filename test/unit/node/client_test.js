@@ -2,6 +2,7 @@ var StreamFeed = require('../../../src/lib/feed'),
     expect = require('expect.js'),
     beforeEachFn = require('../utils/hooks').beforeEach,
     td = require('testdouble'),
+    stream = require('../../../src/getstream'),
     signing = require('../../../src/lib/signing');
 
 
@@ -85,6 +86,44 @@ describe('Stream Client (Node)', function() {
             td.verify(post(td.matchers.contains({
                 url: 'activities/',
             }), fn));
+        });
+
+    });
+
+    describe('connect', function() {
+
+        it('#LOCAL', function() {
+            process.env['LOCAL'] = 1;
+
+            var client = stream.connect('12345', 'abcdefghijklmnop');
+            expect(client.baseUrl).to.be('http://localhost:8000/api/');
+
+            delete process.env['LOCAL'];
+        });
+
+        it('#LOCAL', function() {
+            var client = stream.connect('12345', 'abcdefghijklmnop', null, {
+                location: 'nl-NL'
+            });
+            expect(client.baseUrl).to.be('https://nl-NL-api.getstream.io/api/');
+        });
+
+        it('#LOCAL_FAYE', function() {
+            process.env['LOCAL_FAYE'] = 1;
+
+            var client = stream.connect('12345', 'abcdefghijklmnop');
+            expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
+
+            delete process.env['LOCAL_FAYE'];
+        });
+
+        it('#STREAM_BASE_URL', function() {
+            process.env['STREAM_BASE_URL'] = 'http://local.getstream.io/api/';
+
+            var client = stream.connect('12345', 'abcdefghijklmnop');
+            expect(client.baseUrl).to.be('http://local.getstream.io/api/');
+
+            delete process.env['STREAM_BASE_URL'];
         });
 
     });
