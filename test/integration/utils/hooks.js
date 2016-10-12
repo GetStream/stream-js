@@ -2,7 +2,7 @@ var stream = require('../../../src/getstream')
   , config = require('./config');
 
 function initNode() {
-    this.timeout(4000);
+    this.timeout(6000);
     this.localRun = false;
 
     if (process.env.LOCAL) {
@@ -13,7 +13,7 @@ function initNode() {
 }
 
 function initBrowser() {
-    this.timeout(4000);
+    this.timeout(6000);
     this.localRun = false;
 
     if (document.location.href.indexOf('local=1') != -1) {
@@ -25,7 +25,7 @@ function initBrowser() {
 
 function beforeEachNode() {
     this.client = stream.connect(config.API_KEY, config.API_SECRET);
-    this.client = stream.connect(config.API_KEY, config.API_SECRET, 9498, {'group': 'testCycle', 'location': 'us-east'});
+    this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {'group': 'testCycle', 'location': 'qa'});
     this.user1 = this.client.feed('user', '11');
     this.aggregated2 = this.client.feed('aggregated', '22');
     this.aggregated3 = this.client.feed('aggregated', '33');
@@ -38,7 +38,7 @@ function beforeEachNode() {
 
 function beforeEachBrowser() {
     this.client = stream.connect(config.API_KEY);
-    this.client = stream.connect(config.API_KEY, null, 9498, {'group': 'browserTestCycle', 'location': 'eu-west'});
+    this.client = stream.connect(config.API_KEY, null, 9498, {'group': 'browserTestCycle', 'location': 'qa'});
 
     if (this.localRun){
         this.client.baseUrl = 'http://localhost:8000/api/';

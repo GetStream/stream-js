@@ -10,17 +10,8 @@ describe('Stream client (Node)', function() {
     init.call(this);
     beforeEach(beforeEachFn);
 
-    it('location support', function() {
-        var options = {};
-        var location = 'us-east';
-        var fullLocation = 'https://us-east-api.getstream.io/api/';
-        options.location = location;
-        this.client = stream.connect('a', 'b', 'c', options);
-        expect(this.client.baseUrl).to.eql(fullLocation);
-        expect(this.client.location).to.eql(location);
-    });
-
-    it('update activities', function(done) {
+    it('update activities', function() {
+        var self = this;
         var activities = [{
             'actor': 1,
             'verb': 'tweet',
@@ -33,7 +24,7 @@ describe('Stream client (Node)', function() {
             'foreign_id': 'update_activity_1'
         }, ];
 
-        this.user1.addActivities(activities)
+        return this.user1.addActivities(activities)
             .then(function(body) {
                 var activity = body['activities'][0];
 
@@ -44,27 +35,28 @@ describe('Stream client (Node)', function() {
 
                 var activities = [activity];
 
-                return this.client.updateActivities(activities);
+                return self.client.updateActivities(activities);
+            })
+            .then(function() {
+                return self.user1.get({ limit: 2 });
             })
             .then(function(body) {
-                var activity = body['activities'][0];
+                var activity = body['results'][1];
                 expect(activity.answer).to.be(10);
-                done();
-            })
-            .catch(function(reason) {
-                done(reason.error);
             });
     });
 
-    it('update activity illegal foreign id', function(done) {
+    it('update activity illegal foreign id', function() {
+        var self = this;
+        this.timeout(15000);
+
         var activity = {
             'actor': 1,
             'verb': 'tweet',
             'object': 2,
         };
 
-        this.user1.addActivity(activity)
-            .catch(done)
+        return this.user1.addActivity(activity)
             .then(function(body) {
                 var activity = body;
 
@@ -75,27 +67,28 @@ describe('Stream client (Node)', function() {
 
                 activity['foreign_id'] = 'aap';
 
-                return this.client.updateActivity(activity);
+                return self.client.updateActivity(activity);
             })
             .then(function() {
-                done('Expected InputException');
+                throw new Error('Expected InputException');
             })
             .catch(function(reason) {
                 expect(reason.error.code).to.be(4);
-                expect(reason.error.exception).to.be('InputException')
-                done();
+                expect(reason.error.exception).to.be('InputException');
             });
     });
 
-    it('update activity illegal time', function(done) {
+    it('update activity illegal time', function() {
+        this.timeout(15000);
+        var self = this;
+
         var activity = {
             'actor': 1,
             'verb': 'tweet',
             'object': 2,
         };
 
-        this.user1.addActivity(activity)
-            .catch(done)
+        return this.user1.addActivity(activity)
             .then(function(body) {
                 var activity = body;
 
@@ -104,27 +97,28 @@ describe('Stream client (Node)', function() {
 
                 activity['time'] = 'aap';
 
-                return this.client.updateActivity(activity);
+                return self.client.updateActivity(activity);
             })
             .then(function() {
-                done('Expected InputException');
+                throw new Error('Expected InputException');
             })
             .catch(function(reason) {
                 expect(reason.error.code).to.be(4);
-                expect(reason.error.exception).to.be('InputException')
-                done();
+                expect(reason.error.exception).to.be('InputException');
             });
     });
 
-    it('update activity illegal to field', function(done) {
+    it('update activity illegal to field', function() {
+        this.timeout(15000);
+        var self = this;
+
         var activity = {
             'actor': 1,
             'verb': 'tweet',
             'object': 2,
         };
 
-        this.user1.addActivity(activity)
-            .catch(done)
+        return this.user1.addActivity(activity)
             .then(function(body) {
                 var activity = body;
 
@@ -133,19 +127,19 @@ describe('Stream client (Node)', function() {
 
                 activity['to'] = ['to:something'];
 
-                return this.client.updateActivity(activity);
+                return self.client.updateActivity(activity);
             })
             .then(function() {
-                done('Expected InputException');
+                throw new Error('Expected InputException');
             })
             .catch(function(reason) {
                 expect(reason.error.code).to.be(4);
-                expect(reason.error.exception).to.be('InputException')
-                done();
+                expect(reason.error.exception).to.be('InputException');
             });
     });
 
-    it('updating many activities', function(done) {
+    it('updating many activities', function() {
+        var self = this;
         var activities = [];
         for (var i = 0; i < 10; i++) {
             activities.push({
@@ -156,7 +150,7 @@ describe('Stream client (Node)', function() {
             });
         }
 
-        this.user1.addActivities(activities)
+        return this.user1.addActivities(activities)
             .then(function(body) {
                 var activitiesCreated = body['activities'];
 
@@ -164,26 +158,23 @@ describe('Stream client (Node)', function() {
                     activitiesCreated[j]['answer'] = 100;
                 }
 
-                return this.client.updateActivities(activitiesCreated);
-            }.bind(this))
+                return self.client.updateActivities(activitiesCreated);
+            })
             .then(function(body) {
-                return this.user1.get({
+                return self.user1.get({
                     limit: 10
                 });
-            }.bind(this))
+            })
             .then(function(body) {
                 var activitiesUpdated = body['results'];
 
                 for (var n = 0; n < activitiesUpdated.length; n++) {
                     expect(activitiesUpdated[n]['answer']).to.be(100);
                 }
-
-                done();
-            })
-            .catch(done);
+            });
     });
 
-    it('#updateActivity', function(done) {
+    it('#updateActivity', function() {
         var activity = {
             'verb': 'do',
             'actor': 'user:1',
@@ -192,12 +183,8 @@ describe('Stream client (Node)', function() {
             'foreign_id': 'update_activity_11'
         };
 
-        this.client.updateActivity(activity)
-            .then(function() {
-                done();
-            }, done);
+        return this.client.updateActivity(activity);
     });
-
 
     it('supports application level authentication', function(done) {
         this.client.makeSignedRequest({
@@ -272,7 +259,7 @@ describe('Stream client (Node)', function() {
         });
     });
 
-    it('batch promises', function(done) {
+    it('batch promises', function() {
         var activity = {
             'actor': 'user:11',
             'verb': 'like',
@@ -280,8 +267,6 @@ describe('Stream client (Node)', function() {
         };
         var feeds = ['flat:33', 'user:11'];
 
-        this.client.addToMany(activity, feeds).then(function(body) {
-            done();
-        }, done);
+        return this.client.addToMany(activity, feeds);
     });
 });

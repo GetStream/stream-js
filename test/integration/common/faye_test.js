@@ -2,6 +2,8 @@ var stream = require('../../../src/getstream')
   , errors = require('../../../src/getstream').errors
   , expect = require('expect.js')
   , init = require('../utils/hooks').init
+  , Promise = require('../../../src/lib/promise')
+  , utils = require('../utils/index')
   , beforeEachFn = require('../utils/hooks').beforeEach;
 
 describe('Stream client (Faye)', function() {
@@ -9,26 +11,22 @@ describe('Stream client (Faye)', function() {
     init.call(this);
     beforeEach(beforeEachFn);
 
-    it('fayeGetClient', function(done) {
-        var client = this.user1.getFayeClient();
-        done();
+    it('fayeGetClient', function() {
+        this.user1.getFayeClient();
     });
 
-    it('fayeSubscribe', function(done) {
+    it('fayeSubscribe', function() {
         this.timeout(6000);
 
-        this.user1.subscribe(function callback() {})
-            .then(function() {
-                done();
-            }, done);
+        return this.user1.subscribe(function callback() {});
     });
 
     it('fayeSubscribeListening', function(done) {
         this.timeout(6000);
 
-        var testUser1 = this.client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIxMTEifQ.QHiPXFufxIjMnQbMoyfdKbdE82u7UFswPVVobhOL0G0'),
-            testUser2 = this.client.feed('user', '222', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY'),
-            testUser3 = this.client.feed('user', '333', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIzMzMifQ.atyOocKSyZIjisssKaVjDI4Ct18T0hK7PjkEnPvWxTk');
+        var testUser1 = utils.feed(this.client, 'user', '111'),
+            testUser2 = utils.feed(this.client, 'user', '222'),
+            testUser3 = utils.feed(this.client, 'user', '333');
 
         var subscribes = [],
             messages = 0,
@@ -66,12 +64,12 @@ describe('Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeListeningWrongToken', function(done) {
-        this.timeout(6000);
+        this.timeout(10000);
 
         // Invalid token:
         var testUser1 = this.client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY'),
             // Valid token:
-            testUser2 = this.client.feed('user', '222', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY');
+            testUser2 = utils.feed(this.client, 'user', '222');
 
         var messages = 0,
             activity = {

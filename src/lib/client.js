@@ -61,7 +61,7 @@ StreamClient.prototype = {
     // which data center to use
     this.location = this.options.location;
     if (this.location) {
-      this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+      this.baseUrl = 'http://' + this.location + '-api.getstream.io:82/api/';
     }
 
     if (typeof (process) !== 'undefined' && process.env.LOCAL) {
