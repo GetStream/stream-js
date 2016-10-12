@@ -223,6 +223,21 @@ describe('Stream Client (Common)', function() {
             task(new Error('oops'), { statusCode: 200 }, {});
         });
 
+        it('(4) with callback', function(done) {
+            function fulfill() {
+            }
+
+            function reject(err) {
+                done(err);
+            }
+
+            var task = this.client.wrapPromiseTask(function() {
+                done();
+            }, fulfill, reject); 
+
+            task(null, { statusCode: 200 }, {});
+        });
+
     });
 
     it('#enrichUrl', function() {
