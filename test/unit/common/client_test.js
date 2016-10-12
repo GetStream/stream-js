@@ -234,7 +234,7 @@ describe('Stream Client (Common)', function() {
         });
 
         it('#delete', function() {
-            this.client.delete({ url: 'matthisk' });
+            this.client['delete']({ url: 'matthisk' });
 
             td.verify(toExpect('DELETE'));
         });

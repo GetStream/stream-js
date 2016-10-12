@@ -449,7 +449,7 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
-  delete: function(kwargs, cb) {
+  'delete': function(kwargs, cb) {
     /**
      * Shorthand function for delete request
      * @method delete

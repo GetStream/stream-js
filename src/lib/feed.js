@@ -74,7 +74,7 @@ StreamFeed.prototype = {
       params['foreign_id'] = '1';
     }
 
-    return this.client.delete({
+    return this.client['delete']({
       url: 'feed/' + this.feedUrl + '/' + identifier + '/',
       qs: params,
       signature: this.signature,
@@ -170,7 +170,7 @@ StreamFeed.prototype = {
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
     var targetFeedId = targetSlug + ':' + targetUserId;
-    var xhr = this.client.delete({
+    var xhr = this.client['delete']({
       url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
       qs: qs,
       signature: this.signature,
