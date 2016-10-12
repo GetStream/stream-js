@@ -1,4 +1,4 @@
-Stream-js
+Stream-JS
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
