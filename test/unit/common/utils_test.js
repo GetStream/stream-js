@@ -16,4 +16,10 @@ describe('Utility functions', function() {
         });
     });
 
+    it('#rfc3986', function() {
+        var result = utils.rfc3986('hello!\'()*matthisk');
+
+        expect(result).to.be('hello%21%27%28%29%2Amatthisk');
+    });
+
 });
