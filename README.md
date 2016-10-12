@@ -10,7 +10,7 @@ Stream-js
 
 
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
+The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=js). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
 
 
 ### Installation
@@ -200,7 +200,7 @@ subscription.cancel();
 ```
 
 
-Docs are available on [GetStream.io](http://getstream.io/docs/).
+Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
 
 
@@ -218,7 +218,7 @@ mocha test/cov.js -R html-cov > cov.html
 ```
 
   [Stream]: https://getstream.io/
-  [GetStream.io]: http://getstream.io/docs/
+  [GetStream.io]: http://getstream.io/docs/?language=js
 
 Releasing
 ------------

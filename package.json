@@ -6,7 +6,7 @@
   "name": "getstream",
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./src/getstream.js",
-  "homepage": "https://getstream.io/",
+  "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
   "version": "3.5.0",
