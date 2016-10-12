@@ -80,6 +80,7 @@ StreamClient.prototype = {
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
 
+    /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
     }
