@@ -5,6 +5,8 @@ var webpackConfig = require('./webpack.config.js');
 delete webpackConfig['entry'];
 delete webpackConfig['output'];
 
+webpackConfig['devtool'] = 'inline-source-map';
+
 module.exports = function(config) {
 
     var customLaunchers = {
@@ -19,12 +21,6 @@ module.exports = function(config) {
         'SL_Safari': {
             base: 'SauceLabs',
             browserName: 'safari',
-        },
-        'SL_IE_8': {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 7',
-            version: '8',
         },
         'SL_IE_9': {
             base: 'SauceLabs',
@@ -82,6 +78,11 @@ module.exports = function(config) {
 
         // Webpack configuration for webpack preprocessor
         webpack: webpackConfig,
+        webpackMiddleware: {
+            // webpack-dev-middleware configuration
+            // i. e.
+            stats: 'errors-only'
+        },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
