@@ -7,8 +7,7 @@ node_js:
 - '5.7'
 - '6.7'
 env:
-- BROWSER_TESTS="no"
-- INTEGRATION_TESTS="no"
+- BROWSER_TESTS="no" INTEGRATION_TESTS="no"
 matrix:
  include:
  - node_js: 6.7
