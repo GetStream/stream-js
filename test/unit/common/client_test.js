@@ -155,7 +155,7 @@ describe('Stream Client (Common)', function() {
             var self = this;
 
             function toThrow() {
-                self.client.feed('user:jaap');
+                self.client.feed('user:jaap', 'jaap');
             }
 
             expect(toThrow).to.throwException(function(e) {
