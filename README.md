@@ -5,9 +5,10 @@ Stream-js
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
 
+[![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
+
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
-[![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=js). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
