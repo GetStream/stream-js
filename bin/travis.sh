@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 ./node_modules/.bin/webpack
 npm test
 ./bin/coveralls.sh
