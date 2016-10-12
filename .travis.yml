@@ -12,6 +12,8 @@ matrix:
  include:
  - node_js: 6.7
    env: BROWSER_TESTS="yes"
+before_install:
+- npm config set engine-strict true 
 script:
 - if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
 - if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-unit-browser; fi
