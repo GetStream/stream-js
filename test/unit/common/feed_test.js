@@ -114,7 +114,7 @@ describe('Stream Feed (Common)', function() {
             }, undefined));
         });
 
-        it('(2) with cb', function() {
+        it('(3) with cb', function() {
             var cb = function() {};
             feed.follow('user', 'henk', cb);
             
@@ -129,7 +129,7 @@ describe('Stream Feed (Common)', function() {
             }, cb));
         });
 
-        it('(2) activity copy limit', function() {
+        it('(4) activity copy limit', function() {
             feed.follow('user', 'henk', { limit: 10 });
             
             var body = {
@@ -144,7 +144,7 @@ describe('Stream Feed (Common)', function() {
             }, undefined));
         });
 
-        it('(2) with cb and activity copy limit', function() {
+        it('(5) with cb and activity copy limit', function() {
             var cb = function() {};
             feed.follow('user', 'henk', { limit: 10 }, cb);
             
@@ -393,7 +393,7 @@ describe('Stream Feed (Common)', function() {
             td.verify(subscribeFn('/' + feed.notificationChannel, undefined));
         });
 
-        it('(2) cb', function() {
+        it('(3) cb', function() {
             var cb = function() {};
             td.replace(this.client, 'appId', 1234);
 

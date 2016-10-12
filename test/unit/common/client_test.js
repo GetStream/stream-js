@@ -27,31 +27,66 @@ describe('Stream Client (Common)', function() {
         expect(this.client.baseUrl).to.be('https://api.getstream.io/api/');
     });
 
-    it('#on', function(done) {
-        expect(this.client.on).to.be.a(Function);
+    describe('#on', function() {
 
-        td.replace(this.client, 'enrichKwargs', enrichKwargs);
+        it('(1) without callback', function(done) {
+            expect(this.client.on).to.be.a(Function);
 
-        this.client.on('request', function() {
+            td.replace(this.client, 'enrichKwargs', enrichKwargs);
+
+            this.client.on('request', function() {
+                done();
+            });
+
+            this.client.get({ uri: 'test' });
+        });
+
+        it('(2) with callback', function(done) {
+            expect(this.client.on).to.be.a(Function);
+
+            td.replace(this.client, 'enrichKwargs', enrichKwargs);
+
+            this.client.on('request', function() {
+                done();
+            });
+
+            this.client.get({ uri: 'test' }, function() {});
+        });
+
+    });
+
+    describe('#off', function() {
+
+        it('(1) specific off', function(done) {
+            expect(this.client.off).to.be.a(Function);
+
+            td.replace(this.client, 'enrichKwargs', enrichKwargs);
+
+            this.client.on('request', function() {
+                done('Expected not to be called');
+            });
+            this.client.off('request');
+
+            this.client.get({ uri: 'test' });
+
             done();
         });
 
-        this.client.get({ uri: 'test' });
-    });
+        it('(2) global off', function(done) {
+            expect(this.client.off).to.be.a(Function);
 
-    it('#off', function(done) {
-        expect(this.client.off).to.be.a(Function);
+            td.replace(this.client, 'enrichKwargs', enrichKwargs);
 
-        td.replace(this.client, 'enrichKwargs', enrichKwargs);
+            this.client.on('request', function() {
+                done('Expected not to be called');
+            });
+            this.client.off();
 
-        this.client.on('request', function() {
-            done('Expected not to be called');
+            this.client.get({ uri: 'test' });
+
+            done();
         });
-        this.client.off('request');
 
-        this.client.get({ uri: 'test' });
-
-        done();
     });
 
     it('#send', function(done) {
@@ -114,7 +149,33 @@ describe('Stream Client (Common)', function() {
             expect(toThrow).to.throwException(function(e) {
                 expect(e).to.be.a(errors.FeedError);
             });
-        });     
+        });
+
+        it('(5) throw with colon', function() {
+            var self = this;
+
+            function toThrow() {
+                self.client.feed('user:jaap');
+            }
+
+            expect(toThrow).to.throwException(function(e) {
+                expect(e).to.be.a(errors.FeedError);
+            });
+        });   
+
+        it('(6) throw without secret and token', function() {
+            var self = this;
+
+            function toThrow() {
+                self.client.feed('user','jaap');
+            }
+
+            self.client.apiSecret = undefined;
+
+            expect(toThrow).to.throwException(function(e) {
+                expect(e).to.be.a(errors.FeedError);
+            });
+        });  
 
     });
 
@@ -169,18 +230,38 @@ describe('Stream Client (Common)', function() {
         expect(url).to.be(this.client.baseUrl + this.client.version + '/' + 'matthisk');
     });
 
-    it('#enrichKwargs', function() {
-        var kwargs = this.client.enrichKwargs({ 
-            url: 'matthisk',
-            signature: 'heimensen',
+    describe('#enrichKwargs', function() {
+
+        it('(1) simple auth type', function() {
+            var kwargs = this.client.enrichKwargs({ 
+                url: 'matthisk',
+                signature: 'heimensen',
+            });
+
+            expect(kwargs.qs.api_key).to.be(this.client.apiKey);
+            expect(kwargs.qs.location).to.be(this.client.group);
+            expect(kwargs.json).to.be(true);
+            expect(kwargs.headers['stream-auth-type']).to.be('simple');
+            expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
+            expect(kwargs.headers['Authorization']).to.be('heimensen');
         });
 
-        expect(kwargs.qs.api_key).to.be(this.client.apiKey);
-        expect(kwargs.qs.location).to.be(this.client.group);
-        expect(kwargs.json).to.be(true);
-        expect(kwargs.headers['stream-auth-type']).to.be('simple');
-        expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-        expect(kwargs.headers['Authorization']).to.be('heimensen');
+        it('(2) jwt signature', function() {
+            var signature = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG5Eb2UiLCJhY3Rpb24iOiJyZWFkIn0.dfayorXXS1rAyd97BGCNgrCodPH9X3P80DPMH5b9D_A";
+
+            var kwargs = this.client.enrichKwargs({ 
+                url: 'matthisk',
+                signature: "feedname " + signature,
+            });
+
+            expect(kwargs.qs.api_key).to.be(this.client.apiKey);
+            expect(kwargs.qs.location).to.be(this.client.group);
+            expect(kwargs.json).to.be(true);
+            expect(kwargs.headers['stream-auth-type']).to.be('jwt');
+            expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
+            expect(kwargs.headers['Authorization']).to.be(signature);
+        });
+
     });
 
     describe('#signActivities', function() {
@@ -205,6 +286,15 @@ describe('Stream Client (Common)', function() {
                 expect(output[0].to[0].split(' ')[1]).to.be(token);    
             }
 
+        });
+
+        it('(3) without secret', function() {
+            var activities = [{ object: 0, actor: 'matthisk', verb: 'tweet' }];
+
+            this.client.apiSecret = undefined;
+            var output = this.client.signActivities(activities);
+
+            expect(output).to.equal(activities);
         });
 
     });

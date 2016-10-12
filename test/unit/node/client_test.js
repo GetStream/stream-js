@@ -88,6 +88,19 @@ describe('Stream Client (Node)', function() {
             }), fn));
         });
 
+        it('(3) update single activity', function() {
+            var post = td.function();
+            td.replace(this.client, 'post', post);
+
+            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+
+            this.client.updateActivity(activities[0]);
+
+            td.verify(post(td.matchers.contains({
+                url: 'activities/',
+            }), undefined));
+        });
+
     });
 
     describe('connect', function() {
