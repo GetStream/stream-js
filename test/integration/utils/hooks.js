@@ -2,6 +2,8 @@ var stream = require('../../../src/getstream')
   , feed = require('../utils').feed
   , config = require('./config');
 
+var INCR = 0;
+
 function feedFromWebpack(client, feed) {
     return client.feed(feed.feedGroup, feed.userId, feed.token);
 }
@@ -29,22 +31,24 @@ function initBrowser() {
 }
 
 function beforeEachNode() {
+    var rnd = Date.now() + Math.random() * 1000;
+
     this.client = stream.connect(config.API_KEY, config.API_SECRET);
     this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
         'group': 'testCycle', 
         'location': 'qa'
     });
-    this.user1 = this.client.feed('user', '11-' + Date.now());
-    this.user2 = this.client.feed('user', '22-' + Date.now());
-    this.user3 = this.client.feed('user', '33-' + Date.now());
-    this.user4 = this.client.feed('user', '44-' + Date.now());
-    this.aggregated2 = this.client.feed('aggregated', '22-' + Date.now());
-    this.aggregated3 = this.client.feed('aggregated', '33-' + Date.now());
-    this.flat3 = this.client.feed('flat', '33-' + Date.now());
-    this.secret3 = this.client.feed('secret', '33-' + Date.now());
-    this.notification3 = this.client.feed('notification', '33-' + Date.now());
-    this.user1ReadOnly = this.client.feed('user', '11-' + Date.now(), null, null, {readOnly: true});
-    this.user2ReadOnly = this.client.feed('user', '22-' + Date.now(), null, null, {readOnly: true});
+    this.user1 = this.client.feed('user', '11-' + rnd + INCR++);
+    this.user2 = this.client.feed('user', '22-' + rnd + INCR++);
+    this.user3 = this.client.feed('user', '33-' + rnd + INCR++);
+    this.user4 = this.client.feed('user', '44-' + rnd + INCR++);
+    this.aggregated2 = this.client.feed('aggregated', '22-' + rnd + INCR++);
+    this.aggregated3 = this.client.feed('aggregated', '33-' + rnd + INCR++);
+    this.flat3 = this.client.feed('flat', '33-' + rnd + INCR++);
+    this.secret3 = this.client.feed('secret', '33-' + rnd + INCR++);
+    this.notification3 = this.client.feed('notification', '33-' + rnd + INCR++);
+    this.user1ReadOnly = this.client.feed('user', '11-' + rnd + INCR++, null, null, {readOnly: true});
+    this.user2ReadOnly = this.client.feed('user', '22-' + rnd + INCR++, null, null, {readOnly: true});
 }
 
 function beforeEachBrowser() {

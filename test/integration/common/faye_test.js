@@ -11,19 +11,17 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     init.call(this);
     beforeEach(beforeEachFn);
 
+    this.timeout(10000);
+
     it('fayeGetClient', function() {
         this.user1.getFayeClient();
     });
 
     it('fayeSubscribe', function() {
-        this.timeout(6000);
-
         return this.user1.subscribe(function callback() {});
     });
 
     it('fayeSubscribeListening', function(done) {
-        this.timeout(6000);
-
         var testUser1 = this.user1,
             testUser2 = this.user2,
             testUser3 = this.user3;
@@ -64,8 +62,6 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeListeningWrongToken', function(done) {
-        this.timeout(10000);
-
         // Invalid token:
         var testUser1 = this.client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY');
         // Valid token:
@@ -102,7 +98,6 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeScope', function(done) {
-        this.timeout(6000);
         var client = this.user1ReadOnly.getFayeClient();
         var isDone = false;
 
@@ -118,7 +113,6 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeScopeTampered', function(done) {
-        this.timeout(6000);
         var client = this.user1ReadOnly.getFayeClient();
         var isDone = false;
 
@@ -133,8 +127,6 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeError', function(done) {
-        this.timeout(6000);
-
         var client = stream.connect('5crf3bhfzesn');
 
         function sub() {

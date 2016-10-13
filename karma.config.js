@@ -19,6 +19,10 @@ function defineFeed(feedGroup, userId, readOnly) {
     };
 }
 
+function rnd() {
+    return Date.now() + Math.random() * 1000;
+}
+
 webpackConfig['devtool'] = 'inline-source-map';
 webpackConfig['plugins'] = [
     new webpack.DefinePlugin({
@@ -28,16 +32,16 @@ webpackConfig['plugins'] = [
         'process.env.STREAM_APP_ID': JSON.stringify(process.env.STREAM_APP_ID),
 
         // Pre generated feed identifiers + tokens
-        'USER_1': JSON.stringify(defineFeed('user', '11-' + Date.now())),
-        'USER_2': JSON.stringify(defineFeed('user', '22-' + Date.now())),
-        'USER_3': JSON.stringify(defineFeed('user', '33-' + Date.now())),
-        'USER_4': JSON.stringify(defineFeed('user', '44-' + Date.now())),
-        'AGG_2': JSON.stringify(defineFeed('aggregated', '22-' + Date.now())),
-        'AGG_3': JSON.stringify(defineFeed('aggregated', '33-' + Date.now())),
-        'FLAT_3': JSON.stringify(defineFeed('flat', '33-' + Date.now())),
-        'SECRET_3': JSON.stringify(defineFeed('secret', '33-' + Date.now())),
-        'NOTI_3': JSON.stringify(defineFeed('notification', '33-' + Date.now())),
-        'USER_READ_ONLY_1': JSON.stringify(defineFeed('user', '11-' + Date.now(), true)),
+        'USER_1': JSON.stringify(defineFeed('user', '11-' + rnd())),
+        'USER_2': JSON.stringify(defineFeed('user', '22-' + rnd())),
+        'USER_3': JSON.stringify(defineFeed('user', '33-' + rnd())),
+        'USER_4': JSON.stringify(defineFeed('user', '44-' + rnd())),
+        'AGG_2': JSON.stringify(defineFeed('aggregated', '22-' + rnd())),
+        'AGG_3': JSON.stringify(defineFeed('aggregated', '33-' + rnd())),
+        'FLAT_3': JSON.stringify(defineFeed('flat', '33-' + rnd())),
+        'SECRET_3': JSON.stringify(defineFeed('secret', '33-' + rnd())),
+        'NOTI_3': JSON.stringify(defineFeed('notification', '33-' + rnd())),
+        'USER_READ_ONLY_1': JSON.stringify(defineFeed('user', '11-' + rnd(), true)),
     }),
     new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
     new RewirePlugin(),
