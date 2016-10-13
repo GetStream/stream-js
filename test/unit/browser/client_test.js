@@ -1,11 +1,13 @@
 var expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach
+  , init = require('../utils/hooks').init
   , stream = require('../../../src/getstream')
   , StreamFeed = require('../../../src/lib/feed')
   , errors = stream.errors;
 
-describe('Stream Client (browser)', function() {
+describe('[UNIT] Stream Client (browser)', function() {
 
+    init.call(this);
     beforeEach(beforeEachFn);
 
     it('shouldn\'t allow secret keys', function() {
@@ -26,7 +28,7 @@ describe('Stream Client (browser)', function() {
         expect(client.browser).to.be(true);
     });
 
-    it('should store config on the client', function() {
+    it.skip('should store config on the client', function() {
         var client = stream.connect('abcdefgh', null, 1000, { 
             'version': 'v2.0',
             'fayeUrl': 'https://hello.world',
@@ -41,7 +43,7 @@ describe('Stream Client (browser)', function() {
     });
 
     it('shouldn\'t support signed requests on the client', function() {
-      expect(this.client.makeSignedRequest).to.be(undefined);
+        expect(this.client.makeSignedRequest).to.be(undefined);
     });
 
     it('#userAgent', function() {

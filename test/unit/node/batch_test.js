@@ -7,7 +7,7 @@ var errors = require('../../../src/getstream').errors,
     signing = signing || require('../../../src/lib/signing');
 
 
-describe('Stream Client Batch (Node)', function() {
+describe('[UNIT] Stream Client Batch (Node)', function() {
 
     beforeEach(beforeEachFn);
 

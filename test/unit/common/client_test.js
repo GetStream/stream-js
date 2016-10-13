@@ -1,5 +1,6 @@
 var expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach
+  , init = require('../utils/hooks').init
   , config = require('../utils/config')
   , td = require('testdouble')
   , stream = require('../../../src/getstream')
@@ -10,8 +11,9 @@ function enrichKwargs(kwargs) {
     return kwargs;
 }
 
-describe('Stream Client (Common)', function() {
+describe('[UNIT] Stream Client (Common)', function() {
 
+    init.call(this);
     beforeEach(beforeEachFn);
     afterEach(function() {
         td.reset();

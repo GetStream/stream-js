@@ -2,7 +2,7 @@ var init = require('../utils/hooks').init
   , expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach;
 
-describe('Stream client (Promises)', function() {
+describe('[INTEGRATION] Stream client (Promises)', function() {
 
     init.call(this);
     beforeEach(beforeEachFn);

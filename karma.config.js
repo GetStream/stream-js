@@ -1,51 +1,50 @@
+var path = require('path');
+var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
-// Karma configuration
-// Generated on Thu Oct 06 2016 16:59:45 GMT+0200 (CEST)
+var RewirePlugin = require("rewire-webpack");
+var signing = require('./src/lib/signing');
 
 delete webpackConfig['entry'];
 delete webpackConfig['output'];
 
+function defineFeed(feedGroup, userId, readOnly) {
+    return {
+        feedGroup: feedGroup,
+        userId: userId,
+        signature: signing.sign(process.env.STREAM_API_SECRET, feedGroup + userId),
+        token: signing.JWTScopeToken(process.env.STREAM_API_SECRET, '*', readOnly ? 'read' : '*', {
+            feedId: feedGroup + userId,
+            expireTokens: true,
+        }),
+    };
+}
+
 webpackConfig['devtool'] = 'inline-source-map';
+webpackConfig['plugins'] = [
+    new webpack.DefinePlugin({
+        'IS_BROWSER_ENV': true,
+        'process.env.STREAM_API_KEY': JSON.stringify(process.env.STREAM_API_KEY),
+        'process.env.STREAM_API_SECRET': JSON.stringify(process.env.STREAM_API_SECRET),
+        'process.env.STREAM_APP_ID': JSON.stringify(process.env.STREAM_APP_ID),
+
+        // Pre generated feed identifiers + tokens
+        'USER_1': JSON.stringify(defineFeed('user', '11-' + Date.now())),
+        'USER_2': JSON.stringify(defineFeed('user', '22-' + Date.now())),
+        'USER_3': JSON.stringify(defineFeed('user', '33-' + Date.now())),
+        'USER_4': JSON.stringify(defineFeed('user', '44-' + Date.now())),
+        'AGG_2': JSON.stringify(defineFeed('aggregated', '22-' + Date.now())),
+        'AGG_3': JSON.stringify(defineFeed('aggregated', '33-' + Date.now())),
+        'FLAT_3': JSON.stringify(defineFeed('flat', '33-' + Date.now())),
+        'SECRET_3': JSON.stringify(defineFeed('secret', '33-' + Date.now())),
+        'NOTI_3': JSON.stringify(defineFeed('notification', '33-' + Date.now())),
+        'USER_READ_ONLY_1': JSON.stringify(defineFeed('user', '11-' + Date.now(), true)),
+    }),
+    new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
+    new RewirePlugin(),
+];
 
 module.exports = function(config) {
 
-    var customLaunchers = {
-        'SL_Chrome': {
-            base: 'SauceLabs',
-            browserName: 'chrome',
-        },
-        'SL_FireFox': {
-            base: 'SauceLabs',
-            browserName: 'firefox',
-        },
-        'SL_Safari': {
-            base: 'SauceLabs',
-            browserName: 'safari',
-        },
-        'SL_IE_9': {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 7',
-            version: '9',
-        },
-        'SL_IE_10': {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 8',
-            version: '10',
-        },
-        'SL_IE_11': {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 8.1',
-            version: '11',
-        },
-        'SL_IE_13': {
-            base: 'SauceLabs',
-            browserName: 'microsoftedge',
-            platform: 'Windows 10',
-        },
-    };
 
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -57,10 +56,10 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
+          'test/integration/browser/**/*_test.js',
+          'test/integration/common/**/*_test.js',
           'test/unit/common/**/*_test.js',
           'test/unit/browser/**/*_test.js',
-          // 'test/integration/browser/**/*_test.js',
-          // 'test/integration/common/**/*_test.js',
         ],
 
         // list of files to exclude
@@ -87,7 +86,7 @@ module.exports = function(config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['dots', 'saucelabs'],
+        reporters: ['mocha'],
 
         // web server port
         port: 9876,
@@ -104,20 +103,15 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        // browsers: ['Chrome'],
-        sauceLabs: {
-            testName: 'Stream-JS Browser Tests',
-            public: "public",
-        },
-        customLaunchers: customLaunchers,
-        browsers: Object.keys(customLaunchers),
+        browsers: ['Chrome'],
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: true,
+        singleRun: false,
 
         // Concurrency level
         // how many browser should be started simultaneous
-        concurrency: Infinity
+        concurrency: Infinity,
+
     });
 };

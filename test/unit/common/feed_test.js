@@ -1,12 +1,14 @@
 var expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach
+  , init = require('../utils/hooks').init
   , td = require('testdouble')
   , errors = require('../../../src/getstream').errors
   , StreamFeed = require('../../../src/lib/feed');
 
-describe('Stream Feed (Common)', function() {
+describe('[UNIT] Stream Feed (Common)', function() {
     var get, post, del, feed;
 
+    init.call(this);
     beforeEach(beforeEachFn);
     beforeEach(function() {
         feed = new StreamFeed(this.client, 'user', 'matthisk', 'token');

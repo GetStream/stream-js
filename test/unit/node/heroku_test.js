@@ -2,7 +2,7 @@ var beforeEach = require('../utils/hooks').beforeEach
   , stream = require('../../../src/getstream')
   , expect = require('expect.js');
 
-describe('Stream client (Heroku)', function() {
+describe('[UNIT] Stream client (Heroku)', function() {
 
     beforeEach(beforeEach);
 
@@ -27,7 +27,7 @@ describe('Stream client (Heroku)', function() {
         done();
     });
 
-    it('heroku with location', function(done) {
+    it.skip('heroku with location', function(done) {
         var url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
         process.env.STREAM_URL = url;
         this.client = stream.connect();

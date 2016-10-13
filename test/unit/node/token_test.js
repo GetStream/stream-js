@@ -2,7 +2,7 @@ var signing = require('../../../src/lib/signing')
   , expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach;
 
-describe('Creating tokens', function() {
+describe('[UNIT] Creating tokens', function() {
 
     beforeEach(beforeEachFn);
 

@@ -1,9 +1,11 @@
 var expect = require('expect.js')
   , beforeEachFn = require('../utils/hooks').beforeEach
+  , init = require('../utils/hooks').init
   , Faye = require('faye');
 
-describe('Faye (browser)', function() {
+describe('[UNIT] Faye (browser)', function() {
 
+    init.call(this);
     beforeEach(beforeEachFn);
 
     it('#getFayeAuthorization', function() {

@@ -1,6 +1,5 @@
 var path = require("path");
 var webpack = require("webpack");
-var RewirePlugin = require("rewire-webpack");
 var minify = process.argv.indexOf('--minify') !== -1;
 
 var plugins = [
@@ -8,7 +7,6 @@ var plugins = [
       IS_BROWSER_ENV: true,
     }),
     new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
-    new RewirePlugin(),
 ];
 
 if (minify) {

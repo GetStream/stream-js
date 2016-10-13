@@ -5,10 +5,24 @@ var stream = require('../../../src/getstream')
   , expect = require('expect.js')
   , wrapCB = require('../utils').wrapCB;
 
-describe('Stream client (Node)', function() {
+describe('[INTEGRATION] Stream client (Node)', function() {
 
     init.call(this);
     beforeEach(beforeEachFn);
+
+    it('get feed', function(done) {
+        this.user1.get({
+            'limit': 1
+        }, function(error, response, body) {
+            if (error) done(error);
+            expect(response.statusCode).to.eql(200);
+
+            var userAgent = response.req._headers['x-stream-client'];
+            expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
+
+            done();
+        });
+    });
 
     it('update activities', function() {
         var self = this;
@@ -268,5 +282,30 @@ describe('Stream client (Node)', function() {
         var feeds = ['flat:33', 'user:11'];
 
         return this.client.addToMany(activity, feeds);
+    });
+
+    it('add activity using to', function() {
+        var self = this;
+        var activityId = null;
+        var activity = {
+            'actor': 1,
+            'verb': 'add',
+            'object': 1
+        };
+        activity['participants'] = ['Thierry', 'Tommaso'];
+        activity['route'] = {
+            'name': 'Vondelpark',
+            'distance': '20'
+        };
+        activity['to'] = [self.flat3.id, 'user:everyone'];
+        
+        return this.user1.addActivity(activity)
+            .then(function(body) {
+                activityId = body['id'];
+                return self.flat3.get({ 'limit': 1 });
+            })
+            .then(function(body) {
+                expect(body['results'][0]['id']).to.eql(activityId); 
+            });
     });
 });

@@ -6,7 +6,7 @@ var stream = require('../../../src/getstream')
   , utils = require('../utils/index')
   , beforeEachFn = require('../utils/hooks').beforeEach;
 
-describe('Stream client (Faye)', function() {
+describe('[INTEGRATION] Stream client (Faye)', function() {
 
     init.call(this);
     beforeEach(beforeEachFn);
@@ -24,9 +24,9 @@ describe('Stream client (Faye)', function() {
     it('fayeSubscribeListening', function(done) {
         this.timeout(6000);
 
-        var testUser1 = utils.feed(this.client, 'user', '111'),
-            testUser2 = utils.feed(this.client, 'user', '222'),
-            testUser3 = utils.feed(this.client, 'user', '333');
+        var testUser1 = this.user1,
+            testUser2 = this.user2,
+            testUser3 = this.user3;
 
         var subscribes = [],
             messages = 0,
@@ -67,9 +67,9 @@ describe('Stream client (Faye)', function() {
         this.timeout(10000);
 
         // Invalid token:
-        var testUser1 = this.client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY'),
-            // Valid token:
-            testUser2 = utils.feed(this.client, 'user', '222');
+        var testUser1 = this.client.feed('user', '111', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY');
+        // Valid token:
+        var testUser2 = this.user2;
 
         var messages = 0,
             activity = {

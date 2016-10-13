@@ -1,20 +1,16 @@
 sudo: false
 language: node_js
 node_js:
-# - '0.11'
-- '0.12'
-- '4.6'
-- '5.7'
-- '6.8'
+- 0.12
+- 4
+- 5
+- 6
 env:
-- BROWSER_TESTS="no" INTEGRATION_TESTS="no"
+- BROWSER_TESTS="no"
 matrix:
  include:
  - node_js: 6.8
    env: BROWSER_TESTS="yes"
- - node_js: 6.8
-   env: INTEGRATION_TESTS="yes"
 script:
-- if [ "$BROWSER_TESTS" == "no" ] && [ "$INTEGRATION_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
-- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-unit-browser; fi
-- if [ "$INTEGRATION_TESTS" == "yes" ]; then npm run test-integration-node; fi
+- if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi

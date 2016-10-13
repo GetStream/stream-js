@@ -6,7 +6,7 @@ var StreamFeed = require('../../../src/lib/feed'),
     signing = require('../../../src/lib/signing');
 
 
-describe('Stream Client (Node)', function() {
+describe('[UNIT] Stream Client (Node)', function() {
 
     beforeEach(beforeEachFn);
 
@@ -114,7 +114,7 @@ describe('Stream Client (Node)', function() {
             delete process.env['LOCAL'];
         });
 
-        it('#LOCAL', function() {
+        it.skip('#LOCAL', function() {
             var client = stream.connect('12345', 'abcdefghijklmnop', null, {
                 location: 'nl-NL'
             });

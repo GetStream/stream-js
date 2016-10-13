@@ -7,7 +7,7 @@ var config = require('../utils/config')
   , errors = require('../../../src/lib/errors')
   , qs = require('qs');
 
-describe('Redirect URL\'s', function() {
+describe('[UNIT] Redirect URL\'s', function() {
 
     beforeEach(beforeEachFn);
 

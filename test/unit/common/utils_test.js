@@ -1,8 +1,11 @@
 var utils = require('../../../src/lib/utils')
+  , init = require('../utils/hooks').init
   , expect = require('expect.js')
   , errors = require('../../../src/lib/errors');
 
-describe('Utility functions', function() {
+describe('[UNIT] Utility functions', function() {
+
+    init.call(this);
 
     it('should validate feed id\'s', function() {
         expect(utils.validateFeedId('flat:0')).to.be.ok();

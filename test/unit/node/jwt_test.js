@@ -3,7 +3,7 @@ var expect = require('expect.js')
   , qcJWT = require('../utils/jwt')
   , signing = signing || require('../../../src/lib/signing');
 
-describe('Json web token validation', function() {
+describe('[UNIT] Json web token validation', function() {
 
     this.timeout(10000);
 
