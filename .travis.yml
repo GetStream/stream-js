@@ -11,9 +11,9 @@ env:
 matrix:
  include:
  - node_js: 6.7
-   env: BROWSER_TESTS="yes" INTEGRATION_TESTS="no"
+   env: BROWSER_TESTS="yes"
  - node_js: 6.7
-   env: INTEGRATION_TESTS="yes" BROWSER_TESTS="no"
+   env: INTEGRATION_TESTS="yes"
 script:
 - if [ "$BROWSER_TESTS" == "no" ] && [ "$INTEGRATION_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
 - if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-unit-browser; fi
