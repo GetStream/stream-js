@@ -5,14 +5,14 @@ node_js:
 - '0.12'
 - '4.6'
 - '5.7'
-- '6.7'
+- '6.8'
 env:
 - BROWSER_TESTS="no" INTEGRATION_TESTS="no"
 matrix:
  include:
- - node_js: 6.7
+ - node_js: 6.8
    env: BROWSER_TESTS="yes"
- - node_js: 6.7
+ - node_js: 6.8
    env: INTEGRATION_TESTS="yes"
 script:
 - if [ "$BROWSER_TESTS" == "no" ] && [ "$INTEGRATION_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
