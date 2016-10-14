@@ -35,7 +35,7 @@ function arbNonEmptyString() {
 }
 
 function arbJWT() {
-  return jwt.sign( arbJSON(), arbNonEmptyString(), arbJSON() );
+  return jwt.sign( arbJSON(), arbNonEmptyString(), { algorithm: 'HS256', noTimestamp: true });
 }
 
 module.exports = {

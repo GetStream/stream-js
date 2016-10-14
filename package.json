@@ -75,7 +75,7 @@
     "xmlhttp-request": "~0.4.1",
     "faye": "~1.2.0",
     "http-signature": "~1.1.1",
-    "jsonwebtoken": "5.7.0",
+    "jsonwebtoken": "7.1.9",
     "qs": "~6.2.0",
     "request": "2.75.0"
   },

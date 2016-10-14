@@ -8,7 +8,7 @@ describe('[UNIT] Json web token validation', function() {
     this.timeout(10000);
 
     it('should decode valid jwts headers', function() {
-        expect( qc.forAll( qcJWT.propertyHeaderJSON, qcJWT.arbJWT ) ).to.be(true);
+        qc.forAll( qcJWT.propertyHeaderJSON, qcJWT.arbJWT );
     });
 
 });
