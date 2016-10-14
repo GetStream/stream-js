@@ -70,7 +70,7 @@ module.exports = function(config) {
 
         // Integration tests can take very long we will give the browser
         // 2 minutes to complete these.
-        browserNoActivityTimeout: 120 * 1000,
+        browserNoActivityTimeout: 300 * 1000,
 
         // Concurrency level
         // how many browser should be started simultaneous
