@@ -42,25 +42,11 @@ function createFeedWithToken(client, feedGroup, userId, readOnly) {
 }
 
 function initNode() {
-    this.timeout(6000);
-    this.localRun = false;
-
-    if (process.env.LOCAL) {
-      // local testing is slow as we run celery tasks in sync
-      this.timeout(25000);
-      this.localRun = true;
-    }
+    this.timeout(30000);
 }
 
 function initBrowser() {
-    this.timeout(6000);
-    this.localRun = false;
-
-    if (document.location.href.indexOf('local=1') != -1) {
-        // local testing via the browser
-        this.timeout(25000);
-        this.localRun = true;
-    }
+    this.timeout(30000);
 }
 
 function beforeEachNode() {

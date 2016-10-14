@@ -11,8 +11,6 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     init.call(this);
     beforeEach(beforeEachFn);
 
-    this.timeout(10000);
-
     it('fayeGetClient', function() {
         this.user1.getFayeClient();
     });

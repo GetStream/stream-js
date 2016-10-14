@@ -62,7 +62,6 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     it('update activity illegal foreign id', function() {
         var self = this;
-        this.timeout(15000);
 
         var activity = {
             'actor': 1,
@@ -93,7 +92,6 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
 
     it('update activity illegal time', function() {
-        this.timeout(15000);
         var self = this;
 
         var activity = {
@@ -123,7 +121,6 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
 
     it('update activity illegal to field', function() {
-        this.timeout(15000);
         var self = this;
 
         var activity = {
@@ -212,8 +209,8 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         client.makeSignedRequest({
             url: 'test/auth/digest/'
         }, function(error, response, body) {
-            if (error) done(error);
-            if (body.exception === 'ApiKeyException') done();
+            if (error) return done(error);
+            if (body.exception === 'ApiKeyException') return done();
         });
     });
 
@@ -229,8 +226,6 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
 
     it('supports batch following', function(done) {
-        this.timeout(6000);
-
         var follows = [{
             'source': 'flat:1',
             'target': 'user:1'

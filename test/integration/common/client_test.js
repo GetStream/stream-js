@@ -40,6 +40,17 @@ describe('[INTEGRATION] Stream client (Common)', function() {
             });
     });
 
+    it.skip('err not null', function(done) {
+        this.user1.addActivity({
+            actor: 'actorname',
+            actorName: 'abc',
+            verb: 'follow'
+        }, function(error, response, body) {
+            expect(error).to.be.an(Object);
+            done();
+        });
+    });
+
     it('signing', function(done) {
         expect(this.user1.token).to.be.an('string');
         done();
@@ -228,7 +239,6 @@ describe('[INTEGRATION] Stream client (Common)', function() {
     it('follow', function() {
         var self = this;
         var activityId = null;
-        this.timeout(9000);
 
         var activity = {
             'actor': 1,
@@ -264,7 +274,6 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     it('unfollow', function() {
         var self = this;
-        this.timeout(6000);
         var activityId = null;
 
         var activity = {
@@ -431,7 +440,6 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     it('mark read and seen', function() {
         // add 2 activities to ensure we have new data
-        this.timeout(15000);
         var self = this;
         var params = {
             limit: 2

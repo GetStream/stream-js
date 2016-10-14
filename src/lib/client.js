@@ -154,6 +154,7 @@ StreamClient.prototype = {
           response: response,
         });
       } else if (!/^2/.test('' + response.statusCode)) {
+        // error = body;
         reject({
           error: body,
           response: response,
@@ -162,7 +163,7 @@ StreamClient.prototype = {
         fulfill(body);
       }
 
-      callback.apply(client, arguments);
+      callback.call(client, error, response, body);
     };
   },
 
