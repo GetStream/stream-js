@@ -31,6 +31,8 @@ function jwt(resource, action, options) {
 }
 
 function createFeedWithToken(client, feedGroup, userId, readOnly) {
+    userId = userId + '-' + Date.now();
+
     var token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
     return client.feed(feedGroup, userId, token);
 }
