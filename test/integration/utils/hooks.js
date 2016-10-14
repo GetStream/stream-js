@@ -30,7 +30,7 @@ function jwt(resource, action, options) {
     return res;
 }
 
-function feedFromWebpack(client, feedGroup, userId, readOnly) {
+function createFeedWithToken(client, feedGroup, userId, readOnly) {
     var token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
     return client.feed(feedGroup, userId, token);
 }
@@ -88,16 +88,16 @@ function beforeEachBrowser() {
         this.client.fayeUrl = 'http://localhost:9999/faye/';
     }
 
-    this.user1 = feedFromWebpack(this.client, 'user', '11');
-    this.user2 = feedFromWebpack(this.client, 'user', '22');
-    this.user3 = feedFromWebpack(this.client, 'user', '33');
-    this.user4 = feedFromWebpack(this.client, 'user', '44');
-    this.aggregated2 = feedFromWebpack(this.client, 'aggregated', '22');
-    this.aggregated3 = feedFromWebpack(this.client, 'aggregated', '33');
-    this.flat3 = feedFromWebpack(this.client, 'flat', '33');
-    this.secret3 = feedFromWebpack(this.client, 'secret', '33');
-    this.notification3 = feedFromWebpack(this.client, 'notification', '33');
-    this.user1ReadOnly = feedFromWebpack(this.client, 'user', '11', true);
+    this.user1 = createFeedWithToken(this.client, 'user', '11');
+    this.user2 = createFeedWithToken(this.client, 'user', '22');
+    this.user3 = createFeedWithToken(this.client, 'user', '33');
+    this.user4 = createFeedWithToken(this.client, 'user', '44');
+    this.aggregated2 = createFeedWithToken(this.client, 'aggregated', '22');
+    this.aggregated3 = createFeedWithToken(this.client, 'aggregated', '33');
+    this.flat3 = createFeedWithToken(this.client, 'flat', '33');
+    this.secret3 = createFeedWithToken(this.client, 'secret', '33');
+    this.notification3 = createFeedWithToken(this.client, 'notification', '33');
+    this.user1ReadOnly = createFeedWithToken(this.client, 'user', '11', true);
 }
 
 module.exports = {
