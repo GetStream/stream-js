@@ -42,11 +42,11 @@ function createFeedWithToken(client, feedGroup, userId, readOnly) {
 }
 
 function initNode() {
-    this.timeout(30000);
+    this.timeout(40000);
 }
 
 function initBrowser() {
-    this.timeout(30000);
+    this.timeout(40000);
 }
 
 function beforeEachNode() {
