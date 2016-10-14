@@ -20,6 +20,8 @@ webpackConfig['plugins'] = [
     new webpack.NormalModuleReplacementPlugin(/crypto/, path.join(__dirname, 'node_modules', 'crypto-browserify', 'index.js')),
     new RewirePlugin(),
 ];
+// We need to override the default crypto-browserfy version loaded
+// by webpack, because it is horribly outdated.
 webpackConfig['node']['Buffer'] = true;
 webpackConfig['module']['loaders'].push({ test: /\.json$/, loader: 'json-loader' });
 
