@@ -30,8 +30,12 @@ function jwt(resource, action, options) {
     return res;
 }
 
+function randUserId(userId) {
+    return userId + '-' + Date.now() + '-' + Math.round(Math.random() * 1000);
+}
+
 function createFeedWithToken(client, feedGroup, userId, readOnly) {
-    userId = userId + '-' + Date.now();
+    userId = randUserId(userId);
 
     var token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
     return client.feed(feedGroup, userId, token);
@@ -65,17 +69,17 @@ function beforeEachNode() {
         'group': 'testCycle', 
         'location': 'qa'
     });
-    this.user1 = this.client.feed('user', '11-' + Date.now());
-    this.user2 = this.client.feed('user', '22-' + Date.now());
-    this.user3 = this.client.feed('user', '33-' + Date.now());
-    this.user4 = this.client.feed('user', '44-' + Date.now());
-    this.aggregated2 = this.client.feed('aggregated', '22-' + Date.now());
-    this.aggregated3 = this.client.feed('aggregated', '33-' + Date.now());
-    this.flat3 = this.client.feed('flat', '33-' + Date.now());
-    this.secret3 = this.client.feed('secret', '33-' + Date.now());
-    this.notification3 = this.client.feed('notification', '33-' + Date.now());
-    this.user1ReadOnly = this.client.feed('user', '11-' + Date.now(), null, null, {readOnly: true});
-    this.user2ReadOnly = this.client.feed('user', '22-' + Date.now(), null, null, {readOnly: true});
+    this.user1 = this.client.feed('user', randUserId('11'));
+    this.user2 = this.client.feed('user', randUserId('22'));
+    this.user3 = this.client.feed('user', randUserId('33'));
+    this.user4 = this.client.feed('user', randUserId('44'));
+    this.aggregated2 = this.client.feed('aggregated', randUserId('22'));
+    this.aggregated3 = this.client.feed('aggregated', randUserId('33'));
+    this.flat3 = this.client.feed('flat', randUserId('33'));
+    this.secret3 = this.client.feed('secret', randUserId('33'));
+    this.notification3 = this.client.feed('notification', randUserId('33'));
+    this.user1ReadOnly = this.client.feed('user', randUserId('11'), null, null, {readOnly: true});
+    this.user2ReadOnly = this.client.feed('user', randUserId('22'), null, null, {readOnly: true});
 }
 
 function beforeEachBrowser() {
