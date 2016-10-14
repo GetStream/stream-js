@@ -68,7 +68,7 @@ It's running unit tests inside the Node environment.
 
 # SauceLabs
 
-Its configuration is stored in [karma.config.js](../karma.config.js).
+Its configuration is stored in [karma.ci.config.js](../karma.ci.config.js).
 
 It's using the karma test runner to execute browser unit tests inside several different browsers on multiple platforms. We use a [karma plugin](https://github.com/karma-runner/karma-sauce-launcher) to enable saucelabs integration for karma.
 
