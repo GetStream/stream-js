@@ -301,7 +301,6 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     it('unfollow keep_history', function() {
         var self = this;
-        this.timeout(6000);
 
         var activityId = null;
 
