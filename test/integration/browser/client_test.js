@@ -1,5 +1,6 @@
 var beforeEachFn = require('../utils/hooks').beforeEach
   , expect = require('expect.js')
+  , signing = require('../../../src/lib/signing')
   , init = require('../utils/hooks').init;
 
 describe('[INTEGRATION] Stream client (Browser)', function() {
@@ -20,7 +21,8 @@ describe('[INTEGRATION] Stream client (Browser)', function() {
             'name': 'Vondelpark',
             'distance': '20'
         };
-        activity['to'] = [this.flat3.id + ' ' + FLAT_3.signature];
+        var signature = signing.sign(process.env.STREAM_API_SECRET, this.flat3.slug + this.flat3.userId);
+        activity['to'] = [this.flat3.id + ' ' + signature];
         
         return this.user1.addActivity(activity)
             .then(function(body) {

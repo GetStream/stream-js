@@ -2,8 +2,37 @@ var stream = require('../../../src/getstream')
   , feed = require('../utils').feed
   , config = require('./config');
 
-function feedFromWebpack(client, feed) {
-    return client.feed(feed.feedGroup, feed.userId, feed.token);
+function jwt(resource, action, options) {
+    var KJUR = require('exports?KJUR!./kjur');
+
+    var header = {
+        alg: "HS256",
+        typ: "JWT",
+    };
+    var payload = {
+        resource: resource,
+        action: action,
+    };
+
+    if (options.feedId) {
+      payload['feed_id'] = options.feedId;
+    }
+
+    if (options.userId) {
+      payload['user_id'] = options.userId;
+    }
+
+    header = JSON.stringify(header);
+    payload = JSON.stringify(payload);
+
+    var res = KJUR.jws.JWS.sign("HS256", header, payload, process.env.STREAM_API_SECRET);
+
+    return res;
+}
+
+function feedFromWebpack(client, feedGroup, userId, readOnly) {
+    var token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
+    return client.feed(feedGroup, userId, token);
 }
 
 function initNode() {
@@ -59,16 +88,16 @@ function beforeEachBrowser() {
         this.client.fayeUrl = 'http://localhost:9999/faye/';
     }
 
-    this.user1 = feedFromWebpack(this.client, USER_1);
-    this.user2 = feedFromWebpack(this.client, USER_2);
-    this.user3 = feedFromWebpack(this.client, USER_3);
-    this.user4 = feedFromWebpack(this.client, USER_4);
-    this.aggregated2 = feedFromWebpack(this.client, AGG_2);
-    this.aggregated3 = feedFromWebpack(this.client, AGG_3);
-    this.flat3 = feedFromWebpack(this.client, FLAT_3);
-    this.secret3 = feedFromWebpack(this.client, SECRET_3);
-    this.notification3 = feedFromWebpack(this.client, NOTI_3);
-    this.user1ReadOnly = feedFromWebpack(this.client, USER_READ_ONLY_1);
+    this.user1 = feedFromWebpack(this.client, 'user', '11');
+    this.user2 = feedFromWebpack(this.client, 'user', '22');
+    this.user3 = feedFromWebpack(this.client, 'user', '33');
+    this.user4 = feedFromWebpack(this.client, 'user', '44');
+    this.aggregated2 = feedFromWebpack(this.client, 'aggregated', '22');
+    this.aggregated3 = feedFromWebpack(this.client, 'aggregated', '33');
+    this.flat3 = feedFromWebpack(this.client, 'flat', '33');
+    this.secret3 = feedFromWebpack(this.client, 'secret', '33');
+    this.notification3 = feedFromWebpack(this.client, 'notification', '33');
+    this.user1ReadOnly = feedFromWebpack(this.client, 'user', '11', true);
 }
 
 module.exports = {

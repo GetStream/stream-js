@@ -2,49 +2,28 @@ var path = require('path');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 var RewirePlugin = require("rewire-webpack");
-var signing = require('./src/lib/signing');
 
 delete webpackConfig['entry'];
 delete webpackConfig['output'];
-
-function defineFeed(feedGroup, userId, readOnly) {
-    return {
-        feedGroup: feedGroup,
-        userId: userId,
-        signature: signing.sign(process.env.STREAM_API_SECRET, feedGroup + userId),
-        token: signing.JWTScopeToken(process.env.STREAM_API_SECRET, '*', readOnly ? 'read' : '*', {
-            feedId: feedGroup + userId,
-            expireTokens: true,
-        }),
-    };
-}
 
 webpackConfig['devtool'] = 'inline-source-map';
 webpackConfig['plugins'] = [
     new webpack.DefinePlugin({
         'IS_BROWSER_ENV': true,
-        'process.env.STREAM_API_KEY': JSON.stringify(process.env.STREAM_API_KEY),
-        'process.env.STREAM_API_SECRET': JSON.stringify(process.env.STREAM_API_SECRET),
-        'process.env.STREAM_APP_ID': JSON.stringify(process.env.STREAM_APP_ID),
-
-        // Pre generated feed identifiers + tokens
-        'USER_1': JSON.stringify(defineFeed('user', '11-' + Date.now())),
-        'USER_2': JSON.stringify(defineFeed('user', '22-' + Date.now())),
-        'USER_3': JSON.stringify(defineFeed('user', '33-' + Date.now())),
-        'USER_4': JSON.stringify(defineFeed('user', '44-' + Date.now())),
-        'AGG_2': JSON.stringify(defineFeed('aggregated', '22-' + Date.now())),
-        'AGG_3': JSON.stringify(defineFeed('aggregated', '33-' + Date.now())),
-        'FLAT_3': JSON.stringify(defineFeed('flat', '33-' + Date.now())),
-        'SECRET_3': JSON.stringify(defineFeed('secret', '33-' + Date.now())),
-        'NOTI_3': JSON.stringify(defineFeed('notification', '33-' + Date.now())),
-        'USER_READ_ONLY_1': JSON.stringify(defineFeed('user', '11-' + Date.now(), true)),
     }),
+    new webpack.EnvironmentPlugin([
+        'STREAM_API_KEY',
+        'STREAM_API_SECRET',
+        'STREAM_APP_ID',
+    ]),
     new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
+    new webpack.NormalModuleReplacementPlugin(/crypto/, path.join(__dirname, 'node_modules', 'crypto-browserify', 'index.js')),
     new RewirePlugin(),
 ];
+webpackConfig['node']['Buffer'] = true;
+webpackConfig['module']['loaders'].push({ test: /\.json$/, loader: 'json-loader' });
 
 module.exports = function(config) {
-
 
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
