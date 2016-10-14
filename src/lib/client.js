@@ -60,8 +60,11 @@ StreamClient.prototype = {
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
+    
+    var protocol = this.options.protocol || 'https';
+    
     if (this.location) {
-      this.baseUrl = 'http://' + this.location + '-api.getstream.io:82/api/';
+        this.baseUrl = protocol + '://' + this.location + '-api.getstream.io/api/';
     }
 
     if (typeof (process) !== 'undefined' && process.env.LOCAL) {

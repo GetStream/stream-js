@@ -114,7 +114,7 @@ describe('[UNIT] Stream Client (Node)', function() {
             delete process.env['LOCAL'];
         });
 
-        it.skip('#LOCAL', function() {
+        it('#LOCAL', function() {
             var client = stream.connect('12345', 'abcdefghijklmnop', null, {
                 location: 'nl-NL'
             });

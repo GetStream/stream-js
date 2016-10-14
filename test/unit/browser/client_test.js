@@ -28,7 +28,7 @@ describe('[UNIT] Stream Client (browser)', function() {
         expect(client.browser).to.be(true);
     });
 
-    it.skip('should store config on the client', function() {
+    it('should store config on the client', function() {
         var client = stream.connect('abcdefgh', null, 1000, { 
             'version': 'v2.0',
             'fayeUrl': 'https://hello.world',
