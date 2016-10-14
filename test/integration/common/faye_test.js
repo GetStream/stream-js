@@ -20,6 +20,8 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     });
 
     it('fayeSubscribeListening', function(done) {
+        this.timeout(60000);
+
         var testUser1 = this.user1,
             testUser2 = this.user2,
             testUser3 = this.user3;
