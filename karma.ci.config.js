@@ -63,13 +63,13 @@ module.exports = function(config) {
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true,
 
-        captureTimeout: 30000,
+        captureTimeout: 60000,
         // Somehow karma doesn't capture intermediate behavior and only 
         // captures once an entire suite is complete. This timeout will
         // guarantee that the browser will have enough time to do this:
 
         // Integration tests can take very long we will give the browser
-        // 2 minutes to complete these.
+        // 300 seconds to complete these.
         browserNoActivityTimeout: 300 * 1000,
 
         // Concurrency level
