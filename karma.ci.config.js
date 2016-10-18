@@ -29,12 +29,12 @@ module.exports = function(config) {
             platform: 'Windows 8.1',
             version: '11',
         },
-        'SL_IE_13': {
-            base: 'SauceLabs',
-            browserName: 'microsoftedge',
-            version: '13',
-            platform: 'Windows 10',
-        },
+        // 'SL_IE_13': {
+        //     base: 'SauceLabs',
+        //     browserName: 'microsoftedge',
+        //     version: '13',
+        //     platform: 'Windows 10',
+        // },
         'SL_IE_14': {
             base: 'SauceLabs',
             browserName: 'microsoftedge',
@@ -74,6 +74,6 @@ module.exports = function(config) {
 
         // Concurrency level
         // how many browser should be started simultaneous
-        concurrency: 1
+        concurrency: 3
     });
 };
