@@ -1,21 +1,16 @@
 sudo: false
 language: node_js
 node_js:
-- '4.6'
-- '5.7'
-- '6.7'
-# env:
-# - LATESTPACKAGES=whoami
-# matrix:
-#   include:
-#   - node_js: 6.7
-#     env: LATESTPACKAGES="ncu -a -u" LATEST=1
+- 0.12
+- 4
+- 5
+- 6
+env:
+- BROWSER_TESTS="no"
+matrix:
+ include:
+ - node_js: 6.8
+   env: BROWSER_TESTS="yes"
 script:
-- npm install npm-check-updates
-# - $LATESTPACKAGES
-- npm install
-- gulp build
-- gulp test
-- mocha test/travis.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
-- npm install -g bower
-- bower install getstream
+- if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi
