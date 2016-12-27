@@ -66,7 +66,7 @@ StreamFeed.prototype = {
      * @example
      * feed.removeActivity(activityId);
      * @example
-     * feed.removeActivity({'foreign_id': foreignId});
+     * feed.removeActivity({'foreignId': foreignId});
      */
     var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
     var params = {};
