@@ -321,6 +321,9 @@ StreamClient.prototype = {
 
     kwargs.headers.Authorization = signature;
     kwargs.headers['X-Stream-Client'] = this.userAgent();
+    // Make sure withCredentials is not enabled, different browser
+    // fallbacks handle it differently by default (meteor)
+    kwargs.withCredentials = false;
     return kwargs;
   },
 
