@@ -37,7 +37,7 @@ module.exports = {
      */
     var activityCopyLimit, qs = {};
 
-    if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'number') {
+    if (typeof callbackOrActivityCopyLimit === 'number') {
       activityCopyLimit = callbackOrActivityCopyLimit;
     }
 
@@ -45,7 +45,7 @@ module.exports = {
       callback = callbackOrActivityCopyLimit;
     }
 
-    if (activityCopyLimit) {
+    if (typeof activityCopyLimit !== 'undefined') {
       qs['activity_copy_limit'] = activityCopyLimit;
     }
 
