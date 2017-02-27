@@ -312,7 +312,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
         return self.user1.addActivity(activity)
             .then(function (body) {
                 activityId = body['id'];
-                self.flat3.follow('user', self.user1.userId);
+                return self.flat3.follow('user', self.user1.userId);
             })
             .then(function () {
                 return self.flat3.unfollow('user', self.user1.userId, {
@@ -323,7 +323,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
                 return utils.delay(config.READ_TIMEOUT);
             })
             .then(function() {
-                return self.flat3.get({ 'limit': 1 }); 
+                return self.flat3.get({ 'limit': 1 });
             })
             .then(function(body) {
                 var firstResult = body['results'][0];
