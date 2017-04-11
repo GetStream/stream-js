@@ -197,22 +197,22 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         return this.client.updateActivity(activity);
     });
 
-    it('supports application level authentication', function(done) {
-        this.client.makeSignedRequest({
-            url: 'test/auth/digest/'
-        }, wrapCB(200, done));
-    });
+//     it('supports application level authentication', function(done) {
+//         this.client.makeSignedRequest({
+//             url: 'test/auth/digest/'
+//         }, wrapCB(200, done));
+//     });
 
-    it('fails application level authentication with wrong keys', function(done) {
-        var client = stream.connect('aap', 'noot');
+//     it('fails application level authentication with wrong keys', function(done) {
+//         var client = stream.connect('aap', 'noot');
 
-        client.makeSignedRequest({
-            url: 'test/auth/digest/'
-        }, function(error, response, body) {
-            if (error) return done(error);
-            if (body.exception === 'ApiKeyException') return done();
-        });
-    });
+//         client.makeSignedRequest({
+//             url: 'test/auth/digest/'
+//         }, function(error, response, body) {
+//             if (error) return done(error);
+//             if (body.exception === 'ApiKeyException') return done();
+//         });
+//     });
 
     it('supports adding activity to multiple feeds', function(done) {
         var activity = {
