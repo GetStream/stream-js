@@ -78,6 +78,9 @@ module.exports = {
       kwargs.json = true;
       kwargs.method = 'POST';
       kwargs.headers = { 'X-Api-Key': this.apiKey };
+      // Make sure withCredentials is not enabled, different browser
+      // fallbacks handle it differently by default (meteor)
+      kwargs.withCredentials = false;
 
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       var req = request(kwargs, callback);

@@ -1,12 +1,17 @@
-Stream-js
+Stream-JS
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
 [![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
-[![Dependencies up to date](https://david-dm.org/GetStream/stream-js.png)](https://david-dm.org/getstream/stream-js)
+[![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
+
+[![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
+
 
 stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
+The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=js). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
 
 
 ### Installation
@@ -169,7 +174,7 @@ var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', event
 
 ```
 
-### Faye
+### Realtime (Faye)
 
 Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick quide to subcribing to feed changes
 
@@ -196,7 +201,7 @@ subscription.cancel();
 ```
 
 
-Docs are available on [GetStream.io](http://getstream.io/docs/).
+Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
 
 
@@ -214,7 +219,7 @@ mocha test/cov.js -R html-cov > cov.html
 ```
 
   [Stream]: https://getstream.io/
-  [GetStream.io]: http://getstream.io/docs/
+  [GetStream.io]: http://getstream.io/docs/?language=js
 
 Releasing
 ------------
@@ -226,3 +231,9 @@ npm install
 npm version [ major | minor | patch ]
 npm publish
 ```
+
+### Copyright and License Information
+
+Copyright (c) 2015-2017 Stream.io Inc, and individual contributors. All rights reserved.
+
+See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.

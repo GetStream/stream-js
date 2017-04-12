@@ -9,6 +9,8 @@ var qs = require('qs');
 var url = require('url');
 var Faye = require('faye');
 
+
+
 /**
  * @callback requestCallback
  * @param {object} [errors]
@@ -58,8 +60,11 @@ StreamClient.prototype = {
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
+    
+    var protocol = this.options.protocol || 'https';
+    
     if (this.location) {
-      this.baseUrl = 'https://' + this.location + '-api.getstream.io/api/';
+        this.baseUrl = protocol + '://' + this.location + '-api.getstream.io/api/';
     }
 
     if (typeof (process) !== 'undefined' && process.env.LOCAL) {
@@ -78,6 +83,7 @@ StreamClient.prototype = {
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
 
+    /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
     }
@@ -151,6 +157,7 @@ StreamClient.prototype = {
           response: response,
         });
       } else if (!/^2/.test('' + response.statusCode)) {
+        // error = body;
         reject({
           error: body,
           response: response,
@@ -159,7 +166,7 @@ StreamClient.prototype = {
         fulfill(body);
       }
 
-      callback.apply(client, arguments);
+      callback.call(client, error, response, body);
     };
   },
 
@@ -314,6 +321,9 @@ StreamClient.prototype = {
 
     kwargs.headers.Authorization = signature;
     kwargs.headers['X-Stream-Client'] = this.userAgent();
+    // Make sure withCredentials is not enabled, different browser
+    // fallbacks handle it differently by default (meteor)
+    kwargs.withCredentials = false;
     return kwargs;
   },
 
@@ -384,6 +394,7 @@ StreamClient.prototype = {
             'api_key': apiKey,
             'signature': subscription.token,
           };
+
         }
 
         callback(message);
@@ -446,7 +457,7 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
-  delete: function(kwargs, cb) {
+  'delete': function(kwargs, cb) {
     /**
      * Shorthand function for delete request
      * @method delete

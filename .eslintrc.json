@@ -1,11 +1,14 @@
 {
-    "extends": "eslint:recommended",
+    "plugins": [
+    ],
+    "extends": [
+        "eslint:recommended"
+    ],
     "rules": {
         "no-console": 0,
         "no-mixed-spaces-and-tabs": 1,
         "comma-dangle": 0,
         "no-unused-vars": 1,
-
         "linebreak-style": [
             2,
             "unix"
@@ -16,20 +19,17 @@
         ]
     },
     "env": {
-        "es6": true,
+        "es6": false,
         "browser": true,
         "commonjs": true,
-        "node": true,
-        "jasmine": true
+        "mocha": true
     },
     "globals": {
-        "Highcharts": true
+        "process": true
     },
-    "ecmaFeatures": {
-        "modules": true,
-        "jsx": true,
-        "experimentalObjectRestSpread": true
+    "ecmaFeatures" : {
+        "modules": true
     },
-    "plugins": [
-    ]
+    "parserOptions": {
+    }
 }

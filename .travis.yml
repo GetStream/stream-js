@@ -1,21 +1,16 @@
 sudo: false
 language: node_js
-node_js: 
-- '4.1'
-- '4.2'
-- '4.3'
-- '5.5'
-- '5.6'
-- '5.7'
-script:
-- gulp build
-- gulp test
-- mocha test/cov.js --reporter mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js
-- npm install -g bower
-- bower install getstream
-addons:
-  sauce_connect: true
+node_js:
+- 0.12
+- 4
+- 5
+- 6
 env:
-  global:
-  - secure: QmxG6aSNZfZlrXcA92/NzX2GNNzcyiFMwEVi9iC2AnHhcm2/YKBtJHQy2AlMpKOON80UZuzYHpKely7jOOASJ7Blr7S4e6uiJR5lPCsW5RFxylY81z1MGhYtMu/64Yau64dFu9Uzue07jwRLVwbLp/jQgkPT3/i/G4qAsx6gK6c=
-  - secure: FlnXcxMo1nfcsW2V8N/n6ZcVsdyxGS+opiaZNhnQNRotPBgGUYeysDVAdKENV1OPMLO3RCasxtxJc9l2vwQVHN6OpuLLqfuWuqK6ZlnlTSCZNHBNSSX0JyaKpu4/Kx9NF2Q2LWMN3dP8QhMG69OIP9Pzv9R0/jpI4+HOlOSWT5Y=
+- BROWSER_TESTS="no"
+matrix:
+ include:
+ - node_js: 6.8
+   env: BROWSER_TESTS="yes"
+script:
+- if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi
