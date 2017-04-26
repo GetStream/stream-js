@@ -36,7 +36,7 @@ bower install getstream
 
 ### Full documentation
 
-Documentation for this JavaScript client are available at the [Stream website](http://getstream.io/docs/?language=js).
+Documentation for this JavaScript client are available at the [Stream website](https://getstream.io/docs/?language=js).
 
 #### Using with React Native
 
