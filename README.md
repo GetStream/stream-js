@@ -9,10 +9,11 @@ Stream-JS
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
+[stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
-stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=js). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
+Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node-orm) which hooks into your ORM.
 
+You can sign up for a Stream account at https://getstream.io/get_started.
 
 ### Installation
 
@@ -32,6 +33,10 @@ bower install getstream
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js) /
 [Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
+
+### Full documentation
+
+Documentation for this JavaScript client are available at the [Stream website](https://getstream.io/docs/?language=js).
 
 #### Using with React Native
 
@@ -155,18 +160,18 @@ user1 = client.feed('user', '1', readonlyToken);
 
 // Create redirect urls
 var impression = {
-    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
-    'user_data': 'tommaso', 
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
+    'user_data': 'tommaso',
     'location': 'email',
     'feed_id': 'user:global'
 };
 var engagement = {
-    'content': 'tweet:2', 
+    'content': 'tweet:2',
     'label': 'click',
-    'position': 1, 
-    'user_data': 'tommaso', 
+    'position': 1,
+    'user_data': 'tommaso',
     'location': 'email',
-    'feed_id': 
+    'feed_id':
     'user:global'
 };
 var events = [impression, engagement];
