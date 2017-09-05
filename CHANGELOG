@@ -2,6 +2,14 @@
  Change history
 ================
 
+3.6.0
+=====
+:released-date: 2017-09-05
+:by: Tommaso Barbugli
+
+* Add type definitions
+* Enforce withCredentials to false (Browser only)
+
 3.4.0
 =====
 :released-date: 2016-06-28
