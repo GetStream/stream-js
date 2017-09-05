@@ -20,7 +20,7 @@
     "test-browser-ci": "./node_modules/.bin/karma start karma.ci.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
     "coverage": "./node_modules/.bin/istanbul bin/run-node-unit-tests.js",
-    "preversion": "npm test-unit-node",
+    "preversion": "npm run test-unit-node",
     "version": "./bin/version.sh && git add dist && git checkout test",
     "postversion": "./bin/postversion.sh"
   },
