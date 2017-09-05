@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-gulp docs
 git add docs/getstream/
 git commit -m 'update docs'
 node ./bin/bower-up.js
