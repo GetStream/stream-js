@@ -58,13 +58,30 @@ errors.SiteError.prototype = new ErrorAbstract();
 
 /**
  * MissingSchemaError
- * @method MissingSchema
+ * @method MissingSchemaError
  * @access private
  * @extends ErrorAbstract
  * @memberof Stream.errors
  * @param  {string} msg
  */
 errors.MissingSchemaError = function MissingSchemaError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+
+/**
+ * StreamApiError
+ * @method StreamApiError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string} msg
+ * @param  {object} data
+ * @param  {object} response
+ */
+errors.StreamApiError = function StreamApiError(msg, data, response) {
+  this.error = data;
+  this.response = response;
+
   ErrorAbstract.call(this, msg);
 };
 
