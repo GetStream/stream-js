@@ -189,6 +189,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done(err);
             }
 
@@ -203,6 +204,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done();
             }
 
@@ -217,6 +219,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done();
             }
 
@@ -230,6 +233,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done(err);
             }
 

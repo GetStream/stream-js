@@ -152,16 +152,9 @@ StreamClient.prototype = {
     var callback = this.wrapCallback(cb);
     return function task(error, response, body) {
       if (error) {
-        reject({
-          error: error,
-          response: response,
-        });
+        reject(new errors.StreamApiError("Unexpected API response", body, response));
       } else if (!/^2/.test('' + response.statusCode)) {
-        // error = body;
-        reject({
-          error: body,
-          response: response,
-        });
+        reject(new errors.StreamApiError("Unexpected API response", body, response));
       } else {
         fulfill(body);
       }
