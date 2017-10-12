@@ -27,7 +27,7 @@ var StreamClient = function() {
 };
 
 StreamClient.prototype = {
-  baseUrl: 'https://api.getstream.io/api/',
+  baseUrl: 'https://api.stream-io-api.com/api/',
   baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
 
   initialize: function(apiKey, apiSecret, appId, options) {
@@ -64,7 +64,7 @@ StreamClient.prototype = {
     var protocol = this.options.protocol || 'https';
     
     if (this.location) {
-        this.baseUrl = protocol + '://' + this.location + '-api.getstream.io/api/';
+        this.baseUrl = protocol + '://' + this.location + '-api.stream-io-api.com/api/';
     }
 
     if (typeof (process) !== 'undefined' && process.env.LOCAL) {

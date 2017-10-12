@@ -118,7 +118,7 @@ describe('[UNIT] Stream Client (Node)', function() {
             var client = stream.connect('12345', 'abcdefghijklmnop', null, {
                 location: 'nl-NL'
             });
-            expect(client.baseUrl).to.be('https://nl-NL-api.getstream.io/api/');
+            expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
         });
 
         it('#LOCAL_FAYE', function() {
@@ -131,10 +131,10 @@ describe('[UNIT] Stream Client (Node)', function() {
         });
 
         it('#STREAM_BASE_URL', function() {
-            process.env['STREAM_BASE_URL'] = 'http://local.getstream.io/api/';
+            process.env['STREAM_BASE_URL'] = 'http://local.stream-io-api.com/api/';
 
             var client = stream.connect('12345', 'abcdefghijklmnop');
-            expect(client.baseUrl).to.be('http://local.getstream.io/api/');
+            expect(client.baseUrl).to.be('http://local.stream-io-api.com/api/');
 
             delete process.env['STREAM_BASE_URL'];
         });

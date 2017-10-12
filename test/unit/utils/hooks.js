@@ -8,22 +8,16 @@ function init() {
 }
 
 function beforeEachBrowser() {
-    this.client = stream.connect(config.API_KEY);
-    this.client = stream.connect(config.API_KEY, null, 9498);
-
-    this.client = new StreamClient(config.API_KEY);
-    this.client = new StreamClient(config.API_KEY, null, 9498);
+  this.client = new StreamClient(config.API_KEY, null, 9498);
 }
 
 function beforeEachNode() {
-    this.client = stream.connect(config.API_KEY, config.API_SECRET);
-    
-    this.client = new StreamClient(config.API_KEY, config.API_SECRET);
+  this.client = new StreamClient(config.API_KEY, config.API_SECRET);
 }
 
 module.exports = {
-    init: init,
-    beforeEachNode : beforeEachNode,
-    beforeEachBrowser : beforeEachBrowser,
-    beforeEach: config.IS_NODE_ENV ? beforeEachNode : beforeEachBrowser,
+  init: init,
+  beforeEachNode : beforeEachNode,
+  beforeEachBrowser : beforeEachBrowser,
+  beforeEach: config.IS_NODE_ENV ? beforeEachNode : beforeEachBrowser,
 };
