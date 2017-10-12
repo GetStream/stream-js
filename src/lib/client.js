@@ -28,7 +28,7 @@ var StreamClient = function() {
 
 StreamClient.prototype = {
   baseUrl: 'https://api.stream-io-api.com/api/',
-  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
+  baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
   initialize: function(apiKey, apiSecret, appId, options) {
     /**
@@ -60,9 +60,9 @@ StreamClient.prototype = {
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
-    
+
     var protocol = this.options.protocol || 'https';
-    
+
     if (this.location) {
         this.baseUrl = protocol + '://' + this.location + '-api.stream-io-api.com/api/';
     }
@@ -77,6 +77,10 @@ StreamClient.prototype = {
 
     if (typeof (process) !== 'undefined' && process.env.STREAM_BASE_URL) {
       this.baseUrl = process.env.STREAM_BASE_URL;
+    }
+
+    if (typeof (process) !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
+      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
     }
 
     this.handlers = {};
@@ -492,13 +496,13 @@ StreamClient.prototype = {
       signature: authToken,
     }, callback);
   },
-  
+
   updateActivity: function(activity) {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
      * @param  {object} activity The activity to update
-     * @return {Promise}          
+     * @return {Promise}
      */
      return this.updateActivities([activity]);
   },
@@ -517,7 +521,7 @@ if (qs) {
      * @param  {string} userId    User id to track
      * @param  {array} events     List of events to track
      * @return {string}           The redirect url
-     */    
+     */
     var uri = url.parse(targetUrl);
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
