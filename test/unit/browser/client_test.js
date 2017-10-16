@@ -38,7 +38,7 @@ describe('[UNIT] Stream Client (browser)', function() {
 
         expect(client.version).to.be('v2.0');
         expect(client.expireTokens).to.be(true);
-        expect(client.baseUrl).to.be('https://nederland-api.getstream.io/api/');
+        expect(client.baseUrl).to.be('https://nederland-api.stream-io-api.com/api/');
         expect(client.fayeUrl).to.be('https://hello.world');
     });
 

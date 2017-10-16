@@ -36,7 +36,7 @@ function connect(apiKey, apiSecret, appId, options) {
       options = {};
     }
 
-    if (location !== 'getstream') {
+    if (location !== 'getstream' && location !== 'stream-io-api') {
       options.location = location;
     }
   }
