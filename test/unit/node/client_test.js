@@ -131,10 +131,10 @@ describe('[UNIT] Stream Client (Node)', function() {
         });
 
         it('#STREAM_BASE_URL', function() {
-            process.env['STREAM_BASE_URL'] = 'http://local.stream-io-api.com/api/';
+            process.env['STREAM_BASE_URL'] = 'https://local.stream-io-api.com/api/';
 
             var client = stream.connect('12345', 'abcdefghijklmnop');
-            expect(client.baseUrl).to.be('http://local.stream-io-api.com/api/');
+            expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
 
             delete process.env['STREAM_BASE_URL'];
         });
