@@ -208,7 +208,13 @@ subscription.cancel();
 
 Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
+#### Node version requirements & Browser support
 
+This API Client project requires Node.js v0.11.0 at a minimum.
+
+The project is supported in line with the Node.js Foundation Release Working Group.
+
+See the [Travis configuration](.travis.yml) and [Sauce Test Status](https://saucelabs.com/u/tthisk) for details of how it is built, tested and packaged.
 
 Contributing
 ------------
