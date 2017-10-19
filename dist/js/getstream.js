@@ -94,7 +94,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      options = {};
 	    }
 
-	    if (location !== 'getstream') {
+	    if (location !== 'getstream' && location !== 'stream-io-api') {
 	      options.location = location;
 	    }
 	  }
@@ -331,8 +331,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	StreamClient.prototype = {
-	  baseUrl: 'https://api.getstream.io/api/',
-	  baseAnalyticsUrl: 'https://analytics.getstream.io/analytics/',
+	  baseUrl: 'https://api.stream-io-api.com/api/',
+	  baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
 	  initialize: function initialize(apiKey, apiSecret, appId, options) {
 	    /**
@@ -368,7 +368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var protocol = this.options.protocol || 'https';
 
 	    if (this.location) {
-	      this.baseUrl = protocol + '://' + this.location + '-api.getstream.io/api/';
+	      this.baseUrl = protocol + '://' + this.location + '-api.stream-io-api.com/api/';
 	    }
 
 	    if (typeof process !== 'undefined' && process.env.LOCAL) {
@@ -381,6 +381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    if (typeof process !== 'undefined' && process.env.STREAM_BASE_URL) {
 	      this.baseUrl = process.env.STREAM_BASE_URL;
+	    }
+
+	    if (typeof process !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
+	      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
 	    }
 
 	    this.handlers = {};
@@ -456,16 +460,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var callback = this.wrapCallback(cb);
 	    return function task(error, response, body) {
 	      if (error) {
-	        reject({
-	          error: error,
-	          response: response
-	        });
+	        reject(new errors.StreamApiError("Unexpected API response", body, response));
 	      } else if (!/^2/.test('' + response.statusCode)) {
-	        // error = body;
-	        reject({
-	          error: body,
-	          response: response
-	        });
+	        reject(new errors.StreamApiError("Unexpected API response", body, response));
 	      } else {
 	        fulfill(body);
 	      }
@@ -808,7 +805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Updates one activity on the getstream-io api
 	     * @since  3.1.0
 	     * @param  {object} activity The activity to update
-	     * @return {Promise}          
+	     * @return {Promise}
 	     */
 	    return this.updateActivities([activity]);
 	  }
@@ -1811,13 +1808,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * MissingSchemaError
-	 * @method MissingSchema
+	 * @method MissingSchemaError
 	 * @access private
 	 * @extends ErrorAbstract
 	 * @memberof Stream.errors
 	 * @param  {string} msg
 	 */
 	errors.MissingSchemaError = function MissingSchemaError(msg) {
+	  ErrorAbstract.call(this, msg);
+	};
+
+	/**
+	 * StreamApiError
+	 * @method StreamApiError
+	 * @access private
+	 * @extends ErrorAbstract
+	 * @memberof Stream.errors
+	 * @param  {string} msg
+	 * @param  {object} data
+	 * @param  {object} response
+	 */
+	errors.StreamApiError = function StreamApiError(msg, data, response) {
+	  this.error = data;
+	  this.response = response;
+
 	  ErrorAbstract.call(this, msg);
 	};
 

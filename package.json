@@ -10,7 +10,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "scripts": {
     "dtslint": "dtslint types/getstream",
     "test": "npm run test-unit-node; npm run test-integration-node",
