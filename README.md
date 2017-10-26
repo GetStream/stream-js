@@ -187,10 +187,10 @@ Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notificati
 var stream = require('getstream');
 // NOTE: the site id is needed for subscribing
 // server side example:
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'SITE_ID');
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID');
 user1 = client.feed('user', '1');
 // same two lines but client side (generate the feed token server side)
-client = stream.connect('YOUR_API_KEY', null, 'SITE_ID');
+client = stream.connect('YOUR_API_KEY', null, 'APP_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
 var subscription = user1.subscribe(function callback() {
