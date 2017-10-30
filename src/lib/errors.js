@@ -68,6 +68,8 @@ errors.MissingSchemaError = function MissingSchemaError(msg) {
   ErrorAbstract.call(this, msg);
 };
 
+errors.MissingSchemaError.prototype = new ErrorAbstract();
+
 /**
  * StreamApiError
  * @method StreamApiError
@@ -85,4 +87,4 @@ errors.StreamApiError = function StreamApiError(msg, data, response) {
   ErrorAbstract.call(this, msg);
 };
 
-errors.MissingSchemaError.prototype = new ErrorAbstract();
+errors.StreamApiError.prototype = new ErrorAbstract();
