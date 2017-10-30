@@ -1818,6 +1818,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ErrorAbstract.call(this, msg);
 	};
 
+	errors.MissingSchemaError.prototype = new ErrorAbstract();
+
 	/**
 	 * StreamApiError
 	 * @method StreamApiError
@@ -1835,7 +1837,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ErrorAbstract.call(this, msg);
 	};
 
-	errors.MissingSchemaError.prototype = new ErrorAbstract();
+	errors.StreamApiError.prototype = new ErrorAbstract();
 
 /***/ }),
 /* 6 */
