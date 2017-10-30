@@ -2,6 +2,15 @@
  Change history
 ================
 
+3.7.0
+=====
+:released-date: 2017-10-30
+:by: Ken Hoff (@kenhoff)
+
+* Add missing StreamApiError prototype (via PR #121 and Issue #119)
+* Updated dtslint to ^0.2.0
+
+
 3.6.0
 =====
 :released-date: 2017-09-05
