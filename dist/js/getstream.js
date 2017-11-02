@@ -63,6 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var StreamClient = __webpack_require__(2);
 	var errors = __webpack_require__(5);
+	var signing = __webpack_require__(7);
 	var request = __webpack_require__(3);
 
 	function connect(apiKey, apiSecret, appId, options) {
@@ -105,6 +106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports.connect = connect;
 	module.exports.errors = errors;
 	module.exports.request = request;
+	module.exports.signing = signing;
 	module.exports.Client = StreamClient;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
