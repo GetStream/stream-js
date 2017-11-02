@@ -5,6 +5,7 @@
  */
 var StreamClient = require('./lib/client');
 var errors = require('./lib/errors');
+var signing = require('./lib/signing');
 var request = require('request');
 
 function connect(apiKey, apiSecret, appId, options) {
@@ -47,4 +48,5 @@ function connect(apiKey, apiSecret, appId, options) {
 module.exports.connect = connect;
 module.exports.errors = errors;
 module.exports.request = request;
+module.exports.signing = signing;
 module.exports.Client = StreamClient;
