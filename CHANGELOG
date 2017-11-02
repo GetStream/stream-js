@@ -2,6 +2,13 @@
  Change history
 ================
 
+3.9.0
+=====
+:released-date: 2017-11-01
+:by: Thierry Schellenbach (@tschellenbach)
+
+* Conveniently expose the sigining library for people using custom endpoints
+
 3.8.0
 =====
 :released-date: 2017-10-30
