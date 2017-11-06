@@ -17,6 +17,13 @@
 * Add missing StreamApiError prototype (via PR #121 and Issue #119)
 * Updated dtslint to ^0.2.0
 
+3.7.0
+=====
+:released-date: 2017-10-30
+:by: Tommaso Barbugli
+
+* API endpoint domain switched from 'getstream.io' to 'stream-io-api.com'
+* API call functions now error with a StreamAPIError
 
 3.6.0
 =====
