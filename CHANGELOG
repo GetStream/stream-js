@@ -2,6 +2,13 @@
  Change history
 ================
 
+3.10.0
+======
+:released-date: 2017-12-06
+:by: Ken Hoff (@kenhoff)
+
+* Adds an updateActivityToTargets method - updates the `to` field on activities.
+
 3.9.0
 =====
 :released-date: 2017-11-01
