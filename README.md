@@ -177,6 +177,15 @@ var engagement = {
 var events = [impression, engagement];
 var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 
+// update the 'to' fields on an existing activity
+// client.feed("user", "ken").function (foreign_id, timestamp, new_targets, added_targets, removed_targets)
+// new_targets, added_targets, and removed_targets are all arrays of feed IDs
+// either provide only the `new_targets` parameter (will replace all targets on the activity),
+// OR provide the added_targets and removed_targets parameters
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, ["feed:1234"])
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, ["feed:1234"])
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, null, ["feed:1234"])
+
 ```
 
 ### Realtime (Faye)
