@@ -714,16 +714,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    if (this.fayeClient === null) {
 	      this.fayeClient = new Faye.Client(this.fayeUrl);
-
-	      this.fayeClient.disable('transport_name');
-	      this.fayeClient.disable('autodisconnect');
-	      this.fayeClient.on('transport:down', function () {
-	        console.error('Faye Client Disconnected');
-	      });
-	      this.fayeClient.on('transport:up', function () {
-	        console.error('Faye Client Connected');
-	      });
-
 	      var authExtension = this.getFayeAuthorization();
 	      this.fayeClient.addExtension(authExtension);
 	    }
