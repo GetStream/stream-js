@@ -713,25 +713,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {object} Faye client
 	     */
 	    if (this.fayeClient === null) {
-	      var BackoffScheduler = function BackoffScheduler() {
-	        Faye.Scheduler.apply(this, arguments);
-	      };
-	      BackoffScheduler.prototype = Object.create(Faye.Scheduler.prototype);
+	      this.fayeClient = new Faye.Client(this.fayeUrl);
 
-	      BackoffScheduler.prototype.getInterval = function () {
-	        var interval = this.options.interval,
-	            attempts = this.attempts;
-
-	        return interval * Math.pow(2, attempts - 1);
-	      };
-
-	      this.fayeClient = new Faye.Client(this.fayeUrl, { scheduler: BackoffScheduler });
+	      this.fayeClient.disable('transport_name');
+	      this.fayeClient.disable('autodisconnect');
 	      this.fayeClient.on('transport:down', function () {
-	        console.log('The Faye transport is down');
+	        console.error('Faye Client Disconnected');
 	      });
 	      this.fayeClient.on('transport:up', function () {
-	        console.log('The Faye transport is up');
+	        console.error('Faye Client Connected');
 	      });
+
 	      var authExtension = this.getFayeAuthorization();
 	      this.fayeClient.addExtension(authExtension);
 	    }
