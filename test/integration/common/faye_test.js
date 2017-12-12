@@ -14,9 +14,13 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     it('fayeGetClient', function() {
         this.user1.getFayeClient();
     });
-
+    
     it('fayeSubscribe', function() {
         return this.user1.subscribe(function callback() {});
+    });
+        
+    it('fayeUnubscribe', function() {
+        return this.user1.unsubscribe(function callback() {});
     });
 
     it('fayeSubscribeListening', function(done) {

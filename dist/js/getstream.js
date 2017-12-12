@@ -713,7 +713,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @return {object} Faye client
 	     */
 	    if (this.fayeClient === null) {
-	      this.fayeClient = new Faye.Client(this.fayeUrl);
+	      var BackoffScheduler = function BackoffScheduler() {
+	        Faye.Scheduler.apply(this, arguments);
+	      };
+	      BackoffScheduler.prototype = Object.create(Faye.Scheduler.prototype);
+
+	      BackoffScheduler.prototype.getInterval = function () {
+	        var interval = this.options.interval,
+	            attempts = this.attempts;
+
+	        return interval * Math.pow(2, attempts - 1);
+	      };
+
+	      this.fayeClient = new Faye.Client(this.fayeUrl, { scheduler: BackoffScheduler });
+	      this.fayeClient.on('transport:down', function () {
+	        console.log('The Faye transport is down');
+	      });
+	      this.fayeClient.on('transport:up', function () {
+	        console.log('The Faye transport is up');
+	      });
 	      var authExtension = this.getFayeAuthorization();
 	      this.fayeClient.addExtension(authExtension);
 	    }
@@ -1701,12 +1719,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
 	    }
 
+	    var subscription = this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
 	    this.client.subscriptions['/' + this.notificationChannel] = {
 	      token: this.token,
-	      userId: this.notificationChannel
+	      userId: this.notificationChannel,
+	      fayeSubscription: subscription
 	    };
 
-	    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+	    return subscription;
+	  },
+
+	  unsubscribe: function unsubscribe() {
+	    /**
+	     * Cancel updates created via feed.subscribe()
+	     * @return void
+	     */
+	    var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
+	    if (streamSubscription) {
+	      delete this.client.subscriptions['/' + this.notificationChannel];
+	      // return this.getFayeClient().unsubscribe('/' + this.notificationChannel, streamSubscription.fayeSubscription);
+	      return streamSubscription.fayeSubscription.cancel();
+	    }
+	    return null;
 	  },
 
 	  getReadOnlyToken: function getReadOnlyToken() {

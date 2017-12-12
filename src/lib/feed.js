@@ -294,8 +294,10 @@ StreamFeed.prototype = {
     var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
     if (streamSubscription) {
       delete this.client.subscriptions['/' + this.notificationChannel];
-      this.getFayeClient().unsubscribe('/' + this.notificationChannel, streamSubscription.subscription);
+      // return this.getFayeClient().unsubscribe('/' + this.notificationChannel, streamSubscription.fayeSubscription);
+      return streamSubscription.fayeSubscription.cancel();
     }
+    return null;
   },
 
   getReadOnlyToken: function() {
