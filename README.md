@@ -202,8 +202,8 @@ user1 = client.feed('user', '1');
 client = stream.connect('YOUR_API_KEY', null, 'APP_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
-var subscription = user1.subscribe(function callback() {
-	/* callback */
+var subscription = user1.subscribe(function (data) {
+	console.log(data);
 });
 // now whenever something changes to the feed user 1
 // the callback will be called
