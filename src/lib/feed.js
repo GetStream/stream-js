@@ -276,12 +276,28 @@ StreamFeed.prototype = {
       throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
     }
 
+    var subscription = this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
     this.client.subscriptions['/' + this.notificationChannel] = {
       token: this.token,
       userId: this.notificationChannel,
+      fayeSubscription: subscription
     };
 
-    return this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+    return subscription;
+  },
+
+  unsubscribe: function() {
+    /**
+     * Cancel updates created via feed.subscribe()
+     * @return void
+     */
+    var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
+    if (streamSubscription) {
+      delete this.client.subscriptions['/' + this.notificationChannel];
+      // return this.getFayeClient().unsubscribe('/' + this.notificationChannel, streamSubscription.fayeSubscription);
+      return streamSubscription.fayeSubscription.cancel();
+    }
+    return null;
   },
 
   getReadOnlyToken: function() {
