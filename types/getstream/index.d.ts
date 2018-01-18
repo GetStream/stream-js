@@ -91,7 +91,7 @@ declare class Feed {
 
   // Subscribe to realtime
   /** Subscribe to Faye realtime source. */
-  subscribe(callback: () => void): object;
+  subscribe(callback: (data: object) => void): Promise<object>;
 
   // Get tokens
   getReadOnlyToken(): string;
