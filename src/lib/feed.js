@@ -353,8 +353,6 @@ StreamFeed.prototype = {
                       throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
                   }
               }
-              // if (removed_targets.includes(added_targets[i])) {
-              // }
           }
       }
 
