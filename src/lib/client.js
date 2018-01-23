@@ -155,7 +155,6 @@ StreamClient.prototype = {
 
     var callback = this.wrapCallback(cb);
     return function task(error, response, body) {
-        // console.log(error);
       if (error) {
         reject(new errors.StreamApiError(`${error}`, body, response));
       } else if (!/^2/.test('' + response.statusCode)) {
