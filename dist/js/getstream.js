@@ -1771,8 +1771,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (added_targets && removed_targets) {
 	      // brute force - iterate through added, check to see if removed contains that element
 	      for (var i = 0; i < added_targets.length; i++) {
-	        if (removed_targets.includes(added_targets[i])) {
-	          throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
+	        // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
+	        for (var j = 0; j < removed_targets.length; j++) {
+	          if (removed_targets[j] == added_targets[i]) {
+	            throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
+	          }
 	        }
 	      }
 	    }
@@ -1945,7 +1948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  	 */
 	  var valid = validRe.test(userId);
 	  if (!valid) {
-	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
+	    throw new errors.FeedError('Invalid userId, please use letters, numbers or _ got: ' + userId);
 	  }
 
 	  return userId;

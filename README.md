@@ -182,6 +182,7 @@ var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', event
 // new_targets, added_targets, and removed_targets are all arrays of feed IDs
 // either provide only the `new_targets` parameter (will replace all targets on the activity),
 // OR provide the added_targets and removed_targets parameters
+// NOTE - the updateActivityToTargets method is not intended to be used in a browser environment.
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, ["feed:1234"])
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, ["feed:1234"])
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, null, ["feed:1234"])
@@ -202,8 +203,8 @@ user1 = client.feed('user', '1');
 client = stream.connect('YOUR_API_KEY', null, 'APP_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
-var subscription = user1.subscribe(function callback() {
-	/* callback */
+var subscription = user1.subscribe(function (data) {
+	console.log(data);
 });
 // now whenever something changes to the feed user 1
 // the callback will be called

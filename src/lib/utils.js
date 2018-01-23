@@ -39,7 +39,7 @@ function validateUserId(userId) {
   	 */
   var valid = validRe.test(userId);
   if (!valid) {
-    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
+    throw new errors.FeedError('Invalid userId, please use letters, numbers or _ got: ' + userId);
   }
 
   return userId;
