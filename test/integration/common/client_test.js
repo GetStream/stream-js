@@ -143,7 +143,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
         var currentDate = new Date();
         activity['date'] = currentDate;
         var isoDate = currentDate.toISOString();
-        
+
         return this.user1.addActivity(activity)
             .then(function(body) {
                 activityId = body['id'];
@@ -348,7 +348,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     it('do i follow', function() {
         var self = this;
-        
+
         return this.user1.follow('flat', '33')
             .then(function doifollow() {
                 return self.user1.following({
@@ -465,7 +465,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
                     mark_read: notificationId
                 };
 
-                return self.notification3.get(params); 
+                return self.notification3.get(params);
             })
             .then(function() {
                 return self.notification3.get(params);
@@ -661,6 +661,8 @@ describe('[INTEGRATION] Stream client (Common)', function() {
                 expect(response.results[0].to).to.have.contain("user:0000");
                 expect(response.results[0].to).to.have.contain("user:5678");
                 done();
+            }).catch(function (err) {
+                console.log(err);
             });
 
         });
