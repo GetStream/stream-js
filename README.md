@@ -182,6 +182,7 @@ var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', event
 // new_targets, added_targets, and removed_targets are all arrays of feed IDs
 // either provide only the `new_targets` parameter (will replace all targets on the activity),
 // OR provide the added_targets and removed_targets parameters
+// NOTE - the updateActivityToTargets method is not intended to be used in a browser environment.
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, ["feed:1234"])
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, ["feed:1234"])
 client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, null, ["feed:1234"])
