@@ -462,9 +462,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var callback = this.wrapCallback(cb);
 	    return function task(error, response, body) {
 	      if (error) {
-	        reject(new errors.StreamApiError("Unexpected API response", body, response));
+	        reject(new errors.StreamApiError('' + error, body, response));
 	      } else if (!/^2/.test('' + response.statusCode)) {
-	        reject(new errors.StreamApiError("Unexpected API response", body, response));
+	        reject(new errors.StreamApiError('' + error, body, response));
 	      } else {
 	        fulfill(body);
 	      }
