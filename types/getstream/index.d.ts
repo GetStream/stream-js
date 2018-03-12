@@ -12,7 +12,7 @@ export function connect(
   options?: object
 ): stream.Client;
 
-declare class Feed {
+export class Feed {
   /** Construct Feed. */
   constructor(
     client: StreamClient,
@@ -46,14 +46,19 @@ declare class Feed {
   follow(
     targetSlug: string,
     targetUserId: string,
-    options?: object
-  ): Promise<object>;
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
   follow(
     targetSlug: string,
     targetUserId: string,
     options: object,
     callback: (err: object, httpResponse: object, body: object) => void
   ): void;
+  follow(
+    targetSlug: string,
+    targetUserId: string,
+    options?: object,
+  ): Promise<object>;
 
   // Unfollow feed
   unfollow(
@@ -98,7 +103,7 @@ declare class Feed {
   getReadWriteToken(): string;
 }
 
-declare class StreamClient {
+export class StreamClient {
   /** Construct StreamClient */
   constructor(
     apiKey: string,
@@ -173,24 +178,22 @@ export { StreamClient as Client };
 // Export the Stream errors
 export namespace errors {
   class MissingSchemaError {
-    /**
-     * Construct MissingSchemaError.
-     * Not typically instantiated by app developers.
-     */
-    constructor();
+  /**
+   * Construct MissingSchemaError.
+   * Not typically instantiated by app developers.
+   */
   }
+
   class FeedError {
-    /**
-     * Construct FeedError.
-     * Not typically instantiated by app developers.
-     */
-    constructor();
+  /**
+   * Construct FeedError.
+   * Not typically instantiated by app developers.
+   */
   }
   class SiteError {
-    /**
-     * Construct SiteError.
-     * Not typically instantiated by app developers.
-     */
-    constructor();
+  /**
+   * Construct SiteError.
+   * Not typically instantiated by app developers.
+   */
   }
 }

@@ -9,6 +9,7 @@
         "noImplicitThis": true,
         "removeComments": true,
         "preserveConstEnums": true,
+        "strictFunctionTypes": true,
         "strictNullChecks": true,
         "sourceMap": true,
         "baseUrl": "../",
