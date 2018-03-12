@@ -46,7 +46,7 @@ declare class Feed {
   follow(
     targetSlug: string,
     targetUserId: string,
-    options: object
+    options?: object
   ): Promise<object>;
   follow(
     targetSlug: string,
