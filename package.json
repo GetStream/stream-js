@@ -13,13 +13,12 @@
   "version": "3.12.3",
   "scripts": {
     "dtslint": "dtslint types/getstream",
-    "test": "npm run test-unit-node; npm run test-integration-node",
+    "test": "npm run test-unit-node",
     "test-unit-node": "./node_modules/.bin/mocha test/unit/common test/unit/node",
-    "test-integration-node": "./node_modules/.bin/mocha test/integration/common test/integration/node",
     "test-browser": "./node_modules/.bin/karma start karma.config.js",
     "test-browser-ci": "./node_modules/.bin/karma start karma.ci.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
-    "coverage": "./node_modules/.bin/istanbul bin/run-node-unit-tests.js",
+    "coverage": "./node_modules/.bin/istanbul cover bin/run-node-unit-tests.js",
     "preversion": "npm run test-unit-node",
     "version": "./bin/version.sh && git add dist && git checkout test",
     "postversion": "./bin/postversion.sh"

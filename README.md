@@ -226,21 +226,17 @@ The project is supported in line with the Node.js Foundation Release Working Gro
 
 See the [Travis configuration](.travis.yml) and [Sauce Test Status](https://saucelabs.com/u/tthisk) for details of how it is built, tested and packaged.
 
-Contributing
-------------
+### Contributing
 
-First, make sure you can run the test suite. Tests are run via Mocha
+First, make sure you can run the test suite. See the [testing Readme](./test/README.md).
 
-```bash
-mocha test/integration/index.js test/unit/index.js
-# browser version (needs to be build through gulp build:test)
-test/browser/test.html
-# coverage
-mocha test/cov.js -R html-cov > cov.html
-```
-
+Take a close look at the docs:
   [Stream]: https://getstream.io/
   [GetStream.io]: http://getstream.io/docs/?language=js
+
+Review the Issue and Pull Request lists for low hanging fruit and work-in-progress. Feel free to contact us to discuss any significant changes you have in mind.
+
+Submit changes for review via Pull Request.
 
 ### Copyright and License Information
 
