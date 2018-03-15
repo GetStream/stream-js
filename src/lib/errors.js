@@ -1,32 +1,22 @@
 var errors = module.exports;
 
-var canCapture = (typeof Error.captureStackTrace === 'function');
-var canStack = !!(new Error()).stack;
+var errorPrototypeFlags = {
+  value: Error,
+  enumerable: false,
+  writable: true,
+  configurable: true
+};
 
-/**
- * Abstract error object
- * @class ErrorAbstract
- * @access private
- * @param  {string}      [msg]         Error message
- * @param  {function}    constructor
- */
-function ErrorAbstract(msg, constructor) {
-  this.message = msg;
-
-  Error.call(this, this.message);
-
+function addStack(err) {
   /* istanbul ignore else */
-  if (canCapture) {
-    Error.captureStackTrace(this, constructor);
-  } else if (canStack) {
-    this.stack = (new Error()).stack;
+  if (typeof Error.captureStackTrace === 'function') {
+    Error.captureStackTrace(err, constructor);
+  } else if (!!(new Error()).stack) {
+    err.stack = (new Error()).stack;
   } else {
-    this.stack = '';
+    err.stack = '';
   }
 }
-
-errors._Abstract = ErrorAbstract;
-ErrorAbstract.prototype = new Error();
 
 /**
  * FeedError
@@ -37,10 +27,19 @@ ErrorAbstract.prototype = new Error();
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
 errors.FeedError = function FeedError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.FeedError.prototype = new ErrorAbstract();
+  var instance = new Error(msg);
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+  addStack(this);
+  return instance;
+}
+errors.FeedError.prototype = Object.create(Error.prototype, {
+  constructor: errorPrototypeFlags
+});
+if (Object.setPrototypeOf){
+    Object.setPrototypeOf(errors.FeedError, Error);
+} else {
+    errors.FeedError.__proto__ = Error;
+}
 
 /**
  * SiteError
@@ -51,10 +50,19 @@ errors.FeedError.prototype = new ErrorAbstract();
  * @param  {string}  [msg]  An error message that will probably end up in a log.
  */
 errors.SiteError = function SiteError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.SiteError.prototype = new ErrorAbstract();
+  var instance = new Error(msg);
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+  addStack(this);
+  return instance;
+}
+errors.SiteError.prototype = Object.create(Error.prototype, {
+  constructor: errorPrototypeFlags
+});
+if (Object.setPrototypeOf){
+    Object.setPrototypeOf(errors.SiteError, Error);
+} else {
+    errors.SiteError.__proto__ = Error;
+}
 
 /**
  * MissingSchemaError
@@ -64,11 +72,20 @@ errors.SiteError.prototype = new ErrorAbstract();
  * @memberof Stream.errors
  * @param  {string} msg
  */
-errors.MissingSchemaError = function MissingSchemaError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.MissingSchemaError.prototype = new ErrorAbstract();
+errors.MissingSchemaError = function (msg) {
+  var instance = new Error(msg);
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+  addStack(this);
+  return instance;
+}
+errors.MissingSchemaError.prototype = Object.create(Error.prototype, {
+  constructor: errorPrototypeFlags
+});
+if (Object.setPrototypeOf){
+    Object.setPrototypeOf(errors.MissingSchemaError, Error);
+} else {
+    errors.MissingSchemaError.__proto__ = Error;
+}
 
 /**
  * StreamApiError
@@ -81,10 +98,16 @@ errors.MissingSchemaError.prototype = new ErrorAbstract();
  * @param  {object} response
  */
 errors.StreamApiError = function StreamApiError(msg, data, response) {
-  this.error = data;
-  this.response = response;
-
-  ErrorAbstract.call(this, msg);
-};
-
-errors.StreamApiError.prototype = new ErrorAbstract();
+  var instance = new Error(msg, data, response);
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+  addStack(this);
+  return instance;
+}
+errors.StreamApiError.prototype = Object.create(Error.prototype, {
+  constructor: errorPrototypeFlags
+});
+if (Object.setPrototypeOf){
+    Object.setPrototypeOf(errors.StreamApiError, Error);
+} else {
+    errors.StreamApiError.__proto__ = Error;
+}
