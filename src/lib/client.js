@@ -156,9 +156,9 @@ StreamClient.prototype = {
     var callback = this.wrapCallback(cb);
     return function task(error, response, body) {
       if (error) {
-        reject(new errors.StreamApiError(`${error}`, body, response));
+        reject(new errors.StreamApiError(error, body, response));
       } else if (!/^2/.test('' + response.statusCode)) {
-        reject(new errors.StreamApiError(`${JSON.stringify(body)} with HTTP status code ${response.statusCode}`, body, response));
+        reject(new errors.StreamApiError(JSON.stringify(body) + ' with HTTP status code ' + response.statusCode, body, response));
       } else {
         fulfill(body);
       }
