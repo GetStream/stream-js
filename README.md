@@ -123,7 +123,7 @@ activities = [
 user1.addActivities(activities);
 
 // specifying additional feeds to push the activity to using the to param
-// especially usefull for notification style feeds
+// especially useful for notification style feeds
 to = ['user:2', 'user:3'];
 activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
 user1.addActivity(activity);
@@ -191,7 +191,7 @@ client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp,
 
 ### Realtime (Faye)
 
-Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick quide to subcribing to feed changes
+Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick guide to subscribing to feed changes
 
 ```javascript
 var stream = require('getstream');
