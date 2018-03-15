@@ -76,6 +76,26 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
         }, cb));
     });
 
+    it('#followMany', function() {
+        expect(this.client.followMany).to.be.a(Function);
+
+        var msr = replaceMSR.call(this);
+
+        var follows = [];
+        var cb = function() {};
+
+        this.client.followMany(follows, 0, cb);
+
+        td.verify(msr({
+            url: 'follow_many/',
+            body: follows,
+            qs: {
+                'activity_copy_limit': 0
+            }
+        }, cb));
+    });
+
+
     it('#makeSignedRequest', function() {
         var self = this;
         td.replace(this.client, 'apiSecret', '');
