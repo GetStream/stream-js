@@ -64,14 +64,19 @@ export class Feed {
   unfollow(
     targetSlug: string,
     targetUserId: string,
-    options?: object
-  ): Promise<object>;
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
   unfollow(
     targetSlug: string,
     targetUserId: string,
-    options?: object,
-    callback?: (err: object, httpResponse: object, body: object) => void
+    options: object,
+    callback: (err: object, httpResponse: object, body: object) => void
   ): void;
+  unfollow(
+    targetSlug: string,
+    targetUserId: string,
+    options?: object
+  ): Promise<object>;
 
   // List followed feeds
   following(options: object): Promise<object>;
