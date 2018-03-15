@@ -1,0 +1,7 @@
+{
+    "extends": "dtslint/dtslint.json",
+    "strictFunctionTypes": true,
+    "rules": {
+      "indent": [true, "spaces"]
+    }
+}

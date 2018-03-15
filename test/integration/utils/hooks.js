@@ -52,9 +52,9 @@ function initBrowser() {
 function beforeEachNode() {
     this.client = stream.connect(config.API_KEY, config.API_SECRET);
     this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
-        'group': 'testCycle', 
+        'group': 'testCycle',
         'location': 'qa',
-        'protocol': 'http',
+        'protocol': 'https',
     });
     this.user1 = this.client.feed('user', randUserId('11'));
     this.user2 = this.client.feed('user', randUserId('22'));
@@ -72,9 +72,9 @@ function beforeEachNode() {
 function beforeEachBrowser() {
     this.client = stream.connect(config.API_KEY);
     this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
-        'group': 'browserTestCycle', 
+        'group': 'browserTestCycle',
         'location': 'qa',
-        'protocol': 'http',
+        'protocol': 'https',
     });
 
     if (this.localRun){

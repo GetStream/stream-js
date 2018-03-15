@@ -449,4 +449,47 @@ describe('[UNIT] Stream Feed (Common)', function() {
         });
 
     });
+
+    describe('#updateActivityToTargets', function() {
+        it('throws an error if `foreign_id` or `time` isn\'t provided', function() {
+            function noTime() {
+                feed.updateActivityToTargets('foreign_id:1234');
+            }
+
+            function noForeignID() {
+                feed.updateActivityToTargets(null, new Date());
+            }
+            expect(noTime).to.throwException();
+            expect(noForeignID).to.throwException();
+        });
+
+        it('throws an error if no `new_targets`, `add_targets`, or `remove_targets` isn\'t provided', function() {
+            var noTargets = function() {
+                feed.updateActivityToTargets('foreign_id:1234', new Date());
+            };
+            expect(noTargets).to.throwException();
+        });
+
+        it('throws an error if `new_targets` is provided along with either `add_targets` or `remove_targets`', function() {
+            var newTargetsWithAdd = function() {
+                feed.updateActivityToTargets('foreign_id:1234', new Date(), ["targetFeed:1234"], ["anotherTargetFeed:1234"]);
+            };
+            var newTargetsWithRemove = function() {
+                feed.updateActivityToTargets('foreign_id:1234', new Date(), ["targetFeed:1234"], null, ["anotherTargetFeed:1234"]);
+            };
+            expect(newTargetsWithAdd).to.throwException();
+            expect(newTargetsWithRemove).to.throwException();
+        });
+
+        it('throws an error if `add_targets` and `remove_targets` both contain the same ID', function() {
+            var sameTargets1 = function() {
+                feed.updateActivityToTargets('foreign_id:1234', new Date(), null, ["targetFeed:1234"], ["targetFeed:1234"]);
+            };
+            var sameTargets2 = function() {
+                feed.updateActivityToTargets('foreign_id:1234', new Date(), null, ["targetFeed:1234", "targetFeed:5678"], ["targetFeed:1234", "targetFeed:0000"]);
+            };
+            expect(sameTargets1).to.throwException();
+            expect(sameTargets2).to.throwException();
+        });
+    });
 });

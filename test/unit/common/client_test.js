@@ -26,7 +26,7 @@ describe('[UNIT] Stream Client (Common)', function() {
         expect(this.client.group).to.be('unspecified');
         expect(this.client.location).to.be(undefined);
         expect(this.client.expireTokens).to.be(false);
-        expect(this.client.baseUrl).to.be('https://api.getstream.io/api/');
+        expect(this.client.baseUrl).to.be('https://api.stream-io-api.com/api/');
     });
 
     describe('#on', function() {
@@ -189,6 +189,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done(err);
             }
 
@@ -203,6 +204,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done();
             }
 
@@ -217,6 +219,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done();
             }
 
@@ -230,6 +233,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             }
 
             function reject(err) {
+                expect(err).to.be.a(errors.StreamApiError);
                 done(err);
             }
 

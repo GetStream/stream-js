@@ -9,10 +9,11 @@ Stream-JS
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
+[stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
-stream-js is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=js). Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node) which hooks into your ORM.
+Note that there is also a [higher level Node integration](https://github.com/getstream/stream-node-orm) which hooks into your ORM.
 
+You can sign up for a Stream account at https://getstream.io/get_started.
 
 ### Installation
 
@@ -32,6 +33,10 @@ bower install getstream
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js) /
 [Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
+
+### Full documentation
+
+Documentation for this JavaScript client are available at the [Stream website](https://getstream.io/docs/?language=js).
 
 #### Using with React Native
 
@@ -118,7 +123,7 @@ activities = [
 user1.addActivities(activities);
 
 // specifying additional feeds to push the activity to using the to param
-// especially usefull for notification style feeds
+// especially useful for notification style feeds
 to = ['user:2', 'user:3'];
 activity = {'to': to, 'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'};
 user1.addActivity(activity);
@@ -155,41 +160,51 @@ user1 = client.feed('user', '1', readonlyToken);
 
 // Create redirect urls
 var impression = {
-    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
-    'user_data': 'tommaso', 
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
+    'user_data': 'tommaso',
     'location': 'email',
     'feed_id': 'user:global'
 };
 var engagement = {
-    'content': 'tweet:2', 
+    'content': 'tweet:2',
     'label': 'click',
-    'position': 1, 
-    'user_data': 'tommaso', 
+    'position': 1,
+    'user_data': 'tommaso',
     'location': 'email',
-    'feed_id': 
+    'feed_id':
     'user:global'
 };
 var events = [impression, engagement];
 var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 
+// update the 'to' fields on an existing activity
+// client.feed("user", "ken").function (foreign_id, timestamp, new_targets, added_targets, removed_targets)
+// new_targets, added_targets, and removed_targets are all arrays of feed IDs
+// either provide only the `new_targets` parameter (will replace all targets on the activity),
+// OR provide the added_targets and removed_targets parameters
+// NOTE - the updateActivityToTargets method is not intended to be used in a browser environment.
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, ["feed:1234"])
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, ["feed:1234"])
+client.feed("user", "ken").updateActivityToTargets("foreign_id:1234", timestamp, null, null, ["feed:1234"])
+
 ```
 
 ### Realtime (Faye)
 
-Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick quide to subcribing to feed changes
+Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick guide to subscribing to feed changes
 
 ```javascript
 var stream = require('getstream');
 // NOTE: the site id is needed for subscribing
 // server side example:
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'SITE_ID');
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID');
 user1 = client.feed('user', '1');
 // same two lines but client side (generate the feed token server side)
-client = stream.connect('YOUR_API_KEY', null, 'SITE_ID');
+client = stream.connect('YOUR_API_KEY', null, 'APP_ID');
 user1 = client.feed('user', '1', 'feedtoken');
 // subscribe to the changes
-var subscription = user1.subscribe(function callback() {
-	/* callback */
+var subscription = user1.subscribe(function (data) {
+	console.log(data);
 });
 // now whenever something changes to the feed user 1
 // the callback will be called
@@ -203,7 +218,13 @@ subscription.cancel();
 
 Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
+#### Node version requirements & Browser support
 
+This API Client project requires Node.js v0.11.0 at a minimum.
+
+The project is supported in line with the Node.js Foundation Release Working Group.
+
+See the [Travis configuration](.travis.yml) and [Sauce Test Status](https://saucelabs.com/u/tthisk) for details of how it is built, tested and packaged.
 
 Contributing
 ------------
@@ -221,13 +242,8 @@ mocha test/cov.js -R html-cov > cov.html
   [Stream]: https://getstream.io/
   [GetStream.io]: http://getstream.io/docs/?language=js
 
-Releasing
-------------
+### Copyright and License Information
 
-Make sure your working directory is clean. And run:
+Copyright (c) 2015-2018 Stream.io Inc, and individual contributors. All rights reserved.
 
-```bash
-npm install
-npm version [ major | minor | patch ]
-npm publish
-```
+See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.

@@ -9,6 +9,9 @@
     "gulpfile.js",
     "LICENSE",
     "package.json",
+    "types/getstream/tests-getstream.ts",
+    "types/getstream/tsconfig.json",
+    "types/getstream/tslint.json",
     "**/.*",
     "**/*.json",
     "**/*.html"

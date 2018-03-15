@@ -1,5 +1,6 @@
 var errors = require('./errors');
-var validRe = /^[\w-]+$/;
+var validFeedSlugRe = /^[\w]+$/;
+var validUserIdRe = /^[\w-]+$/;
 
 function validateFeedId(feedId) {
   /*
@@ -23,9 +24,9 @@ function validateFeedSlug(feedSlug) {
   /*
   	 * Validate that the feedSlug matches \w
   	 */
-  var valid = validRe.test(feedSlug);
+  var valid = validFeedSlugRe.test(feedSlug);
   if (!valid) {
-    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
+    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _: ' + feedSlug);
   }
 
   return feedSlug;
@@ -37,9 +38,9 @@ function validateUserId(userId) {
   /*
   	 * Validate the userId matches \w
   	 */
-  var valid = validRe.test(userId);
+  var valid = validUserIdRe.test(userId);
   if (!valid) {
-    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + userId);
+    throw new errors.FeedError('Invalid userId, please use letters, numbers, - or _: ' + userId);
   }
 
   return userId;
