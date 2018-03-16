@@ -462,7 +462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var callback = this.wrapCallback(cb);
 	    return function task(error, response, body) {
 	      if (error) {
-	        reject(new errors.StreamApiError('' + error, body, response));
+	        reject(new errors.StreamApiError(error, body, response));
 	      } else if (!/^2/.test('' + response.statusCode)) {
 	        reject(new errors.StreamApiError(JSON.stringify(body) + ' with HTTP status code ' + response.statusCode, body, response));
 	      } else {
@@ -1908,7 +1908,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var errors = __webpack_require__(5);
-	var validRe = /^[\w-]+$/;
+	var validFeedSlugRe = /^[\w]+$/;
+	var validUserIdRe = /^[\w-]+$/;
 
 	function validateFeedId(feedId) {
 	  /*
@@ -1932,9 +1933,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	  	 * Validate that the feedSlug matches \w
 	  	 */
-	  var valid = validRe.test(feedSlug);
+	  var valid = validFeedSlugRe.test(feedSlug);
 	  if (!valid) {
-	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _ got: ' + feedSlug);
+	    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _: ' + feedSlug);
 	  }
 
 	  return feedSlug;
@@ -1946,9 +1947,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*
 	  	 * Validate the userId matches \w
 	  	 */
-	  var valid = validRe.test(userId);
+	  var valid = validUserIdRe.test(userId);
 	  if (!valid) {
-	    throw new errors.FeedError('Invalid userId, please use letters, numbers or _ got: ' + userId);
+	    throw new errors.FeedError('Invalid userId, please use letters, numbers, - or _: ' + userId);
 	  }
 
 	  return userId;
