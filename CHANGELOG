@@ -2,58 +2,110 @@
  Change history
 ================
 
+3.13.0
+======
+:release-date: 2018-03-15
+:by: Dwight Gunning (@dwightgunning)
+
+* Fixes break on babel transpilation introduced in 3.12.3 (#145)
+* Fixes regex checks on Feed Ids and User Ids and clarifies error messages
+* Updates downstream dependencies
+* Fixes and enhancements to TypeScript type definitions (#139)
+* Advances package 'engines' advisory to cover Node.js v9.0
+
+
+3.12.3
+======
+:release-date: 2018-01-31
+:by: Ken Hoff (@kenhoff)
+
+* Fixed incorrect TypeScript type definition on Feed.subscribe()
+
+
+3.12.2
+======
+:release-date: 2018-01-29
+:by: Ken Hoff (@kenhoff)
+
+* Further improvements to custom Error messages
+
+
+3.12.1
+======
+:release-date: 2018-01-25
+:by: Ken Hoff (@kenhoff)
+
+* Improvements to custom Error messages
+
+3.12.0
+======
+:release-date: 2018-01-24
+:by: Ken Hoff (@kenhoff)
+
+* Fixes for Node 4 compatibility
+* Corrects error/validation message on user id regex check
+* Clarifications to documention
+
+
 3.10.0
 ======
-:released-date: 2017-12-06
+:release-date: 2017-12-06
 :by: Ken Hoff (@kenhoff)
 
 * Adds an updateActivityToTargets method - updates the `to` field on activities.
 
+
 3.9.0
 =====
-:released-date: 2017-11-01
+:release-date: 2017-11-01
 :by: Thierry Schellenbach (@tschellenbach)
 
 * Conveniently expose the sigining library for people using custom endpoints
 
+
 3.8.0
 =====
-:released-date: 2017-10-30
+:release-date: 2017-10-30
 :by: Ken Hoff (@kenhoff)
 
 * Add missing StreamApiError prototype (via PR #121 and Issue #119)
 * Updated dtslint to ^0.2.0
 
+
 3.7.0
 =====
-:released-date: 2017-10-30
+:release-date: 2017-10-30
 :by: Tommaso Barbugli
 
 * API endpoint domain switched from 'getstream.io' to 'stream-io-api.com'
 * API call functions now error with a StreamAPIError
 
+
 3.6.0
 =====
-:released-date: 2017-09-05
+:release-date: 2017-09-05
 :by: Tommaso Barbugli
 
 * Add type definitions
 * Enforce withCredentials to false (Browser only)
 
+
 3.4.0
 =====
-:released-date: 2016-06-28
+:release-date: 2016-06-28
 :by: Matthisk Heimensen
 
 * add getReadOnlyToken and getReadWriteToken method to feed instances
 * Update Faye to 1.2.0
 
+
 3.3.0
 =====
-:released-date: 2016-06-27
+:release-date: 2016-06-27
 :by: Tommaso Barbugli
 
 * Pin down all dependencies
+
 
 3.2.0
 =====
@@ -61,6 +113,7 @@
 :by: Tommaso Barbugli
 
 * Added support for keep_history parameter on unfollow
+
 
 3.1.2
 =====
@@ -117,6 +170,7 @@
 * Added location support to reduce latency
 * Heroku location support
 
+
 2.0.5
 =====
 :release-date: 2014-11-25
@@ -143,12 +197,14 @@
 * API versioning support
 * Cleanup of API client codebase and naming
 
+
 1.0.6
 =====
 :release-date: 2014-09-16
 :by: Thierry Schellenbach
 
 * Bugfix for filtering support
+
 
 1.0.5
 =====
