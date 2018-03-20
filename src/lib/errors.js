@@ -1,12 +1,5 @@
 var errors = module.exports;
 
-var errorPrototypeFlags = {
-  value: Error,
-  enumerable: false,
-  writable: true,
-  configurable: true
-};
-
 function addStack(err) {
   /* istanbul ignore else */
   if (typeof Error.captureStackTrace === 'function') {
@@ -33,7 +26,12 @@ errors.FeedError = function FeedError(msg) {
   return instance;
 }
 errors.FeedError.prototype = Object.create(Error.prototype, {
-  constructor: errorPrototypeFlags
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
 });
 if (Object.setPrototypeOf){
     Object.setPrototypeOf(errors.FeedError, Error);
@@ -56,7 +54,12 @@ errors.SiteError = function SiteError(msg) {
   return instance;
 }
 errors.SiteError.prototype = Object.create(Error.prototype, {
-  constructor: errorPrototypeFlags
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
 });
 if (Object.setPrototypeOf){
     Object.setPrototypeOf(errors.SiteError, Error);
@@ -79,7 +82,12 @@ errors.MissingSchemaError = function (msg) {
   return instance;
 }
 errors.MissingSchemaError.prototype = Object.create(Error.prototype, {
-  constructor: errorPrototypeFlags
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
 });
 if (Object.setPrototypeOf){
     Object.setPrototypeOf(errors.MissingSchemaError, Error);
@@ -104,7 +112,12 @@ errors.StreamApiError = function StreamApiError(msg, data, response) {
   return instance;
 }
 errors.StreamApiError.prototype = Object.create(Error.prototype, {
-  constructor: errorPrototypeFlags
+  constructor: {
+    value: Error,
+    enumerable: false,
+    writable: true,
+    configurable: true
+  }
 });
 if (Object.setPrototypeOf){
     Object.setPrototypeOf(errors.StreamApiError, Error);
