@@ -99,7 +99,13 @@ describe('[UNIT] Redirect URL\'s', function() {
     });
 
     it('should follow redirect urls', function(done) {
-        var events = [],
+        var events = [{
+                'foreign_id': 'tweet:1',
+                'label': 'click',
+                'user_id': 'tommaso',
+                'location': 'email',
+                'feed_id': 'user:global'
+            }],
             userId = 'tommaso',
             targetUrl = 'http://google.com/?a=b&c=d';
 
