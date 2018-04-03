@@ -528,7 +528,7 @@ if (qs) {
       throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: "*", expireTokens: this.expireTokens });
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {
       'auth_type': 'jwt',
