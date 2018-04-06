@@ -47,7 +47,7 @@ describe('[UNIT] Redirect URL\'s', function() {
         expect(decoded).to.eql({
             'resource': 'redirect_and_track',
             'action': '*',
-            'user_id': userId,
+            'user_id': '*',
         });
 
         for (var i = 0; i < expectedParts.length; i++) {
@@ -89,7 +89,7 @@ describe('[UNIT] Redirect URL\'s', function() {
         expect(decoded).to.eql({
             'resource': 'redirect_and_track',
             'action': '*',
-            'user_id': userId,
+            'user_id': '*',
         });
 
         for (var i = 0; i < expectedParts.length; i++) {
