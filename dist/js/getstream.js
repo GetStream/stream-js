@@ -735,6 +735,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.send('request', 'get', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'GET';
+	      kwargs.gzip = true;
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
 	    }).bind(this));
@@ -754,6 +755,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.send('request', 'post', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'POST';
+	      kwargs.gzip = true;
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
 	    }).bind(this));
@@ -772,6 +774,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'delete', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.gzip = true;
 	      kwargs.method = 'DELETE';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
@@ -833,7 +836,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
 	    }
 
-	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: "*", expireTokens: this.expireTokens });
 	    var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
 	    var kwargs = {
 	      'auth_type': 'jwt',
