@@ -469,6 +469,7 @@ StreamClient.prototype = {
     return new Promise(function(fulfill, reject) {
       this.send('request', 'delete', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
+      kwargs.gzip = true;
       kwargs.method = 'DELETE';
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
