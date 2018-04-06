@@ -430,6 +430,7 @@ StreamClient.prototype = {
       this.send('request', 'get', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
       kwargs.method = 'GET';
+      kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
     }.bind(this));
@@ -449,6 +450,7 @@ StreamClient.prototype = {
       this.send('request', 'post', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
       kwargs.method = 'POST';
+      kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
     }.bind(this));
