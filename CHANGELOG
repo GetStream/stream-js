@@ -2,6 +2,14 @@
  Change history
 ================
 
+3.134.0
+======
+:release-date: 2018-04-06
+:by: Tommaso Barbugli
+
+* Accept gzip encoded responses
+
+
 3.13.0
 ======
 :release-date: 2018-03-15
