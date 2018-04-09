@@ -98,6 +98,39 @@ describe('[UNIT] Redirect URL\'s', function() {
         delete process.env['STREAM_ANALYTICS_BASE_URL']
     });
 
+
+    it('should follow redirect urls', function(done) {
+        var events = [{
+                'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
+                'user_data':'tommaso',
+                'location':'email',
+                'feed_id':'user:global'
+            },{
+                'content':'tweet:2',
+                'label':'click',
+                'position':1,
+                'user_data':'tommaso',
+                'location':'email',
+                'feed_id':'user:global'
+            }],
+            userId = 'tommaso',
+            targetUrl = 'http://google.com/?a=b&c=d';
+
+        var redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
+
+        request(redirectUrl, function(err, response) {
+            if (err) {
+                done(err);
+            } else if (response.statusCode !== 200) {
+                done('Expecting a status code of 200 but got ' + response.statusCode);
+            } else if (response.request.uri.hostname.indexOf('google') === -1) {
+                done('Did not follow redirect to google');
+            } else {
+                done();
+            }
+        });
+    });
+
     it('should fail creating email redirects on invalid targets', function() {
         var self = this;
         expect(function() {
