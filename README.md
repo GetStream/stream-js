@@ -2,12 +2,9 @@ Stream-JS
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
-[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
 [stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
