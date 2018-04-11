@@ -393,6 +393,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.browser = typeof window !== 'undefined';
 	    this.node = !this.browser;
 
+	    if (!this.browser) {
+	      var http = __webpack_require__(50);
+	      var https = __webpack_require__(51);
+
+	      var httpsAgent = new https.Agent({
+	        keepAlive: true,
+	        keepAliveMsecs: 3000
+	      });
+
+	      var httpAgent = new http.Agent({
+	        keepAlive: true,
+	        keepAliveMsecs: 3000
+	      });
+
+	      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+	    }
+
 	    /* istanbul ignore next */
 	    if (this.browser && this.apiSecret) {
 	      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
@@ -606,6 +623,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    kwargs.url = this.enrichUrl(kwargs.url);
 	    if (kwargs.qs === undefined) {
 	      kwargs.qs = {};
+	    }
+
+	    if (!this.browser) {
+	      kwargs.agent = this.requestAgent;
 	    }
 
 	    kwargs.qs['api_key'] = this.apiKey;
@@ -5199,6 +5220,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = Subscription;
 
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports) {
+
+	/* (ignored) */
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports) {
+
+	/* (ignored) */
 
 /***/ })
 /******/ ])
