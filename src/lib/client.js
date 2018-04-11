@@ -87,6 +87,23 @@ StreamClient.prototype = {
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
 
+    if (!this.browser) {
+      var http = require('http');
+      var https = require('https');
+
+      var httpsAgent = new https.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      var httpAgent = new http.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+    }
+
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
@@ -300,6 +317,10 @@ StreamClient.prototype = {
     kwargs.url = this.enrichUrl(kwargs.url);
     if (kwargs.qs === undefined) {
       kwargs.qs = {};
+    }
+
+    if (!this.browser) {
+      kwargs.agent = this.requestAgent;
     }
 
     kwargs.qs['api_key'] = this.apiKey;

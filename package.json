@@ -30,7 +30,9 @@
     "jsonwebtoken": false,
     "./src/lib/batch_operations.js": false,
     "qs": false,
-    "url": false
+    "url": false,
+    "http": false,
+    "https": false
   },
   "react-native": {
     "request": "xmlhttp-request",
