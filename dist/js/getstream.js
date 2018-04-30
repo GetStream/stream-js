@@ -393,6 +393,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.browser = typeof window !== 'undefined';
 	    this.node = !this.browser;
 
+	    if (!this.browser) {
+	      var http = __webpack_require__(50);
+	      var https = __webpack_require__(51);
+
+	      var httpsAgent = new https.Agent({
+	        keepAlive: true,
+	        keepAliveMsecs: 3000
+	      });
+
+	      var httpAgent = new http.Agent({
+	        keepAlive: true,
+	        keepAliveMsecs: 3000
+	      });
+
+	      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+	    }
+
 	    /* istanbul ignore next */
 	    if (this.browser && this.apiSecret) {
 	      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
@@ -608,6 +625,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      kwargs.qs = {};
 	    }
 
+	    if (!this.browser) {
+	      kwargs.agent = this.requestAgent;
+	    }
+
 	    kwargs.qs['api_key'] = this.apiKey;
 	    kwargs.qs.location = this.group;
 	    kwargs.json = true;
@@ -735,6 +756,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.send('request', 'get', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'GET';
+	      kwargs.gzip = true;
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
 	    }).bind(this));
@@ -754,6 +776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.send('request', 'post', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
 	      kwargs.method = 'POST';
+	      kwargs.gzip = true;
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
 	    }).bind(this));
@@ -772,6 +795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Promise((function (fulfill, reject) {
 	      this.send('request', 'delete', kwargs, cb);
 	      kwargs = this.enrichKwargs(kwargs);
+	      kwargs.gzip = true;
 	      kwargs.method = 'DELETE';
 	      var callback = this.wrapPromiseTask(cb, fulfill, reject);
 	      request(kwargs, callback);
@@ -833,7 +857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
 	    }
 
-	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+	    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: "*", expireTokens: this.expireTokens });
 	    var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
 	    var kwargs = {
 	      'auth_type': 'jwt',
@@ -5196,6 +5220,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = Subscription;
 
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports) {
+
+	/* (ignored) */
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports) {
+
+	/* (ignored) */
 
 /***/ })
 /******/ ])

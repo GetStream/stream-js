@@ -10,7 +10,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "3.13.0",
+  "version": "3.15.0",
   "scripts": {
     "dtslint": "dtslint types/getstream",
     "test": "npm run test-unit-node",
@@ -30,7 +30,9 @@
     "jsonwebtoken": false,
     "./src/lib/batch_operations.js": false,
     "qs": false,
-    "url": false
+    "url": false,
+    "http": false,
+    "https": false
   },
   "react-native": {
     "request": "xmlhttp-request",

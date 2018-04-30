@@ -47,7 +47,7 @@ describe('[UNIT] Redirect URL\'s', function() {
         expect(decoded).to.eql({
             'resource': 'redirect_and_track',
             'action': '*',
-            'user_id': userId,
+            'user_id': '*',
         });
 
         for (var i = 0; i < expectedParts.length; i++) {
@@ -89,7 +89,7 @@ describe('[UNIT] Redirect URL\'s', function() {
         expect(decoded).to.eql({
             'resource': 'redirect_and_track',
             'action': '*',
-            'user_id': userId,
+            'user_id': '*',
         });
 
         for (var i = 0; i < expectedParts.length; i++) {
@@ -98,8 +98,21 @@ describe('[UNIT] Redirect URL\'s', function() {
         delete process.env['STREAM_ANALYTICS_BASE_URL']
     });
 
+
     it('should follow redirect urls', function(done) {
-        var events = [],
+        var events = [{
+                'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
+                'user_data':'tommaso',
+                'location':'email',
+                'feed_id':'user:global'
+            },{
+                'content':'tweet:2',
+                'label':'click',
+                'position':1,
+                'user_data':'tommaso',
+                'location':'email',
+                'feed_id':'user:global'
+            }],
             userId = 'tommaso',
             targetUrl = 'http://google.com/?a=b&c=d';
 
