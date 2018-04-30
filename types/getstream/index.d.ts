@@ -175,6 +175,21 @@ export class StreamClient {
     activityCopyLimit?: number,
     callback?: (err: object, httpResponse: object, body: object) => void
   ): void;
+
+  // Unfollow many feeds
+  /**
+   * unfollowMany.
+   * Available in node environments with batchOperations enabled
+   */
+  unfollowMany(unfollows: object[]): Promise<object>;
+  /**
+   * unfollowMany.
+   * Available in node environments with batchOperations enabled
+   */
+  unfollowMany(
+    unfollows: object[],
+    callback?: (err: object, httpResponse: object, body: object) => void
+  ): void;
 }
 
 // Export the Stream Client

@@ -56,6 +56,22 @@ module.exports = {
     }, callback);
   },
 
+  unfollowMany: function (unfollows, callback) {
+    /**
+     * Unfollow multiple feeds with one API call
+     * @method unfollowMany
+     * @memberof StreamClient.prototype
+     * @since 3.16.0
+     * @param  {Array}   unfollows  The follow relations to remove
+     * @param  {requestCallback} [callback] Callback called on completion
+     * @return {Promise}           Promise object
+     */
+    return this.makeSignedRequest({
+      url: 'unfollow_many/',
+      body: unfollows,
+    }, callback);
+  },
+
   makeSignedRequest: function(kwargs, cb) {
     /**
      * Method to create request to api with application level authentication
