@@ -76,12 +76,12 @@
     "webpack": "^1.12.2"
   },
   "dependencies": {
-    "Base64": "~1.0.0",
-    "faye": "~1.2.0",
-    "http-signature": "~1.1.1",
+    "Base64": "^1.0.1",
+    "faye": "^1.2.4",
+    "http-signature": "~1.2.0",
     "jsonwebtoken": "^8.2.0",
-    "qs": "~6.2.0",
-    "request": "2.75.0",
+    "qs": "^6.5.1",
+    "request": "^2.85.0",
     "xmlhttp-request": "~0.4.1"
   },
   "repository": {
