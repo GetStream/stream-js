@@ -61,7 +61,7 @@ module.exports = {
      * Unfollow multiple feeds with one API call
      * @method unfollowMany
      * @memberof StreamClient.prototype
-     * @since 3.16.0
+     * @since 3.15.0
      * @param  {Array}   unfollows  The follow relations to remove
      * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
