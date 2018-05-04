@@ -21,8 +21,8 @@ npm install getstream
 ```
 ### Using JS deliver
 
-```
-<script src="https://cdn.jsdelivr.net/npm/getstream/dist/js/getstream.js"></script>
+```html
+<script src="https://cdn.jsdelivr.net/npm/getstream/dist/js_min/getstream.js"></script>
 ```
 
 #### Install by downloading the JS file
