@@ -19,11 +19,10 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 ```bash
 npm install getstream
 ```
+### Using JS deliver
 
-#### Install using bower
-
-```bash
-bower install getstream
+```
+<script src="https://cdn.jsdelivr.net/npm/getstream/dist/js/getstream.js"></script>
 ```
 
 #### Install by downloading the JS file
