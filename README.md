@@ -54,7 +54,7 @@ client = stream.connect('YOUR_API_KEY');
 // Instantiate a feed object server side
 user1 = client.feed('user', '1');
 // Instantiate a feed object client side
-// Generate a feed's token using server side signing
+// Generate a feed's token using server side signing (see below for stream-js or https://getstream.io/docs/ for other languages)
 user1 = client.feed('user', '1', 'FEED_TOKEN');
 
 // Get activities from 5 to 10 (slow pagination)
