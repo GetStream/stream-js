@@ -1,7 +1,3 @@
-var errors = require('./errors');
-var utils = require('./utils');
-var signing = require('./signing');
-
 var Personalization = function() {
   /**
    * Manage api calls for personalization
@@ -23,7 +19,7 @@ Personalization.prototype = {
     this.client = client;
   },
 
-  get: function(resource, options={}, callback) {
+  get: function(resource, options, callback) {
   /**
    * Get personalized activities for this feed
    *
@@ -38,8 +34,8 @@ Personalization.prototype = {
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = (last.call) ? last : undefined;
-    if (options.call) {
-      options = {}
+    if (!options || options.call) {
+      options = {};
     }
 
     return this.client.get(
@@ -52,7 +48,7 @@ Personalization.prototype = {
       callback);
   },
 
-  post: function(resource, options={}, data={}, callback) {
+  post: function(resource, options, data, callback) {
   /**
    * Post data to personalization endpoint
    *
@@ -68,11 +64,11 @@ Personalization.prototype = {
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = (last.call) ? last : undefined;
-    if (options.call) {
-      options = {}
+    if (!options || options.call) {
+      options = {};
     }
-    if (data.call) {
-      data = {}
+    if (!data || data.call) {
+      data = {};
     }
 
     return this.client.post(
@@ -86,7 +82,7 @@ Personalization.prototype = {
       callback);
   },
 
-  delete: function(resource, options={}, callback) {
+  delete: function(resource, options, callback) {
   /**
    * Delete metadata or activites
    *
@@ -101,8 +97,8 @@ Personalization.prototype = {
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = (last.call) ? last : undefined;
-    if (options.call) {
-      options = {}
+    if (!options || options.call) {
+      options = {};
     }
 
     return this.client.delete(

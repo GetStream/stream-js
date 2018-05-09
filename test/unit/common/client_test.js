@@ -252,12 +252,6 @@ describe('[UNIT] Stream Client (Common)', function() {
             var url = this.client.enrichUrl(feedGroup);
             expect(url).to.be(this.client.baseUrl + this.client.version + '/' + feedGroup);
         });
-
-        it('(2) personalization service', function() {
-            var resource = 'influencers'
-            var url = this.client.enrichUrl(resource, serviceName='personalization');
-            expect(url).to.be('https://personalization.stream-io-api.com/personalization/' + this.client.version + '/' + resource);
-        });
     });
 
     describe('#enrichKwargs', function() {
