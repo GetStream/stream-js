@@ -99,7 +99,6 @@ Collections.prototype = {
       collection_name: collectionName,
       ids: ids
     };
-    console.log(params);
 
     return this.client.delete(
       {
