@@ -1,7 +1,3 @@
-var errors = require('./errors');
-var utils = require('./utils');
-var signing = require('./signing');
-
 var Collections = function() {
   /**
    * Manage api calls for collections
@@ -66,7 +62,7 @@ Collections.prototype = {
       ids = [ids];
     }
     var params = {
-      foreign_ids: ids.map(function(id) { return collectionName + ":" + id}).join(',')
+      foreign_ids: ids.map(function(id) { return collectionName + ":" + id;}).join(',')
     };
 
     return this.client.get(

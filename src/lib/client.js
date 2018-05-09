@@ -106,7 +106,10 @@ StreamClient.prototype = {
     }
   },
 
-  getBaseUrl: function(serviceName='api') {
+  getBaseUrl: function(serviceName) {
+    if (!serviceName) {
+      serviceName = 'api';
+    }
     var url = this.baseUrl;
     if (serviceName != 'api') {
       url = 'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
@@ -122,7 +125,7 @@ StreamClient.prototype = {
     }
 
     var urlEnvironmentKey;
-    if (serviceName ='api') {
+    if (serviceName == 'api') {
       urlEnvironmentKey = 'STREAM_BASE_URL';
     } else {
       urlEnvironmentKey = 'STREAM_' + serviceName.toUpperCase() + '_URL';
@@ -318,7 +321,7 @@ StreamClient.prototype = {
     return feed;
   },
 
-  enrichUrl: function(relativeUrl, serviceName='api') {
+  enrichUrl: function(relativeUrl, serviceName) {
     /**
      * Combines the base url with version and the relative url
      * @method enrichUrl
@@ -326,6 +329,9 @@ StreamClient.prototype = {
      * @private
      * @param {string} relativeUrl
      */
+    if (!serviceName) {
+      serviceName = 'api';
+    }
     var base_url = this.getBaseUrl(serviceName);
     var url = base_url + this.version + '/' + relativeUrl;
     return url;
