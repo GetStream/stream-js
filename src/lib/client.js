@@ -1,3 +1,5 @@
+var Collections = require('./collections');
+var Personalization = require('./personalization');
 var request = require('request');
 var StreamFeed = require('./feed');
 var signing = require('./signing');
@@ -8,8 +10,6 @@ var Promise = require('./promise');
 var qs = require('qs');
 var url = require('url');
 var Faye = require('faye');
-
-
 
 /**
  * @callback requestCallback
@@ -60,23 +60,10 @@ StreamClient.prototype = {
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
-
-    var protocol = this.options.protocol || 'https';
-
-    if (this.location) {
-        this.baseUrl = protocol + '://' + this.location + '-api.stream-io-api.com/api/';
-    }
-
-    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
-      this.baseUrl = 'http://localhost:8000/api/';
-    }
+    this.baseUrl = this.getBaseUrl();
 
     if (typeof (process) !== 'undefined' && process.env.LOCAL_FAYE) {
       this.fayeUrl = 'http://localhost:9999/faye/';
-    }
-
-    if (typeof (process) !== 'undefined' && process.env.STREAM_BASE_URL) {
-      this.baseUrl = process.env.STREAM_BASE_URL;
     }
 
     if (typeof (process) !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
@@ -102,12 +89,52 @@ StreamClient.prototype = {
       });
 
       this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+
+      // setup personalization and collections
+      this.personalizationToken = signing.JWTScopeToken(
+        this.apiSecret, 'personalization', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+      this.collectionsToken = signing.JWTScopeToken(
+        this.apiSecret, 'collections', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+
+      this.personalization = new Personalization(this);
+      this.collections = new Collections(this);
     }
 
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
     }
+  },
+
+  getBaseUrl: function(serviceName) {
+    if (!serviceName) {
+      serviceName = 'api';
+    }
+    var url = this.baseUrl;
+    if (serviceName != 'api') {
+      url = 'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
+    }
+
+    if (this.location) {
+        var protocol = this.options.protocol || 'https';
+        url = protocol + '://' + this.location + '-' + serviceName + '.stream-io-api.com/' + serviceName + '/';
+    }
+
+    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
+      url = 'http://localhost:8000/' + serviceName + '/';
+    }
+
+    var urlEnvironmentKey;
+    if (serviceName == 'api') {
+      urlEnvironmentKey = 'STREAM_BASE_URL';
+    } else {
+      urlEnvironmentKey = 'STREAM_' + serviceName.toUpperCase() + '_URL';
+    }
+    if (typeof (process) !== 'undefined' && process.env[urlEnvironmentKey]) {
+      url = process.env[urlEnvironmentKey];
+    }
+
+    return url;
   },
 
   on: function(event, callback) {
@@ -294,7 +321,7 @@ StreamClient.prototype = {
     return feed;
   },
 
-  enrichUrl: function(relativeUrl) {
+  enrichUrl: function(relativeUrl, serviceName) {
     /**
      * Combines the base url with version and the relative url
      * @method enrichUrl
@@ -302,7 +329,11 @@ StreamClient.prototype = {
      * @private
      * @param {string} relativeUrl
      */
-    var url = this.baseUrl + this.version + '/' + relativeUrl;
+    if (!serviceName) {
+      serviceName = 'api';
+    }
+    var base_url = this.getBaseUrl(serviceName);
+    var url = base_url + this.version + '/' + relativeUrl;
     return url;
   },
 
@@ -314,7 +345,7 @@ StreamClient.prototype = {
      * @param {object} kwargs
      * @private
      */
-    kwargs.url = this.enrichUrl(kwargs.url);
+    kwargs.url = this.enrichUrl(kwargs.url, kwargs.serviceName);
     if (kwargs.qs === undefined) {
       kwargs.qs = {};
     }
