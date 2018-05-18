@@ -61,6 +61,8 @@ StreamClient.prototype = {
     // which data center to use
     this.location = this.options.location;
 
+    this.request = request;
+
     var protocol = this.options.protocol || 'https';
 
     if (this.location) {
@@ -453,7 +455,7 @@ StreamClient.prototype = {
       kwargs.method = 'GET';
       kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
@@ -473,7 +475,7 @@ StreamClient.prototype = {
       kwargs.method = 'POST';
       kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
@@ -493,7 +495,7 @@ StreamClient.prototype = {
       kwargs.gzip = true;
       kwargs.method = 'DELETE';
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
