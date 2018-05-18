@@ -1,0 +1,10 @@
+{
+  presets: [
+    ['@babel/preset-env', {
+      targets: {
+        browsers: ['last 2 versions', 'ie >= 10']
+      },
+    }]
+  ],
+  plugins: ['@babel/plugin-transform-object-assign'],
+}
