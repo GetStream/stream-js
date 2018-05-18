@@ -47,7 +47,7 @@ function padString(string) {
 
 function toBase64(base64UrlString) {
   var b64str = padString(base64UrlString)
-    .replace(/\-/g, '+')
+    .replace(/\-/g, '+') // eslint-disable-line no-useless-escape
     .replace(/_/g, '/');
   return b64str;
 }
