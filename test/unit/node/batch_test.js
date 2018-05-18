@@ -2,7 +2,6 @@ var errors = require('../../../src/getstream').errors,
     expect = require('expect.js'),
     Promise = require('../../../src/lib/promise'),
     td = require('testdouble'),
-    mocks = require('../utils/mocks'),
     beforeEachFn = require('../utils/hooks').beforeEach,
     signing = signing || require('../../../src/lib/signing');
 

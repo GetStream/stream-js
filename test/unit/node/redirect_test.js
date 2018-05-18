@@ -1,5 +1,5 @@
 var config = require('../utils/config')
-  , StreamClient = require('../utils/mocks').StreamClient
+  , StreamClient = require('../../../src/lib/client')
   , jwt = require('jsonwebtoken')
   , url = require('url')
   , request = require('request')

@@ -4,7 +4,6 @@ var expect = require('expect.js')
   , config = require('../utils/config')
   , td = require('testdouble')
   , stream = require('../../../src/getstream')
-  , mocks = require('../utils/mocks')
   , errors = stream.errors;
 
 function enrichKwargs(kwargs) {
@@ -362,13 +361,16 @@ describe('[UNIT] Stream Client (Common)', function() {
 
     describe('Requests', function() {
 
+        var tdRequest = td.function();
+
         function toExpect(method) {
             var arg0 = { url: 'feed', method: method, gzip: true };
             var fun = td.matchers.isA(Function);
-            return mocks.request(arg0, fun);
+            return tdRequest(arg0, fun);
         }
 
         beforeEach(function() {
+            this.client.request = tdRequest;
             td.replace(this.client, 'enrichKwargs', enrichKwargs);
         });
 
