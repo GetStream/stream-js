@@ -27,9 +27,9 @@
     "globals": {
         "process": true
     },
-    "ecmaFeatures" : {
-        "modules": true
-    },
     "parserOptions": {
+        "ecmaFeatures" : {
+            "modules": true
+        }
     }
 }
