@@ -108,7 +108,7 @@ StreamClient.prototype = {
 
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
-      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
+      throw new errors.FeedError('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
     }
   },
 

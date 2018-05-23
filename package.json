@@ -85,7 +85,7 @@
     "jsonwebtoken": "^8.2.0",
     "qs": "^6.5.1",
     "request": "^2.86.0",
-    "xmlhttp-request": "~0.4.1"
+    "xmlhttp-request": "https://github.com/GetStream/xmlhttp-request#2474db1c2829697bcf2788fee49156b62ad8bcfd"
   },
   "repository": {
     "type": "git",
