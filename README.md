@@ -36,7 +36,7 @@ Documentation for this JavaScript client are available at the [Stream website](h
 
 #### Using with React Native
 
-For use with React Native be sure to use webpack as your bundler. For a bootstrap project for React native and webpack see this [project](https://github.com/jhabdas/react-native-webpack-starter-kit)
+This package can be integrated into React Native applications. Remember to not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.
 
 ### Usage
 
