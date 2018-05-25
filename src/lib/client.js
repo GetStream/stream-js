@@ -521,14 +521,14 @@ StreamClient.prototype = {
     }, callback);
   },
 
-  updateActivity: function(activity) {
+  updateActivity: function(activity, callback) {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
      * @param  {object} activity The activity to update
      * @return {Promise}
      */
-     return this.updateActivities([activity]);
+     return this.updateActivities([activity], callback);
   },
 
 };
