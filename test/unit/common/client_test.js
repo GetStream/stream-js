@@ -323,7 +323,7 @@ describe('[UNIT] Stream Client (Common)', function() {
     describe('Requests', function() {
 
         function toExpect(method) {
-            var arg0 = { url: 'matthisk', method: method };
+            var arg0 = { url: 'matthisk', method: method, gzip: true };
             var fun = td.matchers.isA(Function);
             return mocks.request(arg0, fun);
         }

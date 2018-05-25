@@ -2,12 +2,9 @@ Stream-JS
 ===========
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
-[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
 [![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/tthisk.svg)](https://saucelabs.com/u/tthisk)
 
 [stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
@@ -22,11 +19,10 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 ```bash
 npm install getstream
 ```
+### Using JS deliver
 
-#### Install using bower
-
-```bash
-bower install getstream
+```html
+<script src="https://cdn.jsdelivr.net/npm/getstream/dist/js_min/getstream.js"></script>
 ```
 
 #### Install by downloading the JS file
@@ -40,7 +36,7 @@ Documentation for this JavaScript client are available at the [Stream website](h
 
 #### Using with React Native
 
-For use with React Native be sure to use webpack as your bundler. For a bootstrap project for React native and webpack see this [project](https://github.com/jhabdas/react-native-webpack-starter-kit)
+This package can be integrated into React Native applications. Remember to not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.
 
 ### Usage
 
@@ -57,7 +53,7 @@ client = stream.connect('YOUR_API_KEY');
 // Instantiate a feed object server side
 user1 = client.feed('user', '1');
 // Instantiate a feed object client side
-// Generate a feed's token using server side signing
+// Generate a feed's token using server side signing (see below for stream-js or https://getstream.io/docs/ for other languages)
 user1 = client.feed('user', '1', 'FEED_TOKEN');
 
 // Get activities from 5 to 10 (slow pagination)

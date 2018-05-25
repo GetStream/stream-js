@@ -95,7 +95,6 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
         }, cb));
     });
 
-
     it('#makeSignedRequest', function() {
         var self = this;
         td.replace(this.client, 'apiSecret', '');
@@ -114,5 +113,21 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
 
         expect(p).to.be.a(Promise);
     });
+
     
+    it('#unfollowMany', function() {
+        expect(this.client.unfollowMany).to.be.a(Function);
+
+        var msr = replaceMSR.call(this);
+
+        var unfollows = []
+        var cb = function() {};
+
+        this.client.unfollowMany(unfollows, cb);
+
+        td.verify(msr({
+            url: 'unfollow_many/',
+            body: unfollows
+        }, cb));
+    });
 });

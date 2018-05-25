@@ -258,6 +258,22 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         }));
     });
 
+    it('supports batch unfollowing', function (done) {
+        var unfollows = [{
+            'source': 'flat:1',
+            'target': 'user:1'
+        }, {
+            'source': 'flat:1',
+            'target': 'user:2',
+            'keep_history': true
+        }, {
+            'source': 'flat:1',
+            'target': 'user:3'
+        }];
+        
+        this.client.unfollowMany(unfollows, wrapCB(201, done));
+    });
+
     it('no secret application auth', function() {
         var client = stream.connect('ahj2ndz7gsan');
 

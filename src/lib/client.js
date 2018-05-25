@@ -87,9 +87,26 @@ StreamClient.prototype = {
     this.browser = typeof (window) !== 'undefined';
     this.node = !this.browser;
 
+    if (!this.browser) {
+      var http = require('http');
+      var https = require('https');
+
+      var httpsAgent = new https.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      var httpAgent = new http.Agent({
+        keepAlive: true,
+        keepAliveMsecs: 3000,
+      });
+
+      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+    }
+
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
-      throw new errors.FeedError('You are publicly sharing your private key. Dont use the private key while in the browser.');
+      throw new errors.FeedError('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
     }
   },
 
@@ -302,6 +319,10 @@ StreamClient.prototype = {
       kwargs.qs = {};
     }
 
+    if (!this.browser) {
+      kwargs.agent = this.requestAgent;
+    }
+
     kwargs.qs['api_key'] = this.apiKey;
     kwargs.qs.location = this.group;
     kwargs.json = true;
@@ -430,6 +451,7 @@ StreamClient.prototype = {
       this.send('request', 'get', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
       kwargs.method = 'GET';
+      kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
     }.bind(this));
@@ -449,6 +471,7 @@ StreamClient.prototype = {
       this.send('request', 'post', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
       kwargs.method = 'POST';
+      kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
     }.bind(this));
@@ -467,6 +490,7 @@ StreamClient.prototype = {
     return new Promise(function(fulfill, reject) {
       this.send('request', 'delete', kwargs, cb);
       kwargs = this.enrichKwargs(kwargs);
+      kwargs.gzip = true;
       kwargs.method = 'DELETE';
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       request(kwargs, callback);
@@ -528,7 +552,7 @@ if (qs) {
       throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: userId, expireTokens: this.expireTokens });
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: "*", expireTokens: this.expireTokens });
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {
       'auth_type': 'jwt',

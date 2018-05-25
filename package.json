@@ -10,7 +10,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "3.13.0",
+  "version": "3.17.0",
   "scripts": {
     "dtslint": "dtslint types/getstream",
     "test": "npm run test-unit-node",
@@ -30,7 +30,9 @@
     "jsonwebtoken": false,
     "./src/lib/batch_operations.js": false,
     "qs": false,
-    "url": false
+    "url": false,
+    "http": false,
+    "https": false
   },
   "react-native": {
     "request": "xmlhttp-request",
@@ -57,7 +59,7 @@
     "eslint": "^3.7.1",
     "expect.js": "^0.3.1",
     "exports-loader": "~0.6.3",
-    "istanbul": "~0.4.5",
+    "istanbul": "^0.4.5",
     "json-loader": "~0.5.4",
     "karma": "~1.3.0",
     "karma-chrome-launcher": "~2.0.0",
@@ -66,7 +68,7 @@
     "karma-sauce-launcher": "~1.0.0",
     "karma-sourcemap-loader": "~0.3.7",
     "karma-webpack": "~1.8.0",
-    "mocha": "^3.1.0",
+    "mocha": "^3.5.3",
     "quickcheck": "^0.0.4",
     "rewire": "~2.5.2",
     "rewire-webpack": "~1.0.1",
@@ -74,19 +76,19 @@
     "webpack": "^1.12.2"
   },
   "dependencies": {
-    "Base64": "~1.0.0",
-    "faye": "~1.2.0",
-    "http-signature": "~1.1.1",
+    "Base64": "^1.0.1",
+    "faye": "^1.2.4",
+    "http-signature": "~1.2.0",
     "jsonwebtoken": "^8.2.0",
-    "qs": "~6.2.0",
-    "request": "2.75.0",
-    "xmlhttp-request": "~0.4.1"
+    "qs": "^6.5.1",
+    "request": "^2.85.0",
+    "xmlhttp-request": "https://github.com/GetStream/xmlhttp-request#2474db1c2829697bcf2788fee49156b62ad8bcfd"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/GetStream/stream-js.git"
   },
   "engines": {
-    "node": ">=4.8 <=9"
+    "node": ">=4.8 <=10"
   }
 }
