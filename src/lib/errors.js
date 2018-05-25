@@ -4,7 +4,7 @@ function addStack(err) {
   /* istanbul ignore else */
   if (typeof Error.captureStackTrace === 'function') {
     Error.captureStackTrace(err, constructor);
-  } else if (!!(new Error()).stack) {
+  } else if (!!(new Error()).stack) { // eslint-disable-line no-extra-boolean-cast
     err.stack = (new Error()).stack;
   } else {
     err.stack = '';
@@ -24,7 +24,7 @@ errors.FeedError = function FeedError(msg) {
   Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
   addStack(this);
   return instance;
-}
+};
 errors.FeedError.prototype = Object.create(Error.prototype, {
   constructor: {
     value: Error,
@@ -52,7 +52,7 @@ errors.SiteError = function SiteError(msg) {
   Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
   addStack(this);
   return instance;
-}
+};
 errors.SiteError.prototype = Object.create(Error.prototype, {
   constructor: {
     value: Error,
@@ -80,7 +80,7 @@ errors.MissingSchemaError = function (msg) {
   Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
   addStack(this);
   return instance;
-}
+};
 errors.MissingSchemaError.prototype = Object.create(Error.prototype, {
   constructor: {
     value: Error,
@@ -110,7 +110,7 @@ errors.StreamApiError = function StreamApiError(msg, data, response) {
   Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
   addStack(this);
   return instance;
-}
+};
 errors.StreamApiError.prototype = Object.create(Error.prototype, {
   constructor: {
     value: Error,
