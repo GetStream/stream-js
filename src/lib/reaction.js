@@ -1,0 +1,166 @@
+var errors = require('./errors');
+
+var StreamReaction = function() {
+  this.initialize.apply(this, arguments);
+};
+
+StreamReaction.prototype = {
+
+  initialize: function(client, token) {
+    /**
+     * Initialize a feed object
+     * @method intialize
+     * @memberof StreamReaction.prototype
+     * @param {StreamClient} client Stream client this feed is constructed from
+     * @param {string} token JWT token
+     * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
+     */
+    this.client = client;
+    this.token = token;
+    this.signature = this.collectionName + ' ' + this.token;
+  },
+
+  buildURL: function() {
+    var url = 'reaction/';
+    for(var i = 0; i < arguments.length; i++) {
+        url += arguments[i] + '/';
+    }
+    return url;
+  },
+
+  all: function(options, callback) {
+    /**
+     * get all reactions
+     * @method all
+     * @memberof StreamReaction.prototype
+     * @param  {object}   options  {limit:}
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.all()
+     * @example reactions.all({limit:100})
+     */
+    return this.client.get({
+      url: this.buildURL(),
+      signature: this.signature,
+    }, callback);
+  },
+
+  add: function(activityId, kind, data, callback) {
+    /**
+     * add reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   activityId Activity Id
+     * @param  {string}   kind  kind of reaction
+     * @param  {object}   data  data related to reaction
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.add("0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
+     * @example reactions.add("0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
+     */
+    var body = {
+      'activity_id': activityId,
+      'kind': kind,
+      'data': data,
+    };
+    return this.client.post({
+      url: this.buildURL(),
+      body: body,
+      signature: this.signature,
+    }, callback);
+  },
+
+  get: function(id, callback) {
+    /**
+     * get reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+    return this.client.get({
+      url: this.buildURL(id),
+      signature: this.signature,
+    }, callback);
+  },
+
+  lookup: function(search, callback) {
+    /**
+     * lookup reaction by activity id, user id or foreign id
+     * @method lookup
+     * @memberof StreamReaction.prototype
+     * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kinds:[string]}
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.lookup({activiy_id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"}, ["like"])
+     * @example reactions.lookup({user_id:"john"}, ["like", "comment"])
+     * @example reactions.lookup({foreign_id:"fid"}, ["comment"])
+     */
+
+   switch(search.by) {
+    case "activity_id":
+    case "user_id":
+    case "foreign_id":
+      break;
+    default:
+      throw new errors.SiteError('search.by is required and must be equal to activity_id, user_id or foreign_id');
+    }
+    if (!search.value) {
+      throw new errors.SiteError('Missing search.value');
+    }
+    if (!search.kinds) {
+      throw new errors.SiteError('Missing search.kinds');
+    }
+    return this.client.get({
+      url: this.build("by", search.by, search.value, search.kinds),
+      signature: this.signature,
+    }, callback);
+  },
+
+  update: function(id, activityId, kind, data, callback) {
+    /**
+     * update reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {string}   activityId Activity Id
+     * @param  {string}   kind  Kind of reaction
+     * @param  {object}   data  Data associated to reaction
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
+     */
+    var body = {
+      'id': id || "",
+      'activity_id': activityId,
+      'kind': kind,
+      'data': data,
+    };
+    return this.client.post({
+      url: this.buildURL(id),
+      body: body,
+      signature: this.signature,
+    }, callback);
+  },
+
+  delete: function(id, callback) {
+    /**
+     * delete reaction
+     * @method delete
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+    return this.client.post({
+      url: this.buildURL(id),
+      signature: this.signature,
+    }, callback);
+  },
+};
+
+module.exports = StreamReaction;
