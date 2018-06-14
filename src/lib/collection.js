@@ -37,7 +37,7 @@ StreamCollection.prototype = {
     if (itemId.id) {
       return this.buildURL(itemId.id);
     }
-    throw new errors.SiteError('Invalid itemId, must be {id:} or {foreign_id:}');
+    throw new errors.SiteError('Invalid itemId, must be {id:} or {foreignId:}');
   },
 
   items: function(options, callback) {
