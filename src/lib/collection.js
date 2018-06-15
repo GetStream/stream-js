@@ -32,7 +32,7 @@ StreamCollection.prototype = {
 
   getItemURL: function(itemId) {
     if (itemId.foreignId) {
-      return this.buildURL('foreign_id', itemId.foreignID);
+      return this.buildURL('foreign_id', itemId.foreignId);
     }
     if (itemId.id) {
       return this.buildURL(itemId.id);
