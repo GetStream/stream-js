@@ -94,9 +94,9 @@ StreamReaction.prototype = {
      * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kinds:[string]}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example reactions.lookup({activiy_id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"}, ["like"])
-     * @example reactions.lookup({user_id:"john"}, ["like", "comment"])
-     * @example reactions.lookup({foreign_id:"fid"}, ["comment"])
+     * @example reactions.lookup({by:"activity_id", value:"0c7db91c-67f9-11e8-bcd9-fe00a9219401", kinds:["like"]})
+     * @example reactions.lookup({by:"user_id", value:"john"}, kinds:["like", "comment"]})
+     * @example reactions.lookup({by:"foreign_id", value:"fid"}, kinds:["comment"]})
      */
 
    switch(search.by) {

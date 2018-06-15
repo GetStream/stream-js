@@ -66,7 +66,7 @@ StreamCollection.prototype = {
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.get({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"})
-     * @example collection.get({foreign_id:"cheese101"})
+     * @example collection.get({foreignId:"cheese101"})
      */
     return this.client.get({
       url: this.getItemURL(itemId),
@@ -106,7 +106,7 @@ StreamCollection.prototype = {
        * @param  {requestCallback} callback Callback to call on completion
        * @return {Promise} Promise object
        * @example collection.update({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"}, {"name": "cheese burger","toppings": "cheese"})
-       * @example collection.update({foreign_id:"cheese101"}, {"name": "cheese burger","toppings": "cheese"})
+       * @example collection.update({foreignId:"cheese101"}, {"name": "cheese burger","toppings": "cheese"})
        */
       var body = {
           'data': collectionData,
@@ -127,7 +127,7 @@ StreamCollection.prototype = {
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.delete({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"})
-     * @example collection.delete({foreign_id:"cheese101"})
+     * @example collection.delete({foreignId:"cheese101"})
      */
     return this.client['delete']({
       url: this.getItemURL(itemId),
