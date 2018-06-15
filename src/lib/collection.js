@@ -129,7 +129,7 @@ StreamCollection.prototype = {
      * @example collection.delete({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"})
      * @example collection.delete({foreign_id:"cheese101"})
      */
-    return this.client.post({
+    return this.client['delete']({
       url: this.getItemURL(itemId),
       signature: this.signature,
     }, callback);

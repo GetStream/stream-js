@@ -156,7 +156,7 @@ StreamReaction.prototype = {
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.post({
+    return this.client['delete']({
       url: this.buildURL(id),
       signature: this.signature,
     }, callback);
