@@ -32,6 +32,15 @@ describe('[UNIT] Stream Client (Node)', function() {
         expect(feed).to.be.a(StreamFeed);
     });
 
+    describe('#enrichUrl', function() {
+
+        it('(1) personalization service', function() {
+            var resource = 'influencers'
+            var url = this.client.enrichUrl(resource, 'personalization');
+            expect(url).to.be('https://personalization.stream-io-api.com/personalization/' + this.client.version + '/' + resource);
+        });
+    });
+
     describe('#updateActivities', function() {
 
         it('throws', function() {

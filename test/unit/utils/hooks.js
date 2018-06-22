@@ -1,7 +1,6 @@
 var config = require('./config')
-  , rewire = require('rewire')
-  , stream = rewire('../../../src/getstream')
-  , StreamClient = require('./mocks').StreamClient;
+  , td = require('testdouble')
+  , StreamClient = require('../../../src/lib/client');
 
 function init() {
     this.timeout(500);
@@ -9,10 +8,12 @@ function init() {
 
 function beforeEachBrowser() {
   this.client = new StreamClient(config.API_KEY, null, 9498);
+  this.client.request = td.function();
 }
 
 function beforeEachNode() {
   this.client = new StreamClient(config.API_KEY, config.API_SECRET);
+  this.client.request = td.function();
 }
 
 module.exports = {
