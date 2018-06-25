@@ -485,7 +485,7 @@ StreamClient.prototype = {
       kwargs.method = 'GET';
       kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
@@ -505,7 +505,7 @@ StreamClient.prototype = {
       kwargs.method = 'POST';
       kwargs.gzip = true;
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
@@ -525,7 +525,7 @@ StreamClient.prototype = {
       kwargs.gzip = true;
       kwargs.method = 'DELETE';
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      request(kwargs, callback);
+      this.request(kwargs, callback);
     }.bind(this));
   },
 
