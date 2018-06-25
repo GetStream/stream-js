@@ -22,6 +22,9 @@ StreamFeed.prototype.getEnriched = function(options, callback) {
      * @return {Promise} Promise object
      * @example feed.getEnriched({limit: 10, id_lte: 'activity-id'})
      * @example feed.getEnriched({limit: 10, mark_seen: true})
+     * @example feed.getEnriched({limit: 10, mark_seen: true, withRecentReactions: true})
+     * @example feed.getEnriched({limit: 10, mark_seen: true, withReactionCounts: true})
+     * @example feed.getEnriched({limit: 10, mark_seen: true, withOwnReactions: true, withReactionCounts: true})
      */
      return this.get(options, callback, 'enrich/');
 };
