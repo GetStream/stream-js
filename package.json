@@ -16,7 +16,7 @@
     "test": "npm run test-unit-node",
     "test-unit-node": "./node_modules/.bin/mocha test/unit/common test/unit/node",
     "test-integration-node": "./node_modules/.bin/mocha test/integration/common test/integration/node",
-    "test-cloud": "./node_modules/.bin/mocha test/integration/cloud",
+    "test-cloud": "./node_modules/.bin/mocha test/integration/cloud --timeout 40000",
     "test-browser": "./node_modules/.bin/karma start karma.config.js",
     "test-browser-ci": "./node_modules/.bin/karma start karma.ci.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
