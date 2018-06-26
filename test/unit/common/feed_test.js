@@ -104,7 +104,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
         it('(2) default', function() {
             feed.follow('user', 'henk');
-            
+
             var body = {
                 target: 'user:henk',
             };
@@ -119,7 +119,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
         it('(3) with cb', function() {
             var cb = function() {};
             feed.follow('user', 'henk', cb);
-            
+
             var body = {
                 target: 'user:henk',
             };
@@ -133,7 +133,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
         it('(4) activity copy limit', function() {
             feed.follow('user', 'henk', { limit: 10 });
-            
+
             var body = {
                 target: 'user:henk',
                 activity_copy_limit: 10,
@@ -149,7 +149,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
         it('(5) with cb and activity copy limit', function() {
             var cb = function() {};
             feed.follow('user', 'henk', { limit: 10 }, cb);
-            
+
             var body = {
                 target: 'user:henk',
                 activity_copy_limit: 10,
@@ -247,7 +247,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
                 url: 'feed/user/matthisk/following/',
                 qs: {},
                 signature: 'usermatthisk token',
-            }, cb)); 
+            }, cb));
         });
 
         it('(3) options', function() {
@@ -261,7 +261,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
                     filter: 'a,b,c',
                 },
                 signature: 'usermatthisk token',
-            }, cb)); 
+            }, cb));
         });
 
     });
@@ -286,7 +286,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
                 url: 'feed/user/matthisk/followers/',
                 qs: {},
                 signature: 'usermatthisk token',
-            }, cb)); 
+            }, cb));
         });
 
         it('(3) options', function() {
@@ -300,8 +300,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
                     filter: 'a,b,c',
                 },
                 signature: 'usermatthisk token',
-            }, cb)); 
-        });        
+            }, cb));
+        });
 
     });
 
@@ -367,7 +367,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
     describe('#subscribe', function() {
 
         it('(1) throws', function() {
-            td.replace(this.client, 'appId', 0);            
+            td.replace(this.client, 'appId', 0);
 
             function throws() {
                 feed.subscribe();
@@ -387,7 +387,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
             td.when(fn()).thenReturn({
                 subscribe: subscribeFn,
             });
-            
+
             td.replace(this.client, 'getFayeClient', fn);
 
             feed.subscribe();
@@ -405,7 +405,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
             td.when(fn()).thenReturn({
                 subscribe: subscribeFn,
             });
-            
+
             td.replace(this.client, 'getFayeClient', fn);
 
             feed.subscribe(cb);
@@ -413,6 +413,22 @@ describe('[UNIT] Stream Feed (Common)', function() {
             td.verify(subscribeFn('/' + feed.notificationChannel, cb));
         });
 
+    });
+
+    describe('#unsubscribe', function() {
+
+        it('(1) default', function() {
+            var subscriptionId = '/' + feed.notificationChannel;
+            var subscriptionDbl = td.object(['cancel']);
+
+            feed.client.subscriptions[subscriptionId] = {
+                fayeSubscription: subscriptionDbl
+            };
+
+            feed.unsubscribe();
+            expect(feed.client.subscriptions[subscriptionId]).to.be(undefined);
+            td.verify(subscriptionDbl.cancel());
+        });
     });
 
     describe('#removeActivity', function() {

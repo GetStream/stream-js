@@ -32,6 +32,15 @@ describe('[UNIT] Stream Client (Node)', function() {
         expect(feed).to.be.a(StreamFeed);
     });
 
+    describe('#enrichUrl', function() {
+
+        it('(1) personalization service', function() {
+            var resource = 'influencers'
+            var url = this.client.enrichUrl(resource, 'personalization');
+            expect(url).to.be('https://personalization.stream-io-api.com/personalization/' + this.client.version + '/' + resource);
+        });
+    });
+
     describe('#updateActivities', function() {
 
         it('throws', function() {
@@ -74,7 +83,7 @@ describe('[UNIT] Stream Client (Node)', function() {
             }), undefined));
         });
 
-        it('(2) works', function() {
+        it('(2) works - callback', function() {
             var post = td.function();
             td.replace(this.client, 'post', post);
 
@@ -99,6 +108,20 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.verify(post(td.matchers.contains({
                 url: 'activities/',
             }), undefined));
+        });
+
+        it('(3) update single activity - callback', function() {
+            var fn = function() {};
+            var post = td.function();
+            td.replace(this.client, 'post', post);
+
+            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+
+            this.client.updateActivity(activities[0], fn);
+
+            td.verify(post(td.matchers.contains({
+                url: 'activities/',
+            }), fn));
         });
 
     });

@@ -12,6 +12,86 @@ export function connect(
   options?: object
 ): stream.Client;
 
+export class Collections {
+  /** Construct Collections. */
+  constructor(
+    client: StreamClient,
+  );
+
+  // Upsert one or more items within a collection.
+  upsert(
+    collectionName: string,
+    data:object|object[],
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  upsert(collectionName: string, data: object|object[]): Promise<object>;
+
+  // Select all objects with ids from the collection.
+  select(
+    collectionName: string,
+    ids: object|object[],
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  select(collectionName: string, ids: object|object[]): Promise<object>;
+
+  // Remove all objects by id from the collection.
+  delete(
+    collectionName: string,
+    ids: object|object[],
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  delete(collectionName: string, ids: object|object[]): Promise<object>;
+}
+
+export class Personalization {
+  /** Construct Personalization. */
+  constructor(
+    client: StreamClient,
+  );
+
+  // Get personalized activities for this feed.
+  get(
+    resource: string,
+    options: object,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  get(
+    resource: string,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  get(resource: string, options?:object): Promise<object>;
+
+  // Post data to personalization endpoint.
+  post(
+    resource: string,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  post(
+    resource: string,
+    options:object,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  post(
+    resource: string,
+    options:object,
+    data: object,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  post(resource: string, options?:object, data?: object): Promise<object>;
+
+  // Delete metadata or activites
+  delete(
+    resource: string,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  delete(
+    resource: string,
+    options:object,
+    callback: (err: object, httpResponse: object, body: object) => void
+  ): void;
+  delete(resource: string, options?:object): Promise<object>;
+}
+
 export class Feed {
   /** Construct Feed. */
   constructor(
@@ -158,6 +238,10 @@ export class StreamClient {
     feeds: string[],
     callback: (err: object, httpResponse: object, body: object) => void
   ): void;
+
+  // Collections sub-component
+  collections: Collections;
+  personalization: Personalization;
 
   // Follow many feeds
   /**

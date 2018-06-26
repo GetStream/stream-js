@@ -4,7 +4,6 @@ var expect = require('expect.js')
   , config = require('../utils/config')
   , td = require('testdouble')
   , stream = require('../../../src/getstream')
-  , mocks = require('../utils/mocks')
   , errors = stream.errors;
 
 function enrichKwargs(kwargs) {
@@ -163,7 +162,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             expect(toThrow).to.throwException(function(e) {
                 expect(e).to.be.a(errors.FeedError);
             });
-        });   
+        });
 
         it('(6) throw without secret and token', function() {
             var self = this;
@@ -177,7 +176,7 @@ describe('[UNIT] Stream Client (Common)', function() {
             expect(toThrow).to.throwException(function(e) {
                 expect(e).to.be.a(errors.FeedError);
             });
-        });  
+        });
 
     });
 
@@ -193,7 +192,7 @@ describe('[UNIT] Stream Client (Common)', function() {
                 done(err);
             }
 
-            var task = this.client.wrapPromiseTask(undefined, fulfill, reject); 
+            var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
             task(null, { statusCode: 200 }, {});
         });
@@ -208,7 +207,7 @@ describe('[UNIT] Stream Client (Common)', function() {
                 done();
             }
 
-            var task = this.client.wrapPromiseTask(undefined, fulfill, reject); 
+            var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
             task(null, { statusCode: 500 }, {});
         });
@@ -223,7 +222,7 @@ describe('[UNIT] Stream Client (Common)', function() {
                 done();
             }
 
-            var task = this.client.wrapPromiseTask(undefined, fulfill, reject); 
+            var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
             task(new Error('oops'), { statusCode: 200 }, {});
         });
@@ -239,24 +238,28 @@ describe('[UNIT] Stream Client (Common)', function() {
 
             var task = this.client.wrapPromiseTask(function() {
                 done();
-            }, fulfill, reject); 
+            }, fulfill, reject);
 
             task(null, { statusCode: 200 }, {});
         });
 
     });
 
-    it('#enrichUrl', function() {
-        var url = this.client.enrichUrl('matthisk');
-        expect(url).to.be(this.client.baseUrl + this.client.version + '/' + 'matthisk');
+    describe('#enrichUrl', function() {
+
+        it('(1) api service', function() {
+            var feedGroup = 'user'
+            var url = this.client.enrichUrl(feedGroup);
+            expect(url).to.be(this.client.baseUrl + this.client.version + '/' + feedGroup);
+        });
     });
 
     describe('#enrichKwargs', function() {
 
-        it('(1) simple auth type', function() {
-            var kwargs = this.client.enrichKwargs({ 
-                url: 'matthisk',
-                signature: 'heimensen',
+        it('(1) api service - simple auth type', function() {
+            var kwargs = this.client.enrichKwargs({
+                url: 'feed',
+                signature: 'Basic encoded_password',
             });
 
             expect(kwargs.qs.api_key).to.be(this.client.apiKey);
@@ -264,14 +267,15 @@ describe('[UNIT] Stream Client (Common)', function() {
             expect(kwargs.json).to.be(true);
             expect(kwargs.headers['stream-auth-type']).to.be('simple');
             expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-            expect(kwargs.headers['Authorization']).to.be('heimensen');
+            expect(kwargs.headers['Authorization']).to.be('Basic encoded_password');
+            expect(kwargs.url).to.contain('api.stream-io-api.com');
         });
 
-        it('(2) jwt signature', function() {
+        it('(2) api service - jwt signature', function() {
             var signature = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG5Eb2UiLCJhY3Rpb24iOiJyZWFkIn0.dfayorXXS1rAyd97BGCNgrCodPH9X3P80DPMH5b9D_A";
 
-            var kwargs = this.client.enrichKwargs({ 
-                url: 'matthisk',
+            var kwargs = this.client.enrichKwargs({
+                url: 'feed',
                 signature: "feedname " + signature,
             });
 
@@ -281,6 +285,41 @@ describe('[UNIT] Stream Client (Common)', function() {
             expect(kwargs.headers['stream-auth-type']).to.be('jwt');
             expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
             expect(kwargs.headers['Authorization']).to.be(signature);
+            expect(kwargs.url).to.contain('api.stream-io-api.com');
+        });
+
+        it('(3) personalization service - simple auth type', function() {
+            var kwargs = this.client.enrichKwargs({
+                url: 'feed',
+                serviceName: 'personalization',
+                signature: 'Basic encoded_password',
+            });
+
+            expect(kwargs.qs.api_key).to.be(this.client.apiKey);
+            expect(kwargs.qs.location).to.be(this.client.group);
+            expect(kwargs.json).to.be(true);
+            expect(kwargs.headers['stream-auth-type']).to.be('simple');
+            expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
+            expect(kwargs.headers['Authorization']).to.be('Basic encoded_password');
+            expect(kwargs.url).to.contain('personalization.stream-io-api.com');
+        });
+
+        it('(4) personalization service - jwt signature', function() {
+            var signature = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiJwZXJzb25hbGl6YXRpb24iLCJmZWVkX2lkIjoiKiIsInVzZXJfaWQiOiIqIn0.JvX_IGajZSPD5zDOVpeZLkn0hhClMheN_ILnowyBUN";
+
+            var kwargs = this.client.enrichKwargs({
+                url: 'feed',
+                serviceName: 'personalization',
+                signature: "feedname " + signature,
+            });
+
+            expect(kwargs.qs.api_key).to.be(this.client.apiKey);
+            expect(kwargs.qs.location).to.be(this.client.group);
+            expect(kwargs.json).to.be(true);
+            expect(kwargs.headers['stream-auth-type']).to.be('jwt');
+            expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
+            expect(kwargs.headers['Authorization']).to.be(signature);
+            expect(kwargs.url).to.contain('personalization.stream-io-api.com');
         });
 
     });
@@ -304,7 +343,7 @@ describe('[UNIT] Stream Client (Common)', function() {
 
             if (this.client.apiSecret) {
                 var token = this.client.feed('global', 'feed').token;
-                expect(output[0].to[0].split(' ')[1]).to.be(token);    
+                expect(output[0].to[0].split(' ')[1]).to.be(token);
             }
 
         });
@@ -322,30 +361,33 @@ describe('[UNIT] Stream Client (Common)', function() {
 
     describe('Requests', function() {
 
+        var tdRequest = td.function();
+
         function toExpect(method) {
-            var arg0 = { url: 'matthisk', method: method, gzip: true };
+            var arg0 = { url: 'feed', method: method, gzip: true };
             var fun = td.matchers.isA(Function);
-            return mocks.request(arg0, fun);
+            return tdRequest(arg0, fun);
         }
 
         beforeEach(function() {
+            this.client.request = tdRequest;
             td.replace(this.client, 'enrichKwargs', enrichKwargs);
         });
 
         it('#get', function() {
-            this.client.get({ url: 'matthisk' });
+            this.client.get({ url: 'feed' });
 
             td.verify(toExpect('GET'));
         });
 
         it('#post', function() {
-            this.client.post({ url: 'matthisk' });
+            this.client.post({ url: 'feed' });
 
             td.verify(toExpect('POST'));
         });
 
         it('#delete', function() {
-            this.client['delete']({ url: 'matthisk' });
+            this.client['delete']({ url: 'feed' });
 
             td.verify(toExpect('DELETE'));
         });

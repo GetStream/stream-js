@@ -1,30 +1,22 @@
 var path = require('path');
 var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
-var RewirePlugin = require("rewire-webpack");
+var webpackConfig = require('./webpack.config.js')();
 
+// Webpack config tweaks for test-time
 delete webpackConfig['entry'];
 delete webpackConfig['output'];
-
 webpackConfig['devtool'] = 'inline-source-map';
 webpackConfig['plugins'] = [
-    new webpack.DefinePlugin({
-        'IS_BROWSER_ENV': true,
-    }),
     new webpack.EnvironmentPlugin([
         'STREAM_API_KEY',
         'STREAM_API_SECRET',
         'STREAM_APP_ID',
-    ]),
-    new webpack.NormalModuleReplacementPlugin(/(jsonwebtoken|http-signature|batch_operations|qs)/, path.join(__dirname, "src", "/missing.js")),
-    new webpack.NormalModuleReplacementPlugin(/crypto/, path.join(__dirname, 'node_modules', 'crypto-browserify', 'index.js')),
-    new RewirePlugin(),
+    ])
 ];
-// We need to override the default crypto-browserfy version loaded
-// by webpack, because it is horribly outdated.
 webpackConfig['node']['Buffer'] = true;
-webpackConfig['module']['loaders'].push({ test: /\.json$/, loader: 'json-loader' });
+webpackConfig['module']['rules'].push({ test: /\.json$/, exclude:/node_modules/, loader: 'json-loader' });
 
+// Karma config
 module.exports = function(config) {
 
     config.set({

@@ -27,10 +27,10 @@
     "globals": {
         "process": true
     },
-    "ecmaFeatures" : {
-        "modules": true
-    },
     "parserOptions": {
-        "ecmaVersion": 2017
+        "ecmaVersion": 2017,
+        "ecmaFeatures" : {
+            "modules": true
+        }
     }
 }
