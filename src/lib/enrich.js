@@ -26,5 +26,17 @@ StreamFeed.prototype.getEnriched = function(options, callback) {
      * @example feed.getEnriched({limit: 10, mark_seen: true, withReactionCounts: true})
      * @example feed.getEnriched({limit: 10, mark_seen: true, withOwnReactions: true, withReactionCounts: true})
      */
-     return this.get(options, callback, 'enrich/');
+    if (options && options['mark_read'] && options['mark_read'].join) {
+      options['mark_read'] = options['mark_read'].join(',');
+    }
+
+    if (options && options['mark_seen'] && options['mark_seen'].join) {
+      options['mark_seen'] = options['mark_seen'].join(',');
+    }
+
+    return this.client.get({
+      url: 'enrich/feed/' + this.feedUrl + '/',
+      qs: options,
+      signature: this.getReadOnlyToken(),
+    }, callback);
 };

@@ -51,7 +51,7 @@ StreamFeed.prototype = {
     return this.client.post({
       url: 'feed/' + this.feedUrl + '/',
       body: activity,
-      signature: this.signature,
+      signature: this.getReadWriteToken(),
     }, callback);
   },
 
@@ -327,7 +327,7 @@ StreamFeed.prototype = {
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, userId: feedId, expireTokens: this.client.expireTokens });
   },
 
   updateActivityToTargets: function (foreign_id, time, new_targets, added_targets, removed_targets) {

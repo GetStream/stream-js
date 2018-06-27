@@ -74,7 +74,7 @@ StreamCollection.prototype = {
     }, callback);
   },
 
-  add: function(foreignId, collectionData, callback) {
+  add: function(id, collectionData, callback) {
     /**
      * Add item to collection
      * @method add
@@ -86,7 +86,7 @@ StreamCollection.prototype = {
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     var body = {
-      'foreign_id': foreignId,
+      'id': id,
       'data': collectionData,
     };
     return this.client.post({
