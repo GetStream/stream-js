@@ -1,4 +1,7 @@
-var beforeEachFn = require('../utils/hooks').beforeEachNode;
+var stream = require('../../../src/getstream-enrich');
+var config = require('../utils/config');
+var signing = require('../../../src/lib/signing');
+var randUserId = require('../utils/hooks').randUserId;
 require('chai').should();
 
 describe('[INTEGRATION] Stream cloud', () => {
@@ -7,7 +10,26 @@ describe('[INTEGRATION] Stream cloud', () => {
     let beforeFn = () => {
         failed = false;
         ctx = {};
-        beforeEachFn(ctx);
+        ctx.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+            group: 'testCycle',
+            location: 'qa',
+            protocol: 'https',
+            browser: true,
+        });
+        let createUserSession = userId => {
+            userId = randUserId(userId);
+            return ctx.client.createUserSession(
+                userId,
+                signing.JWTScopeToken(config.API_SECRET, '*', '*', {
+                    feedId: '*',
+                    userId: userId,
+                }),
+            );
+        };
+        ctx.alice = createUserSession('alice');
+        ctx.bob = createUserSession('bob');
+        ctx.carl = createUserSession('carl');
+        ctx.doug = createUserSession('doug');
     };
 
     // test is a wrapper around it that skips the test if a previous one in the
@@ -43,9 +65,9 @@ describe('[INTEGRATION] Stream cloud', () => {
         };
         let cheeseBurger;
 
-        describe('When user1 reads his empty feed through the enrich endpoint', () => {
+        describe('When alice reads her empty feed through the enrich endpoint', () => {
             requestShouldNotError(async () => {
-                response = await ctx.user1.getEnriched();
+                response = await ctx.alice.feed('user').get();
             });
 
             responseShould('be empty', () => {
@@ -53,10 +75,10 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
         });
 
-        describe('When user1 adds a cheese burger to the food collection', () => {
+        describe('When alice adds a cheese burger to the food collection', () => {
             requestShouldNotError(async () => {
                 response = await ctx.client
-                    .collection('food', ctx.user1.getReadWriteToken())
+                    .storage('food', ctx.alice.token)
                     .add(undefined, cheeseBurgerData);
             });
 
@@ -87,34 +109,19 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
         });
 
-        describe('When user1 eats the cheese burger', () => {
+        describe('When alice eats the cheese burger', () => {
             requestShouldNotError(async () => {
-                response = await ctx.user1.addActivity({
-                    actor: ctx.user1.userId,
+                response = await ctx.alice.feed('user').addActivity({
+                    actor: ctx.alice.userId,
                     verb: 'eat',
                     object: `SC:food:${cheeseBurger.id}`,
                 });
             });
         });
 
-        describe('When user1 then reads his feed through the regular endpoint', () => {
+        describe('When alice then reads his feed through the enrich endpoint', () => {
             requestShouldNotError(async () => {
-                response = await ctx.user1.get();
-            });
-
-            responseShould(
-                'have the activity should have the non enriched object',
-                () => {
-                    response.results.should.be.lengthOf(1);
-                    response.results[0].object.should.eql(
-                        `SC:food:${cheeseBurger.id}`,
-                    );
-                },
-            );
-        });
-        describe('When user1 then reads his feed through the enrich endpoint', () => {
-            requestShouldNotError(async () => {
-                response = await ctx.user1.getEnriched();
+                response = await ctx.alice.feed('user').get();
             });
 
             responseShould('have the activity containing enriched data', () => {
