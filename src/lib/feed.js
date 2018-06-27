@@ -245,7 +245,7 @@ StreamFeed.prototype = {
     return this.client.get({
       url: 'feed/' + this.feedUrl + '/',
       qs: options,
-      signature: this.signature,
+      signature: this.getReadOnlyToken(),
     }, callback);
   },
 
@@ -311,7 +311,7 @@ StreamFeed.prototype = {
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, userId: feedId, expireTokens: this.client.expireTokens });
   },
 
   getReadWriteToken: function() {

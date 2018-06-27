@@ -1,4 +1,4 @@
-var stream = require('../../../src/getstream')
+var stream = require('../../../src/getstream-enrich')
   , feed = require('../utils').feed
   , config = require('./config');
 
@@ -49,24 +49,27 @@ function initBrowser() {
     this.timeout(40000);
 }
 
-function beforeEachNode() {
-    this.client = stream.connect(config.API_KEY, config.API_SECRET);
-    this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
+function beforeEachNode(ctx) {
+    if (ctx === undefined) {
+        ctx = this;
+    }
+    ctx.client = stream.connect(config.API_KEY, config.API_SECRET);
+    ctx.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
         'group': 'testCycle',
         'location': 'qa',
         'protocol': 'https',
     });
-    this.user1 = this.client.feed('user', randUserId('11'));
-    this.user2 = this.client.feed('user', randUserId('22'));
-    this.user3 = this.client.feed('user', randUserId('33'));
-    this.user4 = this.client.feed('user', randUserId('44'));
-    this.aggregated2 = this.client.feed('aggregated', randUserId('22'));
-    this.aggregated3 = this.client.feed('aggregated', randUserId('33'));
-    this.flat3 = this.client.feed('flat', randUserId('33'));
-    this.secret3 = this.client.feed('secret', randUserId('33'));
-    this.notification3 = this.client.feed('notification', randUserId('33'));
-    this.user1ReadOnly = this.client.feed('user', randUserId('11'), null, null, {readOnly: true});
-    this.user2ReadOnly = this.client.feed('user', randUserId('22'), null, null, {readOnly: true});
+    ctx.user1 = ctx.client.feed('user', randUserId('11'));
+    ctx.user2 = ctx.client.feed('user', randUserId('22'));
+    ctx.user3 = ctx.client.feed('user', randUserId('33'));
+    ctx.user4 = ctx.client.feed('user', randUserId('44'));
+    ctx.aggregated2 = ctx.client.feed('aggregated', randUserId('22'));
+    ctx.aggregated3 = ctx.client.feed('aggregated', randUserId('33'));
+    ctx.flat3 = ctx.client.feed('flat', randUserId('33'));
+    ctx.secret3 = ctx.client.feed('secret', randUserId('33'));
+    ctx.notification3 = ctx.client.feed('notification', randUserId('33'));
+    ctx.user1ReadOnly = ctx.client.feed('user', randUserId('11'), null, null, {readOnly: true});
+    ctx.user2ReadOnly = ctx.client.feed('user', randUserId('22'), null, null, {readOnly: true});
 }
 
 function beforeEachBrowser() {
