@@ -1,20 +1,20 @@
 var errors = require('./errors');
 
-var StreamCollection = function() {
+var StreamObjectStore = function() {
   this.initialize.apply(this, arguments);
 };
 
-StreamCollection.prototype = {
+StreamObjectStore.prototype = {
 
   initialize: function(client, name, token) {
     /**
      * Initialize a feed object
      * @method intialize
-     * @memberof StreamCollection.prototype
+     * @memberof StreamObjectStore.prototype
      * @param {StreamClient} client Stream client this collection is constructed from
-     * @param {string} name Collection name
+     * @param {string} name ObjectStore name
      * @param {string} token JWT token
-     * @example new StreamCollection(client, "food", "eyJhbGciOiJIUzI1...")
+     * @example new StreamObjectStore(client, "food", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
     this.collectionName = name;
@@ -22,29 +22,19 @@ StreamCollection.prototype = {
     this.signature = this.collectionName + ' ' + this.token;
   },
 
-  buildURL: function() {
-    var url = 'collection/' + this.collectionName + '/';
-    for(var i = 0; i < arguments.length; i++) {
-      url += arguments[i] + '/';
+  buildURL: function(itemId) {
+    var url = 'object_store/' + this.collectionName + '/';
+    if (itemId === undefined) {
+        return url;
     }
-    return url;
-  },
-
-  getItemURL: function(itemId) {
-    if (itemId.foreignId) {
-      return this.buildURL('foreign_id', itemId.foreignId);
-    }
-    if (itemId.id) {
-      return this.buildURL(itemId.id);
-    }
-    throw new errors.SiteError('Invalid itemId, must be {id:} or {foreignId:}');
+      return url + itemId + '/';
   },
 
   items: function(options, callback) {
     /**
      * get all items from collection
      * @method items
-     * @memberof StreamCollection.prototype
+     * @memberof StreamObjectStore.prototype
      * @param  {object}   options  {limit:}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
@@ -61,32 +51,31 @@ StreamCollection.prototype = {
     /**
      * get item from collection
      * @method get
-     * @memberof StreamCollection.prototype
-     * @param  {object}   itemId  Collection object id {id:} or {foreign_id:}
+     * @memberof StreamObjectStore.prototype
+     * @param  {object}   itemId  ObjectStore object id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.get({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"})
-     * @example collection.get({foreignId:"cheese101"})
+     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
     return this.client.get({
-      url: this.getItemURL(itemId),
+      url: this.buildURL(itemId),
       signature: this.signature,
     }, callback);
   },
 
-  add: function(id, collectionData, callback) {
+  add: function(itemId, collectionData, callback) {
     /**
      * Add item to collection
      * @method add
-     * @memberof StreamCollection.prototype
-     * @param  {string}   foreignId  Collection foreign_id
-     * @param  {object}   collectionData  Collection data
+     * @memberof StreamObjectStore.prototype
+     * @param  {string}   itemId  ObjectStore id
+     * @param  {object}   collectionData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     var body = {
-      'id': id,
+      'id': itemId,
       'data': collectionData,
     };
     return this.client.post({
@@ -100,19 +89,19 @@ StreamCollection.prototype = {
       /**
        * Update item into collection
        * @method update
-       * @memberof StreamCollection.prototype
-       * @param  {object}   itemId  Collection object id {id:} or {foreign_id:}
-       * @param  {object}   collectionData  Collection data
+       * @memberof StreamObjectStore.prototype
+       * @param  {object}   itemId  ObjectStore object id
+       * @param  {object}   collectionData  ObjectStore data
        * @param  {requestCallback} callback Callback to call on completion
        * @return {Promise} Promise object
-       * @example collection.update({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"}, {"name": "cheese burger","toppings": "cheese"})
-       * @example collection.update({foreignId:"cheese101"}, {"name": "cheese burger","toppings": "cheese"})
+       * @example collection.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+       * @example collection.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
        */
       var body = {
           'data': collectionData,
       };
       return this.client.post({
-      url: this.getItemURL(itemId),
+      url: this.buildURL(itemId),
       body: body,
       signature: this.signature,
     }, callback);
@@ -122,18 +111,17 @@ StreamCollection.prototype = {
     /**
      * Delete item from collection
      * @method delete
-     * @memberof StreamCollection.prototype
-     * @param  {object}   itemId  Collection object id {id:} or {foreign_id:}
+     * @memberof StreamObjectStore.prototype
+     * @param  {object}   itemId  ObjectStore object id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.delete({id:"0c7db91c-67f9-11e8-bcd9-fe00a9219401"})
-     * @example collection.delete({foreignId:"cheese101"})
+     * @example collection.delete("cheese101")
      */
     return this.client['delete']({
-      url: this.getItemURL(itemId),
+      url: this.buildURL(itemId),
       signature: this.signature,
     }, callback);
   },
 };
 
-module.exports = StreamCollection;
+module.exports = StreamObjectStore;

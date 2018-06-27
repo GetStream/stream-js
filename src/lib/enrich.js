@@ -1,11 +1,11 @@
 var StreamClient = require('./client');
 var StreamFeed = require('./feed');
-var StreamCollection = require('./collection');
+var StreamObjectStore = require('./object_store');
 var StreamReaction = require('./reaction');
 
 
-StreamClient.prototype.collection = function(name, token) {
-  return new StreamCollection(this, name, token);
+StreamClient.prototype.storage = function(name, token) {
+  return new StreamObjectStore(this, name, token);
 };
 
 StreamClient.prototype.reactions = function(token) {
