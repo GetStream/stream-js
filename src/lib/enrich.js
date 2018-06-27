@@ -37,6 +37,6 @@ StreamFeed.prototype.getEnriched = function(options, callback) {
     return this.client.get({
       url: 'enrich/feed/' + this.feedUrl + '/',
       qs: options,
-      signature: this.getReadOnlyToken(),
+      signature: this.signature,
     }, callback);
 };

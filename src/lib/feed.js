@@ -51,7 +51,7 @@ StreamFeed.prototype = {
     return this.client.post({
       url: 'feed/' + this.feedUrl + '/',
       body: activity,
-      signature: this.getReadWriteToken(),
+      signature: this.signature,
     }, callback);
   },
 
@@ -245,7 +245,7 @@ StreamFeed.prototype = {
     return this.client.get({
       url: 'feed/' + this.feedUrl + '/',
       qs: options,
-      signature: this.getReadOnlyToken(),
+      signature: this.signature,
     }, callback);
   },
 
@@ -311,7 +311,7 @@ StreamFeed.prototype = {
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, userId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
   },
 
   getReadWriteToken: function() {
@@ -327,7 +327,7 @@ StreamFeed.prototype = {
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, userId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.client.expireTokens });
   },
 
   updateActivityToTargets: function (foreign_id, time, new_targets, added_targets, removed_targets) {
