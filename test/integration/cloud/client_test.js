@@ -3,15 +3,34 @@ require('chai').should();
 
 describe('[INTEGRATION] Stream cloud', () => {
     let ctx;
+    let failed = false;
     let beforeFn = () => {
+        failed = false;
         ctx = {};
         beforeEachFn(ctx);
     };
-    let requestShouldNotError = fn => {
-        it('the request should not error', fn);
+
+    // test is a wrapper around it that skips the test if a previous one in the
+    // same story failed already.
+    let test = (label, fn) => {
+        it(label, async function() {
+            if (failed) {
+                this.skip();
+            }
+            try {
+                await fn();
+            } catch (ex) {
+                failed = true;
+                throw ex;
+            }
+        });
     };
-    let responseShould = (str, fn) => {
-        it('the response should ' + str, fn);
+
+    let requestShouldNotError = fn => {
+        test('the request should not error', fn);
+    };
+    let responseShould = (label, fn) => {
+        test('the response should ' + label, fn);
     };
 
     describe('Enrich story', () => {
