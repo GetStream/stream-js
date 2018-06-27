@@ -1,4 +1,5 @@
-var StreamFeed = require('./feed');
+var StreamUser = require('./user');
+
 var StreamUserSession = function() {
   this.initialize.apply(this, arguments);
 };
@@ -17,6 +18,7 @@ StreamUserSession.prototype = {
     this.client = client;
     this.userId = userId;
     this.token = userAuthToken;
+    this.user = new StreamUser(client, userId, userAuthToken);
   },
 
   feed: function(feedGroup) {
