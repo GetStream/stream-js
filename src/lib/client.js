@@ -529,6 +529,27 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
+  put: function(kwargs, cb) {
+    /**
+     * Shorthand function for put request
+     * @method put
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}   kwargs
+     * @param  {requestCallback} cb     Callback to call on completion
+     * @return {Promise}                Promise object
+     */
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'put', kwargs, cb);
+      kwargs = this.enrichKwargs(kwargs);
+      kwargs.method = 'PUT';
+      kwargs.gzip = true;
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      this.request(kwargs, callback);
+    }.bind(this));
+  },
+
+
   updateActivities: function(activities, callback) {
     /**
      * Updates all supplied activities on the getstream-io api

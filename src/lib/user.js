@@ -17,21 +17,59 @@ StreamUser.prototype = {
     this.id = userId;
     this.data = undefined;
     this.token = userAuthToken;
+    this.url = 'user/' + this.id + '/';
   },
-  get: function() {
-    // TODO: code to get the data for the user
+
+  get: async function(options) {
+    let response = await this.client.get({
+      url: this.url,
+      signature: this.token,
+      qs: options,
+    });
+    this.data = response.data;
+    return response;
   },
-  create: function(data) {
-    // TODO: code to create the user
+
+  _chooseData: function(data) {
+    if (data !== undefined) {
+      return data;
+    }
+    if (this.data !== undefined) {
+      return this.data;
+    }
+    return {};
   },
-  update: function(data) {
-    // TODO: code to update the user
+
+  create: async function(data, options) {
+    let response = await this.client.post({
+      url: 'user/',
+      body: {
+        id: this.id,
+        data: this._chooseData(data),
+      },
+      qs: options,
+      signature: this.token,
+    });
+    this.data = response.data;
+    return response;
   },
-  getOrCreate: function() {
-    // TODO: code to getOrCreate the user
+
+  update: async function(data) {
+    let response = await this.client.put({
+      url: this.url,
+      body: {
+        data: this._chooseData(data),
+      },
+      signature: this.token,
+    });
+    this.data = response.data;
+    return response;
+  },
+  getOrCreate: function(data) {
+    return this.create(data, { get_or_create: true });
   },
   profile: function() {
-    // TODO: Should return the user profile data, and it should also update data
+    return this.get({ with_follow_counts: true });
   },
 };
 

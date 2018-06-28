@@ -46,6 +46,14 @@ StreamUserSession.prototype = {
 
     return feed;
   },
+
+  followUser: function(userId) {
+    return this.feed('timeline').follow('user', userId);
+  },
+
+  getUser: function(userId) {
+    return new StreamUser(this.client, userId, this.token);
+  },
 };
 
 module.exports = StreamUserSession;
