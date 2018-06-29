@@ -28,3 +28,4 @@ bower_components
 
 # IDE directory
 .idea
+.tern-port
