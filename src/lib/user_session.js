@@ -70,6 +70,14 @@ StreamUserSession.prototype = {
   react: function(kind, activityId, data) {
     return this.reactions.add(kind, activityId, data);
   },
+
+  og: function(url) {
+      return this.client.get({
+          url: 'og/',
+          qs: {url: url},
+          signature: this.token,
+      });
+  },
 };
 
 module.exports = StreamUserSession;
