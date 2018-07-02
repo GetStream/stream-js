@@ -19,10 +19,15 @@ StreamUserSession.prototype = {
     this.userId = userId;
     this.token = userAuthToken;
     this.user = new StreamUser(client, userId, userAuthToken);
+    this.reactions = client.reactions(userAuthToken);
   },
 
-  feed: function(feedGroup) {
-    let feed = this.client.feed(feedGroup, this.userId, this.token);
+  feed: function(feedGroup, userId) {
+    if (userId === undefined) {
+      userId = this.userId;
+    }
+
+    let feed = this.client.feed(feedGroup, userId, this.token);
     // HACK: override the normal get with one that enriches
     // TODO: make this not super ugly like it is now
     feed.get = (options, callback) => {
@@ -47,12 +52,31 @@ StreamUserSession.prototype = {
     return feed;
   },
 
-  followUser: function(userId) {
-    return this.feed('timeline').follow('user', userId);
+  followUser: function(user) {
+    // The user argument can be a StreamUser object or a userId
+    if (user instanceof StreamUser) {
+      user = user.id;
+    }
+    return this.feed('timeline').follow('user', user);
   },
 
   getUser: function(userId) {
     return new StreamUser(this.client, userId, this.token);
+  },
+
+  storage: function(collection) {
+    return this.client.storage(collection, this.token);
+  },
+  react: function(kind, activityId, data) {
+    return this.reactions.add(kind, activityId, data);
+  },
+
+  og: function(url) {
+      return this.client.get({
+          url: 'og/',
+          qs: {url: url},
+          signature: this.token,
+      });
   },
 };
 

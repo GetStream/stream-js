@@ -2,15 +2,18 @@ var stream = require('../../../src/getstream-enrich');
 var config = require('../utils/config');
 var signing = require('../../../src/lib/signing');
 var randUserId = require('../utils/hooks').randUserId;
+var expect = require('chai').expect;
 require('chai').should();
 
 describe('[INTEGRATION] Stream cloud', () => {
     let response;
     let prevResponse;
     let ctx;
+    let activity;
     let failed = false;
     let beforeFn = () => {
         response = null;
+        activity = null;
         prevResponse = null;
         failed = false;
         ctx = {};
@@ -58,6 +61,9 @@ describe('[INTEGRATION] Stream cloud', () => {
     let responseShould = (label, fn) => {
         test('the response should ' + label, fn);
     };
+    let activityShould = (label, fn) => {
+        test('the activity should ' + label, fn);
+    };
 
     let requestShouldError = (statusCode, fn) => {
         test('the request should error with status ' + statusCode, async () => {
@@ -73,6 +79,54 @@ describe('[INTEGRATION] Stream cloud', () => {
         });
     };
 
+    let responseShouldHaveFields = (...fields) => {
+        responseShould('have all expected fields', () => {
+            response.should.have.all.keys(fields);
+        });
+    };
+
+    let responseShouldHaveNoActivities = () => {
+        responseShould('have no activities', () => {
+            response.results.should.eql([]);
+        });
+    };
+
+    let responseShouldHaveActivityWithFields = (...fields) => {
+        responseShould('have a single activity', () => {
+            response.results.should.be.lengthOf(1);
+            activity = response.results[0];
+        });
+
+        test('the activity should have all expected fields', () => {
+            activity.should.have.all.keys(
+                'id',
+                'foreign_id',
+                'time',
+                'actor',
+                'verb',
+                'target',
+                'object',
+                'origin',
+                ...fields,
+            );
+        });
+    };
+
+    let responseShouldHaveUUID = () => {
+        responseShould('have a generated UUID as ID', () => {
+            response.id.should.be.a('string').lengthOf(36);
+        });
+    };
+    let reactionFields = [
+        'id',
+        'kind',
+        'activity_id',
+        'user_id',
+        'data',
+        'created_at',
+        'updated_at',
+    ];
+
     describe('Enrich story', () => {
         before(beforeFn);
         let cheeseBurgerData = {
@@ -81,37 +135,35 @@ describe('[INTEGRATION] Stream cloud', () => {
             objectID: 123,
         };
         let cheeseBurger;
+        let eatCheeseBurgerActivity;
+        let like;
+        let like2;
+        let comment;
 
-        describe('When alice reads her empty feed through the enrich endpoint', () => {
+        describe('When alice reads her empty feed', () => {
             requestShouldNotError(async () => {
                 response = await ctx.alice.feed('user').get();
             });
 
-            responseShould('be empty', () => {
-                response.results.should.eql([]);
-            });
+            responseShouldHaveNoActivities();
         });
 
         describe('When alice adds a cheese burger to the food collection', () => {
             requestShouldNotError(async () => {
-                response = await ctx.client
-                    .storage('food', ctx.alice.token)
-                    .add(undefined, cheeseBurgerData);
+                response = await ctx.alice
+                    .storage('food')
+                    .add(null, cheeseBurgerData);
             });
 
-            responseShould('have all expected fields', () => {
-                response.should.have.all.keys(
-                    'id',
-                    'created_at',
-                    'updated_at',
-                    'collection',
-                    'data',
-                );
-            });
+            responseShouldHaveFields(
+                'id',
+                'created_at',
+                'updated_at',
+                'collection',
+                'data',
+            );
 
-            responseShould('have a generated UUID as ID', () => {
-                response.id.should.be.a('string').lengthOf(36);
-            });
+            responseShouldHaveUUID();
 
             responseShould(
                 'have collection and data matching the request',
@@ -136,17 +188,231 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
         });
 
-        describe('When alice then reads his feed through the enrich endpoint', () => {
+        describe('When alice then reads her feed', () => {
             requestShouldNotError(async () => {
                 response = await ctx.alice.feed('user').get();
             });
 
+            responseShouldHaveActivityWithFields();
+
             responseShould('have the activity containing enriched data', () => {
-                response.results.should.be.lengthOf(1);
-                response.results[0].object.should.eql(cheeseBurger);
+                activity.object.should.eql(cheeseBurger);
+                eatCheeseBurgerActivity = response.results[0];
+            });
+        });
+
+        describe('When bob reads his empty timeline', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob.feed('timeline').get();
+            });
+
+            responseShouldHaveNoActivities();
+        });
+
+        describe('When bob follows alice', () => {
+            requestShouldNotError(async () => {
+                await ctx.bob.followUser(ctx.alice.user);
+            });
+        });
+
+        describe('When bob then reads his timeline with own reactions', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob.feed('timeline').get();
+            });
+
+            responseShouldHaveActivityWithFields();
+
+            activityShould('contain enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+        });
+
+        describe('When bob then likes that alice ate the cheese burger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob.react(
+                    'like',
+                    eatCheeseBurgerActivity.id,
+                );
+                like = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'like',
+                    activity_id: eatCheeseBurgerActivity.id,
+                    user_id: ctx.bob.userId,
+                });
+                response.data.should.eql({});
+            });
+        });
+
+        describe('When bob then reads his timeline with own reactions', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob
+                    .feed('timeline')
+                    .get({ withOwnReactions: true });
+            });
+
+            responseShouldHaveActivityWithFields('own_reactions');
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould('contain the reaction of bob', () => {
+                activity.own_reactions.like.should.eql([like]);
+            });
+        });
+
+        describe('When bob then reads alice her feed', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob
+                    .feed('user', ctx.alice.userId)
+                    .get({ withOwnReactions: true });
+            });
+
+            responseShouldHaveActivityWithFields('own_reactions');
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould('contain the reaction of bob', () => {
+                activity.own_reactions.like.should.eql([like]);
+            });
+        });
+
+        describe('When carl then reads alice her feed', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.carl
+                    .feed('user', ctx.alice.userId)
+                    .get({ withRecentReactions: true, withOwnReactions: true });
+            });
+
+            responseShouldHaveActivityWithFields(
+                'own_reactions',
+                'latest_reactions',
+            );
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould('not contain anything in own_reactions', () => {
+                activity.own_reactions.should.eql({});
+            });
+
+            activityShould(
+                'contain the reaction of bob in latest_reactions',
+                () => {
+                    activity.latest_reactions.like.should.eql([like]);
+                },
+            );
+        });
+
+        describe('When dave also likes that alice ate the cheese burger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.react(
+                    'like',
+                    eatCheeseBurgerActivity.id,
+                );
+                like2 = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'like',
+                    activity_id: eatCheeseBurgerActivity.id,
+                    user_id: ctx.dave.userId,
+                });
+                response.data.should.eql({});
+            });
+        });
+
+        describe('When dave then comments on that alice ate a cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.react(
+                    'comment',
+                    eatCheeseBurgerActivity,
+                    {
+                        text: 'Looks juicy!!!',
+                    },
+                );
+                comment = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'comment',
+                    activity_id: eatCheeseBurgerActivity.id,
+                    user_id: ctx.dave.userId,
+                });
+                response.data.should.eql({
+                    text: 'Looks juicy!!!',
+                });
+            });
+        });
+
+        describe('When dave then reads alice her feed with all enrichment enabled', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.feed('user', ctx.alice.userId).get({
+                    withRecentReactions: true,
+                    withOwnReactions: true,
+                    withReactionCounts: true,
+                });
+            });
+
+            responseShouldHaveActivityWithFields(
+                'own_reactions',
+                'latest_reactions',
+                'reaction_counts',
+            );
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould(
+                'contain dave his like and comment in own_reactions',
+                () => {
+                    activity.own_reactions.should.eql({
+                        like: [like2],
+                        comment: [comment],
+                    });
+                },
+            );
+
+            activityShould(
+                'contain his own reactions and of bob his like in latest_reactions',
+                () => {
+                    activity.latest_reactions.should.eql({
+                        like: [like, like2],
+                        comment: [comment],
+                    });
+                },
+            );
+
+            activityShould('have the correct counts for reactions', () => {
+                activity.reaction_counts.should.eql({
+                    like: 2,
+                    comment: 1,
+                });
             });
         });
     });
+
     describe('User profile story', () => {
         before(beforeFn);
         let aliceData = {
@@ -163,25 +429,17 @@ describe('[INTEGRATION] Stream cloud', () => {
         };
         let carlData = {
             name: 'Carl Church',
-            likes: ['apples', 'toyota'],
+            likes: ['cherries', 'curry'],
         };
 
         describe('When alice gets her account without creating it', () => {
             requestShouldError(404, async () => {
                 response = await ctx.alice.user.get();
-                console.log(response);
             });
         });
 
         let checkUserResponse = (userFn, data) => {
-            responseShould('have all the expected fields', () => {
-                response.should.have.all.keys(
-                    'id',
-                    'created_at',
-                    'updated_at',
-                    'data',
-                );
-            });
+            responseShouldHaveFields('id', 'created_at', 'updated_at', 'data');
 
             responseShould('have id and data matching the request', () => {
                 response.id.should.equal(userFn().id);
@@ -194,31 +452,34 @@ describe('[INTEGRATION] Stream cloud', () => {
         };
 
         let checkProfileResponse = (userFn, data, following, followers) => {
-            responseShould('have all the expected fields', () => {
-                response.should.have.all.keys(
-                    'id',
-                    'created_at',
-                    'updated_at',
-                    'data',
-                    'following_count',
-                    'followers_count',
-                );
-            });
+            responseShouldHaveFields(
+                'id',
+                'created_at',
+                'updated_at',
+                'data',
+                'following_count',
+                'followers_count',
+            );
 
-            responseShould('have id and data matching the previously submitted data', () => {
-                response.id.should.equal(userFn().id);
-                response.data.should.eql(data);
-            });
+            responseShould(
+                'have id and data matching the previously submitted data',
+                () => {
+                    response.id.should.equal(userFn().id);
+                    response.data.should.eql(data);
+                },
+            );
 
             test('the local user data should be updated', () => {
                 userFn().data.should.eql(data);
             });
 
-            responseShould('contain the counts for following and followers for timeline->user feedgroups', () => {
-                response.following_count.should.equal(following);
-                response.followers_count.should.equal(followers);
-            });
-
+            responseShould(
+                'contain the counts for following and followers for timeline->user feedgroups',
+                () => {
+                    response.following_count.should.equal(following);
+                    response.followers_count.should.equal(followers);
+                },
+            );
         };
 
         describe('When alice creates her account', () => {
@@ -262,26 +523,28 @@ describe('[INTEGRATION] Stream cloud', () => {
         describe('When creating follow relationships', () => {
             requestShouldNotError(async () => {
                 let promises = [];
+                promises.push(ctx.alice.followUser(ctx.bob.userId));
+                promises.push(ctx.alice.followUser(ctx.carl.userId));
                 promises.push(
-                    ctx.alice.followUser(ctx.bob.userId),
+                    ctx.alice
+                        .feed('timeline')
+                        .follow('timeline', ctx.dave.userId),
+                );
+                promises.push(ctx.bob.followUser(ctx.alice.userId));
+                promises.push(
+                    ctx.bob
+                        .feed('notification')
+                        .follow('user', ctx.alice.userId),
                 );
                 promises.push(
-                    ctx.alice.followUser(ctx.carl.userId),
+                    ctx.carl
+                        .feed('notification')
+                        .follow('user', ctx.alice.userId),
                 );
                 promises.push(
-                    ctx.alice.feed('timeline').follow('timeline', ctx.dave.userId),
-                );
-                promises.push(
-                    ctx.bob.followUser(ctx.alice.userId),
-                );
-                promises.push(
-                    ctx.bob.feed('notification').follow('user', ctx.alice.userId),
-                );
-                promises.push(
-                    ctx.carl.feed('notification').follow('user', ctx.alice.userId),
-                );
-                promises.push(
-                    ctx.dave.feed('notification').follow('user', ctx.alice.userId),
+                    ctx.dave
+                        .feed('notification')
+                        .follow('user', ctx.alice.userId),
                 );
                 await Promise.all(promises);
             });
@@ -295,7 +558,7 @@ describe('[INTEGRATION] Stream cloud', () => {
             checkProfileResponse(() => ctx.alice.user, aliceData, 2, 1);
         });
 
-        describe('When alice looks at bob\'s profile', () => {
+        describe("When alice looks at bob's profile", () => {
             let bobUser;
             requestShouldNotError(async () => {
                 bobUser = ctx.alice.getUser(ctx.bob.userId);
@@ -303,6 +566,57 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
 
             checkProfileResponse(() => bobUser, newBobData, 1, 1);
+        });
+    });
+
+    describe('OpenGraph story', () => {
+        before(beforeFn);
+
+        describe('When alice requests opengraph info for our blog', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice.og(
+                    'https://getstream.io/blog/try-out-the-stream-api-with-postman',
+                );
+            });
+
+            responseShould('have the expected content', () => {
+                response.should.eql({
+                    locale: 'en_US',
+                    type: 'article',
+                    title:
+                        'Try out the Stream API with Postman - The Stream Blog',
+                    description:
+                        "Many of us at Stream use Postman regularly as we build and test our services. We're also always looking for ways to make it quick and easy for other developers to try the service. One of our goals is to help people see first hand how simple it is to build powerful social apps with Stream.",
+                    url:
+                        'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
+                    site_name: 'The Stream Blog',
+                    images: [
+                        {
+                            image:
+                                'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
+                            secure_url:
+                                'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
+                            width: '1600',
+                            height: '835',
+                            alt: 'Postman Collection for the Stream API',
+                        },
+                    ],
+                });
+            });
+        });
+
+        describe('When alice requests opengraph info for a binary blob', () => {
+            requestShouldError(400, async () => {
+                response = await ctx.alice.og(
+                    'https://github.com/buger/goreplay/releases/download/v0.16.1/gor_0.16.1_mac.tar.gz',
+                );
+            });
+
+            responseShould('have the expected content', () => {
+                response.should.eql({
+                    detail: 'document too large (>1MB)',
+                });
+            });
         });
     });
 });
