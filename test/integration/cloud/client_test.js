@@ -341,7 +341,7 @@ describe('[INTEGRATION] Stream cloud', () => {
             requestShouldNotError(async () => {
                 response = await ctx.dave.react(
                     'comment',
-                    eatCheeseBurgerActivity.id,
+                    eatCheeseBurgerActivity,
                     {
                         text: 'Looks juicy!!!',
                     },

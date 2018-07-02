@@ -51,7 +51,7 @@ StreamReaction.prototype = {
      * @method add
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
-     * @param  {string}   activityId Activity Id
+     * @param  {string}   activity Activity or an ActivityID
      * @param  {object}   data  data related to reaction
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
