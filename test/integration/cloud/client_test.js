@@ -117,6 +117,15 @@ describe('[INTEGRATION] Stream cloud', () => {
             response.id.should.be.a('string').lengthOf(36);
         });
     };
+    let reactionFields = [
+        'id',
+        'kind',
+        'activity_id',
+        'user_id',
+        'data',
+        'created_at',
+        'updated_at',
+    ];
 
     describe('Enrich story', () => {
         before(beforeFn);
@@ -127,7 +136,9 @@ describe('[INTEGRATION] Stream cloud', () => {
         };
         let cheeseBurger;
         let eatCheeseBurgerActivity;
-        let reaction;
+        let like;
+        let like2;
+        let comment;
 
         describe('When alice reads her empty feed', () => {
             requestShouldNotError(async () => {
@@ -222,18 +233,10 @@ describe('[INTEGRATION] Stream cloud', () => {
                     'like',
                     eatCheeseBurgerActivity.id,
                 );
-                reaction = response;
+                like = response;
             });
 
-            responseShouldHaveFields(
-                'id',
-                'kind',
-                'activity_id',
-                'user_id',
-                'data',
-                'created_at',
-                'updated_at',
-            );
+            responseShouldHaveFields(...reactionFields);
 
             responseShouldHaveUUID();
 
@@ -261,14 +264,14 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
 
             activityShould('contain the reaction of bob', () => {
-                activity.own_reactions.like.should.eql([reaction]);
+                activity.own_reactions.like.should.eql([like]);
             });
         });
 
         describe('When bob then reads alice her feed', () => {
             requestShouldNotError(async () => {
                 response = await ctx.bob
-                    .feed('timeline', ctx.alice.userId)
+                    .feed('user', ctx.alice.userId)
                     .get({ withOwnReactions: true });
             });
 
@@ -279,8 +282,137 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
 
             activityShould('contain the reaction of bob', () => {
-                activity.own_reactions.like.should.eql([reaction]);
+                activity.own_reactions.like.should.eql([like]);
             });
+        });
+
+        describe('When carl then reads alice her feed', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.carl
+                    .feed('user', ctx.alice.userId)
+                    .get({ withRecentReactions: true, withOwnReactions: true });
+            });
+
+            responseShouldHaveActivityWithFields(
+                'own_reactions',
+                'latest_reactions',
+            );
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould('not contain anything in own_reactions', () => {
+                activity.own_reactions.should.eql({});
+            });
+
+            activityShould(
+                'contain the reaction of bob in latest_reactions',
+                () => {
+                    activity.latest_reactions.like.should.eql([like]);
+                },
+            );
+        });
+
+        describe('When dave also likes that alice ate the cheese burger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.react(
+                    'like',
+                    eatCheeseBurgerActivity.id,
+                );
+                like2 = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'like',
+                    activity_id: eatCheeseBurgerActivity.id,
+                    user_id: ctx.dave.userId,
+                });
+                response.data.should.eql({});
+            });
+        });
+
+        describe('When dave then comments on that alice ate a cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.react(
+                    'comment',
+                    eatCheeseBurgerActivity.id,
+                    {
+                        text: 'Looks juicy!!!',
+                    },
+                );
+                comment = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'comment',
+                    activity_id: eatCheeseBurgerActivity.id,
+                    user_id: ctx.dave.userId,
+                });
+                response.data.should.eql({
+                    text: 'Looks juicy!!!',
+                });
+            });
+        });
+
+        describe('When dave then reads alice her feed with all enrichment enabled', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.dave.feed('user', ctx.alice.userId).get({
+                    withRecentReactions: true,
+                    withOwnReactions: true,
+                    withReactionCounts: true,
+                });
+            });
+
+            responseShouldHaveActivityWithFields(
+                'own_reactions',
+                'latest_reactions',
+                'reaction_counts',
+            );
+
+            activityShould('contain the enriched data', () => {
+                activity.object.should.eql(cheeseBurger);
+            });
+
+            activityShould(
+                'contain dave his like and comment in own_reactions',
+                () => {
+                    activity.own_reactions.should.eql({
+                        like: [like2],
+                        comment: [comment],
+                    });
+                },
+            );
+
+            activityShould(
+                'contain his own reactions and of bob his like in latest_reactions',
+                () => {
+                    activity.latest_reactions.should.eql({
+                        like: [like, like2],
+                        comment: [comment],
+                    });
+                },
+            );
+
+            activityShould(
+                'have the correct counts for reactions',
+                () => {
+                    activity.reaction_counts.should.eql({
+                        like: 2,
+                        comment: 1,
+                    });
+                },
+            );
         });
     });
 

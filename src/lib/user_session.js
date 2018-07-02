@@ -27,7 +27,7 @@ StreamUserSession.prototype = {
       userId = this.userId;
     }
 
-    let feed = this.client.feed(feedGroup, this.userId, this.token);
+    let feed = this.client.feed(feedGroup, userId, this.token);
     // HACK: override the normal get with one that enriches
     // TODO: make this not super ugly like it is now
     feed.get = (options, callback) => {
