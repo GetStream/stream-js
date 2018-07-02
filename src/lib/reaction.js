@@ -5,7 +5,6 @@ var StreamReaction = function() {
 };
 
 StreamReaction.prototype = {
-
   initialize: function(client, token) {
     /**
      * Initialize a feed object
@@ -22,8 +21,8 @@ StreamReaction.prototype = {
 
   buildURL: function() {
     var url = 'reaction/';
-    for(var i = 0; i < arguments.length; i++) {
-        url += arguments[i] + '/';
+    for (var i = 0; i < arguments.length; i++) {
+      url += arguments[i] + '/';
     }
     return url;
   },
@@ -39,10 +38,13 @@ StreamReaction.prototype = {
      * @example reactions.all()
      * @example reactions.all({limit:100})
      */
-    return this.client.get({
-      url: this.buildURL(),
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: this.buildURL(),
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 
   add: function(kind, activity, data, callback) {
@@ -55,22 +57,25 @@ StreamReaction.prototype = {
      * @param  {object}   data  data related to reaction
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example reactions.add("0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
-     * @example reactions.add("0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", {"id": "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "text": "I climbed a mountain"}, {"text": "love it!"},)
      */
-      if (activity instanceof Object) {
-          activity = activity.id
-      }
+    if (activity instanceof Object) {
+      activity = activity.id;
+    }
     var body = {
-      'activity_id': activity,
-      'kind': kind,
-      'data': data,
+      activity_id: activity,
+      kind: kind,
+      data: data,
     };
-    return this.client.post({
-      url: this.buildURL(),
-      body: body,
-      signature: this.signature,
-    }, callback);
+    return this.client.post(
+      {
+        url: this.buildURL(),
+        body: body,
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 
   get: function(id, callback) {
@@ -83,10 +88,13 @@ StreamReaction.prototype = {
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get({
-      url: this.buildURL(id),
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: this.buildURL(id),
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 
   lookup: function(search, callback) {
@@ -102,13 +110,15 @@ StreamReaction.prototype = {
      * @example reactions.lookup({by:"foreign_id", value:"fid"}, kinds:["comment"]})
      */
 
-   switch(search.by) {
-    case "activity_id":
-    case "user_id":
-    case "foreign_id":
-      break;
-    default:
-      throw new errors.SiteError('search.by is required and must be equal to activity_id, user_id or foreign_id');
+    switch (search.by) {
+      case 'activity_id':
+      case 'user_id':
+      case 'foreign_id':
+        break;
+      default:
+        throw new errors.SiteError(
+          'search.by is required and must be equal to activity_id, user_id or foreign_id',
+        );
     }
     if (!search.value) {
       throw new errors.SiteError('Missing search.value');
@@ -116,10 +126,13 @@ StreamReaction.prototype = {
     if (!search.kinds) {
       throw new errors.SiteError('Missing search.kinds');
     }
-    return this.client.get({
-      url: this.build("by", search.by, search.value, search.kinds),
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: this.build('by', search.by, search.value, search.kinds),
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 
   update: function(id, activityId, kind, data, callback) {
@@ -137,16 +150,19 @@ StreamReaction.prototype = {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
     var body = {
-      'id': id || "",
-      'activity_id': activityId,
-      'kind': kind,
-      'data': data,
+      id: id || '',
+      activity_id: activityId,
+      kind: kind,
+      data: data,
     };
-    return this.client.post({
-      url: this.buildURL(id),
-      body: body,
-      signature: this.signature,
-    }, callback);
+    return this.client.post(
+      {
+        url: this.buildURL(id),
+        body: body,
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 
   delete: function(id, callback) {
@@ -159,10 +175,13 @@ StreamReaction.prototype = {
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client['delete']({
-      url: this.buildURL(id),
-      signature: this.signature,
-    }, callback);
+    return this.client['delete'](
+      {
+        url: this.buildURL(id),
+        signature: this.signature,
+      },
+      callback,
+    );
   },
 };
 
