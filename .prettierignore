@@ -1,3 +1,2 @@
-*.md
 **/*{.,-}min.js
 test/integration/utils/kjur.js
