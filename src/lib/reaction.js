@@ -47,7 +47,7 @@ StreamReaction.prototype = {
     );
   },
 
-  add: function(kind, activity, data, callback) {
+  add: function(kind, activity, {data, targetFeeds}={}, callback) {
     /**
      * add reaction
      * @method add

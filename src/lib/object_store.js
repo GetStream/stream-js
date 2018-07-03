@@ -96,22 +96,22 @@ StreamObjectStore.prototype = {
     );
   },
 
-  update: function(itemId, collectionData, callback) {
+  update: function(itemId, objectData, callback) {
     /**
-     * Update item into collection
+     * Update item in the object storage
      * @method update
      * @memberof StreamObjectStore.prototype
      * @param  {object}   itemId  ObjectStore object id
-     * @param  {object}   collectionData  ObjectStore data
+     * @param  {object}   objectData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
-     * @example collection.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     var body = {
-      data: collectionData,
+      data: objectData,
     };
-    return this.client.post(
+    return this.client.put(
       {
         url: this.buildURL(itemId),
         body: body,
