@@ -1,0 +1,194 @@
+var stream = require('../../../src/getstream-enrich');
+var config = require('../utils/config');
+var signing = require('../../../src/lib/signing');
+var randUserId = require('../utils/hooks').randUserId;
+var expect = require('chai').expect;
+var should = require('chai').should();
+
+class CloudContext {
+    constructor(story) {
+        this.response = null;
+        this.prevResponse = null;
+        this.activity = null;
+        this.failed = false;
+        this.cheeseBurger = null;
+        this.cheeseBurgerData = {
+            name: 'cheese burger',
+            toppings: ['cheese'],
+        };
+        this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+            group: 'testCycle',
+            location: 'qa',
+            protocol: 'https',
+            browser: true,
+        });
+        this.alice = this.createUserSession('alice');
+        this.bob = this.createUserSession('bob');
+        this.carl = this.createUserSession('carl');
+        this.dave = this.createUserSession('dave');
+        this.fields = {
+            collection: [
+                'id',
+                'created_at',
+                'updated_at',
+                'collection',
+                'data',
+            ],
+            reaction: [
+                'id',
+                'kind',
+                'activity_id',
+                'user_id',
+                'data',
+                'created_at',
+                'updated_at',
+            ],
+            activity: [
+                'id',
+                'foreign_id',
+                'time',
+                'actor',
+                'verb',
+                'target',
+                'object',
+                'origin',
+            ],
+        };
+    }
+
+    createUserSession(userId) {
+        userId = randUserId(userId);
+        return this.client.createUserSession(
+            userId,
+            signing.JWTScopeToken(config.API_SECRET, '*', '*', {
+                feedId: '*',
+                userId: userId,
+            }),
+        );
+    }
+
+    // test is a wrapper around "it" that skips the test if a previous one in
+    // the same context failed already.
+    test(label, fn) {
+        let ctx = this;
+        it(label, async function() {
+            if (ctx.failed) {
+                this.skip();
+            }
+            try {
+                await fn();
+            } catch (ex) {
+                ctx.failed = true;
+                throw ex;
+            }
+        });
+    }
+
+    requestShouldNotError(fn) {
+        this.test('the request should not error', fn);
+    }
+    responseShould(label, fn) {
+        this.test('the response should ' + label, fn);
+    }
+    activityShould(label, fn) {
+        this.test('the activity should ' + label, fn);
+    }
+
+    requestShouldError(statusCode, fn) {
+        this.test(
+            'the request should error with status ' + statusCode,
+            async () => {
+                try {
+                    await fn();
+                    expect.fail(null, null, 'request should not succeed');
+                } catch (e) {
+                    if (!(e instanceof stream.errors.StreamApiError)) {
+                        throw e;
+                    }
+                    e.response.statusCode.should.equal(statusCode);
+                    this.response = e.error;
+                }
+            },
+        );
+    }
+
+    responseShouldHaveFields(...fields) {
+        this.responseShould('have all expected fields', () => {
+            this.response.should.have.all.keys(fields);
+        });
+    }
+
+    responseShouldHaveNoActivities() {
+        this.responseShould('have no activities', () => {
+            this.response.results.should.eql([]);
+        });
+    }
+
+    responseShouldHaveActivityWithFields(...fields) {
+        this.responseShould('have a single activity', () => {
+            this.response.results.should.be.lengthOf(1);
+            this.activity = this.response.results[0];
+        });
+
+        this.test('the activity should have all expected fields', () => {
+            this.activity.should.have.all.keys(
+                ...this.fields.activity,
+                ...fields,
+            );
+        });
+    }
+
+    responseShouldHaveUUID() {
+        this.responseShould('have a generated UUID as ID', () => {
+            this.response.id.should.be.a('string').lengthOf(36);
+        });
+    }
+
+    responseShouldHaveNewUpdatedAt() {
+        this.responseShould('have an updated updated_at', () => {
+            should.exist(this.prevResponse.updated_at);
+            should.exist(this.response.updated_at);
+            this.response.updated_at.should.not.equal(
+                this.prevResponse.updated_at,
+            );
+        });
+    }
+
+    responseShouldEqualPreviousResponse() {
+        this.responseShould('be the same as the previous response', () => {
+            should.exist(this.prevResponse);
+            should.exist(this.response);
+            this.response.should.eql(this.prevResponse);
+        });
+    }
+
+    aliceAddsCheeseBurger() {
+        describe('When alice adds a cheese burger to the food collection', () => {
+            this.requestShouldNotError(async () => {
+                this.response = await this.alice
+                    .storage('food')
+                    .add(null, this.cheeseBurgerData);
+            });
+
+            this.responseShouldHaveFields(...this.fields.collection);
+
+            this.responseShouldHaveUUID();
+
+            this.responseShould(
+                'have collection and data matching the request',
+                () => {
+                    this.response.collection.should.equal('food');
+                    this.response.data.should.eql(this.cheeseBurgerData);
+                },
+            );
+
+            after(() => {
+                this.cheeseBurger = this.response;
+            });
+        });
+    }
+}
+
+module.exports = {
+    CloudContext: CloudContext,
+};
