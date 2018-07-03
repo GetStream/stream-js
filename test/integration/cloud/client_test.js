@@ -141,7 +141,6 @@ describe('[INTEGRATION] Stream cloud', () => {
         });
     };
 
-
     let collectionFields = [
         'id',
         'created_at',
@@ -368,7 +367,9 @@ describe('[INTEGRATION] Stream cloud', () => {
                     'comment',
                     eatCheeseBurgerActivity,
                     {
-                        text: 'Looks juicy!!!',
+                        data: {
+                            text: 'Looks juicy!!!',
+                        },
                     },
                 );
                 comment = response;
@@ -756,7 +757,6 @@ describe('[INTEGRATION] Stream cloud', () => {
             });
         });
 
-
         describe('When alice tries to create an object with an illegal character in the id', () => {
             requestShouldError(400, async () => {
                 await ctx.alice.storage('food').add('!abcdee!', {});
@@ -802,6 +802,50 @@ describe('[INTEGRATION] Stream cloud', () => {
                 },
             );
         });
+    });
 
+    describe('Reaction CRUD and posting reactions to feeds', () => {
+        beforeFn();
+        let eatActivity;
+        let likeActivity;
+        let like;
+        describe('When alice eats a cheese burger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice.feed('user').addActivity({
+                    actor: ctx.alice.userId,
+                    verb: 'eat',
+                    object: 'cheeseburger',
+                });
+                eatActivity = response;
+            });
+        });
+
+        let commentData = { text: 'Looking yummy!' };
+
+        describe('When bob then comments on that alice ate the cheese burger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob.react('comment', eatActivity.id, {
+                    data: commentData,
+                    targetFeeds: [
+                        ctx.bob.feed('user'),
+                        ctx.bob.feed('notification', ctx.alice.userId),
+                    ],
+                });
+                like = response;
+            });
+
+            responseShouldHaveFields(...reactionFields);
+
+            responseShouldHaveUUID();
+
+            responseShould('have data matching the request', () => {
+                response.should.deep.include({
+                    kind: 'comment',
+                    activity_id: eatActivity.id,
+                    user_id: ctx.bob.userId,
+                });
+                response.data.should.eql(commentData);
+            });
+        });
     });
 });
