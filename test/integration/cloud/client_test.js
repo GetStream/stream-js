@@ -669,6 +669,14 @@ describe('[INTEGRATION] Stream cloud', () => {
             );
         });
 
+        describe('When bob tries to get the cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.bob.storage('food').get(cheeseBurger.id);
+            });
+
+            responseShouldEqualPreviousResponse();
+        });
+
         describe('When bob tries to add the improved cheeseburger with the same ID', () => {
             requestShouldError(409, async () => {
                 response = await ctx.bob
