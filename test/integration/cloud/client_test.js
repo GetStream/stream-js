@@ -3,7 +3,7 @@ var config = require('../utils/config');
 var signing = require('../../../src/lib/signing');
 var randUserId = require('../utils/hooks').randUserId;
 var expect = require('chai').expect;
-require('chai').should();
+var should = require('chai').should();
 
 describe('[INTEGRATION] Stream cloud', () => {
     let response;
@@ -11,11 +11,17 @@ describe('[INTEGRATION] Stream cloud', () => {
     let ctx;
     let activity;
     let failed = false;
+    let cheeseBurger;
+    let cheeseBurgerData;
     let beforeFn = () => {
         response = null;
         activity = null;
         prevResponse = null;
         failed = false;
+        cheeseBurgerData = {
+            name: 'cheese burger',
+            toppings: ['cheese'],
+        };
         ctx = {};
         ctx.client = stream.connect(config.API_KEY, null, config.APP_ID, {
             group: 'testCycle',
@@ -69,6 +75,7 @@ describe('[INTEGRATION] Stream cloud', () => {
         test('the request should error with status ' + statusCode, async () => {
             try {
                 await fn();
+                expect.fail(null, null, 'request should not succeed');
             } catch (e) {
                 if (!(e instanceof stream.errors.StreamApiError)) {
                     throw e;
@@ -117,6 +124,32 @@ describe('[INTEGRATION] Stream cloud', () => {
             response.id.should.be.a('string').lengthOf(36);
         });
     };
+
+    let responseShouldHaveNewUpdatedAt = () => {
+        responseShould('have an updated updated_at', () => {
+            should.exist(prevResponse.updated_at);
+            should.exist(response.updated_at);
+            response.updated_at.should.not.equal(prevResponse.updated_at);
+        });
+    };
+
+    let responseShouldEqualPreviousResponse = () => {
+        responseShould('be the same as the previous response', () => {
+            should.exist(prevResponse);
+            should.exist(response);
+            response.should.eql(prevResponse);
+        });
+    };
+
+
+    let collectionFields = [
+        'id',
+        'created_at',
+        'updated_at',
+        'collection',
+        'data',
+    ];
+
     let reactionFields = [
         'id',
         'kind',
@@ -127,27 +160,7 @@ describe('[INTEGRATION] Stream cloud', () => {
         'updated_at',
     ];
 
-    describe('Enrich story', () => {
-        before(beforeFn);
-        let cheeseBurgerData = {
-            name: 'cheese burger',
-            toppings: ['cheese'],
-            objectID: 123,
-        };
-        let cheeseBurger;
-        let eatCheeseBurgerActivity;
-        let like;
-        let like2;
-        let comment;
-
-        describe('When alice reads her empty feed', () => {
-            requestShouldNotError(async () => {
-                response = await ctx.alice.feed('user').get();
-            });
-
-            responseShouldHaveNoActivities();
-        });
-
+    let aliceAddsCheeseBurger = () => {
         describe('When alice adds a cheese burger to the food collection', () => {
             requestShouldNotError(async () => {
                 response = await ctx.alice
@@ -155,13 +168,7 @@ describe('[INTEGRATION] Stream cloud', () => {
                     .add(null, cheeseBurgerData);
             });
 
-            responseShouldHaveFields(
-                'id',
-                'created_at',
-                'updated_at',
-                'collection',
-                'data',
-            );
+            responseShouldHaveFields(...collectionFields);
 
             responseShouldHaveUUID();
 
@@ -176,6 +183,24 @@ describe('[INTEGRATION] Stream cloud', () => {
             after(() => {
                 cheeseBurger = response;
             });
+        });
+    };
+
+    describe('Enrich story', () => {
+        before(beforeFn);
+        let eatCheeseBurgerActivity;
+        let like;
+        let like2;
+        let comment;
+
+        aliceAddsCheeseBurger();
+
+        describe('When alice reads her empty feed', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice.feed('user').get();
+            });
+
+            responseShouldHaveNoActivities();
         });
 
         describe('When alice eats the cheese burger', () => {
@@ -515,9 +540,11 @@ describe('[INTEGRATION] Stream cloud', () => {
 
         describe('When bob updates his existing user', () => {
             requestShouldNotError(async () => {
+                prevResponse = response;
                 response = await ctx.bob.user.update(newBobData);
             });
             checkUserResponse(() => ctx.bob.user, newBobData);
+            responseShouldHaveNewUpdatedAt();
         });
 
         describe('When creating follow relationships', () => {
@@ -618,5 +645,155 @@ describe('[INTEGRATION] Stream cloud', () => {
                 });
             });
         });
+    });
+
+    describe('Collection CRUD behaviours', () => {
+        beforeFn();
+        let improvedCheeseBurgerData = {
+            name: 'The improved cheese burger',
+            toppings: ['cheese', 'pickles', 'bacon'],
+        };
+        aliceAddsCheeseBurger();
+
+        describe('When alice tries to get the cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice.storage('food').get(cheeseBurger.id);
+                prevResponse = response;
+            });
+
+            responseShould(
+                'be the same as when the cheeseburger was added',
+                async () => {
+                    response.should.eql(cheeseBurger);
+                },
+            );
+        });
+
+        describe('When bob tries to add the improved cheeseburger with the same ID', () => {
+            requestShouldError(409, async () => {
+                response = await ctx.bob
+                    .storage('food')
+                    .add(cheeseBurger.id, improvedCheeseBurgerData);
+            });
+        });
+
+        describe('When alice tries to add the improved cheeseburger with the same ID', () => {
+            requestShouldError(409, async () => {
+                response = await ctx.alice
+                    .storage('food')
+                    .add(cheeseBurger.id, improvedCheeseBurgerData);
+            });
+        });
+
+        describe('When bob tries to update the cheeseburger', () => {
+            requestShouldError(403, async () => {
+                response = await ctx.bob
+                    .storage('food')
+                    .update(cheeseBurger.id, improvedCheeseBurgerData);
+            });
+        });
+
+        describe('When alice tries to update the cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice
+                    .storage('food')
+                    .update(cheeseBurger.id, improvedCheeseBurgerData);
+            });
+            responseShouldHaveNewUpdatedAt();
+        });
+
+        describe('When alice then tries to get the cheeseburger', () => {
+            requestShouldNotError(async () => {
+                prevResponse = response;
+                response = await ctx.alice.storage('food').get(cheeseBurger.id);
+            });
+
+            responseShouldEqualPreviousResponse();
+        });
+
+        describe('When alice tries to change the ID of cheeseburger in an update call', () => {
+            requestShouldError(400, async () => {
+                let storage = ctx.alice.storage('food');
+                var body = {
+                    id: 1234,
+                    data: improvedCheeseBurgerData,
+                };
+                await storage.client.put({
+                    url: storage.buildURL(cheeseBurger.id),
+                    body: body,
+                    signature: storage.signature,
+                });
+            });
+        });
+
+        describe('When bob tries to delete the cheeseburger', () => {
+            requestShouldError(403, async () => {
+                response = await ctx.bob
+                    .storage('food')
+                    .delete(cheeseBurger.id);
+            });
+        });
+
+        describe('When alice tries to delete the cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice
+                    .storage('food')
+                    .delete(cheeseBurger.id);
+            });
+        });
+
+        describe('When alice then tries to get the cheeseburger', () => {
+            requestShouldError(404, async () => {
+                await ctx.alice.storage('food').get(cheeseBurger.id);
+            });
+        });
+
+
+        describe('When alice tries to create an object with an illegal character in the id', () => {
+            requestShouldError(400, async () => {
+                await ctx.alice.storage('food').add('!abcdee!', {});
+            });
+        });
+
+        let newCheeseBurger;
+
+        describe('When alice tries to add a new cheeseburger with a provided ID', () => {
+            let newCheeseBurgerID = randUserId('cheeseburger');
+            requestShouldNotError(async () => {
+                response = await ctx.alice
+                    .storage('food')
+                    .add(newCheeseBurgerID, cheeseBurgerData);
+            });
+
+            responseShouldHaveFields(...collectionFields);
+
+            responseShould(
+                'have ID, collection and data matching the request',
+                () => {
+                    response.id.should.equal(newCheeseBurgerID);
+                    response.collection.should.equal('food');
+                    response.data.should.eql(cheeseBurgerData);
+                },
+            );
+
+            after(() => {
+                newCheeseBurger = response;
+            });
+        });
+
+        describe('When alice tries to get the new cheeseburger', () => {
+            requestShouldNotError(async () => {
+                response = await ctx.alice
+                    .storage('food')
+                    .get(newCheeseBurger.id);
+            });
+            responseShould(
+                'be the same as when the new cheeseburger was added',
+                async () => {
+                    response.should.eql(newCheeseBurger);
+                },
+            );
+        });
+
     });
 });
