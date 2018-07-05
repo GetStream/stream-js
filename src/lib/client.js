@@ -90,21 +90,45 @@ StreamClient.prototype = {
       });
 
       this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
-
-      // setup personalization and collections
-      this.personalizationToken = signing.JWTScopeToken(
-        this.apiSecret, 'personalization', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
-      this.collectionsToken = signing.JWTScopeToken(
-        this.apiSecret, 'collections', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
-
-      this.personalization = new Personalization(this);
-      this.collections = new Collections(this);
     }
+
+    this.personalization = new Personalization(this);
+    this.collections = new Collections(this);
 
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
     }
+  },
+
+  getPersonalizationToken: function() {
+    if (this._personalizationToken) {
+      return this._personalizationToken;
+    }
+
+    if (this.apiSecret) {
+        this._personalizationToken = signing.JWTScopeToken(
+          this.apiSecret, 'personalization', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+    } else {
+      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+    }
+
+    return this._personalizationToken;
+  },
+
+  getCollectionsToken: function() {
+    if (this._collectionsToken) {
+      return this._collectionsToken;
+    }
+
+    if (this.apiSecret) {
+        this._collectionsToken = signing.JWTScopeToken(
+          this.apiSecret, 'collections', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+    } else {
+      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+    }
+
+    return this._collectionsToken;
   },
 
   getBaseUrl: function(serviceName) {

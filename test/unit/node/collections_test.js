@@ -1,9 +1,11 @@
 var expect = require('expect.js'),
     beforeEachFn = require('../utils/hooks').beforeEach,
+    errors = require('../../../src/getstream').errors,
     td = require('testdouble'),
     stream = require('../../../src/getstream'),
     signing = require('../../../src/lib/signing'),
-    Collections = require('../../../src/lib/collections');
+    Collections = require('../../../src/lib/collections'),
+    StreamClient = require('../../../src/lib/client');
 
 
 describe('[UNIT] Stream Collections (node)', function() {
@@ -29,7 +31,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var collectionName = 'user';
             var data = {'id': 'john', 'username': 'johndoe', 'favorite_color': 'gray'};
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.upsert(collectionName, data);
 
             var expected_body = {data: {}};
@@ -50,7 +52,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var data = {'id': 'john', 'username': 'johndoe', 'favorite_color': 'gray'};
             var cb = function() {};
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.upsert(collectionName, data, cb);
 
             var expected_body = {data: {}};
@@ -73,7 +75,7 @@ describe('[UNIT] Stream Collections (node)', function() {
                 {'id': 'dave', 'username': 'daveo', 'favorite_color': 'green'}
             ];
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.upsert(collectionName, data);
 
             var expected_body = {data: {}};
@@ -97,7 +99,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             ];
             var cb = function() {};
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.upsert(collectionName, data, cb);
 
             var expected_body = {data: {}};
@@ -120,7 +122,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var collectionName = 'user';
             var id = 'john';
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.select(collectionName, id);
 
             td.verify(get(
@@ -139,7 +141,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var id = 'john';
             var cb = function() {};
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.select(collectionName, id, cb);
 
             td.verify(get(
@@ -157,7 +159,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var collectionName = 'user';
             var ids = ['john', 'dave'];
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.select(collectionName, ids);
 
             td.verify(get(
@@ -176,7 +178,7 @@ describe('[UNIT] Stream Collections (node)', function() {
             var ids = ['john', 'dave'];
             var cb = function() {};
 
-            this.client.collectionsToken = fakedJWT;
+            this.client._collectionsToken = fakedJWT;
             this.client.collections.select(collectionName, ids, cb);
 
             td.verify(get(
@@ -187,6 +189,42 @@ describe('[UNIT] Stream Collections (node)', function() {
                 signature: fakedJWT
               },
               cb));
+        });
+
+
+
+        describe('No secret provided', function() {
+
+            it('should raise SiteErrors', function() {
+
+                var client = new StreamClient('stub-key', null, 9498);
+                var collectionName = 'user';
+                var ids = ['john', 'dave'];
+                var data = {'id': 'john', 'username': 'johndoe', 'favorite_color': 'gray'};
+                var cb = function() {};
+
+                // upsert
+                expect(function() {
+                    client.collections.upsert(collectionName, data, cb);
+                }).to.throwException(function(e) {
+                    expect(e).to.be.a(errors.SiteError);
+                });
+
+                // select
+                expect(function() {
+                    client.collections.select(collectionName, ids, cb);
+                }).to.throwException(function(e) {
+                    expect(e).to.be.a(errors.SiteError);
+                });
+
+                // delete
+                expect(function() {
+                    client.collections.delete(collectionName, cb);
+                }).to.throwException(function(e) {
+                    expect(e).to.be.a(errors.SiteError);
+                });
+
+            });
         });
 
     });

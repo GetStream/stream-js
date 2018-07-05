@@ -1,9 +1,10 @@
 var expect = require('expect.js'),
     beforeEachFn = require('../utils/hooks').beforeEach,
+    errors = require('../../../src/getstream').errors,
     td = require('testdouble'),
     stream = require('../../../src/getstream'),
     signing = require('../../../src/lib/signing'),
-    Personalization = require('../../../src/lib/personalization');
+    StreamClient = require('../../../src/lib/client');
 
 
 describe('[UNIT] Stream Personalization (node)', function() {
@@ -29,7 +30,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var options = {foo: 'bar', baz: 'qux'};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.get(resource, options);
 
             td.verify(get({
@@ -46,7 +47,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var options = {foo: 'bar', baz: 'qux'};
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.get(resource, options, cb);
 
             td.verify(get({
@@ -62,7 +63,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var fakedJWT = "Faked JWT";
             var resource = 'example';
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.get(resource);
 
             td.verify(get({
@@ -78,7 +79,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.get(resource, cb);
 
             td.verify(get({
@@ -99,7 +100,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var data = {k: 'v'};
             var options = {foo: 'bar', baz: 'qux'};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource, options, data);
 
             td.verify(post({
@@ -118,7 +119,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var data = {k: 'v'};
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource, options, data, cb);
 
             td.verify(post({
@@ -136,7 +137,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var options = {foo: 'bar', baz: 'qux'};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource, options);
 
             td.verify(post({
@@ -154,7 +155,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var options = {foo: 'bar', baz: 'qux'};
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource, options, cb);
 
             td.verify(post({
@@ -172,7 +173,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var fakedJWT = "Faked JWT";
             var resource = 'example';
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource);
 
             td.verify(post({
@@ -189,7 +190,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.post(resource, cb);
 
             td.verify(post({
@@ -210,7 +211,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var options = {foo: 'bar', baz: 'qux'};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.delete(resource, options);
 
             td.verify(del({
@@ -227,7 +228,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var options = {foo: 'bar', baz: 'qux'};
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.delete(resource, options, cb);
 
             td.verify(del({
@@ -243,7 +244,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var fakedJWT = "Faked JWT";
             var resource = 'example';
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.delete(resource);
 
             td.verify(del({
@@ -259,7 +260,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
             var resource = 'example';
             var cb = function() {};
 
-            this.client.personalizationToken = fakedJWT;
+            this.client._personalizationToken = fakedJWT;
             this.client.personalization.delete(resource, cb);
 
             td.verify(del({
@@ -271,4 +272,40 @@ describe('[UNIT] Stream Personalization (node)', function() {
                           callback=cb));
         });
     });
+
+
+    describe('No secret provided', function() {
+
+        it('should raise SiteErrors', function() {
+
+            var client = new StreamClient('stub-key', null, 9498);
+            var resource = 'example';
+            var options = {foo: 'bar', baz: 'qux'};
+            var data = {k: 'v'};
+            var cb = function() {};
+
+            // get
+            expect(function() {
+                client.personalization.get(resource, options);
+            }).to.throwException(function(e) {
+                expect(e).to.be.a(errors.SiteError);
+            });
+
+            // post
+            expect(function() {
+                client.personalization.post(resource, options, data, cb);
+            }).to.throwException(function(e) {
+                expect(e).to.be.a(errors.SiteError);
+            });
+
+            // delete
+            expect(function() {
+                client.personalization.delete(resource);
+            }).to.throwException(function(e) {
+                expect(e).to.be.a(errors.SiteError);
+            });
+
+        });
+    });
+
 });
