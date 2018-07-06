@@ -47,7 +47,11 @@ StreamReaction.prototype = {
     );
   },
 
-  add: function(kind, activity, {data, targetFeeds}={}, callback) {
+  _convertTargetFeeds: function(targetFeeds) {
+    return targetFeeds.map(elem => (typeof elem === 'string' ? elem : elem.id));
+  },
+
+  add: function(kind, activity, { data, targetFeeds } = {}, callback) {
     /**
      * add reaction
      * @method add
@@ -55,6 +59,7 @@ StreamReaction.prototype = {
      * @param  {string}   kind  kind of reaction
      * @param  {string}   activity Activity or an ActivityID
      * @param  {object}   data  data related to reaction
+     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
@@ -63,10 +68,12 @@ StreamReaction.prototype = {
     if (activity instanceof Object) {
       activity = activity.id;
     }
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
     var body = {
       activity_id: activity,
       kind: kind,
       data: data,
+      target_feeds: targetFeeds,
     };
     return this.client.post(
       {
@@ -135,27 +142,25 @@ StreamReaction.prototype = {
     );
   },
 
-  update: function(id, activityId, kind, data, callback) {
+  update: function(id, data, targetFeeds, callback) {
     /**
      * update reaction
      * @method add
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @param  {string}   activityId Activity Id
-     * @param  {string}   kind  Kind of reaction
      * @param  {object}   data  Data associated to reaction
+     * @param  {array}   targetFeeds  Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
     var body = {
-      id: id || '',
-      activity_id: activityId,
-      kind: kind,
       data: data,
+      target_feeds: targetFeeds,
     };
-    return this.client.post(
+    return this.client.put(
       {
         url: this.buildURL(id),
         body: body,
@@ -175,7 +180,7 @@ StreamReaction.prototype = {
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client['delete'](
+    return this.client.delete(
       {
         url: this.buildURL(id),
         signature: this.signature,
