@@ -124,8 +124,26 @@ class CloudContext {
         });
     }
 
+    responseShouldHaveActivityInGroupWithFields(...fields) {
+        this.responseShould('have a single group with a single activity', () => {
+            this.response.should.include.keys('results', 'next', 'duration');
+            this.response.results.should.be.lengthOf(1);
+            this.response.results[0].activities.should.be.lengthOf(1);
+            this.activity = this.response.results[0].activities[0];
+        });
+
+        this.test('the activity should have all expected fields', () => {
+            this.activity.should.have.all.keys(
+                ...this.fields.activity,
+                ...fields,
+            );
+        });
+    }
+
+
     responseShouldHaveActivityWithFields(...fields) {
         this.responseShould('have a single activity', () => {
+            this.response.should.have.all.keys('results', 'next', 'duration');
             this.response.results.should.be.lengthOf(1);
             this.activity = this.response.results[0];
         });

@@ -22,12 +22,14 @@ StreamUserSession.prototype = {
     this.reactions = client.reactions(userAuthToken);
   },
 
-  feed: function(feedGroup, userId) {
-    if (userId === undefined) {
-      userId = this.userId;
+  feed: function(feedGroup, user) {
+    if (user === undefined) {
+      user = this.userId;
+    } else if (user instanceof StreamUser) {
+        user = user.id;
     }
 
-    let feed = this.client.feed(feedGroup, userId, this.token);
+    let feed = this.client.feed(feedGroup, user, this.token);
     // HACK: override the normal get with one that enriches
     // TODO: make this not super ugly like it is now
     feed.get = (options, callback) => {
