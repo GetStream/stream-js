@@ -23,7 +23,7 @@ describe('Enrich story', () => {
             ctx.response = await ctx.alice.feed('user').addActivity({
                 actor: ctx.alice.userId,
                 verb: 'eat',
-                object: `SC:food:${ctx.cheeseBurger.id}`,
+                object: `SO:food:${ctx.cheeseBurger.id}`,
             });
         });
         describe('and then alice reads her feed', () => {

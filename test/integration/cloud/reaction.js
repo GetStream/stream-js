@@ -11,6 +11,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         text: 'Looking yummy! @carl wanna get this on Tuesday?',
     };
 
+    ctx.createUsers();
     describe('When alice eats a cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.alice.feed('user').addActivity({
@@ -19,10 +20,11 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
                 object: 'cheeseburger',
             });
             eatActivity = ctx.response;
+            delete eatActivity.duration;
         });
     });
 
-    describe('When bob then comments on that alice ate the cheese burger', () => {
+    describe('When bob comments on that alice ate the cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.bob.react('comment', eatActivity.id, {
                 data: commentData,
@@ -55,9 +57,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.responseShouldHaveActivityWithFields();
             ctx.activityShould('contain the expected data', () => {
                 expectedCommentData = {
-                    actor: ctx.bob.userId,
                     verb: 'comment',
-                    object: `SA:${eatActivity.id}`,
                     foreign_id: `SR:${comment.id}`,
                     time: comment.created_at.slice(0, -1), // chop off the Z suffix
                     target: '',
@@ -65,6 +65,8 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
                 };
 
                 ctx.activity.should.include(expectedCommentData);
+                ctx.activity.actor.should.eql(ctx.bob.user.full);
+                ctx.activity.object.should.eql(eatActivity);
                 commentActivity = ctx.activity;
             });
         });
