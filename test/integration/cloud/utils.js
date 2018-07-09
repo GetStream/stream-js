@@ -26,6 +26,25 @@ class CloudContext {
         this.bob = this.createUserSession('bob');
         this.carl = this.createUserSession('carl');
         this.dave = this.createUserSession('dave');
+        this.userData = {
+            alice: {
+                name: 'Alice Abbot',
+                likes: ['apples', 'ajax'],
+            },
+            bob: {
+                name: 'Bob Baker',
+                likes: ['berries'],
+            },
+            carl: {
+                name: 'Carl Church',
+                likes: ['cherries', 'curry'],
+            },
+            dave: {
+                name: 'Dave Dawson',
+                likes: ['dark chocolate'],
+            },
+        };
+
         this.fields = {
             collection: [
                 'id',
@@ -52,6 +71,14 @@ class CloudContext {
                 'target',
                 'object',
                 'origin',
+            ],
+            reactionInActivity: [
+                'id',
+                'kind',
+                'user',
+                'data',
+                'created_at',
+                'updated_at',
             ],
         };
     }
@@ -125,12 +152,19 @@ class CloudContext {
     }
 
     responseShouldHaveActivityInGroupWithFields(...fields) {
-        this.responseShould('have a single group with a single activity', () => {
-            this.response.should.include.keys('results', 'next', 'duration');
-            this.response.results.should.be.lengthOf(1);
-            this.response.results[0].activities.should.be.lengthOf(1);
-            this.activity = this.response.results[0].activities[0];
-        });
+        this.responseShould(
+            'have a single group with a single activity',
+            () => {
+                this.response.should.include.keys(
+                    'results',
+                    'next',
+                    'duration',
+                );
+                this.response.results.should.be.lengthOf(1);
+                this.response.results[0].activities.should.be.lengthOf(1);
+                this.activity = this.response.results[0].activities[0];
+            },
+        );
 
         this.test('the activity should have all expected fields', () => {
             this.activity.should.have.all.keys(
@@ -139,7 +173,6 @@ class CloudContext {
             );
         });
     }
-
 
     responseShouldHaveActivityWithFields(...fields) {
         this.responseShould('have a single activity', () => {
@@ -204,6 +237,29 @@ class CloudContext {
                 this.cheeseBurger = this.response;
             });
         });
+    }
+
+    createUsers() {
+        describe('When creating the users', () => {
+            this.test('none of the requests should error', async () => {
+                await Promise.all([
+                    this.alice.user.create(this.userData.alice),
+                    this.bob.user.create(this.userData.bob),
+                    this.carl.user.create(this.userData.carl),
+                    this.dave.user.create(this.userData.dave),
+                ]);
+            });
+        });
+    }
+
+    reactionToReactionInActivity(reaction, user) {
+        reaction = Object.assign({}, reaction);
+
+        delete reaction.activity_id;
+        delete reaction.user_id;
+        reaction.user = user.full;
+
+        return reaction;
     }
 }
 

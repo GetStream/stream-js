@@ -2,21 +2,11 @@ var { CloudContext } = require('./utils');
 
 describe('User profile story', () => {
     let ctx = new CloudContext();
-    let aliceData = {
-        name: 'Alice Abbot',
-        likes: ['apples', 'ajax'],
-    };
-    let bobData = {
-        name: 'Bob Baker',
-        likes: ['berries'],
-    };
+    let aliceData = ctx.userData.alice;
+    let bobData = ctx.userData.bob;
     let newBobData = {
         name: bobData.name,
         hates: bobData.likes,
-    };
-    let carlData = {
-        name: 'Carl Church',
-        likes: ['cherries', 'curry'],
     };
 
     describe('When alice gets her account without creating it', () => {
