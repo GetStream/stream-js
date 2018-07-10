@@ -21,9 +21,9 @@ describe('Enrich story', () => {
     describe('When alice eats the cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.alice.feed('user').addActivity({
-                actor: ctx.alice.userId,
+                actor: ctx.alice.user,
                 verb: 'eat',
-                object: `SO:food:${ctx.cheeseBurger.id}`,
+                object: ctx.cheeseBurger,
             });
         });
         describe('and then alice reads her feed', () => {
@@ -36,7 +36,9 @@ describe('Enrich story', () => {
             ctx.responseShould(
                 'have the activity containing enriched data',
                 () => {
-                    ctx.activity.object.should.eql(ctx.cheeseBurger);
+                    ctx.activity.actor.should.eql(ctx.alice.user.full);
+                    ctx.activity.verb.should.eql('eat');
+                    ctx.activity.object.should.eql(ctx.cheeseBurger.full);
                     eatCheeseBurgerActivity = ctx.response.results[0];
                 },
             );
@@ -63,7 +65,7 @@ describe('Enrich story', () => {
             ctx.responseShouldHaveActivityWithFields();
 
             ctx.activityShould('contain enriched data', () => {
-                ctx.activity.object.should.eql(ctx.cheeseBurger);
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
             });
         });
     });
@@ -100,7 +102,7 @@ describe('Enrich story', () => {
             ctx.responseShouldHaveActivityWithFields('own_reactions');
 
             ctx.activityShould('contain the enriched data', () => {
-                ctx.activity.object.should.eql(ctx.cheeseBurger);
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
             });
 
             ctx.activityShould('contain the reaction of bob', () => {
@@ -118,7 +120,7 @@ describe('Enrich story', () => {
             ctx.responseShouldHaveActivityWithFields('own_reactions');
 
             ctx.activityShould('contain the enriched data', () => {
-                ctx.activity.object.should.eql(ctx.cheeseBurger);
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
             });
 
             ctx.activityShould('contain the reaction of bob', () => {
@@ -139,7 +141,7 @@ describe('Enrich story', () => {
             );
 
             ctx.activityShould('contain the enriched data', () => {
-                ctx.activity.object.should.eql(ctx.cheeseBurger);
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
             });
 
             ctx.activityShould('not contain anything in own_reactions', () => {
@@ -231,7 +233,7 @@ describe('Enrich story', () => {
             );
 
             ctx.activityShould('contain the enriched data', () => {
-                ctx.activity.object.should.eql(ctx.cheeseBurger);
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
             });
 
             ctx.activityShould(

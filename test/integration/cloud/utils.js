@@ -234,7 +234,7 @@ class CloudContext {
             );
 
             after(() => {
-                this.cheeseBurger = this.response;
+                this.cheeseBurger = this.alice.objectFromResponse(this.response);
             });
         });
     }

@@ -15,12 +15,13 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     describe('When alice eats a cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.alice.feed('user').addActivity({
-                actor: ctx.alice.userId,
+                actor: ctx.alice.user,
                 verb: 'eat',
                 object: 'cheeseburger',
             });
             eatActivity = ctx.response;
             delete eatActivity.duration;
+            eatActivity.actor = ctx.alice.user.full;
         });
     });
 

@@ -21,6 +21,10 @@ StreamUser.prototype = {
     this.url = 'user/' + this.id + '/';
   },
 
+  _streamRef: function() {
+      return `SU:${this.id}`;
+  },
+
   get: async function(options) {
     let response = await this.client.get({
       url: this.url,

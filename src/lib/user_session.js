@@ -1,4 +1,5 @@
 var StreamUser = require('./user');
+var _ = require('lodash');
 
 var StreamUserSession = function() {
   this.initialize.apply(this, arguments);
@@ -26,7 +27,7 @@ StreamUserSession.prototype = {
     if (user === undefined) {
       user = this.userId;
     } else if (user instanceof StreamUser) {
-        user = user.id;
+      user = user.id;
     }
 
     let feed = this.client.feed(feedGroup, user, this.token);
@@ -51,6 +52,27 @@ StreamUserSession.prototype = {
       );
     };
 
+    let replaceStreamObjects = obj => {
+      let cloned = obj;
+      if (_.isArray(obj)) {
+        cloned = obj.map(v => replaceStreamObjects(v));
+      } else if (_.isPlainObject(obj)) {
+        cloned = {};
+        for (let k in obj) {
+          cloned[k] = replaceStreamObjects(obj[k]);
+        }
+      } else if (_.isObject(obj) && obj._streamRef !== undefined) {
+        cloned = obj._streamRef();
+      }
+      return cloned;
+    };
+
+    feed._addActivityOriginal = feed.addActivity;
+    feed.addActivity = (activity, callback) => {
+      activity = replaceStreamObjects(activity);
+      return feed._addActivityOriginal(activity, callback);
+    };
+
     return feed;
   },
 
@@ -73,12 +95,21 @@ StreamUserSession.prototype = {
     return this.reactions.add(kind, activityId, data);
   },
 
+  objectFromResponse: function(response) {
+    let object = this.storage(response.collection).object(
+      response.id,
+      response.data,
+    );
+    object.full = response;
+    return object;
+  },
+
   og: function(url) {
-      return this.client.get({
-          url: 'og/',
-          qs: {url: url},
-          signature: this.token,
-      });
+    return this.client.get({
+      url: 'og/',
+      qs: { url: url },
+      signature: this.token,
+    });
   },
 };
 
