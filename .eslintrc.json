@@ -28,7 +28,7 @@
         "process": true
     },
     "parserOptions": {
-        "ecmaVersion": 2017,
+        "ecmaVersion": 2015,
         "ecmaFeatures" : {
             "modules": true
         }
