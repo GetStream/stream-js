@@ -1,6 +1,6 @@
-var signing = require('../../../src/lib/signing')
-  , jwt = require('jsonwebtoken')
-  , qc = require('quickcheck');
+var signing = require('../../../src/lib/signing'),
+  jwt = require('jsonwebtoken'),
+  qc = require('quickcheck');
 
 function propertyHeaderJSON(jwt) {
   var json = signing.isJWTSignature(jwt);
@@ -12,17 +12,17 @@ function arbJSON(depth) {
 
   var result = {};
 
-  while(width--) {
+  while (width--) {
     var value = qc.arbString(),
-        maxDepth = Math.floor(Math.random() * (3 - 1) + 1);
+      maxDepth = Math.floor(Math.random() * (3 - 1) + 1);
 
-    if(depth) {
-      value = arbJSON(depth-1);
-    } else if(depth === undefined) {
+    if (depth) {
+      value = arbJSON(depth - 1);
+    } else if (depth === undefined) {
       value = arbJSON(maxDepth);
     }
 
-    result[ qc.arbString() ] = value;
+    result[qc.arbString()] = value;
   }
 
   return result;
@@ -35,12 +35,15 @@ function arbNonEmptyString() {
 }
 
 function arbJWT() {
-  return jwt.sign( arbJSON(), arbNonEmptyString(), { algorithm: 'HS256', noTimestamp: true });
+  return jwt.sign(arbJSON(), arbNonEmptyString(), {
+    algorithm: 'HS256',
+    noTimestamp: true,
+  });
 }
 
 module.exports = {
-    propertyHeaderJSON: propertyHeaderJSON,
-    arbJSON: arbJSON,
-    arbNonEmptyString: arbNonEmptyString,
-    arbJWT: arbJWT,
+  propertyHeaderJSON: propertyHeaderJSON,
+  arbJSON: arbJSON,
+  arbNonEmptyString: arbNonEmptyString,
+  arbJWT: arbJWT,
 };

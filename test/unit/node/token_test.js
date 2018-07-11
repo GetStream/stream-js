@@ -1,65 +1,63 @@
-var signing = require('../../../src/lib/signing')
-  , expect = require('expect.js')
-  , beforeEachFn = require('../utils/hooks').beforeEach;
+var signing = require('../../../src/lib/signing'),
+  expect = require('expect.js'),
+  beforeEachFn = require('../utils/hooks').beforeEach;
 
 describe('[UNIT] Creating tokens', function() {
+  beforeEach(beforeEachFn);
 
-    beforeEach(beforeEachFn);
+  it('#getReadOnlyToken', function() {
+    var token = this.client.getReadOnlyToken('user', 'test');
 
-    it('#getReadOnlyToken', function() {
-        var token = this.client.getReadOnlyToken('user', 'test');
+    expect(token).not.to.be(undefined);
 
-        expect(token).not.to.be(undefined);
-
-        var feedId = 'usertest';
-        var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-            feedId: feedId,
-            expireTokens: this.client.expireTokens
-        });
-
-        expect(token).to.be(expected);
+    var feedId = 'usertest';
+    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
     });
 
-    it('#getReadWriteToken', function() {
-        var token = this.client.getReadWriteToken('user', 'test');
+    expect(token).to.be(expected);
+  });
 
-        expect(token).not.to.be(undefined);
+  it('#getReadWriteToken', function() {
+    var token = this.client.getReadWriteToken('user', 'test');
 
-        var feedId = 'usertest';
-        var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-            feedId: feedId,
-            expireTokens: this.client.expireTokens
-        });
+    expect(token).not.to.be(undefined);
 
-        expect(token).to.be(expected);
+    var feedId = 'usertest';
+    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
     });
 
-    it('feed #getReadOnlyToken', function() {
-        var token = this.client.feed('user', 'test').getReadOnlyToken();
+    expect(token).to.be(expected);
+  });
 
-        expect(token).not.to.be(undefined);
+  it('feed #getReadOnlyToken', function() {
+    var token = this.client.feed('user', 'test').getReadOnlyToken();
 
-        var feedId = 'usertest';
-        var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-            feedId: feedId,
-            expireTokens: this.client.expireTokens
-        });
+    expect(token).not.to.be(undefined);
 
-        expect(token).to.be(expected);
+    var feedId = 'usertest';
+    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
     });
 
-    it('feed #getReadWriteToken', function() {
-        var token = this.client.feed('user', 'test').getReadWriteToken();
+    expect(token).to.be(expected);
+  });
 
-        expect(token).not.to.be(undefined);
+  it('feed #getReadWriteToken', function() {
+    var token = this.client.feed('user', 'test').getReadWriteToken();
 
-        var feedId = 'usertest';
-        var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-            feedId: feedId,
-            expireTokens: this.client.expireTokens
-        });
+    expect(token).not.to.be(undefined);
 
-        expect(token).to.be(expected);
+    var feedId = 'usertest';
+    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
     });
 
+    expect(token).to.be(expected);
+  });
 });

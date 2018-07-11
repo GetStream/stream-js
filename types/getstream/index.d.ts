@@ -7,89 +7,85 @@ export as namespace stream;
  */
 export function connect(
   apiKey: string,
-  apiSecret: string|null,
+  apiSecret: string | null,
   appId: string,
-  options?: object
+  options?: object,
 ): stream.Client;
 
 export class Collections {
   /** Construct Collections. */
-  constructor(
-    client: StreamClient,
-  );
+  constructor(client: StreamClient);
 
   // Upsert one or more items within a collection.
   upsert(
     collectionName: string,
-    data:object|object[],
-    callback: (err: object, httpResponse: object, body: object) => void
+    data: object | object[],
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  upsert(collectionName: string, data: object|object[]): Promise<object>;
+  upsert(collectionName: string, data: object | object[]): Promise<object>;
 
   // Select all objects with ids from the collection.
   select(
     collectionName: string,
-    ids: object|object[],
-    callback: (err: object, httpResponse: object, body: object) => void
+    ids: object | object[],
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  select(collectionName: string, ids: object|object[]): Promise<object>;
+  select(collectionName: string, ids: object | object[]): Promise<object>;
 
   // Remove all objects by id from the collection.
   delete(
     collectionName: string,
-    ids: object|object[],
-    callback: (err: object, httpResponse: object, body: object) => void
+    ids: object | object[],
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  delete(collectionName: string, ids: object|object[]): Promise<object>;
+  delete(collectionName: string, ids: object | object[]): Promise<object>;
 }
 
 export class Personalization {
   /** Construct Personalization. */
-  constructor(
-    client: StreamClient,
-  );
+  constructor(client: StreamClient);
 
   // Get personalized activities for this feed.
   get(
     resource: string,
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   get(
     resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  get(resource: string, options?:object): Promise<object>;
+  get(resource: string, options?: object): Promise<object>;
 
   // Post data to personalization endpoint.
   post(
     resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   post(
     resource: string,
-    options:object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    options: object,
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   post(
     resource: string,
-    options:object,
+    options: object,
     data: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  post(resource: string, options?:object, data?: object): Promise<object>;
+  post(resource: string, options?: object, data?: object): Promise<object>;
 
   // Delete metadata or activites
   delete(
     resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   delete(
     resource: string,
-    options:object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    options: object,
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  delete(resource: string, options?:object): Promise<object>;
+  delete(resource: string, options?: object): Promise<object>;
 }
 
 export class Feed {
@@ -98,41 +94,41 @@ export class Feed {
     client: StreamClient,
     feedSlug: string,
     userId: string,
-    token: string
+    token: string,
   );
 
   // Add activity
   addActivity(activity: object): Promise<object>;
   addActivity(
     activity: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Remove activity
-  removeActivity(activityId: string|object): Promise<object>;
+  removeActivity(activityId: string | object): Promise<object>;
   removeActivity(
-    activityId: string|object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    activityId: string | object,
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Add activities
   addActivities(activities: object[]): Promise<object>;
   addActivities(
     activities: object[],
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Follow feed
   follow(
     targetSlug: string,
     targetUserId: string,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   follow(
     targetSlug: string,
     targetUserId: string,
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   follow(
     targetSlug: string,
@@ -144,39 +140,39 @@ export class Feed {
   unfollow(
     targetSlug: string,
     targetUserId: string,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   unfollow(
     targetSlug: string,
     targetUserId: string,
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
   unfollow(
     targetSlug: string,
     targetUserId: string,
-    options?: object
+    options?: object,
   ): Promise<object>;
 
   // List followed feeds
   following(options: object): Promise<object>;
   following(
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // List followers
   followers(options: object): Promise<object>;
   followers(
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Get feed
   get(options?: object): Promise<object>;
   get(
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Subscribe to realtime
@@ -194,7 +190,7 @@ export class StreamClient {
     apiKey: string,
     apiSecret?: string,
     appId?: string,
-    options?: object
+    options?: object,
   );
 
   // Event subscriptions
@@ -214,13 +210,13 @@ export class StreamClient {
     userId: string,
     token?: string,
     siteId?: string,
-    options?: object
+    options?: object,
   ): Feed;
 
   // Update activities
   updateActivities(
     activities: object[],
-    callback: (args: object[]) => void
+    callback: (args: object[]) => void,
   ): void;
 
   // Add activity to many feeds
@@ -236,7 +232,7 @@ export class StreamClient {
   addToMany(
     activity: object,
     feeds: string[],
-    callback: (err: object, httpResponse: object, body: object) => void
+    callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Collections sub-component
@@ -248,8 +244,7 @@ export class StreamClient {
    * followMany.
    * Available in node environments with batchOperations enabled
    */
-  followMany(follows: object[], activityCopyLimit?: number
-  ): Promise<object>;
+  followMany(follows: object[], activityCopyLimit?: number): Promise<object>;
   /**
    * followMany.
    * Available in node environments with batchOperations enabled
@@ -257,7 +252,7 @@ export class StreamClient {
   followMany(
     follows: object[],
     activityCopyLimit?: number,
-    callback?: (err: object, httpResponse: object, body: object) => void
+    callback?: (err: object, httpResponse: object, body: object) => void,
   ): void;
 
   // Unfollow many feeds
@@ -272,7 +267,7 @@ export class StreamClient {
    */
   unfollowMany(
     unfollows: object[],
-    callback?: (err: object, httpResponse: object, body: object) => void
+    callback?: (err: object, httpResponse: object, body: object) => void,
   ): void;
 }
 
@@ -282,22 +277,22 @@ export { StreamClient as Client };
 // Export the Stream errors
 export namespace errors {
   class MissingSchemaError {
-  /**
-   * Construct MissingSchemaError.
-   * Not typically instantiated by app developers.
-   */
+    /**
+     * Construct MissingSchemaError.
+     * Not typically instantiated by app developers.
+     */
   }
 
   class FeedError {
-  /**
-   * Construct FeedError.
-   * Not typically instantiated by app developers.
-   */
+    /**
+     * Construct FeedError.
+     * Not typically instantiated by app developers.
+     */
   }
   class SiteError {
-  /**
-   * Construct SiteError.
-   * Not typically instantiated by app developers.
-   */
+    /**
+     * Construct SiteError.
+     * Not typically instantiated by app developers.
+     */
   }
 }

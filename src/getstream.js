@@ -27,8 +27,12 @@ function connect(apiKey, apiSecret, appId, options) {
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
-  if (typeof (process) !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);  // eslint-disable-line no-useless-escape
+  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+    /* eslint-disable no-useless-escape */
+    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(
+      process.env.STREAM_URL
+    );
+    /* eslint-enable no-useless-escape */
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
