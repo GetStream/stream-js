@@ -47,3 +47,20 @@ StreamFeed.prototype.getEnriched = function(options, callback) {
     callback,
   );
 };
+
+StreamFeed.prototype.getActivityDetail = function(activity_id, options, callback) {  /**
+ * Retrieves one activity from a feed and adds enrichment
+ * @method getActivityDetail
+ * @memberof StreamFeed.prototype
+ * @param  {array}    ids  Additional options
+ * @param  {object}   options  Additional options
+ * @param  {requestCallback} callback Callback to call on completion
+ * @return {Promise} Promise object
+ * @example feed.getActivityDetail(activity_id)
+ * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
+ * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
+ * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
+ */
+
+  return this.getEnriched(Object.assign({id_lte:activity_id, id_gte:activity_id, limit:1}, options), callback);
+};
