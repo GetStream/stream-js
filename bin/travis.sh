@@ -4,7 +4,7 @@ set -e
 npm test
 ./bin/coveralls.sh
 if [ ${RUN_LINTERS:="no"} == "yes" ]; then
-    ./node_modules/.bin/eslint src/**/*.js;
+    npm run lint
     # ./node_modules/.bin/dtslint types/getstream
 fi
 npm install -g bower

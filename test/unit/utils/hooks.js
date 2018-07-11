@@ -1,9 +1,9 @@
-var config = require('./config')
-  , td = require('testdouble')
-  , StreamClient = require('../../../src/lib/client');
+var config = require('./config'),
+  td = require('testdouble'),
+  StreamClient = require('../../../src/lib/client');
 
 function init() {
-    this.timeout(500);
+  this.timeout(500);
 }
 
 function beforeEachBrowser() {
@@ -18,7 +18,7 @@ function beforeEachNode() {
 
 module.exports = {
   init: init,
-  beforeEachNode : beforeEachNode,
-  beforeEachBrowser : beforeEachBrowser,
+  beforeEachNode: beforeEachNode,
+  beforeEachBrowser: beforeEachBrowser,
   beforeEach: config.IS_NODE_ENV ? beforeEachNode : beforeEachBrowser,
 };
