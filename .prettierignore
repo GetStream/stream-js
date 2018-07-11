@@ -1,6 +1,5 @@
 **/*{.,-}min.js
 test/integration/utils/kjur.js
-node_modules
 dist
 bin
 .git
