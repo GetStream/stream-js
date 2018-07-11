@@ -2,7 +2,6 @@
 **/*{.,-}min.js
 test/integration/utils/kjur.js
 docs
-node_modules
 dist
 bin
 .git
