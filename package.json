@@ -14,8 +14,8 @@
   "version": "3.18.0",
   "scripts": {
     "dtslint": "dtslint types/getstream",
-    "lint": "./node_modules/.bin/prettier --no-config --list-different './{src,test}/**' && ./node_modules/.bin/eslint --max-warnings 0 './{src,test}/**'",
-    "lint-fix": "./node_modules/.bin/prettier --no-config --write './{src,test}/**' && ./node_modules/.bin/eslint './{src,test}/**' --fix",
+    "lint": "./node_modules/.bin/prettier --list-different '**/*.{js,ts}' && ./node_modules/.bin/eslint '**/*.js' --max-warnings 0",
+    "lint-fix": "./node_modules/.bin/prettier --write '**/*.{js,ts}' && ./node_modules/.bin/eslint --fix '**/*.js'",
     "test": "npm run test-unit-node",
     "test-unit-node": "./node_modules/.bin/mocha test/unit/common test/unit/node",
     "test-integration-node": "./node_modules/.bin/mocha test/integration/common test/integration/node",
