@@ -563,6 +563,47 @@ StreamClient.prototype = {
      return this.updateActivities([activity], callback);
   },
 
+  getActivities: function (params, callback) {
+    /**
+     * Retrieve activities by ID
+     * @since  3.18.0
+     * @param  {object} params object containing either the list of activity IDs as {ids: ['...',...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...},,]}
+     * @return {Promise}
+     */
+    var qs = {};
+    if (params.ids) {
+      var ids = params.ids
+      if (!(ids instanceof Array)) {
+        throw new TypeError('The ids argument should be an Array');
+      }
+      qs['ids'] = ids.join(',');
+    } else if (params.foreignIDTimes) {
+      var list = params.foreignIDTimes
+      if (!(list instanceof Array)) {
+        throw new TypeError('The foreignIDTimes argument should be an Array');
+      }
+      var foreignIDs = [];
+      var timestamps = [];
+      for (var i in list) {
+        if (!(list[i] instanceof Object)) {
+          throw new TypeError('foreignIDTimes elements should be Objects');
+        }
+        foreignIDs.push(list[i].foreignID);
+        timestamps.push(list[i].time);
+      }
+      qs['foreign_ids'] = foreignIDs.join(',');
+      qs['timestamps'] = timestamps.join(',');
+    } else {
+      throw new TypeError('Missing ids or foreignIDTimes params');
+    }
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
+    return this.get({
+      url: 'activities/',
+      qs: qs,
+      signature: authToken,
+    }, callback);
+  },
+
 };
 
 if (qs) {
