@@ -504,18 +504,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
 
     describe('get activities', function() {
-        var date;
         var activity;
 
         beforeEach(function(done){
             var self = this;
-            date = new Date();
             this.user1.addActivity({
                 'actor': 1,
                 'verb': 'test',
                 'object': 1,
                 'foreign_id': 1234,
-                'time': date,
+                'time': new Date(),
             }).then(function() {
                 return self.user1.get();
             }).then(function(resp) {
