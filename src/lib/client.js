@@ -567,7 +567,7 @@ StreamClient.prototype = {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
-     * @param  {object} params object containing either the list of activity IDs as {ids: ['...',...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...},,]}
+     * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
     var qs = {};
