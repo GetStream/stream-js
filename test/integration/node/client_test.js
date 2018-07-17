@@ -503,4 +503,51 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         });
     });
 
+    describe('get activities', function() {
+        var activity;
+
+        beforeEach(function(done){
+            var self = this;
+            this.user1.addActivity({
+                'actor': 1,
+                'verb': 'test',
+                'object': 1,
+                'foreign_id': 1234,
+                'time': new Date(),
+            }).then(function() {
+                return self.user1.get();
+            }).then(function(resp) {
+                activity = resp.results[0];
+                done();
+            });
+        });
+
+        describe('by ID', function() {
+            it('allows to retrieve activities directly by their ID', function(done) {
+                this.client.getActivities({ids: [activity['id']]})
+                    .then(function(resp){
+                        expect(resp.results[0]).to.eql(activity);
+                        done();
+                    });
+            })
+        });
+
+        describe('by foreign ID and time', function () {
+            it('allows to retrieve activities directly by their ID', function (done) {
+                this.client.getActivities({
+                    foreignIDTimes: [
+                        {
+                            foreignID: activity['foreign_id'],
+                            time: activity['time']
+                        }
+                    ]
+                })
+                .then(function (resp) {
+                    expect(resp.results[0]).to.eql(activity);
+                    done();
+                });
+            })
+        });
+    });
+
 });

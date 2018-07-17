@@ -126,6 +126,103 @@ describe('[UNIT] Stream Client (Node)', function() {
 
     });
 
+    describe('#getActivities', function() {
+
+        it('throws', function() {
+            function isGoingToThrow1() {
+                this.client.getActivities({});
+            }
+
+            function isGoingToThrow2() {
+                this.client.getActivities(0);
+            }
+
+            function isGoingToThrow3() {
+                this.client.getActivities(null);
+            }
+
+            function isNotGoingToThrow() {
+                this.client.getActivities([]);
+            }
+
+            function isTypeError(err) {
+                expect(err).to.be.a(TypeError);
+            }
+
+            expect(isGoingToThrow1).to.throwException(isTypeError);
+            expect(isGoingToThrow2).to.throwException(isTypeError);
+            expect(isGoingToThrow3).to.throwException(isTypeError);
+            expect(isNotGoingToThrow).to.not.throw;
+        });
+
+        describe('by ID', function() {
+
+            it('(1) works', function() {
+                var get = td.function();
+                td.replace(this.client, 'get', get);
+
+                var ids = ['one', 'two', 'three'];
+
+                this.client.getActivities({ids: ids});
+
+                td.verify(get(td.matchers.contains({
+                    url: 'activities/',
+                }), undefined));
+            });
+
+            it('(2) works - callback', function() {
+                var get = td.function();
+                td.replace(this.client, 'get', get);
+
+                var ids = ['one', 'two', 'three'];
+                var fn = function() {};
+
+                this.client.getActivities({ids: ids}, fn);
+
+                td.verify(get(td.matchers.contains({
+                    url: 'activities/',
+                }), fn));
+            });
+        });
+
+        describe('by foreign ID and time', function () {
+
+            it('(1) works', function () {
+                var get = td.function();
+                td.replace(this.client, 'get', get);
+
+                var foreignIDTimes = [
+                    { foreignID: "like:1", time: "2018-07-08T14:09:36.000000"},
+                    { foreignID: "post:2", time: "2018-07-09T20:30:40.000000"}
+                ];
+
+                this.client.getActivities({ foreignIDTimes: foreignIDTimes });
+
+                td.verify(get(td.matchers.contains({
+                    url: 'activities/',
+                }), undefined));
+            });
+
+            it('(2) works - callback', function () {
+                var get = td.function();
+                td.replace(this.client, 'get', get);
+
+                var foreignIDTimes = [
+                    { foreignID: "like:1", time: "2018-07-08T14:09:36.000000" },
+                    { foreignID: "post:2", time: "2018-07-09T20:30:40.000000" }
+                ];
+                var fn = function () { };
+
+                this.client.getActivities({ foreignIDTimes: foreignIDTimes }, fn);
+
+                td.verify(get(td.matchers.contains({
+                    url: 'activities/',
+                }), fn));
+            });
+        });
+
+    });
+    
     describe('connect', function() {
 
         it('#LOCAL', function() {
