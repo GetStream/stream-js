@@ -121,7 +121,7 @@ StreamClient.prototype = {
         url = protocol + '://' + this.location + '-' + serviceName + '.stream-io-api.com/' + serviceName + '/';
     }
 
-    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
+    if ((typeof (process) !== 'undefined' && process.env.LOCAL) || this.options.local) {
       url = 'http://localhost:8000/' + serviceName + '/';
     }
 
@@ -133,6 +133,9 @@ StreamClient.prototype = {
     }
     if (typeof (process) !== 'undefined' && process.env[urlEnvironmentKey]) {
       url = process.env[urlEnvironmentKey];
+    }
+    if (this.options.urlOverride && this.options.urlOverride[serviceName]) {
+      return this.options.urlOverride[serviceName];
     }
 
     return url;
