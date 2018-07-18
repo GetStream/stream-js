@@ -11,7 +11,7 @@ describe('Get activities', () => {
 			ctx.response = await ctx.alice.feed('user').addActivity({
 				actor: ctx.alice.userId,
 				verb: 'eat',
-				object: `SC:food:${ctx.cheeseBurger.id}`,
+				object: ctx.cheeseBurger,
 				foreign_id: 'fid:123',
 				time: at
 			});
