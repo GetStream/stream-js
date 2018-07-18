@@ -85,6 +85,7 @@
     "faye": "^1.2.4",
     "http-signature": "~1.2.0",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.10",
     "qs": "^6.5.1",
     "request": "^2.86.0",
     "xmlhttp-request": "https://github.com/GetStream/xmlhttp-request#2474db1c2829697bcf2788fee49156b62ad8bcfd"

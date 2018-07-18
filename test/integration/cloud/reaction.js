@@ -11,18 +11,21 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         text: 'Looking yummy! @carl wanna get this on Tuesday?',
     };
 
+    ctx.createUsers();
     describe('When alice eats a cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.alice.feed('user').addActivity({
-                actor: ctx.alice.userId,
+                actor: ctx.alice.user,
                 verb: 'eat',
                 object: 'cheeseburger',
             });
             eatActivity = ctx.response;
+            delete eatActivity.duration;
+            eatActivity.actor = ctx.alice.user.full;
         });
     });
 
-    describe('When bob then comments on that alice ate the cheese burger', () => {
+    describe('When bob comments on that alice ate the cheese burger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.bob.react('comment', eatActivity.id, {
                 data: commentData,
@@ -52,19 +55,20 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
             });
-            ctx.responseShouldHaveActivityWithFields();
+            ctx.responseShouldHaveActivityWithFields('reaction');
             ctx.activityShould('contain the expected data', () => {
                 expectedCommentData = {
-                    actor: ctx.bob.userId,
                     verb: 'comment',
-                    object: `SA:${eatActivity.id}`,
-                    foreign_id: `SR:${comment.id}`,
+                    foreign_id: `reaction:${comment.id}`,
                     time: comment.created_at.slice(0, -1), // chop off the Z suffix
                     target: '',
                     origin: null,
                 };
 
                 ctx.activity.should.include(expectedCommentData);
+                ctx.activity.actor.should.eql(ctx.bob.user.full);
+                ctx.activity.object.should.eql(eatActivity);
+                ctx.activity.reaction.should.eql(comment);
                 commentActivity = ctx.activity;
             });
         });
@@ -73,7 +77,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.alice.feed('notification').get();
             });
-            ctx.responseShouldHaveActivityInGroupWithFields();
+            ctx.responseShouldHaveActivityInGroupWithFields('reaction');
             ctx.activityShould('be the same as on bob his feed', () => {
                 ctx.activity.should.eql(commentActivity);
             });
@@ -83,7 +87,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.carl.feed('notification').get();
             });
-            ctx.responseShouldHaveActivityInGroupWithFields();
+            ctx.responseShouldHaveActivityInGroupWithFields('reaction');
             ctx.activityShould('be the same as on bob his feed', () => {
                 ctx.activity.should.eql(commentActivity);
             });
@@ -104,7 +108,6 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
                     ctx.bob.feed('notification', ctx.dave.userId),
                 ],
             );
-            comment = ctx.response;
         });
 
         ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -118,13 +121,14 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
                 user_id: ctx.bob.userId,
             });
             ctx.response.data.should.eql(commentData);
+            comment = ctx.response;
         });
 
         describe('and then alice reads bob his feed', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
             });
-            ctx.responseShouldHaveActivityWithFields();
+            ctx.responseShouldHaveActivityWithFields('reaction');
             ctx.activityShould('contain the expected data', () => {
                 ctx.activity.should.include(expectedCommentData);
                 commentActivity = ctx.activity;
@@ -135,7 +139,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.alice.feed('notification').get();
             });
-            ctx.responseShouldHaveActivityInGroupWithFields();
+            ctx.responseShouldHaveActivityInGroupWithFields('reaction');
             ctx.activityShould('be the same as on bob his feed', () => {
                 ctx.activity.should.eql(commentActivity);
             });
@@ -152,7 +156,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.dave.feed('notification').get();
             });
-            ctx.responseShouldHaveActivityInGroupWithFields();
+            ctx.responseShouldHaveActivityInGroupWithFields('reaction');
             ctx.activityShould('be the same as on bob his feed', () => {
                 ctx.activity.should.eql(commentActivity);
             });

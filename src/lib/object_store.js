@@ -16,17 +16,21 @@ StreamObjectStore.prototype = {
      * @example new StreamObjectStore(client, "food", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
-    this.collectionName = name;
+    this.collection = name;
     this.token = token;
-    this.signature = this.collectionName + ' ' + this.token;
+    this.signature = this.collection + ' ' + this.token;
   },
 
   buildURL: function(itemId) {
-    var url = 'object_store/' + this.collectionName + '/';
+    var url = 'object_store/' + this.collection + '/';
     if (itemId === undefined) {
       return url;
     }
     return url + itemId + '/';
+  },
+
+  object: function(itemId, itemData) {
+      return new StreamObject(this, itemId, itemData);
   },
 
   items: function(options, callback) {
@@ -68,13 +72,13 @@ StreamObjectStore.prototype = {
     );
   },
 
-  add: function(itemId, collectionData, callback) {
+  add: function(itemId, itemData, callback) {
     /**
      * Add item to collection
      * @method add
      * @memberof StreamObjectStore.prototype
      * @param  {string}   itemId  ObjectStore id
-     * @param  {object}   collectionData  ObjectStore data
+     * @param  {object}   itemData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
@@ -84,7 +88,7 @@ StreamObjectStore.prototype = {
     }
     var body = {
       id: itemId,
-      data: collectionData,
+      data: itemData,
     };
     return this.client.post(
       {
@@ -138,6 +142,84 @@ StreamObjectStore.prototype = {
       },
       callback,
     );
+  },
+};
+
+var StreamObject = function() {
+  this.initialize.apply(this, arguments);
+};
+
+StreamObject.prototype = {
+  initialize: function(store, id, data) {
+    this.collection = store.collection;
+    this.store = store;
+    this.id = id;
+    this.data = data;
+  },
+
+  _streamRef: function() {
+      return `SO:${this.collection}:${this.id}`;
+  },
+
+  get: async function(callback) {
+    /**
+     * get item from collection and sync data
+     * @method get
+     * @memberof StreamObjectStore.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+    let response = await this.store.get(this.id, callback);
+    this.data = response.data;
+    this.full = response;
+    return response;
+  },
+
+  add: async function(callback) {
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof StreamObjectStore.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    let response = await this.store.add(this.id, this.data, callback);
+    this.data = response.data;
+    this.full = response;
+    return response;
+  },
+
+  update: async function(callback) {
+    /**
+     * Update item in the object storage
+     * @method update
+     * @memberof StreamObjectStore.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    let response = await this.store.update(this.id, this.data, callback);
+    this.data = response.data;
+    this.full = response;
+    return response;
+  },
+
+  delete: async function(callback) {
+    /**
+     * Delete item from collection
+     * @method delete
+     * @memberof StreamObjectStore.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.delete("cheese101")
+     */
+    let response = await this.store.delete(this.id, callback);
+    this.id = null;
+    this.data = null;
+    return response;
   },
 };
 

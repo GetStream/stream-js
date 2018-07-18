@@ -16,8 +16,13 @@ StreamUser.prototype = {
     this.client = client;
     this.id = userId;
     this.data = undefined;
+    this.full = undefined;
     this.token = userAuthToken;
     this.url = 'user/' + this.id + '/';
+  },
+
+  _streamRef: function() {
+      return `SU:${this.id}`;
   },
 
   get: async function(options) {
@@ -26,6 +31,7 @@ StreamUser.prototype = {
       signature: this.token,
       qs: options,
     });
+    this.full = response;
     this.data = response.data;
     return response;
   },
@@ -50,6 +56,7 @@ StreamUser.prototype = {
       qs: options,
       signature: this.token,
     });
+    this.full = response;
     this.data = response.data;
     return response;
   },
@@ -62,6 +69,7 @@ StreamUser.prototype = {
       },
       signature: this.token,
     });
+    this.full = response;
     this.data = response.data;
     return response;
   },
