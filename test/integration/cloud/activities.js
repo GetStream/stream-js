@@ -23,7 +23,7 @@ describe('Get activities', () => {
 			activity.should.have.property('foreign_id');
 			activity.actor.should.equal(ctx.alice.userId);
 			activity.verb.should.equal('eat');
-			activity.object.data.should.eql(ctx.cheeseBurgerData);
+			activity.object.should.eql(ctx.cheeseBurger.full);
 			// activity.object.collection.should.equal('food');
 			// activity.object.data.name.should.equal('cheese burger');
 		});
