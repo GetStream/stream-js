@@ -129,20 +129,27 @@ describe('[UNIT] Stream Client (Node)', function() {
     describe('#getActivities', function() {
 
         it('throws', function() {
+            var self = this;
+
             function isGoingToThrow1() {
-                this.client.getActivities({});
+                self.client.getActivities({});
             }
 
             function isGoingToThrow2() {
-                this.client.getActivities(0);
+                self.client.getActivities(0);
             }
 
             function isGoingToThrow3() {
-                this.client.getActivities(null);
+                self.client.getActivities(null);
+            }
+
+            function isGoingToThrow4() {
+                self.client.getActivities([]);
             }
 
             function isNotGoingToThrow() {
-                this.client.getActivities([]);
+                self.client.getActivities({ ids: [] });
+                self.client.getActivities({ foreignIDTimes: [] });
             }
 
             function isTypeError(err) {
@@ -152,7 +159,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             expect(isGoingToThrow1).to.throwException(isTypeError);
             expect(isGoingToThrow2).to.throwException(isTypeError);
             expect(isGoingToThrow3).to.throwException(isTypeError);
-            expect(isNotGoingToThrow).to.not.throw;
+            expect(isGoingToThrow4).to.throwException(isTypeError);
+            expect(isNotGoingToThrow).to.not.throwException(isTypeError);
         });
 
         describe('by ID', function() {
@@ -226,28 +234,34 @@ describe('[UNIT] Stream Client (Node)', function() {
     describe('#updateActivityPartial', function () {
 
         it('throws', function () {
+            var self = this;
+
             function isGoingToThrow1() {
-                this.client.updateActivityPartial({});
+                self.client.updateActivityPartial({});
             }
 
             function isGoingToThrow2() {
-                this.client.updateActivityPartial(0);
+                self.client.updateActivityPartial(0);
             }
 
             function isGoingToThrow3() {
-                this.client.updateActivityPartial(null);
+                self.client.updateActivityPartial(null);
             }
 
             function isGoingToThrow4() {
-                this.client.updateActivityPartial({foreignID: "foo:bar"});
+                self.client.updateActivityPartial({ foreignID: "foo:bar" });
             }
 
             function isGoingToThrow5() {
-                this.client.updateActivityPartial({ time: "2016-11-10T13:20:00.000000" });
+                self.client.updateActivityPartial({ time: "2016-11-10T13:20:00.000000" });
             }
 
-            function isNotGoingToThrow() {
-                this.client.updateActivityPartial([]);
+            function isGoingToThrow6() {
+                self.client.updateActivityPartial({ id: "test", set: "wrong" });
+            }
+
+            function isGoingToThrow7() {
+                self.client.updateActivityPartial({ id: "test", unset: "wrong" });
             }
 
             function isTypeError(err) {
@@ -259,7 +273,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             expect(isGoingToThrow3).to.throwException(isTypeError);
             expect(isGoingToThrow4).to.throwException(isTypeError);
             expect(isGoingToThrow5).to.throwException(isTypeError);
-            expect(isNotGoingToThrow).to.not.throw;
+            expect(isGoingToThrow6).to.throwException(isTypeError);
+            expect(isGoingToThrow7).to.throwException(isTypeError);
         });
 
         describe('by ID', function () {
