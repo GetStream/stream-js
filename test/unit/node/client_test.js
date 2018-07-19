@@ -222,6 +222,107 @@ describe('[UNIT] Stream Client (Node)', function() {
         });
 
     });
+
+    describe('#updateActivityPartial', function () {
+
+        it('throws', function () {
+            function isGoingToThrow1() {
+                this.client.updateActivityPartial({});
+            }
+
+            function isGoingToThrow2() {
+                this.client.updateActivityPartial(0);
+            }
+
+            function isGoingToThrow3() {
+                this.client.updateActivityPartial(null);
+            }
+
+            function isGoingToThrow4() {
+                this.client.updateActivityPartial({foreignID: "foo:bar"});
+            }
+
+            function isGoingToThrow5() {
+                this.client.updateActivityPartial({ time: "2016-11-10T13:20:00.000000" });
+            }
+
+            function isNotGoingToThrow() {
+                this.client.updateActivityPartial([]);
+            }
+
+            function isTypeError(err) {
+                expect(err).to.be.a(TypeError);
+            }
+
+            expect(isGoingToThrow1).to.throwException(isTypeError);
+            expect(isGoingToThrow2).to.throwException(isTypeError);
+            expect(isGoingToThrow3).to.throwException(isTypeError);
+            expect(isGoingToThrow4).to.throwException(isTypeError);
+            expect(isGoingToThrow5).to.throwException(isTypeError);
+            expect(isNotGoingToThrow).to.not.throw;
+        });
+
+        describe('by ID', function () {
+
+            it('(1) works', function () {
+                var post = td.function();
+                td.replace(this.client, 'post', post);
+
+                var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
+
+                this.client.updateActivityPartial(data);
+
+                td.verify(post(td.matchers.contains({
+                    url: 'activity/',
+                }), undefined));
+            });
+
+            it('(2) works - callback', function () {
+                var post = td.function();
+                td.replace(this.client, 'post', post);
+
+                var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
+                var fn = function () { };
+
+                this.client.updateActivityPartial(data, fn);
+
+                td.verify(post(td.matchers.contains({
+                    url: 'activity/',
+                }), fn));
+            });
+        });
+
+        describe('by foreign ID and time', function () {
+
+            it('(1) works', function () {
+                var post = td.function();
+                td.replace(this.client, 'post', post);
+
+                var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
+
+                this.client.updateActivityPartial(data);
+
+                td.verify(post(td.matchers.contains({
+                    url: 'activity/',
+                }), undefined));
+            });
+
+            it('(2) works - callback', function () {
+                var post = td.function();
+                td.replace(this.client, 'post', post);
+
+                var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
+                var fn = function () { };
+
+                this.client.updateActivityPartial(data, fn)
+
+                td.verify(post(td.matchers.contains({
+                    url: 'activity/',
+                }), fn));
+            });
+        });
+
+    });
     
     describe('connect', function() {
 

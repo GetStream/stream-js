@@ -604,6 +604,60 @@ StreamClient.prototype = {
     }, callback);
   },
 
+  updateActivityPartial: function (data, callback) {
+    /**
+     * Update a single activity with partial operations.
+     * @since 3.19.0
+     * @param {object} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+     * @return {Promise}
+     * @example
+     * client.updateActivityPartial({
+     *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+     *   set: {
+     *     "product.price": 19.99,
+     *     "shares": {
+     *       "facebook": "...",
+     *       "twitter": "...",
+     *     }
+     *   },
+     *   unset: [
+     *     "daily_likes",
+     *     "popularity"
+     *   ]
+     * })
+     * @example
+     * client.updateActivityPartial({
+     *   foreignID: "product:123",
+     *   time: "2016-11-10T13:20:00.000000",
+     *   set: {
+     *     ...
+     *   },
+     *   unset: [
+     *     ...
+     *   ]
+     * })
+     */
+    if (data.foreignID) {
+      data['foreign_id'] = data.foreignID;
+      delete data.foreignID;
+    }
+    if (!data.id && !(data['foreign_id'] || data.time)) {
+      throw new TypeError('Missing id or foreign ID and time')
+    }
+    if (data.set && !(data.set instanceof Object)) {
+      throw new TypeError('set field should be an Object')
+    }
+    if (data.unset && !(data.unset instanceof Array)) {
+      throw new TypeError('unset field should be an Array')
+    }
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
+    return this.post({
+      url: 'activity/',
+      body: data,
+      signature: authToken,
+    }, callback);
+  },
+
 };
 
 if (qs) {

@@ -550,4 +550,104 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         });
     });
 
+    describe('update activity partial', function () {
+        var activity, expected;
+
+        beforeEach(function (done) {
+            var self = this;
+            this.user1.addActivity({
+                'actor': 1,
+                'verb': 'test',
+                'object': 1,
+                'foreign_id': 1234,
+                'time': new Date(),
+                'shares': {
+                    'facebook': 123,
+                    'twitter': 2000,
+                },
+                'popularity': 50,
+                'color': 'blue',
+            }).then(function () {
+                return self.user1.get();
+            }).then(function (resp) {
+                activity = resp.results[0];
+
+                expected = activity;
+                delete expected.color;
+                expected.popularity = 75;
+                expected.shares = {
+                    "facebook": 234,
+                    "twitter": 2000,
+                    "googleplus": 42
+                };
+                expected.foo = {
+                    bar: {
+                        baz: 999
+                    }
+                };
+
+                done();
+            });
+        });
+
+        describe('by ID', function () {
+            it("allows to update the activity", function (done) {                
+                var self = this;
+
+                this.client.updateActivityPartial({
+                    id: activity['id'],
+                    set: {
+                        popularity: 75,
+                        "shares.facebook": 234,
+                        "shares.googleplus": 42,
+                        foo: {
+                            bar: {
+                                baz: 999,
+                            }
+                        }
+                    },
+                    unset: [
+                        "color",
+                    ]
+                }).then(function() {
+                    self.client.getActivities({ids: [activity['id']]})
+                        .then(function(resp) {
+                            expect(resp.results[0]).to.eql(expected);
+                            done();
+                        })
+                })
+            })
+        });
+
+        describe('by foreign ID and time', function () {
+            it("allows to update the activity", function (done) {
+                var self = this;
+
+                this.client.updateActivityPartial({
+                    foreignID: activity['foreign_id'],
+                    time: activity['time'],
+                    set: {
+                        popularity: 75,
+                        "shares.facebook": 234,
+                        "shares.googleplus": 42,
+                        foo: {
+                            bar: {
+                                baz: 999,
+                            }
+                        }
+                    },
+                    unset: [
+                        "color",
+                    ]
+                }).then(function () {
+                    self.client.getActivities({ ids: [activity['id']] })
+                        .then(function (resp) {
+                            expect(resp.results[0]).to.eql(expected);
+                            done();
+                        })
+                })
+            })
+        });
+    });
+
 });
