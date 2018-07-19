@@ -87,8 +87,7 @@ class CloudContext {
         userId = randUserId(userId);
         return this.client.createUserSession(
             userId,
-            signing.JWTScopeToken(config.API_SECRET, '*', '*', {
-                feedId: '*',
+            signing.JWTScopeToken(config.API_SECRET, '', '', {
                 userId: userId,
             }),
         );
