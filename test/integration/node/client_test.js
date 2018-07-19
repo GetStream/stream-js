@@ -594,7 +594,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             it("allows to update the activity", function (done) {                
                 var self = this;
 
-                this.client.updateActivityPartial({
+                this.client.activityPartialUpdate({
                     id: activity['id'],
                     set: {
                         popularity: 75,
@@ -623,7 +623,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             it("allows to update the activity", function (done) {
                 var self = this;
 
-                this.client.updateActivityPartial({
+                this.client.activityPartialUpdate({
                     foreignID: activity['foreign_id'],
                     time: activity['time'],
                     set: {

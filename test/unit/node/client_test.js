@@ -231,37 +231,37 @@ describe('[UNIT] Stream Client (Node)', function() {
 
     });
 
-    describe('#updateActivityPartial', function () {
+    describe('#activityPartialUpdate', function () {
 
         it('throws', function () {
             var self = this;
 
             function isGoingToThrow1() {
-                self.client.updateActivityPartial({});
+                self.client.activityPartialUpdate({});
             }
 
             function isGoingToThrow2() {
-                self.client.updateActivityPartial(0);
+                self.client.activityPartialUpdate(0);
             }
 
             function isGoingToThrow3() {
-                self.client.updateActivityPartial(null);
+                self.client.activityPartialUpdate(null);
             }
 
             function isGoingToThrow4() {
-                self.client.updateActivityPartial({ foreignID: "foo:bar" });
+                self.client.activityPartialUpdate({ foreignID: "foo:bar" });
             }
 
             function isGoingToThrow5() {
-                self.client.updateActivityPartial({ time: "2016-11-10T13:20:00.000000" });
+                self.client.activityPartialUpdate({ time: "2016-11-10T13:20:00.000000" });
             }
 
             function isGoingToThrow6() {
-                self.client.updateActivityPartial({ id: "test", set: "wrong" });
+                self.client.activityPartialUpdate({ id: "test", set: "wrong" });
             }
 
             function isGoingToThrow7() {
-                self.client.updateActivityPartial({ id: "test", unset: "wrong" });
+                self.client.activityPartialUpdate({ id: "test", unset: "wrong" });
             }
 
             function isTypeError(err) {
@@ -285,7 +285,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
                 var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
 
-                this.client.updateActivityPartial(data);
+                this.client.activityPartialUpdate(data);
 
                 td.verify(post(td.matchers.contains({
                     url: 'activity/',
@@ -299,7 +299,7 @@ describe('[UNIT] Stream Client (Node)', function() {
                 var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
                 var fn = function () { };
 
-                this.client.updateActivityPartial(data, fn);
+                this.client.activityPartialUpdate(data, fn);
 
                 td.verify(post(td.matchers.contains({
                     url: 'activity/',
@@ -315,7 +315,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
                 var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
 
-                this.client.updateActivityPartial(data);
+                this.client.activityPartialUpdate(data);
 
                 td.verify(post(td.matchers.contains({
                     url: 'activity/',
@@ -329,7 +329,7 @@ describe('[UNIT] Stream Client (Node)', function() {
                 var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
                 var fn = function () { };
 
-                this.client.updateActivityPartial(data, fn)
+                this.client.activityPartialUpdate(data, fn)
 
                 td.verify(post(td.matchers.contains({
                     url: 'activity/',

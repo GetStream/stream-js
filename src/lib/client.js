@@ -604,14 +604,14 @@ StreamClient.prototype = {
     }, callback);
   },
 
-  updateActivityPartial: function (data, callback) {
+  activityPartialUpdate: function (data, callback) {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
      * @param {object} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
      * @return {Promise}
      * @example
-     * client.updateActivityPartial({
+     * client.activityPartialUpdate({
      *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
      *   set: {
      *     "product.price": 19.99,
@@ -626,7 +626,7 @@ StreamClient.prototype = {
      *   ]
      * })
      * @example
-     * client.updateActivityPartial({
+     * client.activityPartialUpdate({
      *   foreignID: "product:123",
      *   time: "2016-11-10T13:20:00.000000",
      *   set: {
