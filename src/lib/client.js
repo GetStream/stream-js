@@ -607,7 +607,7 @@ StreamClient.prototype = {
   updateActivityPartial: function (data, callback) {
     /**
      * Update a single activity with partial operations.
-     * @since 3.19.0
+     * @since 3.20.0
      * @param {object} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
      * @return {Promise}
      * @example
