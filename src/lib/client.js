@@ -641,7 +641,7 @@ StreamClient.prototype = {
       data['foreign_id'] = data.foreignID;
       delete data.foreignID;
     }
-    if (!data.id && !(data['foreign_id'] && data.time)) {
+    if ((data.id === undefined) && (data.foreign_id === undefined || data.time === undefined)) {
       throw new TypeError('Missing id or foreign ID and time')
     }
     if (data.set && !(data.set instanceof Object)) {
