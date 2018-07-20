@@ -51,7 +51,7 @@ StreamReaction.prototype = {
     return targetFeeds.map(elem => (typeof elem === 'string' ? elem : elem.id));
   },
 
-  add: function(kind, activity, { data, targetFeeds } = {}, callback) {
+  add: function(kind, activity, { id, data, targetFeeds } = {}, callback) {
     /**
      * add reaction
      * @method add
@@ -72,6 +72,7 @@ StreamReaction.prototype = {
     var body = {
       activity_id: activity,
       kind: kind,
+      id: id,
       data: data,
       target_feeds: targetFeeds,
     };
