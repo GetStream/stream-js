@@ -98,6 +98,10 @@ describe('Object Store CRUD behaviours', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.alice.storage('food').delete(ctx.cheeseBurger.id);
         });
+
+        ctx.responseShould("be empty JSON", async () => {
+            ctx.response.eql({});
+        });
     });
 
     describe('When alice then tries to get the cheeseburger', () => {
