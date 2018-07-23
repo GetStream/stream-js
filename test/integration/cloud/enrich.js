@@ -250,7 +250,7 @@ describe('Enrich story', () => {
                 'contain his own reactions and of bob his like in latest_reactions',
                 () => {
                     ctx.activity.latest_reactions.should.eql({
-                        like: [like, like2],
+                        like: [like2, like],
                         comment: [comment],
                     });
                 },
