@@ -100,7 +100,7 @@ describe('Object Store CRUD behaviours', () => {
         });
 
         ctx.responseShould("be empty JSON", async () => {
-            ctx.response.eql({});
+            ctx.response.should.eql({});
         });
     });
 
