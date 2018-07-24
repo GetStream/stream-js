@@ -168,6 +168,10 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.response = await ctx.bob.reactions.delete(comment.id);
         });
 
+        ctx.responseShould("be empty JSON", () => {
+            ctx.response.should.eql({});
+        });
+
         describe('and then alice reads bob his feed', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();

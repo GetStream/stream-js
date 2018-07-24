@@ -264,4 +264,62 @@ describe('Enrich story', () => {
             });
         });
     });
+
+    describe('When dave removes his likes that alice ate the cheese burger', () => {
+        ctx.requestShouldNotError(async () => {
+            ctx.response = await ctx.dave.reactions.delete(like2.id);
+        });
+
+        ctx.responseShould('be empty JSON', () => {
+            ctx.response.should.eql({});
+        });
+
+        describe('and then dave reads alice her feed with all enrichment enabled', () => {
+            ctx.requestShouldNotError(async () => {
+                ctx.response = await ctx.dave
+                    .feed('user', ctx.alice.user)
+                    .get({
+                        withRecentReactions: true,
+                        withOwnReactions: true,
+                        withReactionCounts: true,
+                    });
+            });
+
+            ctx.responseShouldHaveActivityWithFields(
+                'own_reactions',
+                'latest_reactions',
+                'reaction_counts',
+            );
+
+            ctx.activityShould('contain the enriched data', () => {
+                ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+            });
+
+            ctx.activityShould(
+                'contain dave his like and comment in own_reactions',
+                () => {
+                    ctx.activity.own_reactions.should.eql({
+                        comment: [comment],
+                    });
+                },
+            );
+
+            ctx.activityShould(
+                'contain his own reactions and of bob his like in latest_reactions',
+                () => {
+                    ctx.activity.latest_reactions.should.eql({
+                        like: [like],
+                        comment: [comment],
+                    });
+                },
+            );
+
+            ctx.activityShould('have the correct counts for reactions', () => {
+                ctx.activity.reaction_counts.should.eql({
+                    like: 1,
+                    comment: 1,
+                });
+            });
+        });
+    });
 });
