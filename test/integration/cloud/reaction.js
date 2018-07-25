@@ -200,4 +200,10 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.responseShouldHaveNoActivities();
         });
     });
+
+    describe('When alice tries to set a string as the reaction data', () => {
+        ctx.requestShouldError(400, async () => {
+            ctx.response = await ctx.alice.react('comment', eatActivity.id, { data: 'some string'});
+        });
+    });
 });

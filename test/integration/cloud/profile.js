@@ -138,4 +138,10 @@ describe('User profile story', () => {
 
         checkProfileResponse(() => bobUser, newBobData, 1, 1);
     });
+
+    describe('When alice tries to set a string as user data', () => {
+        ctx.requestShouldError(400, async () => {
+            ctx.response = await ctx.alice.user.update('some string');
+        });
+    });
 });

@@ -11,7 +11,9 @@ describe('Object Store CRUD behaviours', () => {
 
     describe('When alice tries to get the cheeseburger', () => {
         ctx.requestShouldNotError(async () => {
-            ctx.response = await ctx.alice.storage('food').get(ctx.cheeseBurger.id);
+            ctx.response = await ctx.alice
+                .storage('food')
+                .get(ctx.cheeseBurger.id);
             ctx.prevResponse = ctx.response;
         });
 
@@ -25,7 +27,9 @@ describe('Object Store CRUD behaviours', () => {
 
     describe('When bob tries to get the cheeseburger', () => {
         ctx.requestShouldNotError(async () => {
-            ctx.response = await ctx.bob.storage('food').get(ctx.cheeseBurger.id);
+            ctx.response = await ctx.bob
+                .storage('food')
+                .get(ctx.cheeseBurger.id);
         });
 
         ctx.responseShouldEqualPreviousResponse();
@@ -67,7 +71,9 @@ describe('Object Store CRUD behaviours', () => {
     describe('When alice then tries to get the cheeseburger', () => {
         ctx.requestShouldNotError(async () => {
             ctx.prevResponse = ctx.response;
-            ctx.response = await ctx.alice.storage('food').get(ctx.cheeseBurger.id);
+            ctx.response = await ctx.alice
+                .storage('food')
+                .get(ctx.cheeseBurger.id);
         });
 
         ctx.responseShouldEqualPreviousResponse();
@@ -90,16 +96,20 @@ describe('Object Store CRUD behaviours', () => {
 
     describe('When bob tries to delete the cheeseburger', () => {
         ctx.requestShouldError(403, async () => {
-            ctx.response = await ctx.bob.storage('food').delete(ctx.cheeseBurger.id);
+            ctx.response = await ctx.bob
+                .storage('food')
+                .delete(ctx.cheeseBurger.id);
         });
     });
 
     describe('When alice tries to delete the cheeseburger', () => {
         ctx.requestShouldNotError(async () => {
-            ctx.response = await ctx.alice.storage('food').delete(ctx.cheeseBurger.id);
+            ctx.response = await ctx.alice
+                .storage('food')
+                .delete(ctx.cheeseBurger.id);
         });
 
-        ctx.responseShould("be empty JSON", async () => {
+        ctx.responseShould('be empty JSON', async () => {
             ctx.response.should.eql({});
         });
     });
@@ -144,7 +154,9 @@ describe('Object Store CRUD behaviours', () => {
 
     describe('When alice tries to get the new cheeseburger', () => {
         ctx.requestShouldNotError(async () => {
-            ctx.response = await ctx.alice.storage('food').get(newCheeseBurger.id);
+            ctx.response = await ctx.alice
+                .storage('food')
+                .get(newCheeseBurger.id);
         });
         ctx.responseShould(
             'be the same as when the new cheeseburger was added',
@@ -152,5 +164,19 @@ describe('Object Store CRUD behaviours', () => {
                 ctx.response.should.eql(newCheeseBurger);
             },
         );
+    });
+
+    describe('When alice tries to add an object with a string as data', () => {
+        ctx.requestShouldError(400, async () => {
+            ctx.response = await ctx.alice
+                .storage('food')
+                .add(null, 'some string');
+        });
+    });
+
+    describe('When alice tries to add an object with empty data', () => {
+        ctx.requestShouldError(400, async () => {
+            ctx.response = await ctx.alice.storage('food').add(null, {});
+        });
     });
 });
