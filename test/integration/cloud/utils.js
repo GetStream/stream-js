@@ -110,6 +110,22 @@ class CloudContext {
         });
     }
 
+    afterTest(fn) {
+        let ctx = this;
+        after(async function() {
+            if (ctx.failed) {
+                this.skip();
+            }
+            try {
+                await fn();
+            } catch (ex) {
+                ctx.failed = true;
+                throw ex;
+            }
+        });
+    }
+
+
     requestShouldNotError(fn) {
         this.test('the request should not error', fn);
     }
@@ -232,7 +248,7 @@ class CloudContext {
                 },
             );
 
-            after(() => {
+            this.afterTest(() => {
                 this.cheeseBurger = this.alice.objectFromResponse(this.response);
             });
         });

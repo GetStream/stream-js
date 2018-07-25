@@ -137,7 +137,7 @@ describe('Object Store CRUD behaviours', () => {
             },
         );
 
-        after(() => {
+        ctx.afterTest(() => {
             newCheeseBurger = ctx.response;
         });
     });
