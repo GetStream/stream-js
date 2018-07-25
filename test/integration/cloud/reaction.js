@@ -168,7 +168,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.response = await ctx.bob.reactions.delete(comment.id);
         });
 
-        ctx.responseShould("be empty JSON", () => {
+        ctx.responseShould('be empty JSON', () => {
             ctx.response.should.eql({});
         });
 
@@ -203,7 +203,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('When alice tries to set a string as the reaction data', () => {
         ctx.requestShouldError(400, async () => {
-            ctx.response = await ctx.alice.react('comment', eatActivity.id, { data: 'some string'});
+            ctx.response = await ctx.alice.react('comment', eatActivity.id, {
+                data: 'some string',
+            });
         });
     });
 });
