@@ -75,6 +75,16 @@ StreamUserSession.prototype = {
 
     return feed;
   },
+  personalizedFeed: function(options = {}, callback) {
+    return this.client.get(
+      {
+        url: 'enrich/personalization/feed/',
+        qs: options,
+        signature: this.token,
+      },
+      callback,
+    );
+  },
 
   followUser: function(user) {
     // The user argument can be a StreamUser object or a userId
