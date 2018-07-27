@@ -115,6 +115,28 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
   return token;
 };
 
+exports.JWTUserToken = function(apiSecret, userId, extraData={}, jwtOptions={}) {
+  /**
+   * Creates the JWT token for feedId, resource and action using the apiSecret
+   * @method JWTScopeToken
+   * @memberof signing
+   * @private
+   * @param {string} apiSecret - API Secret key
+   * @param {string} userId - The user_id key in the JWT payload
+   * @param {string} [extraData] - Extra that should be part of the JWT token
+   * @param {object} [jwtOptions] - Options that can be past to jwt.sign
+   * @return {string} JWT Token
+   */
+  var payload = {
+    user_id: userId,
+    ...extraData,
+  };
+
+  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', ...jwtOptions });
+  return token;
+};
+
+
 exports.isJWTSignature = function(signature) {
   /**
    * check if token is a valid JWT token
