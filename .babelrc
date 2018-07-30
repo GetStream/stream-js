@@ -6,5 +6,11 @@
       },
     }]
   ],
-  plugins: ['@babel/plugin-transform-object-assign'],
+  plugins: [
+    '@babel/plugin-transform-object-assign',
+    ["@babel/plugin-transform-runtime", {
+      "polyfill": false,
+      "regenerator": true
+    }]
+  ],
 }
