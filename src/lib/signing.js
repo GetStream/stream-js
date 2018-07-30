@@ -115,10 +115,10 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
   return token;
 };
 
-exports.JWTUserToken = function(apiSecret, userId, extraData={}, jwtOptions={}) {
+exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptions={}) {
   /**
-   * Creates the JWT token for feedId, resource and action using the apiSecret
-   * @method JWTScopeToken
+   * Creates the JWT token that can be used for a UserSession
+   * @method JWTUserSessionToken
    * @memberof signing
    * @private
    * @param {string} apiSecret - API Secret key
