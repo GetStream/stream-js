@@ -6,7 +6,7 @@ var expect = require('chai').expect;
 var should = require('chai').should();
 
 class CloudContext {
-    constructor(story) {
+    constructor() {
         this.response = null;
         this.prevResponse = null;
         this.activity = null;
@@ -16,12 +16,17 @@ class CloudContext {
             name: 'cheese burger',
             toppings: ['cheese'],
         };
-        this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
-            group: 'testCycle',
-            location: 'qa',
-            protocol: 'https',
-            browser: true,
-        });
+        this.client = stream.connect(
+            config.API_KEY,
+            null,
+            config.APP_ID,
+            {
+                group: 'testCycle',
+                location: 'qa',
+                protocol: 'https',
+                browser: true,
+            },
+        );
         this.alice = this.createUserSession('alice');
         this.bob = this.createUserSession('bob');
         this.carl = this.createUserSession('carl');
@@ -87,9 +92,7 @@ class CloudContext {
         userId = randUserId(userId);
         return this.client.createUserSession(
             userId,
-            signing.JWTScopeToken(config.API_SECRET, '', '', {
-                userId: userId,
-            }),
+            signing.JWTUserToken(config.API_SECRET, userId),
         );
     }
 
@@ -124,7 +127,6 @@ class CloudContext {
             }
         });
     }
-
 
     requestShouldNotError(fn) {
         this.test('the request should not error', fn);
@@ -249,7 +251,9 @@ class CloudContext {
             );
 
             this.afterTest(() => {
-                this.cheeseBurger = this.alice.objectFromResponse(this.response);
+                this.cheeseBurger = this.alice.objectFromResponse(
+                    this.response,
+                );
             });
         });
     }
