@@ -29,3 +29,5 @@ bower_components
 # IDE directory
 .idea
 .tern-port
+
+secrets.*sh
