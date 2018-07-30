@@ -31,26 +31,6 @@ StreamUserSession.prototype = {
     }
 
     let feed = this.client.feed(feedGroup, user, this.token);
-    // HACK: override the normal get with one that enriches
-    // TODO: make this not super ugly like it is now
-    feed.get = (options, callback) => {
-      if (options && options['mark_read'] && options['mark_read'].join) {
-        options['mark_read'] = options['mark_read'].join(',');
-      }
-
-      if (options && options['mark_seen'] && options['mark_seen'].join) {
-        options['mark_seen'] = options['mark_seen'].join(',');
-      }
-
-      return feed.client.get(
-        {
-          url: 'enrich/feed/' + feed.feedUrl + '/',
-          qs: options,
-          signature: feed.signature,
-        },
-        callback,
-      );
-    };
 
     let replaceStreamObjects = obj => {
       let cloned = obj;

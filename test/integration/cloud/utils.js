@@ -1,4 +1,4 @@
-var stream = require('../../../src/getstream-enrich');
+var stream = require('../../../src/getstream');
 var config = require('../utils/config');
 var signing = require('../../../src/lib/signing');
 var randUserId = require('../utils/hooks').randUserId;
@@ -16,7 +16,7 @@ class CloudContext {
             name: 'cheese burger',
             toppings: ['cheese'],
         };
-        this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+        this.client = stream.connectCloud(config.API_KEY, null, config.APP_ID, {
             group: 'testCycle',
             location: 'qa',
             protocol: 'https',
@@ -126,6 +126,9 @@ class CloudContext {
 
 
     requestShouldNotError(fn) {
+        this.test('the request should not error', fn);
+    }
+    noRequestsShouldError(fn) {
         this.test('the request should not error', fn);
     }
     responseShould(label, fn) {
@@ -255,7 +258,7 @@ class CloudContext {
 
     createUsers() {
         describe('When creating the users', () => {
-            this.test('none of the requests should error', async () => {
+            this.noRequestsShouldError(async () => {
                 await Promise.all([
                     this.alice.user.create(this.userData.alice),
                     this.bob.user.create(this.userData.bob),

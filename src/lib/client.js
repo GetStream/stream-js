@@ -320,24 +320,6 @@ StreamClient.prototype = {
      * client.feed('user', '1', 'token2');
      */
 
-    options = options || {};
-
-    if (!feedSlug || !userId) {
-      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
-    }
-
-    if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
-    }
-
-    utils.validateFeedSlug(feedSlug);
-    utils.validateUserId(userId);
-
-    // raise an error if there is no token
-    if (!this.apiSecret && !token) {
-      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
-    }
-
     // create the token in server side mode
     if (this.apiSecret && !token) {
       var feedId = '' + feedSlug + userId;

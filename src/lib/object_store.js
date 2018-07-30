@@ -10,7 +10,7 @@ StreamObjectStore.prototype = {
      * Initialize a feed object
      * @method intialize
      * @memberof StreamObjectStore.prototype
-     * @param {StreamClient} client Stream client this collection is constructed from
+     * @param {StreamCloudClient} client Stream client this collection is constructed from
      * @param {string} name ObjectStore name
      * @param {string} token JWT token
      * @example new StreamObjectStore(client, "food", "eyJhbGciOiJIUzI1...")
