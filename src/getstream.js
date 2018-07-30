@@ -46,7 +46,7 @@ function connect(apiKey, apiSecret, appId, options) {
   return new StreamClient(apiKey, apiSecret, appId, options);
 }
 
-function connectCloud(apiKey, apiSecret, appId, options) {
+function connectCloud(apiKey, appId, options) {
   /**
    * Create StreamCloudClient that's compatible with StreamCloud
    * @method connect
@@ -65,7 +65,7 @@ function connectCloud(apiKey, apiSecret, appId, options) {
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
-  return new cloud.StreamCloudClient(apiKey, apiSecret, appId, options);
+  return new cloud.StreamCloudClient(apiKey, null, appId, options);
 }
 
 

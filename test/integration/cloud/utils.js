@@ -16,7 +16,7 @@ class CloudContext {
             name: 'cheese burger',
             toppings: ['cheese'],
         };
-        this.client = stream.connectCloud(config.API_KEY, null, config.APP_ID, {
+        this.client = stream.connectCloud(config.API_KEY, config.APP_ID, {
             group: 'testCycle',
             location: 'qa',
             protocol: 'https',
