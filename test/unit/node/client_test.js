@@ -3,8 +3,19 @@ var StreamFeed = require('../../../src/lib/feed'),
     beforeEachFn = require('../utils/hooks').beforeEach,
     td = require('testdouble'),
     stream = require('../../../src/getstream'),
-    signing = require('../../../src/lib/signing');
+    StreamClient = require('../../../src/lib/client');
 
+
+describe('[UNIT] Stream Client instantiation (Node)', function() {
+
+    it('with secret', function() {
+      new StreamClient('stub-key', 'stub-secret', 9498);
+    });
+
+    it('without secret', function() {
+        new StreamClient('stub-key', null, 9498);
+    });
+});
 
 describe('[UNIT] Stream Client (Node)', function() {
 

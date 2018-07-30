@@ -1,3 +1,5 @@
+var errors = require('./errors');
+
 var Personalization = function() {
   /**
    * Manage api calls for personalization
@@ -43,7 +45,7 @@ Personalization.prototype = {
         url: resource + '/',
         serviceName: 'personalization',
         qs: options,
-        signature: this.client.personalizationToken
+        signature: this.client.getPersonalizationToken()
       },
       callback);
   },
@@ -77,7 +79,7 @@ Personalization.prototype = {
         serviceName: 'personalization',
         qs: options,
         body: data,
-        signature: this.client.personalizationToken
+        signature: this.client.getPersonalizationToken()
       },
       callback);
   },
@@ -106,7 +108,7 @@ Personalization.prototype = {
         url: resource + '/',
         serviceName: 'personalization',
         qs: options,
-        signature: this.client.personalizationToken
+        signature: this.client.getPersonalizationToken()
       },
       callback);
   },

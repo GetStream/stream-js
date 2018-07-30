@@ -1,3 +1,5 @@
+var errors = require('./errors');
+
 var Collections = function() {
   /**
    * Manage api calls for collections
@@ -6,6 +8,7 @@ var Collections = function() {
    */
   this.initialize.apply(this, arguments);
 };
+
 
 Collections.prototype = {
   initialize: function(client) {
@@ -38,7 +41,7 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         body: data_json,
-        signature: this.client.collectionsToken
+        signature: this.client.getCollectionsToken()
       },
       callback);
   },
@@ -70,7 +73,7 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         qs: params,
-        signature: this.client.collectionsToken
+        signature: this.client.getCollectionsToken()
       },
       callback);
   },
@@ -105,7 +108,7 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         qs: params,
-        signature: this.client.collectionsToken
+        signature: this.client.getCollectionsToken()
       },
       callback);
   },
