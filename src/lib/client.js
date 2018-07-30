@@ -322,6 +322,7 @@ StreamClient.prototype = {
 
     // create the token in server side mode
     if (this.apiSecret && !token) {
+      options = options || {}
       var feedId = '' + feedSlug + userId;
       // use scoped token if read-only access is necessary
       token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
