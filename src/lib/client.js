@@ -76,16 +76,21 @@ StreamClient.prototype = {
     this.node = !this.browser;
 
     if (!this.browser) {
+      var keepAlive = options.keepAlive;
+      if (keepAlive === undefined) {
+          keepAlive = true
+      }
+
       var http = require('http');
       var https = require('https');
 
       var httpsAgent = new https.Agent({
-        keepAlive: true,
+        keepAlive: keepAlive,
         keepAliveMsecs: 3000,
       });
 
       var httpAgent = new http.Agent({
-        keepAlive: true,
+        keepAlive: keepAlive,
         keepAliveMsecs: 3000,
       });
 

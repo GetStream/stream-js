@@ -20,6 +20,7 @@ class CloudContext {
             group: 'testCycle',
             location: 'qa',
             protocol: 'https',
+            keepAlive: false,
         });
         this.alice = this.createUserSession('alice');
         this.bob = this.createUserSession('bob');
