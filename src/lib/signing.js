@@ -127,6 +127,10 @@ exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptio
    * @param {object} [jwtOptions] - Options that can be past to jwt.sign
    * @return {string} JWT Token
    */
+  if (typeof userId !== 'string') {
+    throw new TypeError('userId should be a string');
+  }
+
   var payload = {
     user_id: userId,
     ...extraData,
