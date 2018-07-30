@@ -36,4 +36,4 @@ secrets.*sh
 
 
 # Ignore lib directory (this is not in npmignore because it should be piublished)
-lib/
+/lib/

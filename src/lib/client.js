@@ -30,7 +30,7 @@ StreamClient.prototype = {
   baseUrl: 'https://api.stream-io-api.com/api/',
   baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
-  initialize: function(apiKey, apiSecret, appId, options) {
+  initialize: function(apiKey, apiSecret, appId, options = {}) {
     /**
      * Initialize a client
      * @method intialize
@@ -49,7 +49,7 @@ StreamClient.prototype = {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
     this.appId = appId;
-    this.options = options || {};
+    this.options = options;
     this.version = this.options.version || 'v1.0';
     this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
     this.fayeClient = null;
@@ -76,7 +76,7 @@ StreamClient.prototype = {
     this.node = !this.browser;
 
     if (!this.browser) {
-      var keepAlive = options.keepAlive;
+      var keepAlive = this.options.keepAlive;
       if (keepAlive === undefined) {
           keepAlive = true
       }
