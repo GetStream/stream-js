@@ -2,6 +2,22 @@
  Change history
 ================
 
+3.19.0
+======
+:release-date: 2018-07-17
+:by: Tommaso Barbugli
+
+Added get activities endpoint support
+
+
+3.18.0
+======
+:release-date: 2018-06-26
+:by: Thierry Schellenbach
+
+Update dependencies
+Update build to Webpack 4
+
 3.17.0
 ======
 :release-date: 2018-05-22
