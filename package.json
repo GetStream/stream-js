@@ -5,14 +5,15 @@
   },
   "name": "getstream",
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
-  "main": "./src/getstream.js",
-  "module": "./dist/js/getstream.js",
+  "main": "./lib/getstream.js",
+  "module": "./lib/getstream.js",
   "types": "./types/getstream/index.d.ts",
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
   "version": "3.19.0",
   "scripts": {
+    "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
     "test": "npm run test-unit-node",
     "test-unit-node": "./node_modules/.bin/mocha test/unit/common test/unit/node",
@@ -53,6 +54,7 @@
     }
   },
   "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.55",
     "@babel/core": "^7.0.0-beta.55",
     "@babel/plugin-transform-object-assign": "^7.0.0-beta.55",
     "@babel/preset-env": "^7.0.0-beta.55",

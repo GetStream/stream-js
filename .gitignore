@@ -1,3 +1,4 @@
+# IMPORTANT: If you add/remove a rule here, be sure to do the same in .npmignore
 # Logs
 logs
 *.log
@@ -31,3 +32,8 @@ bower_components
 .tern-port
 
 secrets.*sh
+
+
+
+# Ignore lib directory (this is not in npmignore because it should be piublished)
+lib/
