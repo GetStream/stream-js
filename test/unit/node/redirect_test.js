@@ -135,7 +135,7 @@ describe('[UNIT] Redirect URL\'s', function() {
         var self = this;
         expect(function() {
             self.client.createRedirectUrl('google.com', 'tommaso', []);
-        }).to.throwException(errors.MissingSchemaError);
+        }).to.throwException(new errors.MissingSchemaError());
     });
 
 });

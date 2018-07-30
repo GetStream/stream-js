@@ -8,6 +8,10 @@ var expect = require('expect.js'),
 
 
 describe('[UNIT] Stream Personalization (node)', function() {
+    let get;
+    let post;
+    let del;
+    let callback;
 
     beforeEach(beforeEachFn);
     beforeEach(function() {

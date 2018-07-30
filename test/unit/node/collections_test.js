@@ -9,6 +9,9 @@ var expect = require('expect.js'),
 
 
 describe('[UNIT] Stream Collections (node)', function() {
+    let get;
+    let post;
+    let del;
 
     beforeEach(beforeEachFn);
     beforeEach(function() {
