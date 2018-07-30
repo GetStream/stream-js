@@ -9,8 +9,9 @@
   plugins: [
     '@babel/plugin-transform-object-assign',
     ["@babel/plugin-transform-runtime", {
+      "helpers": false,
       "polyfill": false,
-      "regenerator": true
+      "regenerator": true,
     }]
   ],
 }

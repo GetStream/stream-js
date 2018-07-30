@@ -25,15 +25,19 @@ StreamUser.prototype = {
       return `SU:${this.id}`;
   },
 
-  get: async function(options) {
-    let response = await this.client.get({
+  get: function(options, callback) {
+    return this.client.get({
       url: this.url,
       signature: this.token,
       qs: options,
+    }).then((response) => {
+      this.full = response;
+      this.data = response.data;
+      if (callback) {
+        callback(response);
+      }
+      return response;
     });
-    this.full = response;
-    this.data = response.data;
-    return response;
   },
 
   _chooseData: function(data) {
@@ -46,8 +50,8 @@ StreamUser.prototype = {
     return {};
   },
 
-  create: async function(data, options) {
-    let response = await this.client.post({
+  create: function(data, options, callback) {
+    return this.client.post({
       url: 'user/',
       body: {
         id: this.id,
@@ -55,29 +59,37 @@ StreamUser.prototype = {
       },
       qs: options,
       signature: this.token,
+    }).then((response) => {
+      this.full = response;
+      this.data = response.data;
+      if (callback) {
+        callback(response);
+      }
+      return response;
     });
-    this.full = response;
-    this.data = response.data;
-    return response;
   },
 
-  update: async function(data) {
-    let response = await this.client.put({
+  update: function(data, callback) {
+    return this.client.put({
       url: this.url,
       body: {
         data: this._chooseData(data),
       },
       signature: this.token,
+    }).then((response) => {
+      this.full = response;
+      this.data = response.data;
+      if (callback) {
+        callback(response);
+      }
+      return response;
     });
-    this.full = response;
-    this.data = response.data;
-    return response;
   },
-  getOrCreate: function(data) {
-    return this.create(data, { get_or_create: true });
+  getOrCreate: function(data, callback) {
+    return this.create(data, { get_or_create: true }, callback);
   },
-  profile: function() {
-    return this.get({ with_follow_counts: true });
+  profile: function(callback) {
+    return this.get({ with_follow_counts: true }, callback);
   },
 };
 
