@@ -6,7 +6,7 @@ var expect = require('chai').expect;
 var should = require('chai').should();
 
 class CloudContext {
-    constructor(story) {
+    constructor() {
         this.response = null;
         this.prevResponse = null;
         this.activity = null;
@@ -87,9 +87,7 @@ class CloudContext {
         userId = randUserId(userId);
         return this.client.createUserSession(
             userId,
-            signing.JWTScopeToken(config.API_SECRET, '', '', {
-                userId: userId,
-            }),
+            signing.JWTUserToken(config.API_SECRET, userId),
         );
     }
 
@@ -124,7 +122,6 @@ class CloudContext {
             }
         });
     }
-
 
     requestShouldNotError(fn) {
         this.test('the request should not error', fn);
@@ -252,7 +249,9 @@ class CloudContext {
             );
 
             this.afterTest(() => {
-                this.cheeseBurger = this.alice.objectFromResponse(this.response);
+                this.cheeseBurger = this.alice.objectFromResponse(
+                    this.response,
+                );
             });
         });
     }
