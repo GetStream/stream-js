@@ -46,7 +46,7 @@ function connect(apiKey, apiSecret, appId, options) {
   return new StreamClient(apiKey, apiSecret, appId, options);
 }
 
-function connectCloud(apiKey, appId, options) {
+function connectCloud(apiKey, appId, options={}) {
   /**
    * Create StreamCloudClient that's compatible with StreamCloud
    * @method connect
