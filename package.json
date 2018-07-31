@@ -13,7 +13,7 @@
   "license": "BSD-3-Clause",
   "version": "3.19.0",
   "scripts": {
-    "build": "babel src --out-dir lib && ./bin/version.sh",
+    "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
     "test": "npm run test-unit-node",
     "test-unit-node": "mocha --require @babel/register test/unit/common test/unit/node",
