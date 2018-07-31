@@ -144,6 +144,32 @@ var follows = [
 
 client.followMany(follows);
 
+// Updating parts of an activity
+var set = {
+  'product.price': 19.99,
+  'shares': {
+    'facebook': '...',
+    'twitter': '...'
+  },
+}
+var unset = [
+  'daily_likes',
+  'popularity'
+]
+// ...by ID
+client.activityPartialUpdate({
+  id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+  set: set,
+  unset: unset,
+})
+// ...or by combination of foreign ID and time
+client.activityPartialUpdate({
+  foreignID: 'product:123',
+  time: '2016-11-10T13:20:00.000000',
+  set: set,
+  unset: unset,
+})
+
 // creating a feed token server side
 token = user1.token;
 // passed to client via template or api and initialized as such
