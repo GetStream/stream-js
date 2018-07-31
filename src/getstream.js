@@ -65,6 +65,7 @@ function connectCloud(apiKey, appId, options) {
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
+  options = {...options, defaultServiceName: 'cloud-api'};
   return new cloud.StreamCloudClient(apiKey, null, appId, options);
 }
 

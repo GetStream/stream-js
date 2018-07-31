@@ -52,6 +52,7 @@ StreamClient.prototype = {
     this.options = options;
     this.version = this.options.version || 'v1.0';
     this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+    this.defaultServiceName = this.options.defaultServiceName || 'api';
     this.fayeClient = null;
     this.request = request;
     // track a source name for the api calls, ie get started or databrowser
@@ -138,10 +139,10 @@ StreamClient.prototype = {
 
   getBaseUrl: function(serviceName) {
     if (!serviceName) {
-      serviceName = 'api';
+      serviceName = this.defaultServiceName;
     }
     var url = this.baseUrl;
-    if (serviceName != 'api') {
+    if (serviceName != this.defaultServiceName) {
       url = 'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
     }
 
@@ -155,7 +156,7 @@ StreamClient.prototype = {
     }
 
     var urlEnvironmentKey;
-    if (serviceName == 'api') {
+    if (serviceName == this.defaultServiceName) {
       urlEnvironmentKey = 'STREAM_BASE_URL';
     } else {
       urlEnvironmentKey = 'STREAM_' + serviceName.toUpperCase() + '_URL';
@@ -346,7 +347,7 @@ StreamClient.prototype = {
      * @param {string} relativeUrl
      */
     if (!serviceName) {
-      serviceName = 'api';
+      serviceName = this.defaultServiceName;
     }
     var base_url = this.getBaseUrl(serviceName);
     var url = base_url + this.version + '/' + relativeUrl;
