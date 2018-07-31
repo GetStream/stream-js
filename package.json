@@ -31,7 +31,7 @@
     "request": "xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
-    "./src/lib/batch_operations.js": false,
+    "./lib/lib/batch_operations.js": false,
     "qs": false,
     "url": false,
     "http": false,
@@ -41,7 +41,7 @@
     "request": "xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
-    "./src/lib/batch_operations.js": false,
+    "./lib/lib/batch_operations.js": false,
     "qs": false,
     "url": false
   },
@@ -85,7 +85,6 @@
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.55",
     "Base64": "^1.0.1",
     "faye": "^1.2.4",
     "http-signature": "~1.2.0",
@@ -97,7 +96,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/GetStream/stream-js-frontend-fork.git"
+    "url": "git://github.com/GetStream/stream-js.git"
   },
   "engines": {
     "node": ">=4.8 <=10"
