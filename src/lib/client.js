@@ -564,6 +564,15 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
+  createUserSession: function(userId, userToken) {
+    var cloud = require('./cloud');
+    var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
+    return cClient.createUserSession(userId, userToken);
+  },
+
+  createUserSessionToken: function(userId, extraData={}){
+    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
+  },
 
   updateActivities: function(activities, callback) {
     /**

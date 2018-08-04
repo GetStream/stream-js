@@ -349,7 +349,32 @@ describe('[UNIT] Stream Client (Node)', function() {
         });
 
     });
-    
+
+    describe('createUserSessionToken', function(){
+      it('with userId only', function() {
+		var client = stream.connect('12345', 'abcdefghijklmnop');
+		var token = client.createUserSessionToken("42");
+		expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE');
+	  });
+
+	  it('with extra data', function() {
+		var client = stream.connect('12345', 'abcdefghijklmnop');
+		var token = client.createUserSessionToken("42", {'a':'b'});
+		expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM');
+	  });
+    });
+
+    describe('createUserSession', function(){
+      it('should return a user session', function() {
+		var client = stream.connect('12345', 'abcdefghijklmnop');
+		var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM";
+		var userSession= client.createUserSession("42", token);
+		expect(userSession.userId).to.be("42");
+		expect(userSession.token).to.be(token);
+		expect(userSession.client).to.not.be(null);
+	  });
+    });
+
     describe('connect', function() {
 
         it('#LOCAL', function() {

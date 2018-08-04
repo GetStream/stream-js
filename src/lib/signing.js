@@ -136,7 +136,8 @@ exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptio
     ...extraData,
   };
 
-  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', ...jwtOptions });
+  var opts = Object.assign({ algorithm: 'HS256', noTimestamp: true }, jwtOptions);
+  var token = jwt.sign(payload, apiSecret, opts);
   return token;
 };
 
