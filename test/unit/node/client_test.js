@@ -350,6 +350,14 @@ describe('[UNIT] Stream Client (Node)', function() {
 
     });
 
+	describe('getAnalyticsToken', function(){
+		it('generate correct token', function() {
+			var client = stream.connect('12345', 'abcdefghijklmnop');
+			var token = client.getAnalyticsToken();
+			expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc');
+		});
+	});
+
     describe('createUserSessionToken', function(){
       it('with userId only', function() {
 		var client = stream.connect('12345', 'abcdefghijklmnop');

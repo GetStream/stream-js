@@ -136,7 +136,16 @@ StreamClient.prototype = {
     return this._collectionsToken;
   },
 
-  getBaseUrl: function(serviceName) {
+	getAnalyticsToken: function() {
+		if (this.apiSecret) {
+			return signing.JWTScopeToken(
+				this.apiSecret, 'analytics', '*', {userId: '*', expireTokens: this.expireTokens });
+		} else {
+			throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+		}
+	},
+
+	getBaseUrl: function(serviceName) {
     if (!serviceName) {
       serviceName = 'api';
     }
