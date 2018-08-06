@@ -392,6 +392,7 @@ StreamClient.prototype = {
     } else {
       kwargs.headers['stream-auth-type'] = 'simple';
     }
+    kwargs.timeout = 10 * 1000; // 10 seconds
 
     kwargs.headers.Authorization = signature;
     kwargs.headers['X-Stream-Client'] = this.userAgent();
