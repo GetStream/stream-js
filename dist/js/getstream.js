@@ -347,14 +347,14 @@ errors.StreamApiError.prototype = new ErrorAbstract();
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var Class    = __webpack_require__(1),
-    Cookie   = __webpack_require__(19).Cookie,
+    Cookie   = __webpack_require__(20).Cookie,
     Promise  = __webpack_require__(9),
     URI      = __webpack_require__(3),
     array    = __webpack_require__(13),
     extend   = __webpack_require__(0),
     Logging  = __webpack_require__(8),
     Timeouts = __webpack_require__(46),
-    Channel  = __webpack_require__(21);
+    Channel  = __webpack_require__(22);
 
 var Transport = extend(Class({ className: 'Transport',
   DEFAULT_PORTS: {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
@@ -691,7 +691,7 @@ module.exports = Logging;
 "use strict";
 
 
-var asap = __webpack_require__(23);
+var asap = __webpack_require__(24);
 
 var PENDING   = 0,
     FULFILLED = 1,
@@ -1068,6 +1068,8 @@ module.exports = {
 "use strict";
 
 
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1221,9 +1223,12 @@ exports.JWTUserSessionToken = function (apiSecret, userId) {
     user_id: userId
   }, extraData);
 
-  var token = jwt.sign(payload, apiSecret, _objectSpread({
-    algorithm: 'HS256'
-  }, jwtOptions));
+  var opts = _extends({
+    algorithm: 'HS256',
+    noTimestamp: true
+  }, jwtOptions);
+
+  var token = jwt.sign(payload, apiSecret, opts);
   return token;
 };
 
@@ -1437,6 +1442,115 @@ process.umask = function() { return 0; };
 "use strict";
 
 
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+var StreamClient = __webpack_require__(28);
+
+var StreamFeed = __webpack_require__(26);
+
+var StreamObjectStore = __webpack_require__(34);
+
+var StreamUserSession = __webpack_require__(33);
+
+var StreamReaction = __webpack_require__(29); // Inheriting StreamClient like discribed:
+// https://stackoverflow.com/a/15192747/2570866
+
+
+function StreamCloudClient() {
+  StreamClient.apply(this, arguments);
+}
+
+function createObject(proto) {
+  function ctor() {}
+
+  ctor.prototype = proto;
+  return new ctor();
+}
+
+StreamCloudClient.prototype = createObject(StreamClient.prototype);
+
+StreamCloudClient.prototype.storage = function (name, token) {
+  return new StreamObjectStore(this, name, token);
+};
+
+StreamCloudClient.prototype.reactions = function (token) {
+  return new StreamReaction(this, token);
+};
+
+StreamCloudClient.prototype.createUserSession = function (userId, userAuthToken) {
+  return new StreamUserSession(this, userId, userAuthToken);
+};
+
+StreamCloudClient.prototype.feed = function (feedSlug, userId, token) {
+  return new StreamCloudFeed(this, feedSlug, userId, token);
+};
+
+function StreamCloudFeed() {
+  StreamFeed.apply(this, arguments);
+}
+
+StreamCloudFeed.prototype = createObject(StreamFeed.prototype);
+
+StreamCloudFeed.prototype.get = function (options, callback) {
+  /**
+   * Reads the feed
+   * @method getEnriched
+   * @memberof StreamFeed.prototype
+   * @param  {object}   options  Additional options
+   * @param  {requestCallback} callback Callback to call on completion
+   * @return {Promise} Promise object
+   * @example feed.getEnriched({limit: 10, id_lte: 'activity-id'})
+   * @example feed.getEnriched({limit: 10, mark_seen: true})
+   * @example feed.getEnriched({limit: 10, mark_seen: true, withRecentReactions: true})
+   * @example feed.getEnriched({limit: 10, mark_seen: true, withReactionCounts: true})
+   * @example feed.getEnriched({limit: 10, mark_seen: true, withOwnReactions: true, withReactionCounts: true})
+   */
+  if (options && options['mark_read'] && options['mark_read'].join) {
+    options['mark_read'] = options['mark_read'].join(',');
+  }
+
+  if (options && options['mark_seen'] && options['mark_seen'].join) {
+    options['mark_seen'] = options['mark_seen'].join(',');
+  }
+
+  return this.client.get({
+    url: 'enrich/feed/' + this.feedUrl + '/',
+    qs: options,
+    signature: this.signature
+  }, callback);
+};
+
+StreamCloudFeed.prototype.getActivityDetail = function (activity_id, options, callback) {
+  /**
+   * Retrieves one activity from a feed and adds enrichment
+   * @method getActivityDetail
+   * @memberof StreamFeed.prototype
+   * @param  {array}    ids  Additional options
+   * @param  {object}   options  Additional options
+   * @param  {requestCallback} callback Callback to call on completion
+   * @return {Promise} Promise object
+   * @example feed.getActivityDetail(activity_id)
+   * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
+   * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
+   * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
+   */
+  return this.get(_extends({
+    id_lte: activity_id,
+    id_gte: activity_id,
+    limit: 1
+  }, options), callback);
+};
+
+module.exports.StreamCloudClient = StreamCloudClient;
+module.exports.StreamCloudFeed = StreamCloudFeed;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var extend = __webpack_require__(0);
 
 var Scheduler = function(message, options) {
@@ -1484,7 +1598,7 @@ module.exports = Scheduler;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1574,7 +1688,7 @@ module.exports = XHR;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1631,7 +1745,7 @@ module.exports = Class({
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1641,7 +1755,7 @@ module.exports = {};
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1656,7 +1770,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1665,7 +1779,7 @@ module.exports = {
 var Class     = __webpack_require__(1),
     extend    = __webpack_require__(0),
     Publisher = __webpack_require__(11),
-    Grammar   = __webpack_require__(20);
+    Grammar   = __webpack_require__(21);
 
 var Channel = Class({
   initialize: function(name) {
@@ -1795,7 +1909,7 @@ module.exports = Channel;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -1811,7 +1925,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1884,7 +1998,7 @@ RawTask.prototype.call = function () {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1953,7 +2067,7 @@ function rfc3986(str) {
 exports.rfc3986 = rfc3986;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1963,7 +2077,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 var errors = __webpack_require__(4);
 
-var utils = __webpack_require__(24);
+var utils = __webpack_require__(25);
 
 var signing = __webpack_require__(14);
 
@@ -2363,7 +2477,7 @@ StreamFeed.prototype = {
 module.exports = StreamFeed;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 // Browser Request
@@ -2918,7 +3032,7 @@ module.exports = request;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2928,15 +3042,15 @@ var Collections = __webpack_require__(62);
 
 var Personalization = __webpack_require__(61);
 
-var request = __webpack_require__(26);
+var request = __webpack_require__(27);
 
-var StreamFeed = __webpack_require__(25);
+var StreamFeed = __webpack_require__(26);
 
 var signing = __webpack_require__(14);
 
 var errors = __webpack_require__(4);
 
-var utils = __webpack_require__(24);
+var utils = __webpack_require__(25);
 
 var BatchOperations = __webpack_require__(57);
 
@@ -3076,6 +3190,16 @@ StreamClient.prototype = {
     }
 
     return this._collectionsToken;
+  },
+  getAnalyticsToken: function getAnalyticsToken() {
+    if (this.apiSecret) {
+      return signing.JWTScopeToken(this.apiSecret, 'analytics', '*', {
+        userId: '*',
+        expireTokens: this.expireTokens
+      });
+    } else {
+      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+    }
   },
   getBaseUrl: function getBaseUrl(serviceName) {
     if (!serviceName) {
@@ -3488,6 +3612,16 @@ StreamClient.prototype = {
       this.request(kwargs, callback);
     }.bind(this));
   },
+  createUserSession: function createUserSession(userId, userToken) {
+    var cloud = __webpack_require__(16);
+
+    var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
+    return cClient.createUserSession(userId, userToken);
+  },
+  createUserSessionToken: function createUserSessionToken(userId) {
+    var extraData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
+  },
   updateActivities: function updateActivities(activities, callback) {
     /**
      * Updates all supplied activities on the getstream-io api
@@ -3684,7 +3818,7 @@ module.exports = StreamClient;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(15)))
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3873,7 +4007,7 @@ StreamReaction.prototype = {
 module.exports = StreamReaction;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -3901,7 +4035,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21002,10 +21136,10 @@ module.exports = function(module) {
   else {}
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2), __webpack_require__(29)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2), __webpack_require__(30)(module)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21121,15 +21255,15 @@ StreamUser.prototype = {
 module.exports = StreamUser;
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var StreamUser = __webpack_require__(31);
+var StreamUser = __webpack_require__(32);
 
-var _ = __webpack_require__(30);
+var _ = __webpack_require__(31);
 
 var StreamUserSession = function StreamUserSession() {
   this.initialize.apply(this, arguments);
@@ -21234,7 +21368,7 @@ StreamUserSession.prototype = {
 module.exports = StreamUserSession;
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21475,115 +21609,6 @@ StreamObject.prototype = {
 module.exports = StreamObjectStore;
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-var StreamClient = __webpack_require__(27);
-
-var StreamFeed = __webpack_require__(25);
-
-var StreamObjectStore = __webpack_require__(33);
-
-var StreamUserSession = __webpack_require__(32);
-
-var StreamReaction = __webpack_require__(28); // Inheriting StreamClient like discribed:
-// https://stackoverflow.com/a/15192747/2570866
-
-
-function StreamCloudClient() {
-  StreamClient.apply(this, arguments);
-}
-
-function createObject(proto) {
-  function ctor() {}
-
-  ctor.prototype = proto;
-  return new ctor();
-}
-
-StreamCloudClient.prototype = createObject(StreamClient.prototype);
-
-StreamCloudClient.prototype.storage = function (name, token) {
-  return new StreamObjectStore(this, name, token);
-};
-
-StreamCloudClient.prototype.reactions = function (token) {
-  return new StreamReaction(this, token);
-};
-
-StreamCloudClient.prototype.createUserSession = function (userId, userAuthToken) {
-  return new StreamUserSession(this, userId, userAuthToken);
-};
-
-StreamCloudClient.prototype.feed = function (feedSlug, userId, token) {
-  return new StreamCloudFeed(this, feedSlug, userId, token);
-};
-
-function StreamCloudFeed() {
-  StreamFeed.apply(this, arguments);
-}
-
-StreamCloudFeed.prototype = createObject(StreamFeed.prototype);
-
-StreamCloudFeed.prototype.get = function (options, callback) {
-  /**
-   * Reads the feed
-   * @method getEnriched
-   * @memberof StreamFeed.prototype
-   * @param  {object}   options  Additional options
-   * @param  {requestCallback} callback Callback to call on completion
-   * @return {Promise} Promise object
-   * @example feed.getEnriched({limit: 10, id_lte: 'activity-id'})
-   * @example feed.getEnriched({limit: 10, mark_seen: true})
-   * @example feed.getEnriched({limit: 10, mark_seen: true, withRecentReactions: true})
-   * @example feed.getEnriched({limit: 10, mark_seen: true, withReactionCounts: true})
-   * @example feed.getEnriched({limit: 10, mark_seen: true, withOwnReactions: true, withReactionCounts: true})
-   */
-  if (options && options['mark_read'] && options['mark_read'].join) {
-    options['mark_read'] = options['mark_read'].join(',');
-  }
-
-  if (options && options['mark_seen'] && options['mark_seen'].join) {
-    options['mark_seen'] = options['mark_seen'].join(',');
-  }
-
-  return this.client.get({
-    url: 'enrich/feed/' + this.feedUrl + '/',
-    qs: options,
-    signature: this.signature
-  }, callback);
-};
-
-StreamCloudFeed.prototype.getActivityDetail = function (activity_id, options, callback) {
-  /**
-   * Retrieves one activity from a feed and adds enrichment
-   * @method getActivityDetail
-   * @memberof StreamFeed.prototype
-   * @param  {array}    ids  Additional options
-   * @param  {object}   options  Additional options
-   * @param  {requestCallback} callback Callback to call on completion
-   * @return {Promise} Promise object
-   * @example feed.getActivityDetail(activity_id)
-   * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
-   * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
-   * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
-   */
-  return this.get(_extends({
-    id_lte: activity_id,
-    id_gte: activity_id,
-    limit: 1
-  }, options), callback);
-};
-
-module.exports.StreamCloudClient = StreamCloudClient;
-module.exports.StreamCloudFeed = StreamCloudFeed;
-
-/***/ }),
 /* 35 */
 /***/ (function(module, exports) {
 
@@ -21721,7 +21746,7 @@ module.exports = Extensible;
 
 
 var Class   = __webpack_require__(1),
-    Grammar = __webpack_require__(20);
+    Grammar = __webpack_require__(21);
 
 var Error = Class({
   initialize: function(code, params, message) {
@@ -21855,7 +21880,7 @@ module.exports = JSONP;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class     = __webpack_require__(1),
-    Set       = __webpack_require__(18),
+    Set       = __webpack_require__(19),
     URI       = __webpack_require__(3),
     extend    = __webpack_require__(0),
     toJSON    = __webpack_require__(7),
@@ -21952,7 +21977,7 @@ var Class      = __webpack_require__(1),
     extend     = __webpack_require__(0),
     Deferrable = __webpack_require__(6),
     Transport  = __webpack_require__(5),
-    XHR        = __webpack_require__(17);
+    XHR        = __webpack_require__(18);
 
 var EventSource = extend(Class(Transport, {
   initialize: function(dispatcher, endpoint) {
@@ -22071,7 +22096,7 @@ module.exports = {
 
 var Class      = __webpack_require__(1),
     Promise    = __webpack_require__(9),
-    Set        = __webpack_require__(18),
+    Set        = __webpack_require__(19),
     URI        = __webpack_require__(3),
     browser    = __webpack_require__(12),
     copyObject = __webpack_require__(10),
@@ -22276,7 +22301,7 @@ var Transport = __webpack_require__(5);
 
 Transport.register('websocket', __webpack_require__(45));
 Transport.register('eventsource', __webpack_require__(43));
-Transport.register('long-polling', __webpack_require__(17));
+Transport.register('long-polling', __webpack_require__(18));
 Transport.register('cross-origin-long-polling', __webpack_require__(42));
 Transport.register('callback-polling', __webpack_require__(41));
 
@@ -22292,12 +22317,12 @@ module.exports = Transport;
 
 var Class     = __webpack_require__(1),
     URI       = __webpack_require__(3),
-    cookies   = __webpack_require__(19),
+    cookies   = __webpack_require__(20),
     extend    = __webpack_require__(0),
     Logging   = __webpack_require__(8),
     Publisher = __webpack_require__(11),
     Transport = __webpack_require__(47),
-    Scheduler = __webpack_require__(16);
+    Scheduler = __webpack_require__(17);
 
 var Dispatcher = Class({ className: 'Dispatcher',
   MAX_REQUEST_SIZE: 2048,
@@ -22677,19 +22702,19 @@ module.exports = function(options, validKeys) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var asap            = __webpack_require__(23),
+var asap            = __webpack_require__(24),
     Class           = __webpack_require__(1),
     Promise         = __webpack_require__(9),
     URI             = __webpack_require__(3),
     array           = __webpack_require__(13),
     browser         = __webpack_require__(12),
-    constants       = __webpack_require__(22),
+    constants       = __webpack_require__(23),
     extend          = __webpack_require__(0),
     validateOptions = __webpack_require__(50),
     Deferrable      = __webpack_require__(6),
     Logging         = __webpack_require__(8),
     Publisher       = __webpack_require__(11),
-    Channel         = __webpack_require__(21),
+    Channel         = __webpack_require__(22),
     Dispatcher      = __webpack_require__(48),
     Error           = __webpack_require__(40),
     Extensible      = __webpack_require__(39),
@@ -23071,14 +23096,14 @@ module.exports = Client;
 "use strict";
 
 
-var constants = __webpack_require__(22),
+var constants = __webpack_require__(23),
     Logging   = __webpack_require__(8);
 
 var Faye = {
   VERSION:    constants.VERSION,
 
   Client:     __webpack_require__(51),
-  Scheduler:  __webpack_require__(16)
+  Scheduler:  __webpack_require__(17)
 };
 
 Logging.wrapper = Faye;
@@ -23682,15 +23707,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * @author Thierry Schellenbach
  * BSD License
  */
-var StreamClient = __webpack_require__(27);
+var StreamClient = __webpack_require__(28);
 
 var errors = __webpack_require__(4);
 
 var signing = __webpack_require__(14);
 
-var request = __webpack_require__(26);
+var request = __webpack_require__(27);
 
-var cloud = __webpack_require__(34);
+var cloud = __webpack_require__(16);
 
 function connect(apiKey, apiSecret, appId, options) {
   /**
