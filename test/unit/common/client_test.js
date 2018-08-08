@@ -331,7 +331,7 @@ describe('[UNIT] Stream Client (Common)', function() {
 
             var output = this.client.signActivities(activities);
 
-            expect(output).to.equal(activities);
+            expect(output).to.eql(activities);
         });
 
         it('(2) with to', function() {
@@ -339,6 +339,7 @@ describe('[UNIT] Stream Client (Common)', function() {
 
             var output = this.client.signActivities(activities);
 
+            expect(activities[0].to).to.eql(['global:feed'])
             expect(output[0].to[0].split(' ')[0]).to.be('global:feed');
 
             if (this.client.apiSecret) {
