@@ -1,4 +1,6 @@
-import {fetch, Headers} from 'cross-fetch';
+import fetch from 'cross-fetch';
+import { Headers } from 'cross-fetch';
+
 var errors = require('./errors');
 var FormData = require('form-data');
 var utils = require('./utils');
