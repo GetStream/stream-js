@@ -2,6 +2,17 @@
  Change history
 ================
 
+3.20.0
+======
+:release-date: 2018-07-17
+:by: Jelte Fennema
+
+A beta release was released by accident on the "latest" npm tag. This release
+is effectively undoes that by creating a newer version.
+
+* Support for partial activity update
+* Support creating a client without a secret on the nodejs again.
+
 3.19.0
 ======
 :release-date: 2018-07-17
