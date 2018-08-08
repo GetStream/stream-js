@@ -1,5 +1,6 @@
 var StreamUser = require('./user');
-var _ = require('lodash');
+var isObject = require('lodash/isObject');
+var isPlainObject = require('lodash/isPlainObject');
 
 var StreamUserSession = function() {
   this.initialize.apply(this, arguments);
@@ -21,6 +22,8 @@ StreamUserSession.prototype = {
     this.token = userAuthToken;
     this.user = new StreamUser(client, userId, userAuthToken);
     this.reactions = client.reactions(userAuthToken);
+    this.images = this.client.images(this.token);
+    this.files = this.client.files(this.token);
   },
 
   feed: function(feedGroup, user) {
@@ -34,14 +37,14 @@ StreamUserSession.prototype = {
 
     let replaceStreamObjects = obj => {
       let cloned = obj;
-      if (_.isArray(obj)) {
+      if (Array.isArray(obj)) {
         cloned = obj.map(v => replaceStreamObjects(v));
-      } else if (_.isPlainObject(obj)) {
+      } else if (isPlainObject(obj)) {
         cloned = {};
         for (let k in obj) {
           cloned[k] = replaceStreamObjects(obj[k]);
         }
-      } else if (_.isObject(obj) && obj._streamRef !== undefined) {
+      } else if (isObject(obj) && obj._streamRef !== undefined) {
         cloned = obj._streamRef();
       }
       return cloned;

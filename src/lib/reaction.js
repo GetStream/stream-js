@@ -16,7 +16,7 @@ StreamReaction.prototype = {
      */
     this.client = client;
     this.token = token;
-    this.signature = this.collectionName + ' ' + this.token;
+    this.signature = token;
   },
 
   buildURL: function() {

@@ -3,11 +3,20 @@ var StreamFeed = require('./feed');
 var StreamObjectStore = require('./object_store');
 var StreamUserSession = require('./user_session');
 var StreamReaction = require('./reaction');
+var StreamFileStore = require('./files');
+var StreamImageStore = require('./images');
 
 // Inheriting StreamClient like discribed:
 // https://stackoverflow.com/a/15192747/2570866
 function StreamCloudClient() {
-  StreamClient.apply(this, arguments);
+  let options = arguments[3] || {};
+
+  let location = 'cloud';
+  if (options.location) {
+    location = options.location + '-cloud';
+  }
+  options = {...options, location};
+  StreamClient.apply(this, [arguments[0], arguments[1], arguments[2], options]);
 }
 
 function createObject(proto) {
@@ -20,6 +29,14 @@ StreamCloudClient.prototype = createObject(StreamClient.prototype);
 
 StreamCloudClient.prototype.storage = function(name, token) {
   return new StreamObjectStore(this, name, token);
+};
+
+StreamCloudClient.prototype.files = function(token) {
+  return new StreamFileStore(this, token);
+};
+
+StreamCloudClient.prototype.images = function(token) {
+  return new StreamImageStore(this, token);
 };
 
 StreamCloudClient.prototype.reactions = function(token) {

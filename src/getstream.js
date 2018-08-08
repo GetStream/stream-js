@@ -65,13 +65,6 @@ function connectCloud(apiKey, appId, options={}) {
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
-  let newLocation = 'cloud';
-  if (options.location) {
-    newLocation = options.location + '-cloud';
-  }
-
-  options = {...options, location: newLocation};
-
   return new cloud.StreamCloudClient(apiKey, null, appId, options);
 }
 
