@@ -424,23 +424,26 @@ StreamClient.prototype = {
       return activities;
     }
 
+    var signedActivities = [];
     for (var i = 0; i < activities.length; i++) {
-      var activity = activities[i];
+      var activity = Object.assign({}, activities[i]);
       var to = activity.to || [];
-      var signedTo = [];
-      for (var j = 0; j < to.length; j++) {
-        var feedId = to[j];
-        var feedSlug = feedId.split(':')[0];
-        var userId = feedId.split(':')[1];
-        var token = this.feed(feedSlug, userId).token;
-        var signedFeed = feedId + ' ' + token;
-        signedTo.push(signedFeed);
+      if (to.length > 0) {
+        var signedTo = [];
+        for (var j = 0; j < to.length; j++) {
+          var feedId = to[j];
+          var feedSlug = feedId.split(':')[0];
+          var userId = feedId.split(':')[1];
+          var token = this.feed(feedSlug, userId).token;
+          var signedFeed = feedId + ' ' + token;
+          signedTo.push(signedFeed);
+        }
+        activity.to = signedTo;
       }
-
-      activity.to = signedTo;
+      signedActivities.push(activity);
     }
 
-    return activities;
+    return signedActivities;
   },
 
   getFayeAuthorization: function() {

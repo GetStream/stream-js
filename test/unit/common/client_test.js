@@ -331,7 +331,7 @@ describe('[UNIT] Stream Client (Common)', function() {
 
             var output = this.client.signActivities(activities);
 
-            expect(output).to.equal(activities);
+            expect(output).to.eql(activities);
         });
 
         it('(2) with to', function() {
