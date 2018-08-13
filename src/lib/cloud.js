@@ -5,6 +5,8 @@ var StreamUserSession = require('./user_session');
 var StreamReaction = require('./reaction');
 var StreamFileStore = require('./files');
 var StreamImageStore = require('./images');
+var isObject = require('lodash/isObject');
+var isPlainObject = require('lodash/isPlainObject');
 
 // Inheriting StreamClient like discribed:
 // https://stackoverflow.com/a/15192747/2570866
@@ -91,6 +93,36 @@ StreamCloudFeed.prototype.get = function(options, callback) {
     callback,
   );
 };
+
+function replaceStreamObjects(obj) {
+  let cloned = obj;
+  if (Array.isArray(obj)) {
+    cloned = obj.map(v => replaceStreamObjects(v));
+  } else if (isPlainObject(obj)) {
+    cloned = {};
+    for (let k in obj) {
+      cloned[k] = replaceStreamObjects(obj[k]);
+    }
+  } else if (isObject(obj) && obj._streamRef !== undefined) {
+    cloned = obj._streamRef();
+  }
+  return cloned;
+}
+
+StreamCloudFeed.prototype._addActivityOriginal =
+  StreamCloudFeed.prototype.addActivity;
+StreamCloudFeed.prototype.addActivity = function(activity, callback) {
+  activity = replaceStreamObjects(activity);
+  return this._addActivityOriginal(activity, callback);
+};
+
+StreamCloudFeed.prototype._addActivitiesOriginal =
+  StreamCloudFeed.prototype.addActivities;
+StreamCloudFeed.prototype.addActivities = function(activities, callback) {
+  activities = replaceStreamObjects(activities);
+  return this._addActivityOriginal(activities, callback);
+};
+
 
 StreamCloudFeed.prototype.getActivityDetail = function(
   activity_id,

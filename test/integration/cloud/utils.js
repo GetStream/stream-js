@@ -18,7 +18,6 @@ class CloudContext {
         };
         this.client = stream.connectCloud(config.API_KEY, config.APP_ID, {
             group: 'testCycle',
-            location: 'qa',
             protocol: 'https',
             keepAlive: false,
         });

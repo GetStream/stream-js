@@ -33,30 +33,7 @@ StreamUserSession.prototype = {
       user = user.id;
     }
 
-    let feed = this.client.feed(feedGroup, user, this.token);
-
-    let replaceStreamObjects = obj => {
-      let cloned = obj;
-      if (Array.isArray(obj)) {
-        cloned = obj.map(v => replaceStreamObjects(v));
-      } else if (isPlainObject(obj)) {
-        cloned = {};
-        for (let k in obj) {
-          cloned[k] = replaceStreamObjects(obj[k]);
-        }
-      } else if (isObject(obj) && obj._streamRef !== undefined) {
-        cloned = obj._streamRef();
-      }
-      return cloned;
-    };
-
-    feed._addActivityOriginal = feed.addActivity;
-    feed.addActivity = (activity, callback) => {
-      activity = replaceStreamObjects(activity);
-      return feed._addActivityOriginal(activity, callback);
-    };
-
-    return feed;
+    return this.client.feed(feedGroup, user, this.token);
   },
   personalizedFeed: function(options = {}, callback) {
     return this.client.get(
