@@ -120,7 +120,7 @@ StreamCloudFeed.prototype._addActivitiesOriginal =
   StreamCloudFeed.prototype.addActivities;
 StreamCloudFeed.prototype.addActivities = function(activities, callback) {
   activities = replaceStreamObjects(activities);
-  return this._addActivityOriginal(activities, callback);
+  return this._addActivitiesOriginal(activities, callback);
 };
 
 
