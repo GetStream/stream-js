@@ -45,7 +45,6 @@ describe('OpenGraph story', () => {
         ctx.responseShould('have the expected content', () => {
             ctx.response.should.eql({
                 detail: 'document too large (>1MB)',
-                status_code: 400
             });
         });
     });
