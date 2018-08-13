@@ -1,6 +1,4 @@
 var StreamUser = require('./user');
-var isObject = require('lodash/isObject');
-var isPlainObject = require('lodash/isPlainObject');
 
 var StreamUserSession = function() {
   this.initialize.apply(this, arguments);
