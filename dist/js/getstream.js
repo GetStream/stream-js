@@ -2269,7 +2269,7 @@ StreamCloudFeed.prototype._addActivitiesOriginal = StreamCloudFeed.prototype.add
 
 StreamCloudFeed.prototype.addActivities = function (activities, callback) {
   activities = replaceStreamObjects(activities);
-  return this._addActivityOriginal(activities, callback);
+  return this._addActivitiesOriginal(activities, callback);
 };
 
 StreamCloudFeed.prototype.getActivityDetail = function (activity_id, options, callback) {
