@@ -22,8 +22,8 @@ describe('Permission managament', () => {
     describe('When root requests to see the policy', () => {
         ctx.requestShouldNotError(async () => {
             ctx.response = await ctx.root.permissions.get();
-            policies = ctx.response;
-            console.log(policies);
+            policies = ctx.response.policies;
+            // log(policies);
         });
     });
 
@@ -50,7 +50,7 @@ describe('Permission managament', () => {
         describe('and then requests to see the policies', () => {
             ctx.requestShouldNotError(async () => {
                 ctx.response = await ctx.root.permissions.get();
-                policies = ctx.response;
+                policies = ctx.response.policies;
             });
             ctx.test('the policies should be there again', () => {
                 policies.should.have.lengthOf.above(fixedPolicies.length);
@@ -79,8 +79,8 @@ describe('Permission managament', () => {
                 ctx.response = await ctx.root.permissions.get();
             });
             ctx.test('the policy should be removed', () => {
-                ctx.response.should.have.lengthOf(policies.length - 1);
-                ctx.response[1].should.eql(policies[2]);
+                ctx.response.policies.should.have.lengthOf(policies.length - 1);
+                ctx.response.policies[1].should.eql(policies[2]);
             });
         });
 
@@ -95,8 +95,8 @@ describe('Permission managament', () => {
                 ctx.response = await ctx.root.permissions.get();
             });
             ctx.test('the policy should be there again', () => {
-                ctx.response.should.have.lengthOf(policies.length);
-                ctx.response[1].priority.should.eql(policies[1].priority);
+                ctx.response.policies.should.have.lengthOf(policies.length);
+                ctx.response.policies[1].priority.should.eql(policies[1].priority);
             });
         });
     });
