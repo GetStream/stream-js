@@ -27,12 +27,6 @@ describe('Permission managament', () => {
         });
     });
 
-    describe('When alice tries to delete a default policy', () => {
-        ctx.requestShouldError(403, async () => {
-            await ctx.alice.permissions.delete(policies[1].priority);
-        });
-    });
-
     describe('When root tries to clear the default policies', () => {
         ctx.noRequestsShouldError(async () => {
             let deleteRequests = [];
@@ -64,6 +58,12 @@ describe('Permission managament', () => {
         });
     });
 
+    describe('When alice tries to delete a default policy', () => {
+        ctx.requestShouldError(403, async () => {
+            await ctx.alice.permissions.delete(policies[1].priority);
+        });
+    });
+
     describe('When root tries to delete a fixed policy', () => {
         ctx.requestShouldError(400, async () => {
             await ctx.root.permissions.delete(policies[0].priority);
@@ -84,6 +84,12 @@ describe('Permission managament', () => {
             });
         });
 
+        describe('and then alice tries to add the policy again', () => {
+            ctx.requestShouldError(403, async () => {
+                await ctx.alice.permissions.add(policies[1]);
+            });
+        });
+
         describe('and then root tries to add the policy again', () => {
             ctx.requestShouldNotError(async () => {
                 await ctx.root.permissions.add(policies[1]);
@@ -100,6 +106,7 @@ describe('Permission managament', () => {
             });
         });
     });
+
 
 });
 
