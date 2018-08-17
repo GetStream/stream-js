@@ -22,6 +22,7 @@ StreamUserSession.prototype = {
     this.reactions = client.reactions(userAuthToken);
     this.images = this.client.images(this.token);
     this.files = this.client.files(this.token);
+    this.permissions = this.client.permissions(this.token);
   },
 
   feed: function(feedGroup, user) {

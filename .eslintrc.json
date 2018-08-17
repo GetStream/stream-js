@@ -22,7 +22,8 @@
         "es6": true,
         "browser": true,
         "commonjs": true,
-        "mocha": true
+        "mocha": true,
+        "module": true
     },
     "globals": {
         "process": true

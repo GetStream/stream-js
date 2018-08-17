@@ -38,7 +38,6 @@ describe('Files', () => {
     describe('When alice deletes an already deleted file', () => {
         ctx.requestShouldError(404, async () => {
             ctx.response = await ctx.alice.files.delete(fileURL);
-            console.log(ctx.response);
         });
     });
 });
