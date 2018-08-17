@@ -22,14 +22,14 @@
         "es6": true,
         "browser": true,
         "commonjs": true,
-        "mocha": true,
-        "module": true
+        "mocha": true
     },
     "globals": {
         "process": true
     },
     "parserOptions": {
         "ecmaVersion": 2018,
+        "sourceType": "module",
         "ecmaFeatures" : {
             "modules": true
         }
