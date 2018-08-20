@@ -347,14 +347,14 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var Class    = __webpack_require__(1),
-    Cookie   = __webpack_require__(26).Cookie,
+    Cookie   = __webpack_require__(24).Cookie,
     Promise  = __webpack_require__(9),
     URI      = __webpack_require__(4),
     array    = __webpack_require__(14),
     extend   = __webpack_require__(0),
     Logging  = __webpack_require__(8),
     Timeouts = __webpack_require__(59),
-    Channel  = __webpack_require__(28);
+    Channel  = __webpack_require__(26);
 
 var Transport = extend(Class({ className: 'Transport',
   DEFAULT_PORTS: {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
@@ -691,7 +691,7 @@ module.exports = Logging;
 "use strict";
 
 
-var asap = __webpack_require__(30);
+var asap = __webpack_require__(28);
 
 var PENDING   = 0,
     FULFILLED = 1,
@@ -1514,6 +1514,18 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var root = __webpack_require__(38);
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports) {
 
 /* eslint-env browser */
@@ -1521,7 +1533,7 @@ module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 var __root__ = (function (root) {
@@ -2007,124 +2019,7 @@ module.exports = fetch;
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var root = __webpack_require__(43);
-
-/** Built-in value references. */
-var Symbol = root.Symbol;
-
-module.exports = Symbol;
-
-
-/***/ }),
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(44),
-    getPrototype = __webpack_require__(39),
-    isObjectLike = __webpack_require__(37);
-
-/** `Object#toString` result references. */
-var objectTag = '[object Object]';
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to infer the `Object` constructor. */
-var objectCtorString = funcToString.call(Object);
-
-/**
- * Checks if `value` is a plain object, that is, an object created by the
- * `Object` constructor or one with a `[[Prototype]]` of `null`.
- *
- * @static
- * @memberOf _
- * @since 0.8.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * _.isPlainObject(new Foo);
- * // => false
- *
- * _.isPlainObject([1, 2, 3]);
- * // => false
- *
- * _.isPlainObject({ 'x': 0, 'y': 0 });
- * // => true
- *
- * _.isPlainObject(Object.create(null));
- * // => true
- */
-function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
-    return false;
-  }
-  var proto = getPrototype(value);
-  if (proto === null) {
-    return true;
-  }
-  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-    funcToString.call(Ctor) == objectCtorString;
-}
-
-module.exports = isPlainObject;
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-}
-
-module.exports = isObject;
-
-
-/***/ }),
-/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2136,23 +2031,23 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var StreamClient = __webpack_require__(33);
+var StreamClient = __webpack_require__(31);
 
-var StreamFeed = __webpack_require__(31);
+var StreamFeed = __webpack_require__(29);
 
 var StreamObjectStore = __webpack_require__(47);
 
 var StreamUserSession = __webpack_require__(46);
 
-var StreamReaction = __webpack_require__(36);
+var StreamReaction = __webpack_require__(44);
 
-var StreamFileStore = __webpack_require__(35);
+var StreamFileStore = __webpack_require__(43);
 
-var StreamImageStore = __webpack_require__(34);
+var StreamImageStore = __webpack_require__(42);
 
-var isObject = __webpack_require__(21);
+var isObject = __webpack_require__(41);
 
-var isPlainObject = __webpack_require__(20); // Inheriting StreamClient like discribed:
+var isPlainObject = __webpack_require__(40); // Inheriting StreamClient like discribed:
 // https://stackoverflow.com/a/15192747/2570866
 
 
@@ -2297,7 +2192,7 @@ module.exports.StreamCloudClient = StreamCloudClient;
 module.exports.StreamCloudFeed = StreamCloudFeed;
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2350,7 +2245,7 @@ module.exports = Scheduler;
 
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2440,7 +2335,7 @@ module.exports = XHR;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2497,7 +2392,7 @@ module.exports = Class({
 
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2507,7 +2402,7 @@ module.exports = {};
 
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2522,7 +2417,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2531,7 +2426,7 @@ module.exports = {
 var Class     = __webpack_require__(1),
     extend    = __webpack_require__(0),
     Publisher = __webpack_require__(12),
-    Grammar   = __webpack_require__(27);
+    Grammar   = __webpack_require__(25);
 
 var Channel = Class({
   initialize: function(name) {
@@ -2661,7 +2556,7 @@ module.exports = Channel;
 
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -2677,7 +2572,7 @@ module.exports = {
 
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2750,7 +2645,7 @@ RawTask.prototype.call = function () {
 
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3160,7 +3055,7 @@ StreamFeed.prototype = {
 module.exports = StreamFeed;
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports) {
 
 // Browser Request
@@ -3715,7 +3610,7 @@ module.exports = request;
 
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3727,9 +3622,9 @@ var Collections = __webpack_require__(75);
 
 var Personalization = __webpack_require__(74);
 
-var request = __webpack_require__(32);
+var request = __webpack_require__(30);
 
-var StreamFeed = __webpack_require__(31);
+var StreamFeed = __webpack_require__(29);
 
 var signing = __webpack_require__(15);
 
@@ -4308,7 +4203,7 @@ StreamClient.prototype = {
     }.bind(this));
   },
   createUserSession: function createUserSession(userId, userToken) {
-    var cloud = __webpack_require__(22);
+    var cloud = __webpack_require__(20);
 
     var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
     return cClient.createUserSession(userId, userToken);
@@ -4513,13 +4408,326 @@ module.exports = StreamClient;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(16)))
 
 /***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+
+/***/ }),
 /* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var overArg = __webpack_require__(33);
+
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+
+module.exports = getPrototype;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(17);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+module.exports = freeGlobal;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(37);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(17),
+    getRawTag = __webpack_require__(36),
+    objectToString = __webpack_require__(35);
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(39),
+    getPrototype = __webpack_require__(34),
+    isObjectLike = __webpack_require__(32);
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
+}
+
+module.exports = isPlainObject;
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _crossFetch = _interopRequireWildcard(__webpack_require__(18));
+var _crossFetch = _interopRequireWildcard(__webpack_require__(19));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -4527,7 +4735,7 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 var errors = __webpack_require__(3);
 
-var FormData = __webpack_require__(17);
+var FormData = __webpack_require__(18);
 
 var utils = __webpack_require__(10);
 
@@ -4549,7 +4757,7 @@ StreamImageStore.prototype = {
     } else {
       fileField = {
         uri: uri,
-        type: 'file',
+        type: 'application/octet-stream',
         name: name || uri.split('/').reverse()[0]
       };
     }
@@ -4603,13 +4811,13 @@ StreamImageStore.prototype = {
 module.exports = StreamImageStore;
 
 /***/ }),
-/* 35 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _crossFetch = _interopRequireWildcard(__webpack_require__(18));
+var _crossFetch = _interopRequireWildcard(__webpack_require__(19));
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
@@ -4617,7 +4825,7 @@ var utils = __webpack_require__(10);
 
 var errors = __webpack_require__(3);
 
-var FormData = __webpack_require__(17);
+var FormData = __webpack_require__(18);
 
 var StreamFileStore = function StreamFileStore() {
   this.initialize.apply(this, arguments);
@@ -4637,7 +4845,7 @@ StreamFileStore.prototype = {
     } else {
       fileField = {
         uri: uri,
-        type: 'file',
+        type: 'application/octet-stream',
         name: name || uri.split('/').reverse()[0]
       };
     }
@@ -4663,7 +4871,7 @@ StreamFileStore.prototype = {
 module.exports = StreamFileStore;
 
 /***/ }),
-/* 36 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4852,214 +5060,6 @@ StreamReaction.prototype = {
 module.exports = StreamReaction;
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-
-module.exports = overArg;
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var overArg = __webpack_require__(38);
-
-/** Built-in value references. */
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-
-module.exports = getPrototype;
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/**
- * Converts `value` to a string using `Object.prototype.toString`.
- *
- * @private
- * @param {*} value The value to convert.
- * @returns {string} Returns the converted string.
- */
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-
-module.exports = objectToString;
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(19);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the raw `toStringTag`.
- */
-function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag),
-      tag = value[symToStringTag];
-
-  try {
-    value[symToStringTag] = undefined;
-    var unmasked = true;
-  } catch (e) {}
-
-  var result = nativeObjectToString.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag] = tag;
-    } else {
-      delete value[symToStringTag];
-    }
-  }
-  return result;
-}
-
-module.exports = getRawTag;
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
-
-module.exports = freeGlobal;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(42);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(19),
-    getRawTag = __webpack_require__(41),
-    objectToString = __webpack_require__(40);
-
-/** `Object#toString` result references. */
-var nullTag = '[object Null]',
-    undefinedTag = '[object Undefined]';
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * The base implementation of `getTag` without fallbacks for buggy environments.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-function baseGetTag(value) {
-  if (value == null) {
-    return value === undefined ? undefinedTag : nullTag;
-  }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
-}
-
-module.exports = baseGetTag;
-
-
-/***/ }),
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5183,10 +5183,6 @@ module.exports = StreamUser;
 
 
 var StreamUser = __webpack_require__(45);
-
-var isObject = __webpack_require__(21);
-
-var isPlainObject = __webpack_require__(20);
 
 var StreamUserSession = function StreamUserSession() {
   this.initialize.apply(this, arguments);
@@ -5642,7 +5638,7 @@ module.exports = Extensible;
 
 
 var Class   = __webpack_require__(1),
-    Grammar = __webpack_require__(27);
+    Grammar = __webpack_require__(25);
 
 var Error = Class({
   initialize: function(code, params, message) {
@@ -5776,7 +5772,7 @@ module.exports = JSONP;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class     = __webpack_require__(1),
-    Set       = __webpack_require__(25),
+    Set       = __webpack_require__(23),
     URI       = __webpack_require__(4),
     extend    = __webpack_require__(0),
     toJSON    = __webpack_require__(7),
@@ -5873,7 +5869,7 @@ var Class      = __webpack_require__(1),
     extend     = __webpack_require__(0),
     Deferrable = __webpack_require__(6),
     Transport  = __webpack_require__(5),
-    XHR        = __webpack_require__(24);
+    XHR        = __webpack_require__(22);
 
 var EventSource = extend(Class(Transport, {
   initialize: function(dispatcher, endpoint) {
@@ -5992,7 +5988,7 @@ module.exports = {
 
 var Class      = __webpack_require__(1),
     Promise    = __webpack_require__(9),
-    Set        = __webpack_require__(25),
+    Set        = __webpack_require__(23),
     URI        = __webpack_require__(4),
     browser    = __webpack_require__(13),
     copyObject = __webpack_require__(11),
@@ -6197,7 +6193,7 @@ var Transport = __webpack_require__(5);
 
 Transport.register('websocket', __webpack_require__(58));
 Transport.register('eventsource', __webpack_require__(56));
-Transport.register('long-polling', __webpack_require__(24));
+Transport.register('long-polling', __webpack_require__(22));
 Transport.register('cross-origin-long-polling', __webpack_require__(55));
 Transport.register('callback-polling', __webpack_require__(54));
 
@@ -6213,12 +6209,12 @@ module.exports = Transport;
 
 var Class     = __webpack_require__(1),
     URI       = __webpack_require__(4),
-    cookies   = __webpack_require__(26),
+    cookies   = __webpack_require__(24),
     extend    = __webpack_require__(0),
     Logging   = __webpack_require__(8),
     Publisher = __webpack_require__(12),
     Transport = __webpack_require__(60),
-    Scheduler = __webpack_require__(23);
+    Scheduler = __webpack_require__(21);
 
 var Dispatcher = Class({ className: 'Dispatcher',
   MAX_REQUEST_SIZE: 2048,
@@ -6598,19 +6594,19 @@ module.exports = function(options, validKeys) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var asap            = __webpack_require__(30),
+var asap            = __webpack_require__(28),
     Class           = __webpack_require__(1),
     Promise         = __webpack_require__(9),
     URI             = __webpack_require__(4),
     array           = __webpack_require__(14),
     browser         = __webpack_require__(13),
-    constants       = __webpack_require__(29),
+    constants       = __webpack_require__(27),
     extend          = __webpack_require__(0),
     validateOptions = __webpack_require__(63),
     Deferrable      = __webpack_require__(6),
     Logging         = __webpack_require__(8),
     Publisher       = __webpack_require__(12),
-    Channel         = __webpack_require__(28),
+    Channel         = __webpack_require__(26),
     Dispatcher      = __webpack_require__(61),
     Error           = __webpack_require__(53),
     Extensible      = __webpack_require__(52),
@@ -6992,14 +6988,14 @@ module.exports = Client;
 "use strict";
 
 
-var constants = __webpack_require__(29),
+var constants = __webpack_require__(27),
     Logging   = __webpack_require__(8);
 
 var Faye = {
   VERSION:    constants.VERSION,
 
   Client:     __webpack_require__(64),
-  Scheduler:  __webpack_require__(23)
+  Scheduler:  __webpack_require__(21)
 };
 
 Logging.wrapper = Faye;
@@ -7599,15 +7595,15 @@ module.exports = Collections;
  * @author Thierry Schellenbach
  * BSD License
  */
-var StreamClient = __webpack_require__(33);
+var StreamClient = __webpack_require__(31);
 
 var errors = __webpack_require__(3);
 
 var signing = __webpack_require__(15);
 
-var request = __webpack_require__(32);
+var request = __webpack_require__(30);
 
-var cloud = __webpack_require__(22);
+var cloud = __webpack_require__(20);
 
 function connect(apiKey, apiSecret, appId, options) {
   /**
