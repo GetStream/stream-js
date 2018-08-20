@@ -23,7 +23,7 @@ StreamImageStore.prototype = {
     } else {
       fileField = {
         uri: uri,
-        type: 'file',
+        type: 'application/octet-stream',
         name: name || uri.split('/').reverse()[0]
       };
     }
