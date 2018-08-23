@@ -4119,7 +4119,9 @@ StreamClient.prototype = {
      * @return {object} Faye client
      */
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client(this.fayeUrl);
+      this.fayeClient = new Faye.Client(this.fayeUrl, {
+        timeout: 10
+      });
       var authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
