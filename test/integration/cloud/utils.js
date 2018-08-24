@@ -25,6 +25,7 @@ class CloudContext {
         this.bob = this.createUserSession('bob');
         this.carl = this.createUserSession('carl');
         this.dave = this.createUserSession('dave');
+        this.root = this.createUserSession('root', {stream_admin: true});
         this.userData = {
             alice: {
                 name: 'Alice Abbot',
@@ -42,6 +43,10 @@ class CloudContext {
                 name: 'Dave Dawson',
                 likes: ['dark chocolate'],
             },
+            root: {
+                name: 'The ultimate user',
+                likes: ['power'],
+            }
         };
 
         this.fields = {
@@ -82,11 +87,11 @@ class CloudContext {
         };
     }
 
-    createUserSession(userId) {
+    createUserSession(userId, extraData) {
         userId = randUserId(userId);
         return this.client.createUserSession(
             userId,
-            signing.JWTUserSessionToken(config.API_SECRET, userId),
+            signing.JWTUserSessionToken(config.API_SECRET, userId, extraData),
         );
     }
 

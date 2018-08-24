@@ -46,7 +46,7 @@ describe('Images', () => {
     });
 
     describe('When the thumbnail is requested', () => {
-        it('should return 200', function(done) {
+        ctx.test('should return 200', function(done) {
             request.get(imageUrl, function(err, res, body) {
                 res.statusCode.should.eql(200);
                 done();

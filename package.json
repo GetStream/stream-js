@@ -19,6 +19,7 @@
     "test-unit-node": "mocha --require @babel/register test/unit/common test/unit/node",
     "test-integration-node": "mocha --require @babel/register test/integration/common test/integration/node",
     "test-cloud": "mocha --require @babel/register test/integration/cloud --timeout 40000",
+    "test-cloud-local": "LOCAL=true mocha --require @babel/register test/integration/cloud --timeout 40000 -i --grep 'Files|Images'",
     "test-browser": "karma start karma.config.js",
     "test-browser-ci": "karma start karma.ci.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
@@ -54,14 +55,13 @@
     }
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.55",
-    "@babel/core": "^7.0.0-beta.55",
-    "@babel/plugin-transform-object-assign": "^7.0.0-beta.55",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.55",
-    "@babel/preset-env": "^7.0.0-beta.55",
-    "@babel/register": "^7.0.0-beta.55",
-    "@babel/runtime": "^7.0.0-beta.55",
-    "babel-loader": "^8.0.0-beta",
+    "@babel/cli": "^7.0.0-rc.1",
+    "@babel/core": "^7.0.0-rc.1",
+    "@babel/plugin-transform-object-assign": "^7.0.0-rc.1",
+    "@babel/plugin-transform-runtime": "^7.0.0-rc.1",
+    "@babel/preset-env": "^7.0.0-rc.1",
+    "@babel/register": "^7.0.0-rc.1",
+    "babel-loader": "^8.0.0-beta.4",
     "chai": "^4.1.2",
     "coveralls": "^3.0.1",
     "crypto-browserify": "^3.12.0",
@@ -87,6 +87,7 @@
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
+    "@babel/runtime": "^7.0.0-rc.1",
     "Base64": "^1.0.1",
     "cross-fetch": "^2.2.2",
     "faye": "^1.2.4",
