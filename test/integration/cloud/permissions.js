@@ -107,7 +107,30 @@ describe('Permission managament', () => {
         });
     });
 
-
+    describe('When root tries to clear all policies again (cleanup)', () => {
+        ctx.noRequestsShouldError(async () => {
+            let deleteRequests = [];
+            for (let p of policies) {
+                if (p.priority > 0 && p.priority < 1000) {
+                    deleteRequests.push(
+                        ctx.root.permissions.delete(p.priority),
+                    );
+                } else {
+                    fixedPolicies.push(p);
+                }
+            }
+            await Promise.all(deleteRequests);
+        });
+        describe('and then requests to see the policies', () => {
+            ctx.requestShouldNotError(async () => {
+                ctx.response = await ctx.root.permissions.get();
+                policies = ctx.response.policies;
+            });
+            ctx.test('the policies should be there again', () => {
+                policies.should.have.lengthOf.above(fixedPolicies.length);
+            });
+        });
+    });
 });
 
 describe('Permission checking', () => {
