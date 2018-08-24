@@ -94,20 +94,30 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         });
     });
 
+    describe('When alice tries to update bob his comment', () => {
+        ctx.requestShouldError(403, async () => {
+            commentData = {
+                text: 'Alice you are the best!!!!',
+            };
+            ctx.response = await ctx.alice.reactions.update(comment.id, {
+                data: commentData,
+            });
+        });
+    });
+
     describe('When bob updates his comment and tags dave instead of carl', () => {
         ctx.requestShouldNotError(async () => {
             commentData = {
                 text: 'Looking yummy! @dave wanna get this on Tuesday?',
             };
-            ctx.response = await ctx.bob.reactions.update(
-                comment.id,
-                commentData,
-                [
+            ctx.response = await ctx.bob.reactions.update(comment.id, {
+                data: commentData,
+                targetFeeds: [
                     ctx.bob.feed('user').id,
                     ctx.bob.feed('notification', ctx.alice.userId),
                     ctx.bob.feed('notification', ctx.dave.userId),
                 ],
-            );
+            });
         });
 
         ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -160,6 +170,15 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.activityShould('be the same as on bob his feed', () => {
                 ctx.activity.should.eql(commentActivity);
             });
+        });
+    });
+
+    describe('When alice tries to delete bob his comment', () => {
+        ctx.requestShouldError(403, async () => {
+            commentData = {
+                text: 'Alice you are the best!!!!',
+            };
+            ctx.response = await ctx.alice.reactions.delete(comment.id);
         });
     });
 

@@ -43,12 +43,14 @@ StreamReaction.prototype = {
         url: this.buildURL(),
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 
   _convertTargetFeeds: function(targetFeeds = []) {
-    return targetFeeds.map(elem => (typeof elem === 'string' ? elem : elem.id));
+    return targetFeeds.map(
+      (elem) => (typeof elem === 'string' ? elem : elem.id)
+    );
   },
 
   add: function(kind, activity, { id, data, targetFeeds } = {}, callback) {
@@ -82,7 +84,7 @@ StreamReaction.prototype = {
         body: body,
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 
@@ -101,7 +103,7 @@ StreamReaction.prototype = {
         url: this.buildURL(id),
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 
@@ -125,7 +127,7 @@ StreamReaction.prototype = {
         break;
       default:
         throw new errors.SiteError(
-          'search.by is required and must be equal to activity_id, user_id or foreign_id',
+          'search.by is required and must be equal to activity_id, user_id or foreign_id'
         );
     }
     if (!search.value) {
@@ -139,11 +141,11 @@ StreamReaction.prototype = {
         url: this.build('by', search.by, search.value, search.kinds),
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 
-  update: function(id, data, targetFeeds, callback) {
+  update: function(id, { data, targetFeeds }, callback) {
     /**
      * update reaction
      * @method add
@@ -167,7 +169,7 @@ StreamReaction.prototype = {
         body: body,
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 
@@ -186,7 +188,7 @@ StreamReaction.prototype = {
         url: this.buildURL(id),
         signature: this.signature,
       },
-      callback,
+      callback
     );
   },
 };
