@@ -102,34 +102,24 @@ describe('Permission managament', () => {
             });
             ctx.test('the policy should be there again', () => {
                 ctx.response.policies.should.have.lengthOf(policies.length);
-                ctx.response.policies[1].priority.should.eql(policies[1].priority);
+                ctx.response.policies[1].priority.should.eql(
+                    policies[1].priority,
+                );
             });
         });
     });
 
-    describe('When root tries to clear all policies again (cleanup)', () => {
-        ctx.noRequestsShouldError(async () => {
-            let deleteRequests = [];
-            for (let p of policies) {
-                if (p.priority > 0 && p.priority < 1000) {
-                    deleteRequests.push(
-                        ctx.root.permissions.delete(p.priority),
-                    );
-                } else {
-                    fixedPolicies.push(p);
-                }
+    // Clean up policies again
+    after(async () => {
+        let deleteRequests = [];
+        for (let p of policies) {
+            if (p.priority > 0 && p.priority < 1000) {
+                deleteRequests.push(ctx.root.permissions.delete(p.priority));
+            } else {
+                fixedPolicies.push(p);
             }
-            await Promise.all(deleteRequests);
-        });
-        describe('and then requests to see the policies', () => {
-            ctx.requestShouldNotError(async () => {
-                ctx.response = await ctx.root.permissions.get();
-                policies = ctx.response.policies;
-            });
-            ctx.test('the policies should be there again', () => {
-                policies.should.have.lengthOf.above(fixedPolicies.length);
-            });
-        });
+        }
+        await Promise.all(deleteRequests);
     });
 });
 
