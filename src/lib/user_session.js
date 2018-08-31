@@ -17,7 +17,6 @@ StreamUserSession.prototype = {
      * @example new StreamUserSession(client, "123", "eyJhbGciOiJIUzI1...")
      */
     let jwtBody = jwtDecode(userAuthToken);
-    console.log(jwtBody);
     if (!jwtBody.user_id) {
       throw new TypeError('user_id is missing in jwt token');
     }
