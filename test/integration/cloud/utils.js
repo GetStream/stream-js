@@ -90,7 +90,6 @@ class CloudContext {
     createUserSession(userId, extraData) {
         userId = randUserId(userId);
         return this.client.createUserSession(
-            userId,
             signing.JWTUserSessionToken(config.API_SECRET, userId, extraData),
         );
     }

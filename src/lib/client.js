@@ -577,7 +577,7 @@ StreamClient.prototype = {
     }.bind(this));
   },
 
-  createUserSession: function(userId, userToken) {
+  createUserSession: function(userToken) {
     var cloud = require('./cloud');
     var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
     return cClient.createUserSession(userId, userToken);

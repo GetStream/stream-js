@@ -1,11 +1,12 @@
 var StreamUser = require('./user');
+var jwtDecode = require('jwt-decode');
 
 var StreamUserSession = function() {
   this.initialize.apply(this, arguments);
 };
 
 StreamUserSession.prototype = {
-  initialize: function(client, userId, userAuthToken) {
+  initialize: function(client, userAuthToken) {
     /**
      * Initialize a user session object
      * @method intialize
@@ -15,10 +16,15 @@ StreamUserSession.prototype = {
      * @param {string} token JWT token
      * @example new StreamUserSession(client, "123", "eyJhbGciOiJIUzI1...")
      */
+    let jwtBody = jwtDecode(userAuthToken);
+    console.log(jwtBody);
+    if (!jwtBody.user_id) {
+      throw new TypeError('user_id is missing in jwt token');
+    }
     this.client = client;
-    this.userId = userId;
+    this.userId = jwtBody.user_id;
     this.token = userAuthToken;
-    this.user = new StreamUser(client, userId, userAuthToken);
+    this.user = new StreamUser(client, this.userId, userAuthToken);
     this.reactions = client.reactions(userAuthToken);
     this.images = this.client.images(this.token);
     this.files = this.client.files(this.token);
@@ -41,7 +47,7 @@ StreamUserSession.prototype = {
         qs: options,
         signature: this.token,
       },
-      callback,
+      callback
     );
   },
 
@@ -67,7 +73,7 @@ StreamUserSession.prototype = {
   objectFromResponse: function(response) {
     let object = this.storage(response.collection).object(
       response.id,
-      response.data,
+      response.data
     );
     object.full = response;
     return object;
