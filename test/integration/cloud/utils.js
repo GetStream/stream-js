@@ -25,7 +25,7 @@ class CloudContext {
         this.bob = this.createUserSession('bob');
         this.carl = this.createUserSession('carl');
         this.dave = this.createUserSession('dave');
-        this.root = this.createUserSession('root', {stream_admin: true});
+        this.root = this.createUserSession('root', { stream_admin: true });
         this.userData = {
             alice: {
                 name: 'Alice Abbot',
@@ -46,7 +46,7 @@ class CloudContext {
             root: {
                 name: 'The ultimate user',
                 likes: ['power'],
-            }
+            },
         };
 
         this.fields = {
@@ -95,36 +95,44 @@ class CloudContext {
         );
     }
 
+    wrapFn(fn) {
+        let ctx = this;
+        if (fn.length == 0) {
+            return async function() {
+                if (ctx.failed) {
+                    this.skip();
+                }
+                try {
+                    await fn();
+                } catch (ex) {
+                    ctx.failed = true;
+                    throw ex;
+                }
+            };
+        }
+        return function(done) {
+            if (ctx.failed) {
+                this.skip();
+            }
+            try {
+                fn(done);
+            } catch (ex) {
+                ctx.failed = true;
+                throw ex;
+            }
+        };
+    }
+
     // test is a wrapper around "it" that skips the test if a previous one in
     // the same context failed already.
     test(label, fn) {
-        let ctx = this;
-        it(label, async function() {
-            if (ctx.failed) {
-                this.skip();
-            }
-            try {
-                await fn();
-            } catch (ex) {
-                ctx.failed = true;
-                throw ex;
-            }
-        });
+        it(label, this.wrapFn(fn));
     }
 
+    // afterTest is a wrapper around "after" that skips the after if a previous
+    // test or afterTest in the same context failed already.
     afterTest(fn) {
-        let ctx = this;
-        after(async function() {
-            if (ctx.failed) {
-                this.skip();
-            }
-            try {
-                await fn();
-            } catch (ex) {
-                ctx.failed = true;
-                throw ex;
-            }
-        });
+        after(this.wrapFn(fn));
     }
 
     requestShouldNotError(fn) {
