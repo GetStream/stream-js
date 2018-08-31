@@ -2,7 +2,7 @@
 set -e
 ./node_modules/.bin/webpack
 if [ "${CLOUD_TESTS:='no'}" == "yes" ]; then
-    npm test-cloud
+    npm run test-cloud
 else
     npm test
 fi
