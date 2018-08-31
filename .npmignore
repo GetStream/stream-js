@@ -39,3 +39,6 @@ secrets.*sh
 .babelrc
 # Don't submit src to npm to avoid confusion about which file is used
 /src/
+# Don't submit docs and tests, they only bloat the package
+/docs/
+/test/
