@@ -15,6 +15,14 @@ Collections.prototype = {
     this.client = client;
   },
 
+  createReference: function(collectionName, id) {
+    return "SO:" + collectionName + ":" + id;
+  },
+
+  createUserReference: function(id) {
+    return this.createReference("user", id);
+  },
+
   upsert: function(collectionName, data, callback) {
   /**
    * Upsert one or more items within a collection.
