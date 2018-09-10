@@ -6,6 +6,7 @@
       },
     }]
   ],
+  sourceType: 'unambiguous',
   plugins: [
     '@babel/plugin-transform-object-assign',
     '@babel/plugin-transform-runtime'
