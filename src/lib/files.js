@@ -1,8 +1,6 @@
-import fetch from 'cross-fetch';
-import { Headers } from 'cross-fetch';
-
+var fetch = require('cross-fetch');
+var Headers = require('cross-fetch').Headers;
 var utils = require('./utils');
-var errors = require('./errors');
 var FormData = require('form-data');
 
 var StreamFileStore = function () {
