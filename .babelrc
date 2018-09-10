@@ -8,8 +8,6 @@
   ],
   plugins: [
     '@babel/plugin-transform-object-assign',
-    ["@babel/plugin-transform-runtime", {
-      "helpers": false,
-    }]
+    '@babel/plugin-transform-runtime'
   ],
 }
