@@ -17,7 +17,7 @@
     "dtslint": "dtslint types/getstream",
     "eslint": "eslint '**/*.js' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
-    "lint": "yarn prettier && yarn eslint",
+    "lint": "npm run prettier && npm run eslint",
     "lint-fix": "prettier --write '**/*.{js,ts}' && eslint --fix '**/*.js'",
     "test": "npm run test-unit-node",
     "test-unit-node": "mocha --require @babel/register test/unit/common test/unit/node",
