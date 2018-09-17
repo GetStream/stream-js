@@ -15,16 +15,19 @@ module.exports = {
      * @param  {requestCallback} callback Callback called on completion
      * @return {Promise}           Promise object
      */
-    return this.makeSignedRequest({
-      url: 'feed/add_to_many/',
-      body: {
-        activity: activity,
-        feeds: feeds,
+    return this.makeSignedRequest(
+      {
+        url: 'feed/add_to_many/',
+        body: {
+          activity: activity,
+          feeds: feeds,
+        },
       },
-    }, callback);
+      callback
+    );
   },
 
-  followMany: function(follows, callbackOrActivityCopyLimit, callback)  {
+  followMany: function(follows, callbackOrActivityCopyLimit, callback) {
     /**
      * Follow multiple feeds with one API call
      * @method followMany
@@ -35,13 +38,17 @@ module.exports = {
      * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
      */
-    var activityCopyLimit, qs = {};
+    var activityCopyLimit,
+      qs = {};
 
     if (typeof callbackOrActivityCopyLimit === 'number') {
       activityCopyLimit = callbackOrActivityCopyLimit;
     }
 
-    if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'function') {
+    if (
+      callbackOrActivityCopyLimit &&
+      typeof callbackOrActivityCopyLimit === 'function'
+    ) {
       callback = callbackOrActivityCopyLimit;
     }
 
@@ -49,14 +56,17 @@ module.exports = {
       qs['activity_copy_limit'] = activityCopyLimit;
     }
 
-    return this.makeSignedRequest({
-      url: 'follow_many/',
-      body: follows,
-      qs: qs,
-    }, callback);
+    return this.makeSignedRequest(
+      {
+        url: 'follow_many/',
+        body: follows,
+        qs: qs,
+      },
+      callback
+    );
   },
 
-  unfollowMany: function (unfollows, callback) {
+  unfollowMany: function(unfollows, callback) {
     /**
      * Unfollow multiple feeds with one API call
      * @method unfollowMany
@@ -66,10 +76,13 @@ module.exports = {
      * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
      */
-    return this.makeSignedRequest({
-      url: 'unfollow_many/',
-      body: unfollows,
-    }, callback);
+    return this.makeSignedRequest(
+      {
+        url: 'unfollow_many/',
+        body: unfollows,
+      },
+      callback
+    );
   },
 
   makeSignedRequest: function(kwargs, cb) {
@@ -84,28 +97,32 @@ module.exports = {
      * @return {Promise}         Promise object
      */
     if (!this.apiSecret) {
-      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+      throw new errors.SiteError(
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);'
+      );
     }
 
-    return new Promise(function(fulfill, reject) {
-      this.send('request', 'post', kwargs, cb);
+    return new Promise(
+      function(fulfill, reject) {
+        this.send('request', 'post', kwargs, cb);
 
-      kwargs.url = this.enrichUrl(kwargs.url);
-      kwargs.json = true;
-      kwargs.method = 'POST';
-      kwargs.headers = { 'X-Api-Key': this.apiKey };
-      // Make sure withCredentials is not enabled, different browser
-      // fallbacks handle it differently by default (meteor)
-      kwargs.withCredentials = false;
+        kwargs.url = this.enrichUrl(kwargs.url);
+        kwargs.json = true;
+        kwargs.method = 'POST';
+        kwargs.headers = { 'X-Api-Key': this.apiKey };
+        // Make sure withCredentials is not enabled, different browser
+        // fallbacks handle it differently by default (meteor)
+        kwargs.withCredentials = false;
 
-      var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      var req = request(kwargs, callback);
+        var callback = this.wrapPromiseTask(cb, fulfill, reject);
+        var req = request(kwargs, callback);
 
-      httpSignature.sign(req, {
-        algorithm: 'hmac-sha256',
-        key: this.apiSecret,
-        keyId: this.apiKey,
-      });
-    }.bind(this));
+        httpSignature.sign(req, {
+          algorithm: 'hmac-sha256',
+          key: this.apiSecret,
+          keyId: this.apiKey,
+        });
+      }.bind(this)
+    );
   },
 };

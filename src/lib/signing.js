@@ -25,7 +25,7 @@ function decodeBase64Url(base64UrlString) {
 }
 
 function safeJsonParse(thing) {
-  if (typeof (thing) === 'object') return thing;
+  if (typeof thing === 'object') return thing;
   try {
     return JSON.parse(thing);
   } catch (e) {
@@ -36,12 +36,10 @@ function safeJsonParse(thing) {
 function padString(string) {
   var segmentLength = 4;
   var diff = string.length % segmentLength;
-  if (!diff)
-      return string;
+  if (!diff) return string;
   var padLength = segmentLength - diff;
 
-  while (padLength--)
-    string += '=';
+  while (padLength--) string += '=';
   return string;
 }
 
@@ -97,7 +95,7 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
    * @return {string} JWT Token
    */
   var options = opts || {},
-      noTimestamp = options.expireTokens ? !options.expireTokens : true;
+    noTimestamp = options.expireTokens ? !options.expireTokens : true;
   var payload = {
     resource: resource,
     action: action,
@@ -111,11 +109,19 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
     payload['user_id'] = options.userId;
   }
 
-  var token = jwt.sign(payload, apiSecret, { algorithm: 'HS256', noTimestamp: noTimestamp });
+  var token = jwt.sign(payload, apiSecret, {
+    algorithm: 'HS256',
+    noTimestamp: noTimestamp,
+  });
   return token;
 };
 
-exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptions={}) {
+exports.JWTUserSessionToken = function(
+  apiSecret,
+  userId,
+  extraData = {},
+  jwtOptions = {}
+) {
   /**
    * Creates the JWT token that can be used for a UserSession
    * @method JWTUserSessionToken
@@ -136,11 +142,13 @@ exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptio
     ...extraData,
   };
 
-  var opts = Object.assign({ algorithm: 'HS256', noTimestamp: true }, jwtOptions);
+  var opts = Object.assign(
+    { algorithm: 'HS256', noTimestamp: true },
+    jwtOptions
+  );
   var token = jwt.sign(payload, apiSecret, opts);
   return token;
 };
-
 
 exports.isJWTSignature = function(signature) {
   /**

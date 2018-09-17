@@ -1,423 +1,525 @@
 var StreamFeed = require('../../../src/lib/feed'),
-    expect = require('expect.js'),
-    beforeEachFn = require('../utils/hooks').beforeEach,
-    td = require('testdouble'),
-    stream = require('../../../src/getstream'),
-    StreamClient = require('../../../src/lib/client');
-
+  expect = require('expect.js'),
+  beforeEachFn = require('../utils/hooks').beforeEach,
+  td = require('testdouble'),
+  stream = require('../../../src/getstream'),
+  StreamClient = require('../../../src/lib/client');
 
 describe('[UNIT] Stream Client instantiation (Node)', function() {
+  it('with secret', function() {
+    new StreamClient('stub-key', 'stub-secret', 9498);
+  });
 
-    it('with secret', function() {
-      new StreamClient('stub-key', 'stub-secret', 9498);
-    });
-
-    it('without secret', function() {
-        new StreamClient('stub-key', null, 9498);
-    });
+  it('without secret', function() {
+    new StreamClient('stub-key', null, 9498);
+  });
 });
 
 describe('[UNIT] Stream Client (Node)', function() {
+  beforeEach(beforeEachFn);
 
-    beforeEach(beforeEachFn);
+  it('#updateActivities', function() {
+    var self = this;
 
-    it('#updateActivities', function() {
-        var self = this;
+    expect(function() {
+      self.client.updateActivities('A-String-Thing');
+    }).to.throwException(function(e) {
+      expect(e).to.be.a(TypeError);
+    });
+  });
 
-        expect(function() {
-            self.client.updateActivities('A-String-Thing');
-        }).to.throwException(function(e) {
-            expect(e).to.be.a(TypeError);
-        });
+  it('#userAgent', function() {
+    var useragent = this.client.userAgent();
+
+    expect(useragent).to.be('stream-javascript-client-node-unknown');
+  });
+
+  it('#feed', function() {
+    var feed = this.client.feed('user', 'jaap', '123456789');
+
+    expect(feed).to.be.a(StreamFeed);
+  });
+
+  describe('#enrichUrl', function() {
+    it('(1) personalization service', function() {
+      var resource = 'influencers';
+      var url = this.client.enrichUrl(resource, 'personalization');
+      expect(url).to.be(
+        'https://personalization.stream-io-api.com/personalization/' +
+          this.client.version +
+          '/' +
+          resource
+      );
+    });
+  });
+
+  describe('#updateActivities', function() {
+    it('throws', function() {
+      function isGoingToThrow1() {
+        this.client.updateActivities({});
+      }
+
+      function isGoingToThrow2() {
+        this.client.updateActivities(0);
+      }
+
+      function isGoingToThrow3() {
+        this.client.updateActivities(null);
+      }
+
+      function isNotGoingToThrow() {
+        this.client.updateActivities([]);
+      }
+
+      function isTypeError(err) {
+        expect(err).to.be.a(TypeError);
+      }
+
+      expect(isGoingToThrow1).to.throwException(isTypeError);
+      expect(isGoingToThrow2).to.throwException(isTypeError);
+      expect(isGoingToThrow3).to.throwException(isTypeError);
+      expect(isNotGoingToThrow).to.not.throw;
     });
 
-    it('#userAgent', function() {
-        var useragent = this.client.userAgent();
+    it('(1) works', function() {
+      var post = td.function();
+      td.replace(this.client, 'post', post);
 
-        expect(useragent).to.be('stream-javascript-client-node-unknown');
+      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+
+      this.client.updateActivities(activities);
+
+      td.verify(
+        post(
+          td.matchers.contains({
+            url: 'activities/',
+          }),
+          undefined
+        )
+      );
     });
 
-    it('#feed', function() {
-        var feed = this.client.feed('user', 'jaap', '123456789');
+    it('(2) works - callback', function() {
+      var post = td.function();
+      td.replace(this.client, 'post', post);
 
-        expect(feed).to.be.a(StreamFeed);
+      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      var fn = function() {};
+
+      this.client.updateActivities(activities, fn);
+
+      td.verify(
+        post(
+          td.matchers.contains({
+            url: 'activities/',
+          }),
+          fn
+        )
+      );
     });
 
-    describe('#enrichUrl', function() {
+    it('(3) update single activity', function() {
+      var post = td.function();
+      td.replace(this.client, 'post', post);
 
-        it('(1) personalization service', function() {
-            var resource = 'influencers'
-            var url = this.client.enrichUrl(resource, 'personalization');
-            expect(url).to.be('https://personalization.stream-io-api.com/personalization/' + this.client.version + '/' + resource);
-        });
+      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+
+      this.client.updateActivity(activities[0]);
+
+      td.verify(
+        post(
+          td.matchers.contains({
+            url: 'activities/',
+          }),
+          undefined
+        )
+      );
     });
 
-    describe('#updateActivities', function() {
+    it('(3) update single activity - callback', function() {
+      var fn = function() {};
+      var post = td.function();
+      td.replace(this.client, 'post', post);
 
-        it('throws', function() {
-            function isGoingToThrow1() {
-                this.client.updateActivities({});
-            }
+      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
 
-            function isGoingToThrow2() {
-                this.client.updateActivities(0);
-            }
+      this.client.updateActivity(activities[0], fn);
 
-            function isGoingToThrow3() {
-                this.client.updateActivities(null);
-            }
+      td.verify(
+        post(
+          td.matchers.contains({
+            url: 'activities/',
+          }),
+          fn
+        )
+      );
+    });
+  });
 
-            function isNotGoingToThrow() {
-                this.client.updateActivities([]);
-            }
+  describe('#getActivities', function() {
+    it('throws', function() {
+      var self = this;
 
-            function isTypeError(err) {
-                expect(err).to.be.a(TypeError);
-            }
+      function isGoingToThrow1() {
+        self.client.getActivities({});
+      }
 
-            expect(isGoingToThrow1).to.throwException(isTypeError);
-            expect(isGoingToThrow2).to.throwException(isTypeError);
-            expect(isGoingToThrow3).to.throwException(isTypeError);
-            expect(isNotGoingToThrow).to.not.throw;
-        });
+      function isGoingToThrow2() {
+        self.client.getActivities(0);
+      }
 
-        it('(1) works', function() {
-            var post = td.function();
-            td.replace(this.client, 'post', post);
+      function isGoingToThrow3() {
+        self.client.getActivities(null);
+      }
 
-            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      function isGoingToThrow4() {
+        self.client.getActivities([]);
+      }
 
-            this.client.updateActivities(activities);
+      function isNotGoingToThrow() {
+        self.client.getActivities({ ids: [] });
+        self.client.getActivities({ foreignIDTimes: [] });
+      }
 
-            td.verify(post(td.matchers.contains({
-                url: 'activities/',
-            }), undefined));
-        });
+      function isTypeError(err) {
+        expect(err).to.be.a(TypeError);
+      }
 
-        it('(2) works - callback', function() {
-            var post = td.function();
-            td.replace(this.client, 'post', post);
-
-            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-            var fn = function() {};
-
-            this.client.updateActivities(activities, fn);
-
-            td.verify(post(td.matchers.contains({
-                url: 'activities/',
-            }), fn));
-        });
-
-        it('(3) update single activity', function() {
-            var post = td.function();
-            td.replace(this.client, 'post', post);
-
-            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-
-            this.client.updateActivity(activities[0]);
-
-            td.verify(post(td.matchers.contains({
-                url: 'activities/',
-            }), undefined));
-        });
-
-        it('(3) update single activity - callback', function() {
-            var fn = function() {};
-            var post = td.function();
-            td.replace(this.client, 'post', post);
-
-            var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-
-            this.client.updateActivity(activities[0], fn);
-
-            td.verify(post(td.matchers.contains({
-                url: 'activities/',
-            }), fn));
-        });
-
+      expect(isGoingToThrow1).to.throwException(isTypeError);
+      expect(isGoingToThrow2).to.throwException(isTypeError);
+      expect(isGoingToThrow3).to.throwException(isTypeError);
+      expect(isGoingToThrow4).to.throwException(isTypeError);
+      expect(isNotGoingToThrow).to.not.throwException(isTypeError);
     });
 
-    describe('#getActivities', function() {
+    describe('by ID', function() {
+      it('(1) works', function() {
+        var get = td.function();
+        td.replace(this.client, 'get', get);
 
-        it('throws', function() {
-            var self = this;
+        var ids = ['one', 'two', 'three'];
 
-            function isGoingToThrow1() {
-                self.client.getActivities({});
-            }
+        this.client.getActivities({ ids: ids });
 
-            function isGoingToThrow2() {
-                self.client.getActivities(0);
-            }
+        td.verify(
+          get(
+            td.matchers.contains({
+              url: 'activities/',
+            }),
+            undefined
+          )
+        );
+      });
 
-            function isGoingToThrow3() {
-                self.client.getActivities(null);
-            }
+      it('(2) works - callback', function() {
+        var get = td.function();
+        td.replace(this.client, 'get', get);
 
-            function isGoingToThrow4() {
-                self.client.getActivities([]);
-            }
+        var ids = ['one', 'two', 'three'];
+        var fn = function() {};
 
-            function isNotGoingToThrow() {
-                self.client.getActivities({ ids: [] });
-                self.client.getActivities({ foreignIDTimes: [] });
-            }
+        this.client.getActivities({ ids: ids }, fn);
 
-            function isTypeError(err) {
-                expect(err).to.be.a(TypeError);
-            }
-
-            expect(isGoingToThrow1).to.throwException(isTypeError);
-            expect(isGoingToThrow2).to.throwException(isTypeError);
-            expect(isGoingToThrow3).to.throwException(isTypeError);
-            expect(isGoingToThrow4).to.throwException(isTypeError);
-            expect(isNotGoingToThrow).to.not.throwException(isTypeError);
-        });
-
-        describe('by ID', function() {
-
-            it('(1) works', function() {
-                var get = td.function();
-                td.replace(this.client, 'get', get);
-
-                var ids = ['one', 'two', 'three'];
-
-                this.client.getActivities({ids: ids});
-
-                td.verify(get(td.matchers.contains({
-                    url: 'activities/',
-                }), undefined));
-            });
-
-            it('(2) works - callback', function() {
-                var get = td.function();
-                td.replace(this.client, 'get', get);
-
-                var ids = ['one', 'two', 'three'];
-                var fn = function() {};
-
-                this.client.getActivities({ids: ids}, fn);
-
-                td.verify(get(td.matchers.contains({
-                    url: 'activities/',
-                }), fn));
-            });
-        });
-
-        describe('by foreign ID and time', function () {
-
-            it('(1) works', function () {
-                var get = td.function();
-                td.replace(this.client, 'get', get);
-
-                var foreignIDTimes = [
-                    { foreignID: "like:1", time: "2018-07-08T14:09:36.000000"},
-                    { foreignID: "post:2", time: "2018-07-09T20:30:40.000000"}
-                ];
-
-                this.client.getActivities({ foreignIDTimes: foreignIDTimes });
-
-                td.verify(get(td.matchers.contains({
-                    url: 'activities/',
-                }), undefined));
-            });
-
-            it('(2) works - callback', function () {
-                var get = td.function();
-                td.replace(this.client, 'get', get);
-
-                var foreignIDTimes = [
-                    { foreignID: "like:1", time: "2018-07-08T14:09:36.000000" },
-                    { foreignID: "post:2", time: "2018-07-09T20:30:40.000000" }
-                ];
-                var fn = function () { };
-
-                this.client.getActivities({ foreignIDTimes: foreignIDTimes }, fn);
-
-                td.verify(get(td.matchers.contains({
-                    url: 'activities/',
-                }), fn));
-            });
-        });
-
+        td.verify(
+          get(
+            td.matchers.contains({
+              url: 'activities/',
+            }),
+            fn
+          )
+        );
+      });
     });
 
-    describe('#activityPartialUpdate', function () {
+    describe('by foreign ID and time', function() {
+      it('(1) works', function() {
+        var get = td.function();
+        td.replace(this.client, 'get', get);
 
-        it('throws', function () {
-            var self = this;
+        var foreignIDTimes = [
+          { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
+          { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
+        ];
 
-            function isGoingToThrow1() {
-                self.client.activityPartialUpdate({});
-            }
+        this.client.getActivities({ foreignIDTimes: foreignIDTimes });
 
-            function isGoingToThrow2() {
-                self.client.activityPartialUpdate(0);
-            }
+        td.verify(
+          get(
+            td.matchers.contains({
+              url: 'activities/',
+            }),
+            undefined
+          )
+        );
+      });
 
-            function isGoingToThrow3() {
-                self.client.activityPartialUpdate(null);
-            }
+      it('(2) works - callback', function() {
+        var get = td.function();
+        td.replace(this.client, 'get', get);
 
-            function isGoingToThrow4() {
-                self.client.activityPartialUpdate({ foreignID: "foo:bar" });
-            }
+        var foreignIDTimes = [
+          { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
+          { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
+        ];
+        var fn = function() {};
 
-            function isGoingToThrow5() {
-                self.client.activityPartialUpdate({ time: "2016-11-10T13:20:00.000000" });
-            }
+        this.client.getActivities({ foreignIDTimes: foreignIDTimes }, fn);
 
-            function isGoingToThrow6() {
-                self.client.activityPartialUpdate({ id: "test", set: "wrong" });
-            }
+        td.verify(
+          get(
+            td.matchers.contains({
+              url: 'activities/',
+            }),
+            fn
+          )
+        );
+      });
+    });
+  });
 
-            function isGoingToThrow7() {
-                self.client.activityPartialUpdate({ id: "test", unset: "wrong" });
-            }
+  describe('#activityPartialUpdate', function() {
+    it('throws', function() {
+      var self = this;
 
-            function isTypeError(err) {
-                expect(err).to.be.a(TypeError);
-            }
+      function isGoingToThrow1() {
+        self.client.activityPartialUpdate({});
+      }
 
-            expect(isGoingToThrow1).to.throwException(isTypeError);
-            expect(isGoingToThrow2).to.throwException(isTypeError);
-            expect(isGoingToThrow3).to.throwException(isTypeError);
-            expect(isGoingToThrow4).to.throwException(isTypeError);
-            expect(isGoingToThrow5).to.throwException(isTypeError);
-            expect(isGoingToThrow6).to.throwException(isTypeError);
-            expect(isGoingToThrow7).to.throwException(isTypeError);
+      function isGoingToThrow2() {
+        self.client.activityPartialUpdate(0);
+      }
+
+      function isGoingToThrow3() {
+        self.client.activityPartialUpdate(null);
+      }
+
+      function isGoingToThrow4() {
+        self.client.activityPartialUpdate({ foreignID: 'foo:bar' });
+      }
+
+      function isGoingToThrow5() {
+        self.client.activityPartialUpdate({
+          time: '2016-11-10T13:20:00.000000',
         });
+      }
 
-        describe('by ID', function () {
+      function isGoingToThrow6() {
+        self.client.activityPartialUpdate({ id: 'test', set: 'wrong' });
+      }
 
-            it('(1) works', function () {
-                var post = td.function();
-                td.replace(this.client, 'post', post);
+      function isGoingToThrow7() {
+        self.client.activityPartialUpdate({ id: 'test', unset: 'wrong' });
+      }
 
-                var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
+      function isTypeError(err) {
+        expect(err).to.be.a(TypeError);
+      }
 
-                this.client.activityPartialUpdate(data);
-
-                td.verify(post(td.matchers.contains({
-                    url: 'activity/',
-                }), undefined));
-            });
-
-            it('(2) works - callback', function () {
-                var post = td.function();
-                td.replace(this.client, 'post', post);
-
-                var data = {id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", set: {"foo.bar": 42}, unset: ["baz"]};
-                var fn = function () { };
-
-                this.client.activityPartialUpdate(data, fn);
-
-                td.verify(post(td.matchers.contains({
-                    url: 'activity/',
-                }), fn));
-            });
-        });
-
-        describe('by foreign ID and time', function () {
-
-            it('(1) works', function () {
-                var post = td.function();
-                td.replace(this.client, 'post', post);
-
-                var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
-
-                this.client.activityPartialUpdate(data);
-
-                td.verify(post(td.matchers.contains({
-                    url: 'activity/',
-                }), undefined));
-            });
-
-            it('(2) works - callback', function () {
-                var post = td.function();
-                td.replace(this.client, 'post', post);
-
-                var data = {foreignID: "product:123", time: "2016-11-10T13:20:00.000000", set: {"foo.bar": 42}, unset: ["baz"]};
-                var fn = function () { };
-
-                this.client.activityPartialUpdate(data, fn)
-
-                td.verify(post(td.matchers.contains({
-                    url: 'activity/',
-                }), fn));
-            });
-        });
-
+      expect(isGoingToThrow1).to.throwException(isTypeError);
+      expect(isGoingToThrow2).to.throwException(isTypeError);
+      expect(isGoingToThrow3).to.throwException(isTypeError);
+      expect(isGoingToThrow4).to.throwException(isTypeError);
+      expect(isGoingToThrow5).to.throwException(isTypeError);
+      expect(isGoingToThrow6).to.throwException(isTypeError);
+      expect(isGoingToThrow7).to.throwException(isTypeError);
     });
 
-	describe('getAnalyticsToken', function(){
-		it('generate correct token', function() {
-			var client = stream.connect('12345', 'abcdefghijklmnop');
-			var token = client.getAnalyticsToken();
-			expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc');
-		});
-	});
+    describe('by ID', function() {
+      it('(1) works', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
 
-    describe('createUserSessionToken', function(){
-      it('with userId only', function() {
-		var client = stream.connect('12345', 'abcdefghijklmnop');
-		var token = client.createUserSessionToken("42");
-		expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE');
-	  });
+        var data = {
+          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+          set: { 'foo.bar': 42 },
+          unset: ['baz'],
+        };
 
-	  it('with extra data', function() {
-		var client = stream.connect('12345', 'abcdefghijklmnop');
-		var token = client.createUserSessionToken("42", {'a':'b'});
-		expect(token).to.be('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM');
-	  });
+        this.client.activityPartialUpdate(data);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            undefined
+          )
+        );
+      });
+
+      it('(2) works - callback', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var data = {
+          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+          set: { 'foo.bar': 42 },
+          unset: ['baz'],
+        };
+        var fn = function() {};
+
+        this.client.activityPartialUpdate(data, fn);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            fn
+          )
+        );
+      });
     });
 
-    describe('createUserSession', function(){
-      it('should return a user session', function() {
-		var client = stream.connect('12345', 'abcdefghijklmnop');
-		var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM";
-		var userSession= client.createUserSession(token);
-		expect(userSession.userId).to.be("42");
-		expect(userSession.token).to.be(token);
-		expect(userSession.client).to.not.be(null);
-	  });
+    describe('by foreign ID and time', function() {
+      it('(1) works', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var data = {
+          foreignID: 'product:123',
+          time: '2016-11-10T13:20:00.000000',
+          set: { 'foo.bar': 42 },
+          unset: ['baz'],
+        };
+
+        this.client.activityPartialUpdate(data);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            undefined
+          )
+        );
+      });
+
+      it('(2) works - callback', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var data = {
+          foreignID: 'product:123',
+          time: '2016-11-10T13:20:00.000000',
+          set: { 'foo.bar': 42 },
+          unset: ['baz'],
+        };
+        var fn = function() {};
+
+        this.client.activityPartialUpdate(data, fn);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            fn
+          )
+        );
+      });
+    });
+  });
+
+  describe('getAnalyticsToken', function() {
+    it('generate correct token', function() {
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      var token = client.getAnalyticsToken();
+      expect(token).to.be(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc'
+      );
+    });
+  });
+
+  describe('createUserSessionToken', function() {
+    it('with userId only', function() {
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      var token = client.createUserSessionToken('42');
+      expect(token).to.be(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE'
+      );
     });
 
-    describe('connect', function() {
-
-        it('#LOCAL', function() {
-            process.env['LOCAL'] = 1;
-
-            var client = stream.connect('12345', 'abcdefghijklmnop');
-            expect(client.baseUrl).to.be('http://localhost:8000/api/');
-
-            delete process.env['LOCAL'];
-        });
-
-        it('#LOCAL', function() {
-            var client = stream.connect('12345', 'abcdefghijklmnop', null, {
-                location: 'nl-NL'
-            });
-            expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
-        });
-
-        it('#LOCAL_FAYE', function() {
-            process.env['LOCAL_FAYE'] = 1;
-
-            var client = stream.connect('12345', 'abcdefghijklmnop');
-            expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
-
-            delete process.env['LOCAL_FAYE'];
-        });
-
-        it('#STREAM_BASE_URL', function() {
-            process.env['STREAM_BASE_URL'] = 'https://local.stream-io-api.com/api/';
-
-            var client = stream.connect('12345', 'abcdefghijklmnop');
-            expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
-
-            delete process.env['STREAM_BASE_URL'];
-        });
-
+    it('with extra data', function() {
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      var token = client.createUserSessionToken('42', { a: 'b' });
+      expect(token).to.be(
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM'
+      );
     });
+  });
+
+  describe('createUserSession', function() {
+    it('should return a user session', function() {
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      var token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM';
+      var userSession = client.createUserSession(token);
+      expect(userSession.userId).to.be('42');
+      expect(userSession.token).to.be(token);
+      expect(userSession.client).to.not.be(null);
+    });
+  });
+
+  describe('connect', function() {
+    it('#LOCAL', function() {
+      process.env['LOCAL'] = 1;
+
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      expect(client.baseUrl).to.be('http://localhost:8000/api/');
+
+      delete process.env['LOCAL'];
+    });
+
+    it('#LOCAL', function() {
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop',
+        null,
+        {
+          location: 'nl-NL',
+        }
+      );
+      expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
+    });
+
+    it('#LOCAL_FAYE', function() {
+      process.env['LOCAL_FAYE'] = 1;
+
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
+
+      delete process.env['LOCAL_FAYE'];
+    });
+
+    it('#STREAM_BASE_URL', function() {
+      process.env['STREAM_BASE_URL'] = 'https://local.stream-io-api.com/api/';
+
+      var client = stream.connect(
+        '12345',
+        'abcdefghijklmnop'
+      );
+      expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
+
+      delete process.env['STREAM_BASE_URL'];
+    });
+  });
 });

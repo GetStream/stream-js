@@ -18,7 +18,7 @@ function StreamCloudClient() {
   if (options.location) {
     location = options.location + '-cloud';
   }
-  options = {...options, location};
+  options = { ...options, location };
   StreamClient.apply(this, [arguments[0], arguments[1], arguments[2], options]);
 }
 
@@ -50,10 +50,9 @@ StreamCloudClient.prototype.permissions = function(token) {
   return new StreamPermissions(this, token);
 };
 
-
 StreamCloudClient.prototype.createUserSession = function(
   userId,
-  userAuthToken,
+  userAuthToken
 ) {
   return new StreamUserSession(this, userId, userAuthToken);
 };
@@ -96,14 +95,14 @@ StreamCloudFeed.prototype.get = function(options, callback) {
       qs: options,
       signature: this.signature,
     },
-    callback,
+    callback
   );
 };
 
 function replaceStreamObjects(obj) {
   let cloned = obj;
   if (Array.isArray(obj)) {
-    cloned = obj.map(v => replaceStreamObjects(v));
+    cloned = obj.map((v) => replaceStreamObjects(v));
   } else if (isPlainObject(obj)) {
     cloned = {};
     for (let k in obj) {
@@ -129,11 +128,10 @@ StreamCloudFeed.prototype.addActivities = function(activities, callback) {
   return this._addActivitiesOriginal(activities, callback);
 };
 
-
 StreamCloudFeed.prototype.getActivityDetail = function(
   activity_id,
   options,
-  callback,
+  callback
 ) {
   /**
    * Retrieves one activity from a feed and adds enrichment
@@ -152,9 +150,9 @@ StreamCloudFeed.prototype.getActivityDetail = function(
   return this.get(
     Object.assign(
       { id_lte: activity_id, id_gte: activity_id, limit: 1 },
-      options,
+      options
     ),
-    callback,
+    callback
   );
 };
 

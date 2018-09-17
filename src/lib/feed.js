@@ -24,11 +24,15 @@ StreamFeed.prototype = {
      */
 
     if (!feedSlug || !userId) {
-      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+      throw new errors.FeedError(
+        'Please provide a feed slug and user id, ie client.feed("user", "1")'
+      );
     }
 
     if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+      throw new errors.FeedError(
+        'Please initialize the feed using client.feed("user", "1") not client.feed("user:1")'
+      );
     }
 
     utils.validateFeedSlug(feedSlug);
@@ -36,7 +40,9 @@ StreamFeed.prototype = {
 
     // raise an error if there is no token
     if (!this.apiSecret && !token) {
-      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+      throw new errors.FeedError(
+        'Missing token, in client side mode please provide a feed secret'
+      );
     }
 
     this.client = client;
@@ -50,7 +56,8 @@ StreamFeed.prototype = {
     this.signature = this.feedTogether + ' ' + this.token;
 
     // faye setup
-    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
+    this.notificationChannel =
+      'site-' + this.client.appId + '-feed-' + this.feedTogether;
   },
 
   addActivity: function(activity, callback) {
@@ -65,11 +72,14 @@ StreamFeed.prototype = {
      */
     activity = this.client.signActivity(activity);
 
-    return this.client.post({
-      url: 'feed/' + this.feedUrl + '/',
-      body: activity,
-      signature: this.signature,
-    }, callback);
+    return this.client.post(
+      {
+        url: 'feed/' + this.feedUrl + '/',
+        body: activity,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   removeActivity: function(activityId, callback) {
@@ -85,17 +95,20 @@ StreamFeed.prototype = {
      * @example
      * feed.removeActivity({'foreignId': foreignId});
      */
-    var identifier = (activityId.foreignId) ? activityId.foreignId : activityId;
+    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
     var params = {};
     if (activityId.foreignId) {
       params['foreign_id'] = '1';
     }
 
-    return this.client['delete']({
-      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
-      qs: params,
-      signature: this.signature,
-    }, callback);
+    return this.client['delete'](
+      {
+        url: 'feed/' + this.feedUrl + '/' + identifier + '/',
+        qs: params,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   addActivities: function(activities, callback) {
@@ -111,11 +124,14 @@ StreamFeed.prototype = {
     var data = {
       activities: activities,
     };
-    var xhr = this.client.post({
-      url: 'feed/' + this.feedUrl + '/',
-      body: data,
-      signature: this.signature,
-    }, callback);
+    var xhr = this.client.post(
+      {
+        url: 'feed/' + this.feedUrl + '/',
+        body: data,
+        signature: this.signature,
+      },
+      callback
+    );
     return xhr;
   },
 
@@ -140,12 +156,12 @@ StreamFeed.prototype = {
     var activityCopyLimit;
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
     var target = targetSlug + ':' + targetUserId;
 
     // check for additional options
     if (options && !options.call) {
-      if (typeof options.limit !== "undefined" && options.limit !== null) {
+      if (typeof options.limit !== 'undefined' && options.limit !== null) {
         activityCopyLimit = options.limit;
       }
     }
@@ -154,15 +170,21 @@ StreamFeed.prototype = {
       target: target,
     };
 
-    if (typeof activityCopyLimit !== "undefined" && activityCopyLimit !== null) {
+    if (
+      typeof activityCopyLimit !== 'undefined' &&
+      activityCopyLimit !== null
+    ) {
       body['activity_copy_limit'] = activityCopyLimit;
     }
 
-    return this.client.post({
-      url: 'feed/' + this.feedUrl + '/following/',
-      body: body,
-      signature: this.signature,
-    }, callback);
+    return this.client.post(
+      {
+        url: 'feed/' + this.feedUrl + '/following/',
+        body: body,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   unfollow: function(targetSlug, targetUserId, optionsOrCallback, callback) {
@@ -179,19 +201,24 @@ StreamFeed.prototype = {
      * @return {object}                XHR request object
      * @example feed.unfollow('user', '2', callback);
      */
-    var options = {}, qs = {};
+    var options = {},
+      qs = {};
     if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
     if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
-    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
+    if (typeof options.keepHistory === 'boolean' && options.keepHistory)
+      qs['keep_history'] = '1';
 
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
     var targetFeedId = targetSlug + ':' + targetUserId;
-    var xhr = this.client['delete']({
-      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-      qs: qs,
-      signature: this.signature,
-    }, callback);
+    var xhr = this.client['delete'](
+      {
+        url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+        qs: qs,
+        signature: this.signature,
+      },
+      callback
+    );
     return xhr;
   },
 
@@ -210,11 +237,14 @@ StreamFeed.prototype = {
       options.filter = options.filter.join(',');
     }
 
-    return this.client.get({
-      url: 'feed/' + this.feedUrl + '/following/',
-      qs: options,
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: 'feed/' + this.feedUrl + '/following/',
+        qs: options,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   followers: function(options, callback) {
@@ -233,11 +263,14 @@ StreamFeed.prototype = {
       options.filter = options.filter.join(',');
     }
 
-    return this.client.get({
-      url: 'feed/' + this.feedUrl + '/followers/',
-      qs: options,
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: 'feed/' + this.feedUrl + '/followers/',
+        qs: options,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   get: function(options, callback) {
@@ -259,11 +292,14 @@ StreamFeed.prototype = {
       options['mark_seen'] = options['mark_seen'].join(',');
     }
 
-    return this.client.get({
-      url: 'feed/' + this.feedUrl + '/',
-      qs: options,
-      signature: this.signature,
-    }, callback);
+    return this.client.get(
+      {
+        url: 'feed/' + this.feedUrl + '/',
+        qs: options,
+        signature: this.signature,
+      },
+      callback
+    );
   },
 
   getFayeClient: function() {
@@ -290,14 +326,19 @@ StreamFeed.prototype = {
      * });
      */
     if (!this.client.appId) {
-      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
+      throw new errors.SiteError(
+        'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);'
+      );
     }
 
-    var subscription = this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+    var subscription = this.getFayeClient().subscribe(
+      '/' + this.notificationChannel,
+      callback
+    );
     this.client.subscriptions['/' + this.notificationChannel] = {
       token: this.token,
       userId: this.notificationChannel,
-      fayeSubscription: subscription
+      fayeSubscription: subscription,
     };
 
     return subscription;
@@ -308,7 +349,9 @@ StreamFeed.prototype = {
      * Cancel updates created via feed.subscribe()
      * @return void
      */
-    var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
+    var streamSubscription = this.client.subscriptions[
+      '/' + this.notificationChannel
+    ];
     if (streamSubscription) {
       delete this.client.subscriptions['/' + this.notificationChannel];
       streamSubscription.fayeSubscription.cancel();
@@ -328,7 +371,10 @@ StreamFeed.prototype = {
      * client.getReadOnlyToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', { feedId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
   },
 
   getReadWriteToken: function() {
@@ -344,69 +390,83 @@ StreamFeed.prototype = {
      * client.getReadWriteToken('user', '1');
      */
     var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', { feedId: feedId, expireTokens: this.client.expireTokens });
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
   },
 
-  updateActivityToTargets: function (foreign_id, time, new_targets, added_targets, removed_targets) {
-      /**
-       * Updates an activity's "to" fields
-       * @since 3.10.0
-       * @param {string} foreign_id The foreign_id of the activity to update
-       * @param {string} time The time of the activity to update
-       * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
-       * @param {array} added_targets Add these new targets to the activity
-       * @param {array} removed_targets Remove these targets from the activity
-      */
+  updateActivityToTargets: function(
+    foreign_id,
+    time,
+    new_targets,
+    added_targets,
+    removed_targets
+  ) {
+    /**
+     * Updates an activity's "to" fields
+     * @since 3.10.0
+     * @param {string} foreign_id The foreign_id of the activity to update
+     * @param {string} time The time of the activity to update
+     * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
+     * @param {array} added_targets Add these new targets to the activity
+     * @param {array} removed_targets Remove these targets from the activity
+     */
 
+    if (!foreign_id) {
+      throw new Error('Missing `foreign_id` parameter!');
+    } else if (!time) {
+      throw new Error('Missing `time` parameter!');
+    }
 
-      if (!foreign_id) {
-          throw new Error('Missing `foreign_id` parameter!');
-      } else if (!time) {
-          throw new Error('Missing `time` parameter!');
+    if (!new_targets && !added_targets && !removed_targets) {
+      throw new Error(
+        'Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`'
+      );
+    }
+
+    if (new_targets) {
+      if (added_targets || removed_targets) {
+        throw new Error(
+          "Can't include add_targets or removed_targets if you're also including new_targets"
+        );
       }
+    }
 
-      if (!new_targets && !added_targets && !removed_targets) {
-          throw new Error('Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`');
-      }
-
-      if (new_targets) {
-          if (added_targets || removed_targets) {
-              throw new Error("Can't include add_targets or removed_targets if you're also including new_targets");
+    if (added_targets && removed_targets) {
+      // brute force - iterate through added, check to see if removed contains that element
+      for (var i = 0; i < added_targets.length; i++) {
+        // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
+        for (var j = 0; j < removed_targets.length; j++) {
+          if (removed_targets[j] == added_targets[i]) {
+            throw new Error(
+              "Can't have the same feed ID in added_targets and removed_targets."
+            );
           }
+        }
       }
+    }
 
-      if (added_targets && removed_targets) {
-          // brute force - iterate through added, check to see if removed contains that element
-          for (var i = 0; i < added_targets.length; i++) {
-              // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
-              for (var j = 0; j < removed_targets.length; j++) {
-                  if (removed_targets[j] == added_targets[i]) {
-                      throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
-                  }
-              }
-          }
-      }
+    var body = {
+      foreign_id: foreign_id,
+      time: time,
+    };
+    if (new_targets) {
+      body['new_targets'] = new_targets;
+    }
+    if (added_targets) {
+      body['added_targets'] = added_targets;
+    }
+    if (removed_targets) {
+      body['removed_targets'] = removed_targets;
+    }
 
-      var body = {
-          foreign_id: foreign_id,
-          time: time,
-      };
-      if (new_targets) {
-          body['new_targets'] = new_targets;
-      }
-      if (added_targets) {
-          body['added_targets'] = added_targets;
-      }
-      if (removed_targets) {
-          body['removed_targets'] = removed_targets;
-      }
-
-      return this.client.post({
-          url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
-          signature: this.signature,
-          body: body,
-      });
-  }
+    return this.client.post({
+      url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
+      signature: this.signature,
+      body: body,
+    });
+  },
 };
 
 module.exports = StreamFeed;

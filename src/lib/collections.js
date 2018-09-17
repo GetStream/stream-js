@@ -9,39 +9,38 @@ var Collections = function() {
   this.initialize.apply(this, arguments);
 };
 
-
 Collections.prototype = {
   initialize: function(client) {
     this.client = client;
   },
 
   createReference: function(collectionName, id) {
-    return "SO:" + collectionName + ":" + id;
+    return 'SO:' + collectionName + ':' + id;
   },
 
   createUserReference: function(id) {
-    return this.createReference("user", id);
+    return this.createReference('user', id);
   },
 
   upsert: function(collectionName, data, callback) {
-  /**
-   * Upsert one or more items within a collection.
-   *
-   * @method upsert
-   * @memberof Collections.prototype
-   * @param {object} collectionName - The name of the collection
-   * @param {object or array} data - A single json object or an array of objects
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object.
-  */
+    /**
+     * Upsert one or more items within a collection.
+     *
+     * @method upsert
+     * @memberof Collections.prototype
+     * @param {object} collectionName - The name of the collection
+     * @param {object or array} data - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
 
     if (!Array.isArray(data)) {
       data = [data];
     }
-    var data_json = {data: {}};
+    var data_json = { data: {} };
     data_json['data'][collectionName] = data;
 
     return this.client.post(
@@ -49,31 +48,36 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         body: data_json,
-        signature: this.client.getCollectionsToken()
+        signature: this.client.getCollectionsToken(),
       },
-      callback);
+      callback
+    );
   },
 
   select: function(collectionName, ids, callback) {
-  /**
-   * Select all objects with ids from the collection.
-   *
-   * @method select
-   * @memberof Collections.prototype
-   * @param {object} collectionName - The name of the collection
-   * @param {object or array} ids - A single json object or an array of objects
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object.
-  */
+    /**
+     * Select all objects with ids from the collection.
+     *
+     * @method select
+     * @memberof Collections.prototype
+     * @param {object} collectionName - The name of the collection
+     * @param {object or array} ids - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
 
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
     var params = {
-      foreign_ids: ids.map(function(id) { return collectionName + ":" + id;}).join(',')
+      foreign_ids: ids
+        .map(function(id) {
+          return collectionName + ':' + id;
+        })
+        .join(','),
     };
 
     return this.client.get(
@@ -81,34 +85,39 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         qs: params,
-        signature: this.client.getCollectionsToken()
+        signature: this.client.getCollectionsToken(),
       },
-      callback);
+      callback
+    );
   },
 
   delete: function(collectionName, ids, callback) {
-  /**
-   * Remove all objects by id from the collection.
-   *
-   * @method delete
-   * @memberof Collections.prototype
-   * @param {object} collectionName - The name of the collection
-   * @param {object or array} ids - A single json object or an array of objects
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object.
-  */
+    /**
+     * Remove all objects by id from the collection.
+     *
+     * @method delete
+     * @memberof Collections.prototype
+     * @param {object} collectionName - The name of the collection
+     * @param {object or array} ids - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
 
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
-    ids = ids.map(function(id) { return id.toString();}).join(',');
+    ids = ids
+      .map(function(id) {
+        return id.toString();
+      })
+      .join(',');
 
     var params = {
       collection_name: collectionName,
-      ids: ids
+      ids: ids,
     };
 
     return this.client.delete(
@@ -116,9 +125,10 @@ Collections.prototype = {
         url: 'meta/',
         serviceName: 'api',
         qs: params,
-        signature: this.client.getCollectionsToken()
+        signature: this.client.getCollectionsToken(),
       },
-      callback);
+      callback
+    );
   },
 };
 
