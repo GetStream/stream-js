@@ -47,7 +47,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
         actorName: 'abc',
         verb: 'follow',
       },
-      function(error, response, body) {
+      function(error) {
         expect(error).to.be.an(Object);
         done();
       }
@@ -205,7 +205,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return self.user4
       .addActivity(activity)
-      .then(function(body) {
+      .then(function() {
         return self.user4.removeActivity({
           foreignId: 'add:2',
         });

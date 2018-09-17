@@ -1,5 +1,4 @@
-var expect = require('expect.js'),
-  qc = require('quickcheck'),
+var qc = require('quickcheck'),
   qcJWT = require('../utils/jwt'),
   signing = signing || require('../../../src/lib/signing');
 

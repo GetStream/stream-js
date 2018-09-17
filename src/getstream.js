@@ -29,7 +29,7 @@ function connect(apiKey, apiSecret, appId, options) {
    * "https://thierry:pass@gestream.io/?app=1"
    */
   if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(
       process.env.STREAM_URL
     ); // eslint-disable-line no-useless-escape
     apiKey = parts[1];

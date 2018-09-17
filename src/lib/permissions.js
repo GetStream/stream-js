@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var StreamPermissions = function() {
   this.initialize.apply(this, arguments);
 };

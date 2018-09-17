@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var StreamObjectStore = function() {
   this.initialize.apply(this, arguments);
 };

@@ -2,10 +2,6 @@ var { CloudContext } = require('./utils');
 
 describe('Personalized enrichment story', () => {
   let ctx = new CloudContext();
-  let eatCheeseBurgerActivity;
-  let like;
-  let like2;
-  let comment;
 
   describe('When alice reads her personalization feed', () => {
     ctx.requestShouldError(404, async () => {

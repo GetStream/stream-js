@@ -4,8 +4,6 @@ var config = require('../utils/config'),
   url = require('url'),
   request = require('request'),
   expect = require('expect.js'),
-  afterEachFn = require('../utils/hooks').afterEach,
-  beforeEachFn = require('../utils/hooks').beforeEach,
   errors = require('../../../src/lib/errors'),
   qs = require('qs');
 

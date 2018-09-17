@@ -20,7 +20,7 @@ describe('Images', () => {
 
   describe('When the image ${imageUrl} is requested', () => {
     ctx.test('should return 200', function(done) {
-      request.get(imageUrl, function(err, res, body) {
+      request.get(imageUrl, function(err, res) {
         res.statusCode.should.eql(200);
         done();
       });
@@ -42,7 +42,7 @@ describe('Images', () => {
 
   describe('When the thumbnail is requested', () => {
     ctx.test('should return 200', function(done) {
-      request.get(imageUrl, function(err, res, body) {
+      request.get(imageUrl, function(err, res) {
         res.statusCode.should.eql(200);
         done();
       });

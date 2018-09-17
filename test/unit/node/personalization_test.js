@@ -2,14 +2,13 @@ var expect = require('expect.js'),
   beforeEachFn = require('../utils/hooks').beforeEach,
   errors = require('../../../src/getstream').errors,
   td = require('testdouble'),
-  stream = require('../../../src/getstream'),
-  signing = require('../../../src/lib/signing'),
   StreamClient = require('../../../src/lib/client');
 
 describe('[UNIT] Stream Personalization (node)', function() {
   let get;
   let post;
   let del;
+  // eslint-disable-next-line no-unused-vars
   let callback;
 
   beforeEach(beforeEachFn);

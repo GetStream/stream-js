@@ -3,7 +3,6 @@ var stream = require('../../../src/getstream'),
   expect = require('expect.js'),
   init = require('../utils/hooks').init,
   Promise = require('../../../src/lib/promise'),
-  utils = require('../utils/index'),
   beforeEachFn = require('../utils/hooks').beforeEach;
 
 describe('[INTEGRATION] Stream client (Faye)', function() {
@@ -25,8 +24,7 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
       testUser2 = this.user2,
       testUser3 = this.user3;
 
-    var subscribes = [],
-      messages = 0,
+    var messages = 0,
       N_MESSAGES = 3,
       activity = {
         verb: 'test',
@@ -82,14 +80,14 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
       if (response.statusCode !== 201) done(body);
     };
 
-    var doneYet = function(obj) {
+    var doneYet = function() {
       messages++;
 
       if (messages === 2) done();
     };
 
     testUser1
-      .subscribe(function(message) {
+      .subscribe(function() {
         done('testUser1 should not receive any messages');
       })
       .then(function() {
@@ -102,7 +100,7 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
   });
 
   it('fayeSubscribeScope', function(done) {
-    var client = this.user1ReadOnly.getFayeClient();
+    this.user1ReadOnly.getFayeClient();
     var isDone = false;
 
     var doneYet = function() {
@@ -117,7 +115,7 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
   });
 
   it('fayeSubscribeScopeTampered', function(done) {
-    var client = this.user1ReadOnly.getFayeClient();
+    this.user1ReadOnly.getFayeClient();
     var isDone = false;
 
     var doneYet = function() {

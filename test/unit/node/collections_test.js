@@ -2,9 +2,6 @@ var expect = require('expect.js'),
   beforeEachFn = require('../utils/hooks').beforeEach,
   errors = require('../../../src/getstream').errors,
   td = require('testdouble'),
-  stream = require('../../../src/getstream'),
-  signing = require('../../../src/lib/signing'),
-  Collections = require('../../../src/lib/collections'),
   StreamClient = require('../../../src/lib/client');
 
 describe('[UNIT] Stream Collections (node)', function() {

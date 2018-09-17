@@ -1,5 +1,4 @@
 var stream = require('../../../src/getstream'),
-  feed = require('../utils').feed,
   config = require('./config');
 
 function jwt(resource, action, options) {

@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var Collections = function() {
   /**
    * Manage api calls for collections

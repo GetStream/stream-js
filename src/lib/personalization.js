@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var Personalization = function() {
   /**
    * Manage api calls for personalization

@@ -14,7 +14,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       {
         limit: 1,
       },
-      function(error, response, body) {
+      function(error, response) {
         if (error) done(error);
         expect(response.statusCode).to.eql(200);
 
@@ -181,7 +181,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivities(activitiesCreated);
       })
-      .then(function(body) {
+      .then(function() {
         return self.user1.get({
           limit: 10,
         });
@@ -273,7 +273,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     this.client.followMany(
       follows,
       20,
-      wrapCB(201, done, function(error, response, body) {
+      wrapCB(201, done, function(error, response) {
         expect(response.req.path.indexOf('activity_copy_limit=20')).to.not.be(
           0
         );

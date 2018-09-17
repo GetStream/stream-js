@@ -2,6 +2,7 @@ var { CloudContext } = require('./utils');
 var randUserId = require('../utils/hooks').randUserId;
 var util = require('util');
 
+// eslint-disable-next-line no-unused-vars
 function log(...args) {
   console.log(
     util.inspect(...args, { showHidden: false, depth: null, colors: true })
@@ -12,7 +13,6 @@ describe('Permission managament', () => {
   let ctx = new CloudContext();
   let policies;
   let fixedPolicies = [];
-  let newPolicy;
   describe('When alice requests to see the policies', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.permissions.get();
