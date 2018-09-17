@@ -9,7 +9,7 @@ function validateFeedId(feedId) {
   var parts = feedId.split(':');
   if (parts.length !== 2) {
     throw new errors.FeedError(
-      'Invalid feedId, expected something like user:1 got ' + feedId
+      'Invalid feedId, expected something like user:1 got ' + feedId,
     );
   }
 
@@ -29,7 +29,7 @@ function validateFeedSlug(feedSlug) {
   var valid = validFeedSlugRe.test(feedSlug);
   if (!valid) {
     throw new errors.FeedError(
-      'Invalid feedSlug, please use letters, numbers or _: ' + feedSlug
+      'Invalid feedSlug, please use letters, numbers or _: ' + feedSlug,
     );
   }
 
@@ -45,7 +45,7 @@ function validateUserId(userId) {
   var valid = validUserIdRe.test(userId);
   if (!valid) {
     throw new errors.FeedError(
-      'Invalid userId, please use letters, numbers, - or _: ' + userId
+      'Invalid userId, please use letters, numbers, - or _: ' + userId,
     );
   }
 

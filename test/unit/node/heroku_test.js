@@ -41,7 +41,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect();
       expect(this.client.apiKey).to.eql('bvt88g4kvc63');
       expect(this.client.apiSecret).to.eql(
-        'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd'
+        'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd',
       );
       expect(this.client.appId).to.eql('669');
       expect(this.client.baseUrl).to.eql('https://api.stream-io-api.com/api/');
@@ -57,7 +57,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect();
       expect(this.client.apiKey).to.eql('bvt88g4kvc63');
       expect(this.client.apiSecret).to.eql(
-        'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd'
+        'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd',
       );
       expect(this.client.appId).to.eql('669');
       expect(this.client.baseUrl).to.eql('https://api.getstream.io/api/');
@@ -73,11 +73,11 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect();
       expect(this.client.apiKey).to.eql('ahj2ndz7gsan');
       expect(this.client.apiSecret).to.eql(
-        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy'
+        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy',
       );
       expect(this.client.appId).to.eql('1');
       expect(this.client.baseUrl).to.eql(
-        'https://us-east-api.stream-io-api.com/api/'
+        'https://us-east-api.stream-io-api.com/api/',
       );
       delete process.env['STREAM_URL'];
       done();
@@ -91,11 +91,11 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect();
       expect(this.client.apiKey).to.eql('ahj2ndz7gsan');
       expect(this.client.apiSecret).to.eql(
-        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy'
+        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy',
       );
       expect(this.client.appId).to.eql('1');
       expect(this.client.baseUrl).to.eql(
-        'https://us-east-api.getstream.io/api/'
+        'https://us-east-api.getstream.io/api/',
       );
       delete process.env['STREAM_URL'];
       delete process.env['STREAM_BASE_URL'];
@@ -108,7 +108,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect(
         'a',
         'b',
-        'c'
+        'c',
       );
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');
@@ -123,7 +123,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       this.client = stream.connect(
         'a',
         'b',
-        'c'
+        'c',
       );
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');

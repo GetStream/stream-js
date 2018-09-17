@@ -50,7 +50,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       function(error) {
         expect(error).to.be.an(Object);
         done();
-      }
+      },
     );
   });
 

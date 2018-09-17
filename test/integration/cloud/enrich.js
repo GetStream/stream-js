@@ -131,7 +131,7 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'latest_reactions'
+        'latest_reactions',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -146,7 +146,7 @@ describe('Enrich story', () => {
         'contain the reaction of bob in latest_reactions',
         () => {
           ctx.activity.latest_reactions.like.should.eql([like]);
-        }
+        },
       );
     });
   });
@@ -208,7 +208,7 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
         'latest_reactions',
-        'reaction_counts'
+        'reaction_counts',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -222,7 +222,7 @@ describe('Enrich story', () => {
             like: [like2],
             comment: [comment],
           });
-        }
+        },
       );
 
       ctx.activityShould(
@@ -232,7 +232,7 @@ describe('Enrich story', () => {
             like: [like2, like],
             comment: [comment],
           });
-        }
+        },
       );
 
       ctx.activityShould('have the correct counts for reactions', () => {
@@ -265,7 +265,7 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
         'latest_reactions',
-        'reaction_counts'
+        'reaction_counts',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -278,7 +278,7 @@ describe('Enrich story', () => {
           ctx.activity.own_reactions.should.eql({
             comment: [comment],
           });
-        }
+        },
       );
 
       ctx.activityShould(
@@ -288,7 +288,7 @@ describe('Enrich story', () => {
             like: [like],
             comment: [comment],
           });
-        }
+        },
       );
 
       ctx.activityShould('have the correct counts for reactions', () => {

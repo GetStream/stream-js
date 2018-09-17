@@ -120,7 +120,7 @@ exports.JWTUserSessionToken = function(
   apiSecret,
   userId,
   extraData = {},
-  jwtOptions = {}
+  jwtOptions = {},
 ) {
   /**
    * Creates the JWT token that can be used for a UserSession
@@ -144,7 +144,7 @@ exports.JWTUserSessionToken = function(
 
   var opts = Object.assign(
     { algorithm: 'HS256', noTimestamp: true },
-    jwtOptions
+    jwtOptions,
   );
   var token = jwt.sign(payload, apiSecret, opts);
   return token;

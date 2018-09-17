@@ -23,7 +23,7 @@ module.exports = {
           feeds: feeds,
         },
       },
-      callback
+      callback,
     );
   },
 
@@ -62,7 +62,7 @@ module.exports = {
         body: follows,
         qs: qs,
       },
-      callback
+      callback,
     );
   },
 
@@ -81,7 +81,7 @@ module.exports = {
         url: 'unfollow_many/',
         body: unfollows,
       },
-      callback
+      callback,
     );
   },
 
@@ -98,7 +98,7 @@ module.exports = {
      */
     if (!this.apiSecret) {
       throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);'
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
       );
     }
 
@@ -122,7 +122,7 @@ module.exports = {
           key: this.apiSecret,
           keyId: this.apiKey,
         });
-      }.bind(this)
+      }.bind(this),
     );
   },
 };

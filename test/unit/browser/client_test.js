@@ -14,7 +14,7 @@ describe('[UNIT] Stream Client (browser)', function() {
     function createFn() {
       stream.connect(
         'abcdefgh',
-        '123456789'
+        '123456789',
       );
     }
 
@@ -28,7 +28,7 @@ describe('[UNIT] Stream Client (browser)', function() {
       'abcdefgh',
       null,
       1000,
-      { option: true }
+      { option: true },
     );
 
     expect(client.apiSecret).to.be(null);
@@ -45,13 +45,13 @@ describe('[UNIT] Stream Client (browser)', function() {
         fayeUrl: 'https://hello.world',
         expireTokens: true,
         location: 'nederland',
-      }
+      },
     );
 
     expect(client.version).to.be('v2.0');
     expect(client.expireTokens).to.be(true);
     expect(client.baseUrl).to.be(
-      'https://nederland-api.stream-io-api.com/api/'
+      'https://nederland-api.stream-io-api.com/api/',
     );
     expect(client.fayeUrl).to.be('https://hello.world');
   });

@@ -42,8 +42,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             body: expected_body,
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -66,8 +66,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             body: expected_body,
             signature: fakedJWT,
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -92,8 +92,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             body: expected_body,
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -119,8 +119,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             body: expected_body,
             signature: fakedJWT,
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -142,8 +142,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -164,8 +164,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -191,8 +191,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             },
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -219,8 +219,8 @@ describe('[UNIT] Stream Collections (node)', function() {
             },
             signature: fakedJWT,
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 

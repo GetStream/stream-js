@@ -113,7 +113,7 @@ StreamClient.prototype = {
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
       throw new errors.FeedError(
-        'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.'
+        'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
   },
@@ -128,11 +128,11 @@ StreamClient.prototype = {
         this.apiSecret,
         'personalization',
         '*',
-        { userId: '*', feedId: '*', expireTokens: this.expireTokens }
+        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
       );
     } else {
       throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);'
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
       );
     }
 
@@ -149,11 +149,11 @@ StreamClient.prototype = {
         this.apiSecret,
         'collections',
         '*',
-        { userId: '*', feedId: '*', expireTokens: this.expireTokens }
+        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
       );
     } else {
       throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);'
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
       );
     }
 
@@ -168,7 +168,7 @@ StreamClient.prototype = {
       });
     } else {
       throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);'
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
       );
     }
   },
@@ -290,8 +290,8 @@ StreamClient.prototype = {
               ' with HTTP status code ' +
               response.statusCode,
             body,
-            response
-          )
+            response,
+          ),
         );
       } else {
         fulfill(body);
@@ -564,7 +564,7 @@ StreamClient.prototype = {
         kwargs.gzip = true;
         var callback = this.wrapPromiseTask(cb, fulfill, reject);
         this.request(kwargs, callback);
-      }.bind(this)
+      }.bind(this),
     );
   },
 
@@ -586,7 +586,7 @@ StreamClient.prototype = {
         kwargs.gzip = true;
         var callback = this.wrapPromiseTask(cb, fulfill, reject);
         this.request(kwargs, callback);
-      }.bind(this)
+      }.bind(this),
     );
   },
 
@@ -608,7 +608,7 @@ StreamClient.prototype = {
         kwargs.method = 'DELETE';
         var callback = this.wrapPromiseTask(cb, fulfill, reject);
         this.request(kwargs, callback);
-      }.bind(this)
+      }.bind(this),
     );
   },
 
@@ -630,7 +630,7 @@ StreamClient.prototype = {
         kwargs.gzip = true;
         var callback = this.wrapPromiseTask(cb, fulfill, reject);
         this.request(kwargs, callback);
-      }.bind(this)
+      }.bind(this),
     );
   },
 
@@ -640,7 +640,7 @@ StreamClient.prototype = {
       this.apiKey,
       null,
       this.appId,
-      this.options
+      this.options,
     );
     return cClient.createUserSession(userToken);
   },
@@ -675,7 +675,7 @@ StreamClient.prototype = {
         body: data,
         signature: authToken,
       },
-      callback
+      callback,
     );
   },
 
@@ -732,7 +732,7 @@ StreamClient.prototype = {
         qs: qs,
         signature: authToken,
       },
-      callback
+      callback,
     );
   },
 
@@ -795,7 +795,7 @@ StreamClient.prototype = {
         body: data,
         signature: authToken,
       },
-      callback
+      callback,
     );
   },
 };
@@ -804,7 +804,7 @@ if (qs) {
   StreamClient.prototype.createRedirectUrl = function(
     targetUrl,
     userId,
-    events
+    events,
   ) {
     /**
      * Creates a redirect url for tracking the given events in the context of
@@ -821,7 +821,7 @@ if (qs) {
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
       throw new errors.MissingSchemaError(
-        'Invalid URI: "' + url.format(uri) + '"'
+        'Invalid URI: "' + url.format(uri) + '"',
       );
     }
 
@@ -829,7 +829,7 @@ if (qs) {
       this.apiSecret,
       'redirect_and_track',
       '*',
-      { userId: '*', expireTokens: this.expireTokens }
+      { userId: '*', expireTokens: this.expireTokens },
     );
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {

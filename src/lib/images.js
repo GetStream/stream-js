@@ -34,7 +34,7 @@ StreamImageStore.prototype = {
         headers: new Headers({
           Authorization: this.token,
         }),
-      }
+      },
     ).then((r) => {
       return r.json();
     });
@@ -61,7 +61,7 @@ StreamImageStore.prototype = {
     uri,
     w,
     h,
-    { crop, resize } = { crop: 'center', resize: 'clip' }
+    { crop, resize } = { crop: 'center', resize: 'clip' },
   ) {
     return this.process(uri, { w, h, crop, resize });
   },

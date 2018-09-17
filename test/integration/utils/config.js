@@ -6,7 +6,7 @@ var API_KEY = process.env.STREAM_API_KEY,
 
 if (!API_KEY || !API_SECRET || !APP_ID) {
   throw new Error(
-    'Expected STREAM_API_KEY, STREAM_API_SECRET, and STREAM_APP_ID env vars'
+    'Expected STREAM_API_KEY, STREAM_API_SECRET, and STREAM_APP_ID env vars',
   );
 }
 

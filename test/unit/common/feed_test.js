@@ -33,7 +33,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
     expect(feed.feedTogether).to.be('usermatthisk');
     expect(feed.signature).to.be('usermatthisk token');
     expect(feed.notificationChannel).to.be(
-      'site-' + this.client.appId + '-feed-usermatthisk'
+      'site-' + this.client.appId + '-feed-usermatthisk',
     );
   });
 
@@ -50,8 +50,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: activity,
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -66,8 +66,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: activity,
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -85,8 +85,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: { activities: activities },
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -101,8 +101,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: { activities: activities },
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -135,8 +135,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: body,
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -155,8 +155,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: body,
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -175,8 +175,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: body,
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -196,8 +196,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             body: body,
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -226,8 +226,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -242,8 +242,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -259,8 +259,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -277,8 +277,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -294,8 +294,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -310,8 +310,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -329,8 +329,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -346,8 +346,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -362,8 +362,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -381,8 +381,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -398,8 +398,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -414,8 +414,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
 
@@ -435,8 +435,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -447,7 +447,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
           mark_read: ['a', 'b'],
           mark_seen: ['c', 'd'],
         },
-        cb
+        cb,
       );
 
       td.verify(
@@ -460,8 +460,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             },
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -541,8 +541,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -556,8 +556,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: { foreign_id: '1' },
             signature: 'usermatthisk token',
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -572,8 +572,8 @@ describe('[UNIT] Stream Feed (Common)', function() {
             qs: {},
             signature: 'usermatthisk token',
           },
-          cb
-        )
+          cb,
+        ),
       );
     });
   });
@@ -604,7 +604,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
           'foreign_id:1234',
           new Date(),
           ['targetFeed:1234'],
-          ['anotherTargetFeed:1234']
+          ['anotherTargetFeed:1234'],
         );
       };
       var newTargetsWithRemove = function() {
@@ -613,7 +613,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
           new Date(),
           ['targetFeed:1234'],
           null,
-          ['anotherTargetFeed:1234']
+          ['anotherTargetFeed:1234'],
         );
       };
       expect(newTargetsWithAdd).to.throwException();
@@ -627,7 +627,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
           new Date(),
           null,
           ['targetFeed:1234'],
-          ['targetFeed:1234']
+          ['targetFeed:1234'],
         );
       };
       var sameTargets2 = function() {
@@ -636,7 +636,7 @@ describe('[UNIT] Stream Feed (Common)', function() {
           new Date(),
           null,
           ['targetFeed:1234', 'targetFeed:5678'],
-          ['targetFeed:1234', 'targetFeed:0000']
+          ['targetFeed:1234', 'targetFeed:0000'],
         );
       };
       expect(sameTargets1).to.throwException();

@@ -28,7 +28,7 @@ function jwt(resource, action, options) {
     'HS256',
     header,
     payload,
-    process.env.STREAM_API_SECRET
+    process.env.STREAM_API_SECRET,
   );
 
   return res;
@@ -56,7 +56,7 @@ function initBrowser() {
 function beforeEachNode() {
   this.client = stream.connect(
     config.API_KEY,
-    config.API_SECRET
+    config.API_SECRET,
   );
   this.client = stream.connect(
     config.API_KEY,
@@ -66,7 +66,7 @@ function beforeEachNode() {
       group: 'testCycle',
       location: 'qa',
       protocol: 'https',
-    }
+    },
   );
   this.user1 = this.client.feed('user', randUserId('11'));
   this.user2 = this.client.feed('user', randUserId('22'));
@@ -95,7 +95,7 @@ function beforeEachBrowser() {
       group: 'browserTestCycle',
       location: 'qa',
       protocol: 'https',
-    }
+    },
   );
 
   if (this.localRun) {

@@ -52,7 +52,7 @@ StreamCloudClient.prototype.permissions = function(token) {
 
 StreamCloudClient.prototype.createUserSession = function(
   userId,
-  userAuthToken
+  userAuthToken,
 ) {
   return new StreamUserSession(this, userId, userAuthToken);
 };
@@ -95,7 +95,7 @@ StreamCloudFeed.prototype.get = function(options, callback) {
       qs: options,
       signature: this.signature,
     },
-    callback
+    callback,
   );
 };
 
@@ -131,7 +131,7 @@ StreamCloudFeed.prototype.addActivities = function(activities, callback) {
 StreamCloudFeed.prototype.getActivityDetail = function(
   activity_id,
   options,
-  callback
+  callback,
 ) {
   /**
    * Retrieves one activity from a feed and adds enrichment
@@ -150,9 +150,9 @@ StreamCloudFeed.prototype.getActivityDetail = function(
   return this.get(
     Object.assign(
       { id_lte: activity_id, id_gte: activity_id, limit: 1 },
-      options
+      options,
     ),
-    callback
+    callback,
   );
 };
 

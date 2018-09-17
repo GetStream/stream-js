@@ -232,7 +232,7 @@ describe('[UNIT] Stream Client (Common)', function() {
           done();
         },
         fulfill,
-        reject
+        reject,
       );
 
       task(null, { statusCode: 200 }, {});
@@ -244,7 +244,7 @@ describe('[UNIT] Stream Client (Common)', function() {
       var feedGroup = 'user';
       var url = this.client.enrichUrl(feedGroup);
       expect(url).to.be(
-        this.client.baseUrl + this.client.version + '/' + feedGroup
+        this.client.baseUrl + this.client.version + '/' + feedGroup,
       );
     });
   });

@@ -35,7 +35,7 @@ describe('[INTEGRATION] Stream client (Promises)', function() {
       },
       function() {
         done();
-      }
+      },
     );
   });
 });

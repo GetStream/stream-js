@@ -48,7 +48,7 @@ Collections.prototype = {
         body: data_json,
         signature: this.client.getCollectionsToken(),
       },
-      callback
+      callback,
     );
   },
 
@@ -85,7 +85,7 @@ Collections.prototype = {
         qs: params,
         signature: this.client.getCollectionsToken(),
       },
-      callback
+      callback,
     );
   },
 
@@ -125,7 +125,7 @@ Collections.prototype = {
         qs: params,
         signature: this.client.getCollectionsToken(),
       },
-      callback
+      callback,
     );
   },
 };

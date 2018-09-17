@@ -6,7 +6,7 @@ describe('OpenGraph story', () => {
   describe('When alice requests opengraph info for our blog', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.og(
-        'https://getstream.io/blog/try-out-the-stream-api-with-postman'
+        'https://getstream.io/blog/try-out-the-stream-api-with-postman',
       );
     });
 
@@ -37,7 +37,7 @@ describe('OpenGraph story', () => {
   describe('When alice requests opengraph info for a binary blob', () => {
     ctx.requestShouldError(400, async () => {
       ctx.response = await ctx.alice.og(
-        'https://github.com/buger/goreplay/releases/download/v0.16.1/gor_0.16.1_mac.tar.gz'
+        'https://github.com/buger/goreplay/releases/download/v0.16.1/gor_0.16.1_mac.tar.gz',
       );
     });
 

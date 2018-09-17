@@ -84,7 +84,7 @@ class CloudContext {
   createUserSession(userId, extraData) {
     userId = randUserId(userId);
     return this.client.createUserSession(
-      signing.JWTUserSessionToken(config.API_SECRET, userId, extraData)
+      signing.JWTUserSessionToken(config.API_SECRET, userId, extraData),
     );
   }
 
@@ -155,7 +155,7 @@ class CloudContext {
           e.response.statusCode.should.equal(statusCode);
           this.response = e.error;
         }
-      }
+      },
     );
   }
 
@@ -235,7 +235,7 @@ class CloudContext {
         () => {
           this.response.collection.should.equal('food');
           this.response.data.should.eql(this.cheeseBurgerData);
-        }
+        },
       );
 
       this.afterTest(() => {

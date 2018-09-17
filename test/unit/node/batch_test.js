@@ -37,8 +37,8 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
             feeds: feeds,
           },
         },
-        undefined
-      )
+        undefined,
+      ),
     );
   });
 
@@ -61,8 +61,8 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
             activity_copy_limit: 10,
           },
         },
-        cb
-      )
+        cb,
+      ),
     );
   });
 
@@ -83,8 +83,8 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
           body: follows,
           qs: {},
         },
-        cb
-      )
+        cb,
+      ),
     );
   });
 
@@ -107,8 +107,8 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
             activity_copy_limit: 0,
           },
         },
-        cb
-      )
+        cb,
+      ),
     );
   });
 
@@ -147,8 +147,8 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
           url: 'unfollow_many/',
           body: unfollows,
         },
-        cb
-      )
+        cb,
+      ),
     );
   });
 });

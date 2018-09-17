@@ -42,8 +42,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: options,
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -64,8 +64,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: options,
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
 
@@ -84,8 +84,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: {},
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -105,8 +105,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: {},
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
   });
@@ -130,8 +130,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: data,
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -154,8 +154,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: data,
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
 
@@ -176,8 +176,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: {},
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -199,8 +199,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: {},
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
 
@@ -220,8 +220,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: {},
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -242,8 +242,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             body: {},
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
   });
@@ -265,8 +265,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: options,
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -287,8 +287,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: options,
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
 
@@ -307,8 +307,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: {},
             signature: fakedJWT,
           },
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -328,8 +328,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
             qs: {},
             signature: fakedJWT,
           },
-          (callback = cb)
-        )
+          (callback = cb),
+        ),
       );
     });
   });

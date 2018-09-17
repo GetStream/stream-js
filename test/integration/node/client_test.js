@@ -22,7 +22,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
 
         done();
-      }
+      },
     );
   });
 
@@ -275,10 +275,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       20,
       wrapCB(201, done, function(error, response) {
         expect(response.req.path.indexOf('activity_copy_limit=20')).to.not.be(
-          0
+          0,
         );
         done();
-      })
+      }),
     );
   });
 
@@ -482,7 +482,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             timestamp,
             null,
             null,
-            ['user:5678']
+            ['user:5678'],
           );
         })
         .then(function() {
@@ -514,7 +514,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             timestamp,
             null,
             null,
-            ['user:1234']
+            ['user:1234'],
           );
         })
         .then(function() {
@@ -546,7 +546,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             timestamp,
             null,
             ['user:5678'],
-            ['user:1234']
+            ['user:1234'],
           );
         })
         .then(function() {
@@ -579,7 +579,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             timestamp,
             null,
             ['user:5678'],
-            ['user:1234']
+            ['user:1234'],
           );
         })
         .then(function() {

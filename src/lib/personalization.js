@@ -45,7 +45,7 @@ Personalization.prototype = {
         qs: options,
         signature: this.client.getPersonalizationToken(),
       },
-      callback
+      callback,
     );
   },
 
@@ -80,7 +80,7 @@ Personalization.prototype = {
         body: data,
         signature: this.client.getPersonalizationToken(),
       },
-      callback
+      callback,
     );
   },
 
@@ -110,7 +110,7 @@ Personalization.prototype = {
         qs: options,
         signature: this.client.getPersonalizationToken(),
       },
-      callback
+      callback,
     );
   },
 };

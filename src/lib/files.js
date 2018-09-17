@@ -36,7 +36,7 @@ StreamFileStore.prototype = {
         headers: new Headers({
           Authorization: this.token,
         }),
-      }
+      },
     ).then((r) => {
       return r.json();
     });

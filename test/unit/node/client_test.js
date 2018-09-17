@@ -48,7 +48,7 @@ describe('[UNIT] Stream Client (Node)', function() {
         'https://personalization.stream-io-api.com/personalization/' +
           this.client.version +
           '/' +
-          resource
+          resource,
       );
     });
   });
@@ -94,8 +94,8 @@ describe('[UNIT] Stream Client (Node)', function() {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -113,8 +113,8 @@ describe('[UNIT] Stream Client (Node)', function() {
           td.matchers.contains({
             url: 'activities/',
           }),
-          fn
-        )
+          fn,
+        ),
       );
     });
 
@@ -131,8 +131,8 @@ describe('[UNIT] Stream Client (Node)', function() {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined
-        )
+          undefined,
+        ),
       );
     });
 
@@ -150,8 +150,8 @@ describe('[UNIT] Stream Client (Node)', function() {
           td.matchers.contains({
             url: 'activities/',
           }),
-          fn
-        )
+          fn,
+        ),
       );
     });
   });
@@ -206,8 +206,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined
-          )
+            undefined,
+          ),
         );
       });
 
@@ -225,8 +225,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activities/',
             }),
-            fn
-          )
+            fn,
+          ),
         );
       });
     });
@@ -248,8 +248,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined
-          )
+            undefined,
+          ),
         );
       });
 
@@ -270,8 +270,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activities/',
             }),
-            fn
-          )
+            fn,
+          ),
         );
       });
     });
@@ -342,8 +342,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined
-          )
+            undefined,
+          ),
         );
       });
 
@@ -365,8 +365,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activity/',
             }),
-            fn
-          )
+            fn,
+          ),
         );
       });
     });
@@ -390,8 +390,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined
-          )
+            undefined,
+          ),
         );
       });
 
@@ -414,8 +414,8 @@ describe('[UNIT] Stream Client (Node)', function() {
             td.matchers.contains({
               url: 'activity/',
             }),
-            fn
-          )
+            fn,
+          ),
         );
       });
     });
@@ -425,11 +425,11 @@ describe('[UNIT] Stream Client (Node)', function() {
     it('generate correct token', function() {
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       var token = client.getAnalyticsToken();
       expect(token).to.be(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc',
       );
     });
   });
@@ -438,22 +438,22 @@ describe('[UNIT] Stream Client (Node)', function() {
     it('with userId only', function() {
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       var token = client.createUserSessionToken('42');
       expect(token).to.be(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
       );
     });
 
     it('with extra data', function() {
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       var token = client.createUserSessionToken('42', { a: 'b' });
       expect(token).to.be(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM'
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM',
       );
     });
   });
@@ -462,7 +462,7 @@ describe('[UNIT] Stream Client (Node)', function() {
     it('should return a user session', function() {
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       var token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM';
@@ -479,7 +479,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       expect(client.baseUrl).to.be('http://localhost:8000/api/');
 
@@ -493,7 +493,7 @@ describe('[UNIT] Stream Client (Node)', function() {
         null,
         {
           location: 'nl-NL',
-        }
+        },
       );
       expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
     });
@@ -503,7 +503,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
 
@@ -515,7 +515,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
       var client = stream.connect(
         '12345',
-        'abcdefghijklmnop'
+        'abcdefghijklmnop',
       );
       expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
 

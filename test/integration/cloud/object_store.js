@@ -19,7 +19,7 @@ describe('Object Store CRUD behaviours', () => {
       'be the same as when the cheeseburger was added',
       async () => {
         ctx.response.should.eql(ctx.cheeseBurger.full);
-      }
+      },
     );
   });
 
@@ -136,7 +136,7 @@ describe('Object Store CRUD behaviours', () => {
         ctx.response.id.should.equal(newCheeseBurgerID);
         ctx.response.collection.should.equal('food');
         ctx.response.data.should.eql(ctx.cheeseBurgerData);
-      }
+      },
     );
 
     ctx.afterTest(() => {
@@ -152,7 +152,7 @@ describe('Object Store CRUD behaviours', () => {
       'be the same as when the new cheeseburger was added',
       async () => {
         ctx.response.should.eql(newCheeseBurger);
-      }
+      },
     );
   });
 

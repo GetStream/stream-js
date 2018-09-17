@@ -25,13 +25,13 @@ StreamFeed.prototype = {
 
     if (!feedSlug || !userId) {
       throw new errors.FeedError(
-        'Please provide a feed slug and user id, ie client.feed("user", "1")'
+        'Please provide a feed slug and user id, ie client.feed("user", "1")',
       );
     }
 
     if (feedSlug.indexOf(':') !== -1) {
       throw new errors.FeedError(
-        'Please initialize the feed using client.feed("user", "1") not client.feed("user:1")'
+        'Please initialize the feed using client.feed("user", "1") not client.feed("user:1")',
       );
     }
 
@@ -41,7 +41,7 @@ StreamFeed.prototype = {
     // raise an error if there is no token
     if (!this.apiSecret && !token) {
       throw new errors.FeedError(
-        'Missing token, in client side mode please provide a feed secret'
+        'Missing token, in client side mode please provide a feed secret',
       );
     }
 
@@ -78,7 +78,7 @@ StreamFeed.prototype = {
         body: activity,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -107,7 +107,7 @@ StreamFeed.prototype = {
         qs: params,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -130,7 +130,7 @@ StreamFeed.prototype = {
         body: data,
         signature: this.signature,
       },
-      callback
+      callback,
     );
     return xhr;
   },
@@ -183,7 +183,7 @@ StreamFeed.prototype = {
         body: body,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -217,7 +217,7 @@ StreamFeed.prototype = {
         qs: qs,
         signature: this.signature,
       },
-      callback
+      callback,
     );
     return xhr;
   },
@@ -243,7 +243,7 @@ StreamFeed.prototype = {
         qs: options,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -269,7 +269,7 @@ StreamFeed.prototype = {
         qs: options,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -298,7 +298,7 @@ StreamFeed.prototype = {
         qs: options,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -327,13 +327,13 @@ StreamFeed.prototype = {
      */
     if (!this.client.appId) {
       throw new errors.SiteError(
-        'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);'
+        'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
       );
     }
 
     var subscription = this.getFayeClient().subscribe(
       '/' + this.notificationChannel,
-      callback
+      callback,
     );
     this.client.subscriptions['/' + this.notificationChannel] = {
       token: this.token,
@@ -401,7 +401,7 @@ StreamFeed.prototype = {
     time,
     new_targets,
     added_targets,
-    removed_targets
+    removed_targets,
   ) {
     /**
      * Updates an activity's "to" fields
@@ -421,14 +421,14 @@ StreamFeed.prototype = {
 
     if (!new_targets && !added_targets && !removed_targets) {
       throw new Error(
-        'Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`'
+        'Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`',
       );
     }
 
     if (new_targets) {
       if (added_targets || removed_targets) {
         throw new Error(
-          "Can't include add_targets or removed_targets if you're also including new_targets"
+          "Can't include add_targets or removed_targets if you're also including new_targets",
         );
       }
     }
@@ -440,7 +440,7 @@ StreamFeed.prototype = {
         for (var j = 0; j < removed_targets.length; j++) {
           if (removed_targets[j] == added_targets[i]) {
             throw new Error(
-              "Can't have the same feed ID in added_targets and removed_targets."
+              "Can't have the same feed ID in added_targets and removed_targets.",
             );
           }
         }

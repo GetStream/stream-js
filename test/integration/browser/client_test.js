@@ -22,7 +22,7 @@ describe('[INTEGRATION] Stream client (Browser)', function() {
     };
     var signature = signing.sign(
       process.env.STREAM_API_SECRET,
-      this.flat3.slug + this.flat3.userId
+      this.flat3.slug + this.flat3.userId,
     );
     activity['to'] = [this.flat3.id + ' ' + signature];
 

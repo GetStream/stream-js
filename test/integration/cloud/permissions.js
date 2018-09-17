@@ -5,7 +5,7 @@ var util = require('util');
 // eslint-disable-next-line no-unused-vars
 function log(...args) {
   console.log(
-    util.inspect(...args, { showHidden: false, depth: null, colors: true })
+    util.inspect(...args, { showHidden: false, depth: null, colors: true }),
   );
 }
 

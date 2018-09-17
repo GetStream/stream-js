@@ -35,7 +35,7 @@ describe('User profile story', () => {
       'updated_at',
       'data',
       'following_count',
-      'followers_count'
+      'followers_count',
     );
 
     ctx.responseShould(
@@ -43,7 +43,7 @@ describe('User profile story', () => {
       () => {
         ctx.response.id.should.equal(userFn().id);
         ctx.response.data.should.eql(data);
-      }
+      },
     );
 
     ctx.test('the local user data should be updated', () => {
@@ -55,7 +55,7 @@ describe('User profile story', () => {
       () => {
         ctx.response.following_count.should.equal(following);
         ctx.response.followers_count.should.equal(followers);
-      }
+      },
     );
   };
 
@@ -105,17 +105,17 @@ describe('User profile story', () => {
       promises.push(ctx.alice.followUser(ctx.bob.userId));
       promises.push(ctx.alice.followUser(ctx.carl.userId));
       promises.push(
-        ctx.alice.feed('timeline').follow('timeline', ctx.dave.userId)
+        ctx.alice.feed('timeline').follow('timeline', ctx.dave.userId),
       );
       promises.push(ctx.bob.followUser(ctx.alice.userId));
       promises.push(
-        ctx.bob.feed('notification').follow('user', ctx.alice.userId)
+        ctx.bob.feed('notification').follow('user', ctx.alice.userId),
       );
       promises.push(
-        ctx.carl.feed('notification').follow('user', ctx.alice.userId)
+        ctx.carl.feed('notification').follow('user', ctx.alice.userId),
       );
       promises.push(
-        ctx.dave.feed('notification').follow('user', ctx.alice.userId)
+        ctx.dave.feed('notification').follow('user', ctx.alice.userId),
       );
       await Promise.all(promises);
     });
