@@ -78,7 +78,7 @@ StreamClient.prototype = {
 
     this.handlers = {};
     this.browser =
-      typeof this.options.browser !== undefined
+      typeof this.options.browser !== 'undefined'
         ? this.options.browser
         : typeof window !== 'undefined';
     this.node = !this.browser;
