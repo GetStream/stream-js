@@ -2,6 +2,14 @@
  Change history
 ================
 
+3.21.0
+======
+:release-date: 2018-09-17
+:by: Jelte Fennema
+
+* Support for a new set of frontend API's
+
+
 3.20.0
 ======
 :release-date: 2018-07-17
