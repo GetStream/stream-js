@@ -1,7 +1,8 @@
 **/*{.,-}min.js
 test/integration/utils/kjur.js
-dist
-bin
+/dist/
+/lib/
+/bin/
 .git
 docs
 **/*.sh
