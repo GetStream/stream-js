@@ -8,8 +8,7 @@ else
 fi
 ./bin/coveralls.sh
 if [ "${RUN_LINTERS:='no'}" == "yes" ]; then
-    ./node_modules/.bin/eslint src/**/*.js;
-    # ./node_modules/.bin/dtslint types/getstream
+    npm run lint
 fi
 npm install -g bower
 bower install getstream
