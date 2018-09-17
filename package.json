@@ -15,6 +15,10 @@
   "scripts": {
     "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
+    "eslint": "eslint '**/*.js' --max-warnings 0",
+    "prettier": "prettier --list-different '**/*.{js,ts}'",
+    "lint": "yarn prettier && yarn eslint",
+    "lint-fix": "prettier --write '**/*.{js,ts}' && eslint --fix '**/*.js'",
     "test": "npm run test-unit-node",
     "test-unit-node": "mocha --require @babel/register test/unit/common test/unit/node",
     "test-integration-node": "mocha --require @babel/register test/integration/common test/integration/node",
@@ -80,6 +84,7 @@
     "mocha": "^5.1.1",
     "null-loader": "^0.1.1",
     "nyc": "^12.0.2",
+    "prettier": "^1.13.7",
     "quickcheck": "^0.0.4",
     "testdouble": "^3.8.1",
     "typescript": "^2.8.3",
