@@ -1,0 +1,14 @@
+{
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "arrowParens": "always",
+    "tabWidth": 2,
+    "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "trailingComma": "all"
+      }
+    }
+  ]
+}
