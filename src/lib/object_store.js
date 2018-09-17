@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var StreamObjectStore = function() {
   this.initialize.apply(this, arguments);
 };
@@ -49,7 +47,7 @@ StreamObjectStore.prototype = {
         url: this.buildURL(),
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -68,7 +66,7 @@ StreamObjectStore.prototype = {
         url: this.buildURL(itemId),
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -96,7 +94,7 @@ StreamObjectStore.prototype = {
         body: body,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -121,7 +119,7 @@ StreamObjectStore.prototype = {
         body: body,
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 
@@ -140,7 +138,7 @@ StreamObjectStore.prototype = {
         url: this.buildURL(itemId),
         signature: this.signature,
       },
-      callback
+      callback,
     );
   },
 };

@@ -46,7 +46,7 @@ StreamUserSession.prototype = {
         qs: options,
         signature: this.token,
       },
-      callback
+      callback,
     );
   },
 
@@ -72,7 +72,7 @@ StreamUserSession.prototype = {
   objectFromResponse: function(response) {
     let object = this.storage(response.collection).object(
       response.id,
-      response.data
+      response.data,
     );
     object.full = response;
     return object;

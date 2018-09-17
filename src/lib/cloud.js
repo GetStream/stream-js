@@ -18,7 +18,7 @@ function StreamCloudClient() {
   if (options.location) {
     location = options.location + '-cloud';
   }
-  options = {...options, location};
+  options = { ...options, location };
   StreamClient.apply(this, [arguments[0], arguments[1], arguments[2], options]);
 }
 
@@ -49,7 +49,6 @@ StreamCloudClient.prototype.reactions = function(token) {
 StreamCloudClient.prototype.permissions = function(token) {
   return new StreamPermissions(this, token);
 };
-
 
 StreamCloudClient.prototype.createUserSession = function(
   userId,
@@ -103,7 +102,7 @@ StreamCloudFeed.prototype.get = function(options, callback) {
 function replaceStreamObjects(obj) {
   let cloned = obj;
   if (Array.isArray(obj)) {
-    cloned = obj.map(v => replaceStreamObjects(v));
+    cloned = obj.map((v) => replaceStreamObjects(v));
   } else if (isPlainObject(obj)) {
     cloned = {};
     for (let k in obj) {
@@ -128,7 +127,6 @@ StreamCloudFeed.prototype.addActivities = function(activities, callback) {
   activities = replaceStreamObjects(activities);
   return this._addActivitiesOriginal(activities, callback);
 };
-
 
 StreamCloudFeed.prototype.getActivityDetail = function(
   activity_id,

@@ -28,8 +28,10 @@ function connect(apiKey, apiSecret, appId, options) {
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
-  if (typeof (process) !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);  // eslint-disable-line no-useless-escape
+  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(
+      process.env.STREAM_URL,
+    );
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
@@ -46,7 +48,7 @@ function connect(apiKey, apiSecret, appId, options) {
   return new StreamClient(apiKey, apiSecret, appId, options);
 }
 
-function connectCloud(apiKey, appId, options={}) {
+function connectCloud(apiKey, appId, options = {}) {
   /**
    * Create StreamCloudClient that's compatible with StreamCloud
    * @method connect
@@ -67,7 +69,6 @@ function connectCloud(apiKey, appId, options={}) {
    */
   return new cloud.StreamCloudClient(apiKey, null, appId, options);
 }
-
 
 module.exports.connect = connect;
 module.exports.connectCloud = connectCloud;

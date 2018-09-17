@@ -58,27 +58,35 @@ StreamClient.prototype = {
     this.group = this.options.group || 'unspecified';
     // track subscriptions made on feeds created by this client
     this.subscriptions = {};
-    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
+    this.expireTokens = this.options.expireTokens
+      ? this.options.expireTokens
+      : false;
     // which data center to use
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
 
-    if (typeof (process) !== 'undefined' && process.env.LOCAL_FAYE) {
+    if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
       this.fayeUrl = 'http://localhost:9999/faye/';
     }
 
-    if (typeof (process) !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
+    if (
+      typeof process !== 'undefined' &&
+      process.env.STREAM_ANALYTICS_BASE_URL
+    ) {
       this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
     }
 
     this.handlers = {};
-    this.browser = typeof(this.options.browser) !== 'undefined' ? this.options.browser : typeof (window) !== 'undefined';
+    this.browser =
+      typeof this.options.browser !== 'undefined'
+        ? this.options.browser
+        : typeof window !== 'undefined';
     this.node = !this.browser;
 
     if (!this.browser) {
       var keepAlive = this.options.keepAlive;
       if (keepAlive === undefined) {
-          keepAlive = true
+        keepAlive = true;
       }
 
       var http = require('http');
@@ -94,7 +102,9 @@ StreamClient.prototype = {
         keepAliveMsecs: 3000,
       });
 
-      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+      this.requestAgent = this.baseUrl.startsWith('https://')
+        ? httpsAgent
+        : httpAgent;
     }
 
     this.personalization = new Personalization(this);
@@ -102,7 +112,9 @@ StreamClient.prototype = {
 
     /* istanbul ignore next */
     if (this.browser && this.apiSecret) {
-      throw new errors.FeedError('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
+      throw new errors.FeedError(
+        'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
+      );
     }
   },
 
@@ -112,10 +124,16 @@ StreamClient.prototype = {
     }
 
     if (this.apiSecret) {
-        this._personalizationToken = signing.JWTScopeToken(
-          this.apiSecret, 'personalization', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+      this._personalizationToken = signing.JWTScopeToken(
+        this.apiSecret,
+        'personalization',
+        '*',
+        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
+      );
     } else {
-      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+      throw new errors.SiteError(
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
+      );
     }
 
     return this._personalizationToken;
@@ -127,39 +145,61 @@ StreamClient.prototype = {
     }
 
     if (this.apiSecret) {
-        this._collectionsToken = signing.JWTScopeToken(
-          this.apiSecret, 'collections', '*', {userId: '*', feedId: '*', expireTokens: this.expireTokens });
+      this._collectionsToken = signing.JWTScopeToken(
+        this.apiSecret,
+        'collections',
+        '*',
+        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
+      );
     } else {
-      throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+      throw new errors.SiteError(
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
+      );
     }
 
     return this._collectionsToken;
   },
 
-	getAnalyticsToken: function() {
-		if (this.apiSecret) {
-			return signing.JWTScopeToken(
-				this.apiSecret, 'analytics', '*', {userId: '*', expireTokens: this.expireTokens });
-		} else {
-			throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
-		}
-	},
+  getAnalyticsToken: function() {
+    if (this.apiSecret) {
+      return signing.JWTScopeToken(this.apiSecret, 'analytics', '*', {
+        userId: '*',
+        expireTokens: this.expireTokens,
+      });
+    } else {
+      throw new errors.SiteError(
+        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
+      );
+    }
+  },
 
-	getBaseUrl: function(serviceName) {
+  getBaseUrl: function(serviceName) {
     if (!serviceName) {
       serviceName = 'api';
     }
     var url = this.baseUrl;
     if (serviceName != 'api') {
-      url = 'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
+      url =
+        'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
     }
 
     if (this.location) {
-        var protocol = this.options.protocol || 'https';
-        url = protocol + '://' + this.location + '-' + serviceName + '.stream-io-api.com/' + serviceName + '/';
+      var protocol = this.options.protocol || 'https';
+      url =
+        protocol +
+        '://' +
+        this.location +
+        '-' +
+        serviceName +
+        '.stream-io-api.com/' +
+        serviceName +
+        '/';
     }
 
-    if ((typeof (process) !== 'undefined' && process.env.LOCAL) || this.options.local) {
+    if (
+      (typeof process !== 'undefined' && process.env.LOCAL) ||
+      this.options.local
+    ) {
       url = 'http://localhost:8000/' + serviceName + '/';
     }
 
@@ -169,7 +209,7 @@ StreamClient.prototype = {
     } else {
       urlEnvironmentKey = 'STREAM_' + serviceName.toUpperCase() + '_URL';
     }
-    if (typeof (process) !== 'undefined' && process.env[urlEnvironmentKey]) {
+    if (typeof process !== 'undefined' && process.env[urlEnvironmentKey]) {
       url = process.env[urlEnvironmentKey];
     }
     if (this.options.urlOverride && this.options.urlOverride[serviceName]) {
@@ -244,7 +284,15 @@ StreamClient.prototype = {
       if (error) {
         reject(new errors.StreamApiError(error, body, response));
       } else if (!/^2/.test('' + response.statusCode)) {
-        reject(new errors.StreamApiError(JSON.stringify(body) + ' with HTTP status code ' + response.statusCode, body, response));
+        reject(
+          new errors.StreamApiError(
+            JSON.stringify(body) +
+              ' with HTTP status code ' +
+              response.statusCode,
+            body,
+            response,
+          ),
+        );
       } else {
         fulfill(body);
       }
@@ -282,7 +330,7 @@ StreamClient.prototype = {
      * @memberof StreamClient.prototype
      * @return {string} current user agent
      */
-    var description = (this.node) ? 'node' : 'browser';
+    var description = this.node ? 'node' : 'browser';
     // TODO: get the version here in a way which works in both and browserify
     var version = 'unknown';
     return 'stream-javascript-client-' + description + '-' + version;
@@ -336,10 +384,12 @@ StreamClient.prototype = {
 
     // create the token in server side mode
     if (this.apiSecret && !token) {
-      options = options || {}
+      options = options || {};
       var feedId = '' + feedSlug + userId;
       // use scoped token if read-only access is necessary
-      token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
+      token = options.readOnly
+        ? this.getReadOnlyToken(feedSlug, userId)
+        : signing.sign(this.apiSecret, feedId);
     }
 
     var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
@@ -456,7 +506,7 @@ StreamClient.prototype = {
      * @return {object} Faye authorization middleware
      */
     var apiKey = this.apiKey,
-        self = this;
+      self = this;
 
     return {
       incoming: function(message, callback) {
@@ -468,11 +518,10 @@ StreamClient.prototype = {
           var subscription = self.subscriptions[message.subscription];
 
           message.ext = {
-            'user_id': subscription.userId,
-            'api_key': apiKey,
-            'signature': subscription.token,
+            user_id: subscription.userId,
+            api_key: apiKey,
+            signature: subscription.token,
           };
-
         }
 
         callback(message);
@@ -489,7 +538,7 @@ StreamClient.prototype = {
      * @return {object} Faye client
      */
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client(this.fayeUrl, {timeout: 10});
+      this.fayeClient = new Faye.Client(this.fayeUrl, { timeout: 10 });
       var authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
@@ -507,14 +556,16 @@ StreamClient.prototype = {
      * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
-    return new Promise(function(fulfill, reject) {
-      this.send('request', 'get', kwargs, cb);
-      kwargs = this.enrichKwargs(kwargs);
-      kwargs.method = 'GET';
-      kwargs.gzip = true;
-      var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      this.request(kwargs, callback);
-    }.bind(this));
+    return new Promise(
+      function(fulfill, reject) {
+        this.send('request', 'get', kwargs, cb);
+        kwargs = this.enrichKwargs(kwargs);
+        kwargs.method = 'GET';
+        kwargs.gzip = true;
+        var callback = this.wrapPromiseTask(cb, fulfill, reject);
+        this.request(kwargs, callback);
+      }.bind(this),
+    );
   },
 
   post: function(kwargs, cb) {
@@ -527,17 +578,19 @@ StreamClient.prototype = {
      * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
-    return new Promise(function(fulfill, reject) {
-      this.send('request', 'post', kwargs, cb);
-      kwargs = this.enrichKwargs(kwargs);
-      kwargs.method = 'POST';
-      kwargs.gzip = true;
-      var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      this.request(kwargs, callback);
-    }.bind(this));
+    return new Promise(
+      function(fulfill, reject) {
+        this.send('request', 'post', kwargs, cb);
+        kwargs = this.enrichKwargs(kwargs);
+        kwargs.method = 'POST';
+        kwargs.gzip = true;
+        var callback = this.wrapPromiseTask(cb, fulfill, reject);
+        this.request(kwargs, callback);
+      }.bind(this),
+    );
   },
 
-  'delete': function(kwargs, cb) {
+  delete: function(kwargs, cb) {
     /**
      * Shorthand function for delete request
      * @method delete
@@ -547,14 +600,16 @@ StreamClient.prototype = {
      * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
-    return new Promise(function(fulfill, reject) {
-      this.send('request', 'delete', kwargs, cb);
-      kwargs = this.enrichKwargs(kwargs);
-      kwargs.gzip = true;
-      kwargs.method = 'DELETE';
-      var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      this.request(kwargs, callback);
-    }.bind(this));
+    return new Promise(
+      function(fulfill, reject) {
+        this.send('request', 'delete', kwargs, cb);
+        kwargs = this.enrichKwargs(kwargs);
+        kwargs.gzip = true;
+        kwargs.method = 'DELETE';
+        var callback = this.wrapPromiseTask(cb, fulfill, reject);
+        this.request(kwargs, callback);
+      }.bind(this),
+    );
   },
 
   put: function(kwargs, cb) {
@@ -567,23 +622,30 @@ StreamClient.prototype = {
      * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
-    return new Promise(function(fulfill, reject) {
-      this.send('request', 'put', kwargs, cb);
-      kwargs = this.enrichKwargs(kwargs);
-      kwargs.method = 'PUT';
-      kwargs.gzip = true;
-      var callback = this.wrapPromiseTask(cb, fulfill, reject);
-      this.request(kwargs, callback);
-    }.bind(this));
+    return new Promise(
+      function(fulfill, reject) {
+        this.send('request', 'put', kwargs, cb);
+        kwargs = this.enrichKwargs(kwargs);
+        kwargs.method = 'PUT';
+        kwargs.gzip = true;
+        var callback = this.wrapPromiseTask(cb, fulfill, reject);
+        this.request(kwargs, callback);
+      }.bind(this),
+    );
   },
 
   createUserSession: function(userToken) {
     var cloud = require('./cloud');
-    var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
+    var cClient = new cloud.StreamCloudClient(
+      this.apiKey,
+      null,
+      this.appId,
+      this.options,
+    );
     return cClient.createUserSession(userToken);
   },
 
-  createUserSessionToken: function(userId, extraData={}){
+  createUserSessionToken: function(userId, extraData = {}) {
     return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
   },
 
@@ -594,21 +656,27 @@ StreamClient.prototype = {
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
-    if (! (activities instanceof Array)) {
+    if (!(activities instanceof Array)) {
       throw new TypeError('The activities argument should be an Array');
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+      feedId: '*',
+      expireTokens: this.expireTokens,
+    });
 
     var data = {
       activities: activities,
     };
 
-    return this.post({
-      url: 'activities/',
-      body: data,
-      signature: authToken,
-    }, callback);
+    return this.post(
+      {
+        url: 'activities/',
+        body: data,
+        signature: authToken,
+      },
+      callback,
+    );
   },
 
   updateActivity: function(activity, callback) {
@@ -618,10 +686,10 @@ StreamClient.prototype = {
      * @param  {object} activity The activity to update
      * @return {Promise}
      */
-     return this.updateActivities([activity], callback);
+    return this.updateActivities([activity], callback);
   },
 
-  getActivities: function (params, callback) {
+  getActivities: function(params, callback) {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
@@ -630,13 +698,13 @@ StreamClient.prototype = {
      */
     var qs = {};
     if (params.ids) {
-      var ids = params.ids
+      var ids = params.ids;
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
       qs['ids'] = ids.join(',');
     } else if (params.foreignIDTimes) {
-      var list = params.foreignIDTimes
+      var list = params.foreignIDTimes;
       if (!(list instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
@@ -654,15 +722,21 @@ StreamClient.prototype = {
     } else {
       throw new TypeError('Missing ids or foreignIDTimes params');
     }
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
-    return this.get({
-      url: 'activities/',
-      qs: qs,
-      signature: authToken,
-    }, callback);
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+      feedId: '*',
+      expireTokens: this.expireTokens,
+    });
+    return this.get(
+      {
+        url: 'activities/',
+        qs: qs,
+        signature: authToken,
+      },
+      callback,
+    );
   },
 
-  activityPartialUpdate: function (data, callback) {
+  activityPartialUpdate: function(data, callback) {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
@@ -699,27 +773,39 @@ StreamClient.prototype = {
       data['foreign_id'] = data.foreignID;
       delete data.foreignID;
     }
-    if ((data.id === undefined) && (data.foreign_id === undefined || data.time === undefined)) {
-      throw new TypeError('Missing id or foreign ID and time')
+    if (
+      data.id === undefined &&
+      (data.foreign_id === undefined || data.time === undefined)
+    ) {
+      throw new TypeError('Missing id or foreign ID and time');
     }
     if (data.set && !(data.set instanceof Object)) {
-      throw new TypeError('set field should be an Object')
+      throw new TypeError('set field should be an Object');
     }
     if (data.unset && !(data.unset instanceof Array)) {
-      throw new TypeError('unset field should be an Array')
+      throw new TypeError('unset field should be an Array');
     }
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', { feedId: '*', expireTokens: this.expireTokens });
-    return this.post({
-      url: 'activity/',
-      body: data,
-      signature: authToken,
-    }, callback);
+    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+      feedId: '*',
+      expireTokens: this.expireTokens,
+    });
+    return this.post(
+      {
+        url: 'activity/',
+        body: data,
+        signature: authToken,
+      },
+      callback,
+    );
   },
-
 };
 
 if (qs) {
-  StreamClient.prototype.createRedirectUrl = function(targetUrl, userId, events) {
+  StreamClient.prototype.createRedirectUrl = function(
+    targetUrl,
+    userId,
+    events,
+  ) {
     /**
      * Creates a redirect url for tracking the given events in the context of
      * an email using Stream's analytics platform. Learn more at
@@ -734,17 +820,24 @@ if (qs) {
     var uri = url.parse(targetUrl);
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
-      throw new errors.MissingSchemaError('Invalid URI: "' + url.format(uri) + '"');
+      throw new errors.MissingSchemaError(
+        'Invalid URI: "' + url.format(uri) + '"',
+      );
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', { userId: "*", expireTokens: this.expireTokens });
+    var authToken = signing.JWTScopeToken(
+      this.apiSecret,
+      'redirect_and_track',
+      '*',
+      { userId: '*', expireTokens: this.expireTokens },
+    );
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {
-      'auth_type': 'jwt',
-      'authorization': authToken,
-      'url': targetUrl,
-      'api_key': this.apiKey,
-      'events': JSON.stringify(events),
+      auth_type: 'jwt',
+      authorization: authToken,
+      url: targetUrl,
+      api_key: this.apiKey,
+      events: JSON.stringify(events),
     };
 
     var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));

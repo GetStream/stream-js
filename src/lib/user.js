@@ -22,22 +22,24 @@ StreamUser.prototype = {
   },
 
   _streamRef: function() {
-      return `SU:${this.id}`;
+    return `SU:${this.id}`;
   },
 
   get: function(options, callback) {
-    return this.client.get({
-      url: this.url,
-      signature: this.token,
-      qs: options,
-    }).then((response) => {
-      this.full = response;
-      this.data = response.data;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    return this.client
+      .get({
+        url: this.url,
+        signature: this.token,
+        qs: options,
+      })
+      .then((response) => {
+        this.full = response;
+        this.data = response.data;
+        if (callback) {
+          callback(response);
+        }
+        return response;
+      });
   },
 
   _chooseData: function(data) {
@@ -51,39 +53,43 @@ StreamUser.prototype = {
   },
 
   create: function(data, options, callback) {
-    return this.client.post({
-      url: 'user/',
-      body: {
-        id: this.id,
-        data: this._chooseData(data),
-      },
-      qs: options,
-      signature: this.token,
-    }).then((response) => {
-      this.full = response;
-      this.data = response.data;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    return this.client
+      .post({
+        url: 'user/',
+        body: {
+          id: this.id,
+          data: this._chooseData(data),
+        },
+        qs: options,
+        signature: this.token,
+      })
+      .then((response) => {
+        this.full = response;
+        this.data = response.data;
+        if (callback) {
+          callback(response);
+        }
+        return response;
+      });
   },
 
   update: function(data, callback) {
-    return this.client.put({
-      url: this.url,
-      body: {
-        data: this._chooseData(data),
-      },
-      signature: this.token,
-    }).then((response) => {
-      this.full = response;
-      this.data = response.data;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    return this.client
+      .put({
+        url: this.url,
+        body: {
+          data: this._chooseData(data),
+        },
+        signature: this.token,
+      })
+      .then((response) => {
+        this.full = response;
+        this.data = response.data;
+        if (callback) {
+          callback(response);
+        }
+        return response;
+      });
   },
   getOrCreate: function(data, callback) {
     return this.create(data, { get_or_create: true }, callback);

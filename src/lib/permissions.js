@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var StreamPermissions = function() {
   this.initialize.apply(this, arguments);
 };
@@ -41,7 +39,7 @@ StreamPermissions.prototype = {
         url: this.buildURL(),
         signature: this.token,
       },
-      callback
+      callback,
     );
   },
 
@@ -61,7 +59,7 @@ StreamPermissions.prototype = {
         body: body,
         signature: this.token,
       },
-      callback
+      callback,
     );
   },
 
@@ -80,7 +78,7 @@ StreamPermissions.prototype = {
         url: this.buildURL(priority),
         signature: this.token,
       },
-      callback
+      callback,
     );
   },
 };

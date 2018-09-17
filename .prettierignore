@@ -3,6 +3,6 @@ test/integration/utils/kjur.js
 /dist/
 /lib/
 /bin/
-/.git/
-/docs/
+.git
+docs
 **/*.sh

@@ -3,12 +3,12 @@ var Headers = require('cross-fetch').Headers;
 var FormData = require('form-data');
 var utils = require('./utils');
 
-var StreamImageStore = function () {
+var StreamImageStore = function() {
   this.initialize.apply(this, arguments);
 };
 
 StreamImageStore.prototype = {
-  initialize: function (client, token) {
+  initialize: function(client, token) {
     this.client = client;
     this.token = token;
   },
@@ -22,26 +22,28 @@ StreamImageStore.prototype = {
       fileField = {
         uri: uri,
         type: 'application/octet-stream',
-        name: name || uri.split('/').reverse()[0]
+        name: name || uri.split('/').reverse()[0],
       };
     }
     data.append('file', fileField);
     return fetch(
-      `${this.client.enrichUrl('images/')}?api_key=${this.client.apiKey}`, {
-      method: 'post',
-      body: data,
-      headers: new Headers({
-        'Authorization': this.token,
-      })
-    }).then(r => { return r.json() });
+      `${this.client.enrichUrl('images/')}?api_key=${this.client.apiKey}`,
+      {
+        method: 'post',
+        body: data,
+        headers: new Headers({
+          Authorization: this.token,
+        }),
+      },
+    ).then((r) => {
+      return r.json();
+    });
   },
   delete: function(uri) {
-    return this.client.delete(
-      {
-        url: `images/${uri}`,
-        signature: this.token,
-      }
-    );
+    return this.client.delete({
+      url: `images/${uri}`,
+      signature: this.token,
+    });
   },
   process: function(uri, options) {
     let params = Object.assign(options);
@@ -49,16 +51,19 @@ StreamImageStore.prototype = {
       params.crop = params.crop.join(',');
     }
 
-    return this.client.get(
-      {
-        url: `images/${uri}`,
-        qs: params,
-        signature: this.token,
-      }
-    );
+    return this.client.get({
+      url: `images/${uri}`,
+      qs: params,
+      signature: this.token,
+    });
   },
-  thumbmail: function(uri, w, h, {crop, resize} = {crop: 'center', resize: 'clip'}) {
-    return this.process(uri, {w, h, crop, resize});
+  thumbmail: function(
+    uri,
+    w,
+    h,
+    { crop, resize } = { crop: 'center', resize: 'clip' },
+  ) {
+    return this.process(uri, { w, h, crop, resize });
   },
 };
 

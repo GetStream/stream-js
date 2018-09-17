@@ -1,5 +1,3 @@
-var errors = require('./errors');
-
 var Personalization = function() {
   /**
    * Manage api calls for personalization
@@ -22,20 +20,20 @@ Personalization.prototype = {
   },
 
   get: function(resource, options, callback) {
-  /**
-   * Get personalized activities for this feed
-   *
-   * @method get
-   * @memberof Personalization.prototype
-   * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-   * @param {object} options  Additional options
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object. Personalized feed
-   * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-  */
+    /**
+     * Get personalized activities for this feed
+     *
+     * @method get
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options  Additional options
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Personalized feed
+     * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
     if (!options || options.call) {
       options = {};
     }
@@ -45,27 +43,28 @@ Personalization.prototype = {
         url: resource + '/',
         serviceName: 'personalization',
         qs: options,
-        signature: this.client.getPersonalizationToken()
+        signature: this.client.getPersonalizationToken(),
       },
-      callback);
+      callback,
+    );
   },
 
   post: function(resource, options, data, callback) {
-  /**
-   * Post data to personalization endpoint
-   *
-   * @method post
-   * @memberof Personalization.prototype
-   * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-   * @param {object} options - Additional options
-   * @param {object} data - Data to send in the payload
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object. Data that was posted if successful, or an error.
-   * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-  */
+    /**
+     * Post data to personalization endpoint
+     *
+     * @method post
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @param {object} data - Data to send in the payload
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Data that was posted if successful, or an error.
+     * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
     if (!options || options.call) {
       options = {};
     }
@@ -79,26 +78,27 @@ Personalization.prototype = {
         serviceName: 'personalization',
         qs: options,
         body: data,
-        signature: this.client.getPersonalizationToken()
+        signature: this.client.getPersonalizationToken(),
       },
-      callback);
+      callback,
+    );
   },
 
   delete: function(resource, options, callback) {
-  /**
-   * Delete metadata or activites
-   *
-   * @method delete
-   * @memberof Personalization.prototype
-   * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-   * @param {object} options - Additional options
-   * @param {requestCallback} callback - Callback to call on completion
-   * @return {Promise} Promise object. Data that was deleted if successful, or an error.
-   * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-  */
+    /**
+     * Delete metadata or activites
+     *
+     * @method delete
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Data that was deleted if successful, or an error.
+     * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
     var last = arguments[arguments.length - 1];
     // callback is always the last argument
-    callback = (last.call) ? last : undefined;
+    callback = last.call ? last : undefined;
     if (!options || options.call) {
       options = {};
     }
@@ -108,11 +108,11 @@ Personalization.prototype = {
         url: resource + '/',
         serviceName: 'personalization',
         qs: options,
-        signature: this.client.getPersonalizationToken()
+        signature: this.client.getPersonalizationToken(),
       },
-      callback);
+      callback,
+    );
   },
-
 };
 
 module.exports = Personalization;
