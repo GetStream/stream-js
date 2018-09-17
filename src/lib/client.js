@@ -30,7 +30,7 @@ StreamClient.prototype = {
   baseUrl: 'https://api.stream-io-api.com/api/',
   baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
-  initialize: function(apiKey, apiSecret, appId, options) {
+  initialize: function(apiKey, apiSecret, appId, options = {}) {
     /**
      * Initialize a client
      * @method intialize
@@ -49,7 +49,7 @@ StreamClient.prototype = {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
     this.appId = appId;
-    this.options = options || {};
+    this.options = options;
     this.version = this.options.version || 'v1.0';
     this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
     this.fayeClient = null;
@@ -76,16 +76,21 @@ StreamClient.prototype = {
     this.node = !this.browser;
 
     if (!this.browser) {
+      var keepAlive = this.options.keepAlive;
+      if (keepAlive === undefined) {
+          keepAlive = true
+      }
+
       var http = require('http');
       var https = require('https');
 
       var httpsAgent = new https.Agent({
-        keepAlive: true,
+        keepAlive: keepAlive,
         keepAliveMsecs: 3000,
       });
 
       var httpAgent = new http.Agent({
-        keepAlive: true,
+        keepAlive: keepAlive,
         keepAliveMsecs: 3000,
       });
 
@@ -131,7 +136,16 @@ StreamClient.prototype = {
     return this._collectionsToken;
   },
 
-  getBaseUrl: function(serviceName) {
+	getAnalyticsToken: function() {
+		if (this.apiSecret) {
+			return signing.JWTScopeToken(
+				this.apiSecret, 'analytics', '*', {userId: '*', expireTokens: this.expireTokens });
+		} else {
+			throw new errors.SiteError('Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);');
+		}
+	},
+
+	getBaseUrl: function(serviceName) {
     if (!serviceName) {
       serviceName = 'api';
     }
@@ -145,7 +159,7 @@ StreamClient.prototype = {
         url = protocol + '://' + this.location + '-' + serviceName + '.stream-io-api.com/' + serviceName + '/';
     }
 
-    if (typeof (process) !== 'undefined' && process.env.LOCAL) {
+    if ((typeof (process) !== 'undefined' && process.env.LOCAL) || this.options.local) {
       url = 'http://localhost:8000/' + serviceName + '/';
     }
 
@@ -157,6 +171,9 @@ StreamClient.prototype = {
     }
     if (typeof (process) !== 'undefined' && process.env[urlEnvironmentKey]) {
       url = process.env[urlEnvironmentKey];
+    }
+    if (this.options.urlOverride && this.options.urlOverride[serviceName]) {
+      return this.options.urlOverride[serviceName];
     }
 
     return url;
@@ -317,26 +334,9 @@ StreamClient.prototype = {
      * client.feed('user', '1', 'token2');
      */
 
-    options = options || {};
-
-    if (!feedSlug || !userId) {
-      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
-    }
-
-    if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
-    }
-
-    utils.validateFeedSlug(feedSlug);
-    utils.validateUserId(userId);
-
-    // raise an error if there is no token
-    if (!this.apiSecret && !token) {
-      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
-    }
-
     // create the token in server side mode
     if (this.apiSecret && !token) {
+      options = options || {}
       var feedId = '' + feedSlug + userId;
       // use scoped token if read-only access is necessary
       token = options.readOnly ? this.getReadOnlyToken(feedSlug, userId) : signing.sign(this.apiSecret, feedId);
@@ -392,6 +392,7 @@ StreamClient.prototype = {
     } else {
       kwargs.headers['stream-auth-type'] = 'simple';
     }
+    kwargs.timeout = 10 * 1000; // 10 seconds
 
     kwargs.headers.Authorization = signature;
     kwargs.headers['X-Stream-Client'] = this.userAgent();
@@ -488,7 +489,7 @@ StreamClient.prototype = {
      * @return {object} Faye client
      */
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client(this.fayeUrl);
+      this.fayeClient = new Faye.Client(this.fayeUrl, {timeout: 10});
       var authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
@@ -554,6 +555,36 @@ StreamClient.prototype = {
       var callback = this.wrapPromiseTask(cb, fulfill, reject);
       this.request(kwargs, callback);
     }.bind(this));
+  },
+
+  put: function(kwargs, cb) {
+    /**
+     * Shorthand function for put request
+     * @method put
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {object}   kwargs
+     * @param  {requestCallback} cb     Callback to call on completion
+     * @return {Promise}                Promise object
+     */
+    return new Promise(function(fulfill, reject) {
+      this.send('request', 'put', kwargs, cb);
+      kwargs = this.enrichKwargs(kwargs);
+      kwargs.method = 'PUT';
+      kwargs.gzip = true;
+      var callback = this.wrapPromiseTask(cb, fulfill, reject);
+      this.request(kwargs, callback);
+    }.bind(this));
+  },
+
+  createUserSession: function(userToken) {
+    var cloud = require('./cloud');
+    var cClient = new cloud.StreamCloudClient(this.apiKey, null, this.appId, this.options);
+    return cClient.createUserSession(userToken);
+  },
+
+  createUserSessionToken: function(userId, extraData={}){
+    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
   },
 
   updateActivities: function(activities, callback) {

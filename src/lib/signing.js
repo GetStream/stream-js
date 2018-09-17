@@ -115,6 +115,33 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
   return token;
 };
 
+exports.JWTUserSessionToken = function(apiSecret, userId, extraData={}, jwtOptions={}) {
+  /**
+   * Creates the JWT token that can be used for a UserSession
+   * @method JWTUserSessionToken
+   * @memberof signing
+   * @private
+   * @param {string} apiSecret - API Secret key
+   * @param {string} userId - The user_id key in the JWT payload
+   * @param {string} [extraData] - Extra that should be part of the JWT token
+   * @param {object} [jwtOptions] - Options that can be past to jwt.sign
+   * @return {string} JWT Token
+   */
+  if (typeof userId !== 'string') {
+    throw new TypeError('userId should be a string');
+  }
+
+  var payload = {
+    user_id: userId,
+    ...extraData,
+  };
+
+  var opts = Object.assign({ algorithm: 'HS256', noTimestamp: true }, jwtOptions);
+  var token = jwt.sign(payload, apiSecret, opts);
+  return token;
+};
+
+
 exports.isJWTSignature = function(signature) {
   /**
    * check if token is a valid JWT token

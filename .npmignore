@@ -1,4 +1,3 @@
-# IMPORTANT: If you add/remove a rule here, be sure to do the same in .npmignore
 # Logs
 logs
 *.log
@@ -36,5 +35,10 @@ secrets.*sh
 /.nyc_output/
 
 
-# Ignore lib directory (this is not in npmignore because it should be piublished)
-/lib/
+# Don't submit babelrc to npm
+.babelrc
+# Don't submit src to npm to avoid confusion about which file is used
+/src/
+# Don't submit docs and tests, they only bloat the package
+/docs/
+/test/

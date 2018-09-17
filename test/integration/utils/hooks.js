@@ -95,6 +95,8 @@ function beforeEachBrowser() {
 }
 
 module.exports = {
+    jwt: jwt,
+    randUserId: randUserId,
     initNode: initNode,
     initBrowser: initBrowser,
     beforeEachNode: beforeEachNode,

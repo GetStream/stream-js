@@ -55,3 +55,11 @@ function rfc3986(str) {
 }
 
 exports.rfc3986 = rfc3986;
+
+function isReadableStream(obj) {
+  return typeof obj === 'object' &&
+    typeof (obj._read === 'function') &&
+    typeof (obj._readableState === 'object');
+}
+
+exports.isReadableStream = isReadableStream;

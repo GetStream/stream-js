@@ -7,6 +7,7 @@ var StreamClient = require('./lib/client');
 var errors = require('./lib/errors');
 var signing = require('./lib/signing');
 var request = require('request');
+var cloud = require('./lib/cloud');
 
 function connect(apiKey, apiSecret, appId, options) {
   /**
@@ -45,7 +46,31 @@ function connect(apiKey, apiSecret, appId, options) {
   return new StreamClient(apiKey, apiSecret, appId, options);
 }
 
+function connectCloud(apiKey, appId, options={}) {
+  /**
+   * Create StreamCloudClient that's compatible with StreamCloud
+   * @method connect
+   * @param  {string} apiKey    API key
+   * @param  {string} [apiSecret] API secret (only use this on the server)
+   * @param  {string} [appId]     Application identifier
+   * @param  {object} [options]   Additional options
+   * @param  {string} [options.location] Datacenter location
+   * @return {StreamCloudClient}     StreamCloudClient
+   * @example <caption>Basic usage</caption>
+   * stream.connect(apiKey, apiSecret);
+   * @example <caption>or if you want to be able to subscribe and listen</caption>
+   * stream.connect(apiKey, apiSecret, appId);
+   * @example <caption>or on Heroku</caption>
+   * stream.connect(streamURL);
+   * @example <caption>where streamURL looks like</caption>
+   * "https://thierry:pass@gestream.io/?app=1"
+   */
+  return new cloud.StreamCloudClient(apiKey, null, appId, options);
+}
+
+
 module.exports.connect = connect;
+module.exports.connectCloud = connectCloud;
 module.exports.errors = errors;
 module.exports.request = request;
 module.exports.signing = signing;

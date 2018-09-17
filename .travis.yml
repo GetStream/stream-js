@@ -12,6 +12,8 @@ env:
 matrix:
  include:
  - node_js: node
+   env: BROWSER_TESTS="no" CLOUD_TESTS="yes"
+ - node_js: node
    env: BROWSER_TESTS="no" RUN_LINTERS="yes"
  - node_js: node
    env: BROWSER_TESTS="yes"
