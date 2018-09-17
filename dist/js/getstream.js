@@ -156,98 +156,6 @@ module.exports = g;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-var errors = module.exports;
-var canCapture = typeof Error.captureStackTrace === 'function';
-var canStack = !!new Error().stack;
-/**
- * Abstract error object
- * @class ErrorAbstract
- * @access private
- * @param  {string}      [msg]         Error message
- * @param  {function}    constructor
- */
-
-function ErrorAbstract(msg, constructor) {
-  this.message = msg;
-  Error.call(this, this.message);
-  /* istanbul ignore else */
-
-  if (canCapture) {
-    Error.captureStackTrace(this, constructor);
-  } else if (canStack) {
-    this.stack = new Error().stack;
-  } else {
-    this.stack = '';
-  }
-}
-
-errors._Abstract = ErrorAbstract;
-ErrorAbstract.prototype = new Error();
-/**
- * FeedError
- * @class FeedError
- * @access private
- * @extends ErrorAbstract
- * @memberof Stream.errors
- * @param {String} [msg] - An error message that will probably end up in a log.
- */
-
-errors.FeedError = function FeedError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.FeedError.prototype = new ErrorAbstract();
-/**
- * SiteError
- * @class SiteError
- * @access private
- * @extends ErrorAbstract
- * @memberof Stream.errors
- * @param  {string}  [msg]  An error message that will probably end up in a log.
- */
-
-errors.SiteError = function SiteError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.SiteError.prototype = new ErrorAbstract();
-/**
- * MissingSchemaError
- * @method MissingSchemaError
- * @access private
- * @extends ErrorAbstract
- * @memberof Stream.errors
- * @param  {string} msg
- */
-
-errors.MissingSchemaError = function MissingSchemaError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.MissingSchemaError.prototype = new ErrorAbstract();
-/**
- * StreamApiError
- * @method StreamApiError
- * @access private
- * @extends ErrorAbstract
- * @memberof Stream.errors
- * @param  {string} msg
- * @param  {object} data
- * @param  {object} response
- */
-
-errors.StreamApiError = function StreamApiError(msg, data, response) {
-  this.error = data;
-  this.response = response;
-  ErrorAbstract.call(this, msg);
-};
-
-errors.StreamApiError.prototype = new ErrorAbstract();
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -337,7 +245,7 @@ module.exports = {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -345,11 +253,11 @@ module.exports = {
 
 var Class    = __webpack_require__(1),
     Cookie   = __webpack_require__(26).Cookie,
-    Promise  = __webpack_require__(9),
-    URI      = __webpack_require__(4),
+    Promise  = __webpack_require__(8),
+    URI      = __webpack_require__(3),
     array    = __webpack_require__(16),
     extend   = __webpack_require__(0),
-    Logging  = __webpack_require__(8),
+    Logging  = __webpack_require__(7),
     Timeouts = __webpack_require__(66),
     Channel  = __webpack_require__(28);
 
@@ -556,13 +464,13 @@ module.exports = Transport;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(19)))
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var Promise   = __webpack_require__(9);
+var Promise   = __webpack_require__(8);
 
 module.exports = {
   then: function(callback, errback) {
@@ -612,7 +520,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -628,13 +536,13 @@ module.exports = function(object) {
 
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var toJSON = __webpack_require__(7);
+var toJSON = __webpack_require__(6);
 
 var Logging = {
   LOG_LEVELS: {
@@ -682,7 +590,7 @@ module.exports = Logging;
 
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -848,6 +756,98 @@ Promise.deferred = Promise.pending = function() {
 
 module.exports = Promise;
 
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+var errors = module.exports;
+var canCapture = typeof Error.captureStackTrace === 'function';
+var canStack = !!new Error().stack;
+/**
+ * Abstract error object
+ * @class ErrorAbstract
+ * @access private
+ * @param  {string}      [msg]         Error message
+ * @param  {function}    constructor
+ */
+
+function ErrorAbstract(msg, constructor) {
+  this.message = msg;
+  Error.call(this, this.message);
+  /* istanbul ignore else */
+
+  if (canCapture) {
+    Error.captureStackTrace(this, constructor);
+  } else if (canStack) {
+    this.stack = new Error().stack;
+  } else {
+    this.stack = '';
+  }
+}
+
+errors._Abstract = ErrorAbstract;
+ErrorAbstract.prototype = new Error();
+/**
+ * FeedError
+ * @class FeedError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param {String} [msg] - An error message that will probably end up in a log.
+ */
+
+errors.FeedError = function FeedError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+
+errors.FeedError.prototype = new ErrorAbstract();
+/**
+ * SiteError
+ * @class SiteError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string}  [msg]  An error message that will probably end up in a log.
+ */
+
+errors.SiteError = function SiteError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+
+errors.SiteError.prototype = new ErrorAbstract();
+/**
+ * MissingSchemaError
+ * @method MissingSchemaError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string} msg
+ */
+
+errors.MissingSchemaError = function MissingSchemaError(msg) {
+  ErrorAbstract.call(this, msg);
+};
+
+errors.MissingSchemaError.prototype = new ErrorAbstract();
+/**
+ * StreamApiError
+ * @method StreamApiError
+ * @access private
+ * @extends ErrorAbstract
+ * @memberof Stream.errors
+ * @param  {string} msg
+ * @param  {object} data
+ * @param  {object} response
+ */
+
+errors.StreamApiError = function StreamApiError(msg, data, response) {
+  this.error = data;
+  this.response = response;
+  ErrorAbstract.call(this, msg);
+};
+
+errors.StreamApiError.prototype = new ErrorAbstract();
 
 /***/ }),
 /* 10 */
@@ -1341,7 +1341,7 @@ module.exports = fetch;
 
 var _typeof = __webpack_require__(18);
 
-var errors = __webpack_require__(3);
+var errors = __webpack_require__(9);
 
 var validFeedSlugRe = /^[\w]+$/;
 var validUserIdRe = /^[\w-]+$/;
@@ -2288,11 +2288,11 @@ module.exports = Scheduler;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class     = __webpack_require__(1),
-    URI       = __webpack_require__(4),
+    URI       = __webpack_require__(3),
     browser   = __webpack_require__(15),
     extend    = __webpack_require__(0),
-    toJSON    = __webpack_require__(7),
-    Transport = __webpack_require__(5);
+    toJSON    = __webpack_require__(6),
+    Transport = __webpack_require__(4);
 
 var XHR = extend(Class(Transport, {
   encode: function(messages) {
@@ -2713,7 +2713,7 @@ module.exports = _objectSpread;
 
 var _typeof = __webpack_require__(18);
 
-var errors = __webpack_require__(3);
+var errors = __webpack_require__(9);
 
 var utils = __webpack_require__(11);
 
@@ -2852,7 +2852,7 @@ StreamFeed.prototype = {
     var target = targetSlug + ':' + targetUserId; // check for additional options
 
     if (options && !options.call) {
-      if (typeof options.limit !== "undefined" && options.limit !== null) {
+      if (typeof options.limit !== 'undefined' && options.limit !== null) {
         activityCopyLimit = options.limit;
       }
     }
@@ -2861,7 +2861,7 @@ StreamFeed.prototype = {
       target: target
     };
 
-    if (typeof activityCopyLimit !== "undefined" && activityCopyLimit !== null) {
+    if (typeof activityCopyLimit !== 'undefined' && activityCopyLimit !== null) {
       body['activity_copy_limit'] = activityCopyLimit;
     }
 
@@ -3059,7 +3059,7 @@ StreamFeed.prototype = {
      * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
      * @param {array} added_targets Add these new targets to the activity
      * @param {array} removed_targets Remove these targets from the activity
-    */
+     */
     if (!foreign_id) {
       throw new Error('Missing `foreign_id` parameter!');
     } else if (!time) {
@@ -3685,7 +3685,7 @@ var StreamFeed = __webpack_require__(32);
 
 var signing = __webpack_require__(17);
 
-var errors = __webpack_require__(3);
+var errors = __webpack_require__(9);
 
 var utils = __webpack_require__(11);
 
@@ -3761,7 +3761,7 @@ StreamClient.prototype = {
     }
 
     this.handlers = {};
-    this.browser = typeof window !== 'undefined';
+    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
     this.node = !this.browser;
 
     if (!this.browser) {
@@ -4157,9 +4157,9 @@ StreamClient.prototype = {
         if (message.subscription && self.subscriptions[message.subscription]) {
           var subscription = self.subscriptions[message.subscription];
           message.ext = {
-            'user_id': subscription.userId,
-            'api_key': apiKey,
-            'signature': subscription.token
+            user_id: subscription.userId,
+            api_key: apiKey,
+            signature: subscription.token
           };
         }
 
@@ -4223,7 +4223,7 @@ StreamClient.prototype = {
       this.request(kwargs, callback);
     }.bind(this));
   },
-  'delete': function _delete(kwargs, cb) {
+  delete: function _delete(kwargs, cb) {
     /**
      * Shorthand function for delete request
      * @method delete
@@ -4438,16 +4438,16 @@ if (qs) {
     }
 
     var authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', {
-      userId: "*",
+      userId: '*',
       expireTokens: this.expireTokens
     });
     var analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
     var kwargs = {
-      'auth_type': 'jwt',
-      'authorization': authToken,
-      'url': targetUrl,
-      'api_key': this.apiKey,
-      'events': JSON.stringify(events)
+      auth_type: 'jwt',
+      authorization: authToken,
+      url: targetUrl,
+      api_key: this.apiKey,
+      events: JSON.stringify(events)
     };
     var qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
     return analyticsUrl + '?' + qString;
@@ -4781,9 +4781,7 @@ module.exports = isObject;
 
 /***/ }),
 /* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var errors = __webpack_require__(3);
+/***/ (function(module, exports) {
 
 var StreamPermissions = function StreamPermissions() {
   this.initialize.apply(this, arguments);
@@ -4902,7 +4900,7 @@ StreamImageStore.prototype = {
       method: 'post',
       body: data,
       headers: new Headers({
-        'Authorization': this.token
+        Authorization: this.token
       })
     }).then(function (r) {
       return r.json();
@@ -4985,7 +4983,7 @@ StreamFileStore.prototype = {
       method: 'post',
       body: data,
       headers: new Headers({
-        'Authorization': this.token
+        Authorization: this.token
       })
     }).then(function (r) {
       return r.json();
@@ -5004,7 +5002,7 @@ module.exports = StreamFileStore;
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var errors = __webpack_require__(3);
+var errors = __webpack_require__(9);
 
 var StreamReaction = function StreamReaction() {
   this.initialize.apply(this, arguments);
@@ -5510,9 +5508,7 @@ module.exports = StreamUserSession;
 
 /***/ }),
 /* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var errors = __webpack_require__(3);
+/***/ (function(module, exports) {
 
 var StreamObjectStore = function StreamObjectStore() {
   this.initialize.apply(this, arguments);
@@ -5767,7 +5763,7 @@ module.exports = StreamObjectStore;
 
 var Class      = __webpack_require__(1),
     extend     = __webpack_require__(0),
-    Deferrable = __webpack_require__(6);
+    Deferrable = __webpack_require__(5);
 
 var Subscription = Class({
   initialize: function(client, channels, callback, context) {
@@ -5817,7 +5813,7 @@ module.exports = Subscription;
 
 
 var Class      = __webpack_require__(1),
-    Deferrable = __webpack_require__(6);
+    Deferrable = __webpack_require__(5);
 
 module.exports = Class(Deferrable);
 
@@ -5830,7 +5826,7 @@ module.exports = Class(Deferrable);
 
 
 var extend  = __webpack_require__(0),
-    Logging = __webpack_require__(8);
+    Logging = __webpack_require__(7);
 
 var Extensible = {
   addExtension: function(extension) {
@@ -5946,11 +5942,11 @@ module.exports = Error;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class      = __webpack_require__(1),
-    URI        = __webpack_require__(4),
+    URI        = __webpack_require__(3),
     copyObject = __webpack_require__(13),
     extend     = __webpack_require__(0),
-    toJSON     = __webpack_require__(7),
-    Transport  = __webpack_require__(5);
+    toJSON     = __webpack_require__(6),
+    Transport  = __webpack_require__(4);
 
 var JSONP = extend(Class(Transport, {
  encode: function(messages) {
@@ -6019,10 +6015,10 @@ module.exports = JSONP;
 
 var Class     = __webpack_require__(1),
     Set       = __webpack_require__(25),
-    URI       = __webpack_require__(4),
+    URI       = __webpack_require__(3),
     extend    = __webpack_require__(0),
-    toJSON    = __webpack_require__(7),
-    Transport = __webpack_require__(5);
+    toJSON    = __webpack_require__(6),
+    Transport = __webpack_require__(4);
 
 var CORS = extend(Class(Transport, {
   encode: function(messages) {
@@ -6110,11 +6106,11 @@ module.exports = CORS;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class      = __webpack_require__(1),
-    URI        = __webpack_require__(4),
+    URI        = __webpack_require__(3),
     copyObject = __webpack_require__(13),
     extend     = __webpack_require__(0),
-    Deferrable = __webpack_require__(6),
-    Transport  = __webpack_require__(5),
+    Deferrable = __webpack_require__(5),
+    Transport  = __webpack_require__(4),
     XHR        = __webpack_require__(24);
 
 var EventSource = extend(Class(Transport, {
@@ -6233,16 +6229,16 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class      = __webpack_require__(1),
-    Promise    = __webpack_require__(9),
+    Promise    = __webpack_require__(8),
     Set        = __webpack_require__(25),
-    URI        = __webpack_require__(4),
+    URI        = __webpack_require__(3),
     browser    = __webpack_require__(15),
     copyObject = __webpack_require__(13),
     extend     = __webpack_require__(0),
-    toJSON     = __webpack_require__(7),
+    toJSON     = __webpack_require__(6),
     ws         = __webpack_require__(64),
-    Deferrable = __webpack_require__(6),
-    Transport  = __webpack_require__(5);
+    Deferrable = __webpack_require__(5),
+    Transport  = __webpack_require__(4);
 
 var WebSocket = extend(Class(Transport, {
   UNCONNECTED:  1,
@@ -6435,7 +6431,7 @@ module.exports = {
 "use strict";
 
 
-var Transport = __webpack_require__(5);
+var Transport = __webpack_require__(4);
 
 Transport.register('websocket', __webpack_require__(65));
 Transport.register('eventsource', __webpack_require__(63));
@@ -6454,10 +6450,10 @@ module.exports = Transport;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class     = __webpack_require__(1),
-    URI       = __webpack_require__(4),
+    URI       = __webpack_require__(3),
     cookies   = __webpack_require__(26),
     extend    = __webpack_require__(0),
-    Logging   = __webpack_require__(8),
+    Logging   = __webpack_require__(7),
     Publisher = __webpack_require__(14),
     Transport = __webpack_require__(67),
     Scheduler = __webpack_require__(23);
@@ -6842,15 +6838,15 @@ module.exports = function(options, validKeys) {
 
 var asap            = __webpack_require__(30),
     Class           = __webpack_require__(1),
-    Promise         = __webpack_require__(9),
-    URI             = __webpack_require__(4),
+    Promise         = __webpack_require__(8),
+    URI             = __webpack_require__(3),
     array           = __webpack_require__(16),
     browser         = __webpack_require__(15),
     constants       = __webpack_require__(29),
     extend          = __webpack_require__(0),
     validateOptions = __webpack_require__(70),
-    Deferrable      = __webpack_require__(6),
-    Logging         = __webpack_require__(8),
+    Deferrable      = __webpack_require__(5),
+    Logging         = __webpack_require__(7),
     Publisher       = __webpack_require__(14),
     Channel         = __webpack_require__(28),
     Dispatcher      = __webpack_require__(68),
@@ -7235,7 +7231,7 @@ module.exports = Client;
 
 
 var constants = __webpack_require__(29),
-    Logging   = __webpack_require__(8);
+    Logging   = __webpack_require__(7);
 
 var Faye = {
   VERSION:    constants.VERSION,
@@ -7496,7 +7492,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 /* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Promise = __webpack_require__(9);
+var Promise = __webpack_require__(8);
 
 module.exports = Promise;
 
@@ -7611,9 +7607,7 @@ module.exports = _defineProperty;
 
 /***/ }),
 /* 82 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var errors = __webpack_require__(3);
+/***/ (function(module, exports) {
 
 var Personalization = function Personalization() {
   /**
@@ -7646,7 +7640,7 @@ Personalization.prototype = {
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7674,7 +7668,7 @@ Personalization.prototype = {
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7706,7 +7700,7 @@ Personalization.prototype = {
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7727,9 +7721,7 @@ module.exports = Personalization;
 
 /***/ }),
 /* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var errors = __webpack_require__(3);
+/***/ (function(module, exports) {
 
 var Collections = function Collections() {
   /**
@@ -7744,6 +7736,12 @@ Collections.prototype = {
   initialize: function initialize(client) {
     this.client = client;
   },
+  createReference: function createReference(collectionName, id) {
+    return 'SO:' + collectionName + ':' + id;
+  },
+  createUserReference: function createUserReference(id) {
+    return this.createReference('user', id);
+  },
   upsert: function upsert(collectionName, data, callback) {
     /**
      * Upsert one or more items within a collection.
@@ -7754,7 +7752,7 @@ Collections.prototype = {
      * @param {object or array} data - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7784,7 +7782,7 @@ Collections.prototype = {
      * @param {object or array} ids - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7795,7 +7793,7 @@ Collections.prototype = {
 
     var params = {
       foreign_ids: ids.map(function (id) {
-        return collectionName + ":" + id;
+        return collectionName + ':' + id;
       }).join(',')
     };
     return this.client.get({
@@ -7815,7 +7813,7 @@ Collections.prototype = {
      * @param {object or array} ids - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
-    */
+     */
     var last = arguments[arguments.length - 1]; // callback is always the last argument
 
     callback = last.call ? last : undefined;
@@ -7852,7 +7850,7 @@ module.exports = Collections;
  */
 var StreamClient = __webpack_require__(34);
 
-var errors = __webpack_require__(3);
+var errors = __webpack_require__(9);
 
 var signing = __webpack_require__(17);
 
@@ -7880,8 +7878,7 @@ function connect(apiKey, apiSecret, appId, options) {
    * "https://thierry:pass@gestream.io/?app=1"
    */
   if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    var parts = /https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL); // eslint-disable-line no-useless-escape
-
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
