@@ -11,7 +11,9 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When alice tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.storage('food').get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.alice
+        .collection('food')
+        .get(ctx.cheeseBurger.id);
       ctx.prevResponse = ctx.response;
     });
 
@@ -25,7 +27,7 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When bob tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.storage('food').get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.bob.collection('food').get(ctx.cheeseBurger.id);
     });
 
     ctx.responseShouldEqualPreviousResponse();
@@ -34,7 +36,7 @@ describe('Object Store CRUD behaviours', () => {
   describe('When bob tries to add the improved cheeseburger with the same ID', () => {
     ctx.requestShouldError(409, async () => {
       ctx.response = await ctx.bob
-        .storage('food')
+        .collection('food')
         .add(ctx.cheeseBurger.id, improvedCheeseBurgerData);
     });
   });
@@ -42,7 +44,7 @@ describe('Object Store CRUD behaviours', () => {
   describe('When alice tries to add the improved cheeseburger with the same ID', () => {
     ctx.requestShouldError(409, async () => {
       ctx.response = await ctx.alice
-        .storage('food')
+        .collection('food')
         .add(ctx.cheeseBurger.id, improvedCheeseBurgerData);
     });
   });
@@ -50,7 +52,7 @@ describe('Object Store CRUD behaviours', () => {
   describe('When bob tries to update the cheeseburger', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.bob
-        .storage('food')
+        .collection('food')
         .update(ctx.cheeseBurger.id, improvedCheeseBurgerData);
     });
   });
@@ -58,7 +60,7 @@ describe('Object Store CRUD behaviours', () => {
   describe('When alice tries to update the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice
-        .storage('food')
+        .collection('food')
         .update(ctx.cheeseBurger.id, improvedCheeseBurgerData);
     });
     ctx.responseShouldHaveNewUpdatedAt();
@@ -67,7 +69,9 @@ describe('Object Store CRUD behaviours', () => {
   describe('When alice then tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
-      ctx.response = await ctx.alice.storage('food').get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.alice
+        .collection('food')
+        .get(ctx.cheeseBurger.id);
     });
 
     ctx.responseShouldEqualPreviousResponse();
@@ -75,29 +79,31 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When alice tries to change the ID of cheeseburger in an update call', () => {
     ctx.requestShouldError(400, async () => {
-      let storage = ctx.alice.storage('food');
+      let collection = ctx.alice.collection('food');
       var body = {
         id: 1234,
         data: improvedCheeseBurgerData,
       };
-      await storage.client.put({
-        url: storage.buildURL(ctx.cheeseBurger.id),
+      await collection.client.put({
+        url: collection.buildURL(ctx.cheeseBurger.id),
         body: body,
-        signature: storage.signature,
+        signature: collection.signature,
       });
     });
   });
 
   describe('When bob tries to delete the cheeseburger', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.bob.storage('food').delete(ctx.cheeseBurger.id);
+      ctx.response = await ctx.bob
+        .collection('food')
+        .delete(ctx.cheeseBurger.id);
     });
   });
 
   describe('When alice tries to delete the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice
-        .storage('food')
+        .collection('food')
         .delete(ctx.cheeseBurger.id);
     });
 
@@ -108,13 +114,13 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When alice then tries to get the cheeseburger', () => {
     ctx.requestShouldError(404, async () => {
-      await ctx.alice.storage('food').get(ctx.cheeseBurger.id);
+      await ctx.alice.collection('food').get(ctx.cheeseBurger.id);
     });
   });
 
   describe('When alice tries to create an object with an illegal character in the id', () => {
     ctx.requestShouldError(400, async () => {
-      await ctx.alice.storage('food').add('!abcdee!', {});
+      await ctx.alice.collection('food').add('!abcdee!', {});
     });
   });
 
@@ -124,7 +130,7 @@ describe('Object Store CRUD behaviours', () => {
     let newCheeseBurgerID = randUserId('cheeseburger');
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice
-        .storage('food')
+        .collection('food')
         .add(newCheeseBurgerID, ctx.cheeseBurgerData);
     });
 
@@ -146,7 +152,7 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When alice tries to get the new cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.storage('food').get(newCheeseBurger.id);
+      ctx.response = await ctx.alice.collection('food').get(newCheeseBurger.id);
     });
     ctx.responseShould(
       'be the same as when the new cheeseburger was added',
@@ -158,13 +164,15 @@ describe('Object Store CRUD behaviours', () => {
 
   describe('When alice tries to add an object with a string as data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.storage('food').add(null, 'some string');
+      ctx.response = await ctx.alice
+        .collection('food')
+        .add(null, 'some string');
     });
   });
 
   describe('When alice tries to add an object with empty data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.storage('food').add(null, {});
+      ctx.response = await ctx.alice.collection('food').add(null, {});
     });
   });
 });
