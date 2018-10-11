@@ -1,7 +1,7 @@
 var { CloudContext } = require('./utils');
 var randUserId = require('../utils/hooks').randUserId;
 
-describe('Object Store CRUD behaviours', () => {
+describe('Collection CRUD behaviours', () => {
   let ctx = new CloudContext();
   let improvedCheeseBurgerData = {
     name: 'The improved cheese burger',
