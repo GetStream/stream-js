@@ -1,17 +1,17 @@
-var StreamObjectStore = function() {
+var FrontendCollection = function() {
   this.initialize.apply(this, arguments);
 };
 
-StreamObjectStore.prototype = {
+FrontendCollection.prototype = {
   initialize: function(client, name, token) {
     /**
      * Initialize a feed object
      * @method intialize
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param {StreamCloudClient} client Stream client this collection is constructed from
      * @param {string} name ObjectStore name
      * @param {string} token JWT token
-     * @example new StreamObjectStore(client, "food", "eyJhbGciOiJIUzI1...")
+     * @example new FrontendCollection(client, "food", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
     this.collection = name;
@@ -27,15 +27,19 @@ StreamObjectStore.prototype = {
     return url + itemId + '/';
   },
 
+  entry: function(itemId, itemData) {
+    return new CollectionEntry(this, itemId, itemData);
+  },
+
   object: function(itemId, itemData) {
-    return new StreamObject(this, itemId, itemData);
+    return new CollectionEntry(this, itemId, itemData);
   },
 
   items: function(options, callback) {
     /**
      * get all items from collection
      * @method items
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param  {object}   options  {limit:}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
@@ -55,7 +59,7 @@ StreamObjectStore.prototype = {
     /**
      * get item from collection
      * @method get
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param  {object}   itemId  ObjectStore object id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
@@ -74,7 +78,7 @@ StreamObjectStore.prototype = {
     /**
      * Add item to collection
      * @method add
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param  {string}   itemId  ObjectStore id
      * @param  {object}   itemData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
@@ -100,9 +104,9 @@ StreamObjectStore.prototype = {
 
   update: function(itemId, objectData, callback) {
     /**
-     * Update item in the object storage
+     * Update item in the object collection
      * @method update
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param  {object}   itemId  ObjectStore object id
      * @param  {object}   objectData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
@@ -127,7 +131,7 @@ StreamObjectStore.prototype = {
     /**
      * Delete item from collection
      * @method delete
-     * @memberof StreamObjectStore.prototype
+     * @memberof FrontendCollection.prototype
      * @param  {object}   itemId  ObjectStore object id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
@@ -143,11 +147,11 @@ StreamObjectStore.prototype = {
   },
 };
 
-var StreamObject = function() {
+var CollectionEntry = function() {
   this.initialize.apply(this, arguments);
 };
 
-StreamObject.prototype = {
+CollectionEntry.prototype = {
   initialize: function(store, id, data) {
     this.collection = store.collection;
     this.store = store;
@@ -163,7 +167,7 @@ StreamObject.prototype = {
     /**
      * get item from collection and sync data
      * @method get
-     * @memberof StreamObjectStore.prototype
+     * @memberof CollectionEntry.prototype
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
@@ -182,7 +186,7 @@ StreamObject.prototype = {
     /**
      * Add item to collection
      * @method add
-     * @memberof StreamObjectStore.prototype
+     * @memberof CollectionEntry.prototype
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
@@ -201,7 +205,7 @@ StreamObject.prototype = {
     /**
      * Update item in the object storage
      * @method update
-     * @memberof StreamObjectStore.prototype
+     * @memberof CollectionEntry.prototype
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
@@ -221,7 +225,7 @@ StreamObject.prototype = {
     /**
      * Delete item from collection
      * @method delete
-     * @memberof StreamObjectStore.prototype
+     * @memberof CollectionEntry.prototype
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.delete("cheese101")
@@ -237,4 +241,4 @@ StreamObject.prototype = {
   },
 };
 
-module.exports = StreamObjectStore;
+module.exports = FrontendCollection;

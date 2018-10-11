@@ -65,12 +65,15 @@ StreamUserSession.prototype = {
   storage: function(collection) {
     return this.client.storage(collection, this.token);
   },
+  collection: function(name) {
+    return this.client.collection(name, this.token);
+  },
   react: function(kind, activityId, data) {
     return this.reactions.add(kind, activityId, data);
   },
 
   objectFromResponse: function(response) {
-    let object = this.storage(response.collection).object(
+    let object = this.collection(response.collection).object(
       response.id,
       response.data,
     );

@@ -34,6 +34,10 @@ StreamCloudClient.prototype.storage = function(name, token) {
   return new StreamObjectStore(this, name, token);
 };
 
+StreamCloudClient.prototype.collection = function(name, token) {
+  return new StreamObjectStore(this, name, token);
+};
+
 StreamCloudClient.prototype.files = function(token) {
   return new StreamFileStore(this, token);
 };
