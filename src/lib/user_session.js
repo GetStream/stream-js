@@ -81,6 +81,15 @@ StreamUserSession.prototype = {
     return object;
   },
 
+  collectionEntryFromResponse: function(response) {
+    let object = this.collection(response.collection).entry(
+      response.id,
+      response.data,
+    );
+    object.full = response;
+    return object;
+  },
+
   og: function(url) {
     return this.client.get({
       url: 'og/',
