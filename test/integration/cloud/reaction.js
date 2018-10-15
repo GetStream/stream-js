@@ -187,7 +187,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
-  describe('When alice tries to delete bob\'s comment', () => {
+  describe("When alice tries to delete bob's comment", () => {
     ctx.requestShouldError(403, async () => {
       commentData = {
         text: 'Alice you are the best!!!!',

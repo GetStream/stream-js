@@ -15,7 +15,7 @@ describe('Personalized enrichment story', () => {
       ctx.response = await ctx.alice.personalizedFeed();
     });
   });
-  describe('When alice reads her personalization feed', () => {
+  describe("When alice reads her personalization feed with an endpoint that doesn't exist", () => {
     ctx.requestShouldError(404, async () => {
       ctx.response = await ctx.alice.personalizedFeed({
         feed_slug: 'timeline',
