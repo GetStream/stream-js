@@ -1,6 +1,6 @@
 var StreamClient = require('./client');
 var StreamFeed = require('./feed');
-var StreamObjectStore = require('./object_store');
+var StreamObjectStore = require('./cloud_collection');
 var StreamUserSession = require('./user_session');
 var StreamReaction = require('./reaction');
 var StreamFileStore = require('./files');
