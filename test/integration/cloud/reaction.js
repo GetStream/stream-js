@@ -51,6 +51,20 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response.data.should.eql(commentData);
     });
 
+    describe('and then alice reads the reaction by ID', () => {
+      ctx.requestShouldNotError(async () => {
+        await ctx.alice.reactions.get(comment.id);
+      });
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    });
+
+    describe('and then bob reads the reaction by ID', () => {
+      ctx.requestShouldNotError(async () => {
+        await ctx.bob.reactions.get(comment.id);
+      });
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    });
+
     describe('and then alice reads bob his feed', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
@@ -173,7 +187,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
-  describe('When alice tries to delete bob his comment', () => {
+  describe('When alice tries to delete bob\'s comment', () => {
     ctx.requestShouldError(403, async () => {
       commentData = {
         text: 'Alice you are the best!!!!',
@@ -189,6 +203,12 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     ctx.responseShould('be empty JSON', () => {
       ctx.response.should.eql({});
+    });
+
+    describe('and then alice reads the reaction by ID', () => {
+      ctx.requestShouldError(404, async () => {
+        await ctx.alice.reactions.get(comment.id);
+      });
     });
 
     describe('and then alice reads bob his feed', () => {
