@@ -107,17 +107,30 @@ StreamReaction.prototype = {
     );
   },
 
+  list: function(activityID, kinds, callback) {
+    return this.client.get(
+      {
+        url: this.buildURL('by', 'activity_id', activityID),
+        signature: this.signature,
+      },
+      callback,
+    );
+  },
+
   lookup: function(search, callback) {
     /**
-     * lookup reaction by activity id, user id or foreign id
+     * lookup reactions by activity id, user id or foreign id, supports pagination in ascending (search.prev) and descending (search.next) order
+     * results are limited to 25 at most and returned ordered by updated_at (descending)
      * @method lookup
      * @memberof StreamReaction.prototype
-     * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kinds:[string]}
+     * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example reactions.lookup({by:"activity_id", value:"0c7db91c-67f9-11e8-bcd9-fe00a9219401", kinds:["like"]})
-     * @example reactions.lookup({by:"user_id", value:"john"}, kinds:["like", "comment"]})
-     * @example reactions.lookup({by:"foreign_id", value:"fid"}, kinds:["comment"]})
+     * @example reactions.lookup({by:"activity_id", value:"0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.lookup({by:"user_id", value:"john"}, kinds:"like"})
+     * @example reactions.lookup({by:"foreign_id", value:"fid"}, kind:"comment"})
+     * @example reactions.lookup({by:"foreign_id", value:"fid"}, previous:"cD0yMDE4LTEwLTE5KzEzJTNBNTQlM0EwMi4yOTUzNzglMkIwMCUzQTAw"})
+     * @example reactions.lookup({by:"foreign_id", value:"fid"}, next:"cD0yMDE4LTEwLTE5KzEzJTNBNTQlM0EwMi4yOTUzNzglMkIwMCUzQTAw"})
      */
 
     switch (search.by) {
@@ -130,15 +143,36 @@ StreamReaction.prototype = {
           'search.by is required and must be equal to activity_id, user_id or foreign_id',
         );
     }
+    let qs = {
+      limit: search.limit ? search.limit : 20,
+    };
+
+    if (search.next) {
+      qs.cursor = search.next;
+    }
+
+    if (search.previous) {
+      qs.cursor = search.previous;
+    }
+
+    if (search.next && search.previous) {
+      throw new errors.SiteError('Cannot use both next and previous params');
+    }
+
     if (!search.value) {
       throw new errors.SiteError('Missing search.value');
     }
-    if (!search.kinds) {
-      throw new errors.SiteError('Missing search.kinds');
+
+    let url = this.buildURL('by', search.by, search.value);
+    
+    if (search.kind) {
+      url = this.buildURL('by', search.by, search.value, search.kind);
     }
+
     return this.client.get(
       {
-        url: this.build('by', search.by, search.value, search.kinds),
+        url: url,
+        qs: qs,
         signature: this.signature,
       },
       callback,

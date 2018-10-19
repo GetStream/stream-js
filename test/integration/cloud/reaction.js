@@ -1,5 +1,132 @@
 var { CloudContext } = require('./utils');
 
+describe('Reaction pagination', () => {
+  let ctx = new CloudContext();
+  let eatActivity;
+  let likes = [];
+  let paginationLastCursor;
+
+  ctx.createUsers();
+
+  describe('When alice creates 1 activity', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.feed('user').addActivity({
+        actor: ctx.alice.user,
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
+      eatActivity = ctx.response;
+      delete eatActivity.duration;
+      eatActivity.actor = ctx.alice.user.full;
+    });
+  });
+
+  describe('When bob adds 25 likes to the activity and some comments', () => {
+    for (let index = 0; index < 25; index++) {
+      ctx.requestShouldNotError(async () => {
+        if (index % 3 == 0) {
+          ctx.response = await ctx.bob.react('comment', eatActivity.id, {data: {index}});
+        }
+        ctx.response = await ctx.bob.react('like', eatActivity.id, {data: {index}});
+        likes.unshift(ctx.response);
+        if (index % 4 == 0) {
+          ctx.response = await ctx.bob.react('clap', eatActivity.id, {data: {index}});
+        }
+      });
+    }
+  });
+
+  describe('Paginate the whole thing', () => {
+    let resp;
+
+    ctx.test('specify page size using limit param', async() => {
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'kinds': 'like',
+        'limit': 3,
+      };
+      resp = await ctx.alice.reactions.lookup(search);
+      resp.results.length.should.eql(3);
+    });
+
+    ctx.test('specify page size using limit param > result set', async() => {
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'kinds': 'like',
+        'limit': 300,
+      };
+      resp = await ctx.alice.reactions.lookup(search);
+      resp.results.length.should.eql(25);
+    });
+  
+    ctx.test('negative limit is ignored and default limit is used instead', async() => {
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'kinds': 'like',
+        'limit': -1,
+      };
+      resp = await ctx.alice.reactions.lookup(search);
+      resp.results.length.should.eql(10);
+    });
+  
+    ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async() => {
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'limit': 100,
+      };
+      resp = await ctx.alice.reactions.lookup(search);
+      resp.results.length.should.eql(25);
+      resp.results[0].kind.should.eql('clap');
+      resp.results[1].kind.should.eql('like');
+      resp.results[2].kind.should.eql('comment');
+    });
+
+    ctx.test('and then alice reads the reactions for that activity five at the time in descending order', async() => {
+      let done = false;
+      let readLikes = [];
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'kinds': 'like',
+        'limit': 5,
+      };
+      while (!done) {
+        resp = await ctx.alice.reactions.lookup(search);
+        done = (resp.next === undefined || resp.next === "" || resp.next === null) ? true : false;
+        search.next = resp.next;
+        readLikes = readLikes.concat(resp.results);
+      }
+      readLikes.should.eql(likes);
+    });
+
+    ctx.test('reading everything in reverse order should also work', async() => {
+      let done = false;
+      let readLikesReversed = resp.results;
+      let search = {
+        'by': 'activity_id',
+        'value': eatActivity.id,
+        'kinds': 'like',
+        'limit': 5,
+      };
+
+      while (!done) {
+        search.previous = resp.previous;
+        resp = await ctx.alice.reactions.lookup(search);
+        done = (resp.previous === undefined || resp.previous === "" || resp.previous === null) ? true : false;
+        readLikesReversed = resp.results.concat(readLikesReversed);
+      }
+      readLikesReversed.should.eql(likes);
+    });
+  
+  });
+
+});
+
+
 describe('Reaction CRUD and posting reactions to feeds', () => {
   let ctx = new CloudContext();
 
