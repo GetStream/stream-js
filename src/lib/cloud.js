@@ -1,6 +1,6 @@
 var StreamClient = require('./client');
 var StreamFeed = require('./feed');
-var StreamObjectStore = require('./object_store');
+var StreamObjectStore = require('./cloud_collection');
 var StreamUserSession = require('./user_session');
 var StreamReaction = require('./reaction');
 var StreamFileStore = require('./files');
@@ -31,6 +31,10 @@ function createObject(proto) {
 StreamCloudClient.prototype = createObject(StreamClient.prototype);
 
 StreamCloudClient.prototype.storage = function(name, token) {
+  return new StreamObjectStore(this, name, token);
+};
+
+StreamCloudClient.prototype.collection = function(name, token) {
   return new StreamObjectStore(this, name, token);
 };
 

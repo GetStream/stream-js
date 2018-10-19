@@ -2,6 +2,15 @@
  Change history
 ================
 
+3.22.0
+======
+:release-date: 2018-10-17
+:by: Jelte Fennema
+
+* Add support for reading reactions by ID
+* Make collections an alias for the storage API, to make naming consistent
+
+
 3.21.0
 ======
 :release-date: 2018-09-17
