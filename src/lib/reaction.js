@@ -107,16 +107,6 @@ StreamReaction.prototype = {
     );
   },
 
-  list: function(activityID, kinds, callback) {
-    return this.client.get(
-      {
-        url: this.buildURL('by', 'activity_id', activityID),
-        signature: this.signature,
-      },
-      callback,
-    );
-  },
-
   lookup: function(search, callback) {
     /**
      * lookup reactions by activity id, user id or foreign id, supports pagination in ascending (search.prev) and descending (search.next) order
@@ -126,23 +116,10 @@ StreamReaction.prototype = {
      * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example reactions.lookup({by:"activity_id", value:"0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
-     * @example reactions.lookup({by:"user_id", value:"john"}, kinds:"like"})
-     * @example reactions.lookup({by:"foreign_id", value:"fid"}, kind:"comment"})
-     * @example reactions.lookup({by:"foreign_id", value:"fid"}, previous:"cD0yMDE4LTEwLTE5KzEzJTNBNTQlM0EwMi4yOTUzNzglMkIwMCUzQTAw"})
-     * @example reactions.lookup({by:"foreign_id", value:"fid"}, next:"cD0yMDE4LTEwLTE5KzEzJTNBNTQlM0EwMi4yOTUzNzglMkIwMCUzQTAw"})
+     * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.lookup({user_id: "john", kinds:"like"})
      */
 
-    switch (search.by) {
-      case 'activity_id':
-      case 'user_id':
-      case 'foreign_id':
-        break;
-      default:
-        throw new errors.SiteError(
-          'search.by is required and must be equal to activity_id, user_id or foreign_id',
-        );
-    }
     let qs = {
       limit: search.limit ? search.limit : 20,
     };
@@ -159,14 +136,20 @@ StreamReaction.prototype = {
       throw new errors.SiteError('Cannot use both next and previous params');
     }
 
-    if (!search.value) {
-      throw new errors.SiteError('Missing search.value');
+    if (search.user_id && search.activity_id) {
+      throw new errors.SiteError('Cannot use both activity_id and user_id params');
     }
 
-    let url = this.buildURL('by', search.by, search.value);
+    if (!search.user_id && !search.activity_id) {
+      throw new errors.SiteError('Must use either activity_id or user_id param');
+    }
+
+    let lookupType = search.user_id ? 'user_id' : 'activity_id';
+    let value = search.user_id ? search.user_id : search.activity_id;
+    let url = this.buildURL(lookupType, value);
     
     if (search.kind) {
-      url = this.buildURL('by', search.by, search.value, search.kind);
+      url = this.buildURL(lookupType, value, search.kind);
     }
 
     return this.client.get(

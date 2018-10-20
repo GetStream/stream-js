@@ -41,9 +41,8 @@ describe('Reaction pagination', () => {
 
     ctx.test('specify page size using limit param', async() => {
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
-        'kinds': 'like',
+        'activity_id': eatActivity.id,
+        'kind': 'like',
         'limit': 3,
       };
       resp = await ctx.alice.reactions.lookup(search);
@@ -52,9 +51,8 @@ describe('Reaction pagination', () => {
 
     ctx.test('specify page size using limit param > result set', async() => {
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
-        'kinds': 'like',
+        'activity_id': eatActivity.id,
+        'kind': 'like',
         'limit': 300,
       };
       resp = await ctx.alice.reactions.lookup(search);
@@ -63,9 +61,8 @@ describe('Reaction pagination', () => {
   
     ctx.test('negative limit is ignored and default limit is used instead', async() => {
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
-        'kinds': 'like',
+        activity_id: eatActivity.id,
+        'kind': 'like',
         'limit': -1,
       };
       resp = await ctx.alice.reactions.lookup(search);
@@ -74,8 +71,7 @@ describe('Reaction pagination', () => {
   
     ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async() => {
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
+        'activity_id': eatActivity.id,
         'limit': 100,
       };
       resp = await ctx.alice.reactions.lookup(search);
@@ -89,9 +85,8 @@ describe('Reaction pagination', () => {
       let done = false;
       let readLikes = [];
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
-        'kinds': 'like',
+        'activity_id': eatActivity.id,
+        'kind': 'like',
         'limit': 5,
       };
       while (!done) {
@@ -107,9 +102,8 @@ describe('Reaction pagination', () => {
       let done = false;
       let readLikesReversed = resp.results;
       let search = {
-        'by': 'activity_id',
-        'value': eatActivity.id,
-        'kinds': 'like',
+        'activity_id': eatActivity.id,
+        'kind': 'like',
         'limit': 5,
       };
 
