@@ -107,13 +107,17 @@ StreamReaction.prototype = {
     );
   },
 
-  lookup: function(search, callback) {
+  filter: function(conditions, callback) {
     /**
-     * lookup reactions by activity id, user id or foreign id, supports pagination in ascending (search.prev) and descending (search.next) order
-     * results are limited to 25 at most and returned ordered by updated_at (descending)
+     * retrieve reactions by activity id or user_id, pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
+     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used 
+     * the reaction with ID equal to the value provided is included.
+     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used 
+     * the reaction with ID equal to the value provided is included.
+     * results are limited to 25 at most and are ordered newest to oldest by default.
      * @method lookup
      * @memberof StreamReaction.prototype
-     * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
+     * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
@@ -121,35 +125,39 @@ StreamReaction.prototype = {
      */
 
     let qs = {
-      limit: search.limit ? search.limit : 20,
+      limit: conditions.limit ? conditions.limit : 20,
     };
 
-    if (search.next) {
-      qs.cursor = search.next;
+    if (conditions.id_lt) {
+      qs.id_lt = conditions.id_lt;
     }
 
-    if (search.previous) {
-      qs.cursor = search.previous;
+    if (conditions.id_lte) {
+      qs.id_lte = conditions.id_lte;
+    }
+  
+    if (conditions.id_gt) {
+      qs.id_gt = conditions.id_gt;
+    }
+  
+    if (conditions.id_gte) {
+      qs.id_gte = conditions.id_gte;
     }
 
-    if (search.next && search.previous) {
-      throw new errors.SiteError('Cannot use both next and previous params');
-    }
-
-    if (search.user_id && search.activity_id) {
+    if (conditions.user_id && conditions.activity_id) {
       throw new errors.SiteError('Cannot use both activity_id and user_id params');
     }
 
-    if (!search.user_id && !search.activity_id) {
+    if (!conditions.user_id && !conditions.activity_id) {
       throw new errors.SiteError('Must use either activity_id or user_id param');
     }
 
-    let lookupType = search.user_id ? 'user_id' : 'activity_id';
-    let value = search.user_id ? search.user_id : search.activity_id;
+    let lookupType = conditions.user_id ? 'user_id' : 'activity_id';
+    let value = conditions.user_id ? conditions.user_id : conditions.activity_id;
     let url = this.buildURL(lookupType, value);
     
-    if (search.kind) {
-      url = this.buildURL(lookupType, value, search.kind);
+    if (conditions.kind) {
+      url = this.buildURL(lookupType, value, conditions.kind);
     }
 
     return this.client.get(

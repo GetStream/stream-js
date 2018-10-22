@@ -40,41 +40,41 @@ describe('Reaction pagination', () => {
     let resp;
 
     ctx.test('specify page size using limit param', async() => {
-      let search = {
+      let conditions = {
         'activity_id': eatActivity.id,
         'kind': 'like',
         'limit': 3,
       };
-      resp = await ctx.alice.reactions.lookup(search);
+      resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(3);
     });
 
     ctx.test('specify page size using limit param > result set', async() => {
-      let search = {
+      let conditions = {
         'activity_id': eatActivity.id,
         'kind': 'like',
         'limit': 300,
       };
-      resp = await ctx.alice.reactions.lookup(search);
+      resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(25);
     });
   
     ctx.test('negative limit is ignored and default limit is used instead', async() => {
-      let search = {
+      let conditions = {
         activity_id: eatActivity.id,
         'kind': 'like',
         'limit': -1,
       };
-      resp = await ctx.alice.reactions.lookup(search);
+      resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(10);
     });
   
     ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async() => {
-      let search = {
+      let conditions = {
         'activity_id': eatActivity.id,
         'limit': 100,
       };
-      resp = await ctx.alice.reactions.lookup(search);
+      resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(25);
       resp.results[0].kind.should.eql('clap');
       resp.results[1].kind.should.eql('like');
@@ -84,15 +84,15 @@ describe('Reaction pagination', () => {
     ctx.test('and then alice reads the reactions for that activity five at the time in descending order', async() => {
       let done = false;
       let readLikes = [];
-      let search = {
+      let conditions = {
         'activity_id': eatActivity.id,
         'kind': 'like',
         'limit': 5,
       };
       while (!done) {
-        resp = await ctx.alice.reactions.lookup(search);
+        resp = await ctx.alice.reactions.filter(conditions);
         done = (resp.next === undefined || resp.next === "" || resp.next === null) ? true : false;
-        search.next = resp.next;
+        conditions.id_lt = resp.results[resp.results.length-1].id;
         readLikes = readLikes.concat(resp.results);
       }
       readLikes.should.eql(likes);
@@ -100,18 +100,20 @@ describe('Reaction pagination', () => {
 
     ctx.test('reading everything in reverse order should also work', async() => {
       let done = false;
-      let readLikesReversed = resp.results;
-      let search = {
+      let readLikesReversed = [];
+      let conditions = {
         'activity_id': eatActivity.id,
         'kind': 'like',
         'limit': 5,
+        'id_gte': resp.results[resp.results.length-1].id
       };
 
       while (!done) {
-        search.previous = resp.previous;
-        resp = await ctx.alice.reactions.lookup(search);
-        done = (resp.previous === undefined || resp.previous === "" || resp.previous === null) ? true : false;
-        readLikesReversed = resp.results.concat(readLikesReversed);
+        resp = await ctx.alice.reactions.filter(conditions);
+        done = (resp.next === undefined || resp.next === "" || resp.next === null) ? true : false;
+        readLikesReversed = resp.results.slice().reverse().concat(readLikesReversed);
+        conditions.id_gt = resp.results[resp.results.length-1].id;
+        delete conditions.id_gte;
       }
       readLikesReversed.should.eql(likes);
     });
