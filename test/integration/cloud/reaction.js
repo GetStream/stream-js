@@ -4,7 +4,6 @@ describe('Reaction pagination', () => {
   let ctx = new CloudContext();
   let eatActivity;
   let likes = [];
-  let paginationLastCursor;
 
   ctx.createUsers();
 
@@ -25,12 +24,18 @@ describe('Reaction pagination', () => {
     for (let index = 0; index < 25; index++) {
       ctx.requestShouldNotError(async () => {
         if (index % 3 == 0) {
-          ctx.response = await ctx.bob.react('comment', eatActivity.id, {data: {index}});
+          ctx.response = await ctx.bob.react('comment', eatActivity.id, {
+            data: { index },
+          });
         }
-        ctx.response = await ctx.bob.react('like', eatActivity.id, {data: {index}});
+        ctx.response = await ctx.bob.react('like', eatActivity.id, {
+          data: { index },
+        });
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
-          ctx.response = await ctx.bob.react('clap', eatActivity.id, {data: {index}});
+          ctx.response = await ctx.bob.react('clap', eatActivity.id, {
+            data: { index },
+          });
         }
       });
     }
@@ -39,89 +44,107 @@ describe('Reaction pagination', () => {
   describe('Paginate the whole thing', () => {
     let resp;
 
-    ctx.test('specify page size using limit param', async() => {
+    ctx.test('specify page size using limit param', async () => {
       let conditions = {
-        'activity_id': eatActivity.id,
-        'kind': 'like',
-        'limit': 3,
+        activity_id: eatActivity.id,
+        kind: 'like',
+        limit: 3,
       };
       resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(3);
     });
 
-    ctx.test('specify page size using limit param > result set', async() => {
-      let conditions = {
-        'activity_id': eatActivity.id,
-        'kind': 'like',
-        'limit': 300,
-      };
-      resp = await ctx.alice.reactions.filter(conditions);
-      resp.results.length.should.eql(25);
-    });
-  
-    ctx.test('negative limit is ignored and default limit is used instead', async() => {
+    ctx.test('specify page size using limit param > result set', async () => {
       let conditions = {
         activity_id: eatActivity.id,
-        'kind': 'like',
-        'limit': -1,
-      };
-      resp = await ctx.alice.reactions.filter(conditions);
-      resp.results.length.should.eql(10);
-    });
-  
-    ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async() => {
-      let conditions = {
-        'activity_id': eatActivity.id,
-        'limit': 100,
+        kind: 'like',
+        limit: 300,
       };
       resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(25);
-      resp.results[0].kind.should.eql('clap');
-      resp.results[1].kind.should.eql('like');
-      resp.results[2].kind.should.eql('comment');
     });
 
-    ctx.test('and then alice reads the reactions for that activity five at the time in descending order', async() => {
-      let done = false;
-      let readLikes = [];
-      let conditions = {
-        'activity_id': eatActivity.id,
-        'kind': 'like',
-        'limit': 5,
-      };
-      while (!done) {
+    ctx.test(
+      'negative limit is ignored and default limit is used instead',
+      async () => {
+        let conditions = {
+          activity_id: eatActivity.id,
+          kind: 'like',
+          limit: -1,
+        };
         resp = await ctx.alice.reactions.filter(conditions);
-        done = (resp.next === undefined || resp.next === "" || resp.next === null) ? true : false;
-        conditions.id_lt = resp.results[resp.results.length-1].id;
-        readLikes = readLikes.concat(resp.results);
-      }
-      readLikes.should.eql(likes);
-    });
+        resp.results.length.should.eql(10);
+      },
+    );
 
-    ctx.test('reading everything in reverse order should also work', async() => {
-      let done = false;
-      let readLikesReversed = [];
-      let conditions = {
-        'activity_id': eatActivity.id,
-        'kind': 'like',
-        'limit': 5,
-        'id_gte': resp.results[resp.results.length-1].id
-      };
-
-      while (!done) {
+    ctx.test(
+      'pagination without kind param and limit >25 should return 25 mixed reactions',
+      async () => {
+        let conditions = {
+          activity_id: eatActivity.id,
+          limit: 100,
+        };
         resp = await ctx.alice.reactions.filter(conditions);
-        done = (resp.next === undefined || resp.next === "" || resp.next === null) ? true : false;
-        readLikesReversed = resp.results.slice().reverse().concat(readLikesReversed);
-        conditions.id_gt = resp.results[resp.results.length-1].id;
-        delete conditions.id_gte;
-      }
-      readLikesReversed.should.eql(likes);
-    });
-  
+        resp.results.length.should.eql(25);
+        resp.results[0].kind.should.eql('clap');
+        resp.results[1].kind.should.eql('like');
+        resp.results[2].kind.should.eql('comment');
+      },
+    );
+
+    ctx.test(
+      'and then alice reads the reactions for that activity five at the time in descending order',
+      async () => {
+        let done = false;
+        let readLikes = [];
+        let conditions = {
+          activity_id: eatActivity.id,
+          kind: 'like',
+          limit: 5,
+        };
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null
+              ? true
+              : false;
+          conditions.id_lt = resp.results[resp.results.length - 1].id;
+          readLikes = readLikes.concat(resp.results);
+        }
+        readLikes.should.eql(likes);
+      },
+    );
+
+    ctx.test(
+      'reading everything in reverse order should also work',
+      async () => {
+        let done = false;
+        let readLikesReversed = [];
+        let conditions = {
+          activity_id: eatActivity.id,
+          kind: 'like',
+          limit: 5,
+          id_gte: resp.results[resp.results.length - 1].id,
+        };
+
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null
+              ? true
+              : false;
+          readLikesReversed = resp.results
+            .slice()
+            .reverse()
+            .concat(readLikesReversed);
+          conditions.id_gt = resp.results[resp.results.length - 1].id;
+          delete conditions.id_gte;
+        }
+        readLikesReversed.should.eql(likes);
+      },
+    );
   });
-
 });
-
 
 describe('Reaction CRUD and posting reactions to feeds', () => {
   let ctx = new CloudContext();
