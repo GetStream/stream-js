@@ -236,7 +236,7 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould('have the correct counts for reactions', () => {
-        ctx.activity.reaction_counts.should.eql({
+        ctx.activity.reaction_counts.should.include({
           like: 2,
           comment: 1,
         });
@@ -292,7 +292,7 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould('have the correct counts for reactions', () => {
-        ctx.activity.reaction_counts.should.eql({
+        ctx.activity.reaction_counts.should.include({
           like: 1,
           comment: 1,
         });

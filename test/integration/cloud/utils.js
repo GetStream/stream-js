@@ -259,11 +259,7 @@ class CloudContext {
 
   reactionToReactionInActivity(reaction, user) {
     reaction = Object.assign({}, reaction);
-
-    delete reaction.activity_id;
-    delete reaction.user_id;
     reaction.user = user.full;
-
     return reaction;
   }
 }

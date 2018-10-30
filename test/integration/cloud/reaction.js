@@ -31,6 +31,7 @@ describe('Reaction pagination', () => {
         ctx.response = await ctx.bob.react('like', eatActivity.id, {
           data: { index },
         });
+        ctx.response.user = ctx.bob.user.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
           ctx.response = await ctx.bob.react('clap', eatActivity.id, {
@@ -43,6 +44,18 @@ describe('Reaction pagination', () => {
 
   describe('Paginate the whole thing', () => {
     let resp;
+
+    ctx.test('reactions should be enriched when filtering', async () => {
+      let conditions = {
+        activity_id: eatActivity.id,
+        kind: 'like',
+        limit: 1,
+      };
+      resp = await ctx.alice.reactions.filter(conditions);
+      resp.results.length.should.eql(1);
+      resp.results[0].should.have.all.keys(['user', ...ctx.fields.reaction]);
+      resp.results[0].user.should.eql(ctx.bob.user.full);
+    });
 
     ctx.test('specify page size using limit param', async () => {
       let conditions = {
