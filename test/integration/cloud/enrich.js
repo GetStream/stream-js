@@ -93,7 +93,10 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields('own_reactions');
+      ctx.responseShouldHaveActivityWithFields(
+        'own_reactions',
+        'own_reactions_meta',
+      );
 
       ctx.activityShould('contain the enriched data', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
@@ -101,6 +104,10 @@ describe('Enrich story', () => {
 
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
+      });
+
+      ctx.activityShould('not contain anything in own_reactions_meta', () => {
+        ctx.activity.own_reactions_meta.should.eql({});
       });
     });
 
@@ -111,7 +118,10 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields('own_reactions');
+      ctx.responseShouldHaveActivityWithFields(
+        'own_reactions',
+        'own_reactions_meta',
+      );
 
       ctx.activityShould('contain the enriched data', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
@@ -119,6 +129,10 @@ describe('Enrich story', () => {
 
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
+      });
+
+      ctx.activityShould('not contain anything in own_reactions_meta', () => {
+        ctx.activity.own_reactions_meta.should.eql({});
       });
     });
 
@@ -131,21 +145,33 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
+        'own_reactions_meta',
         'latest_reactions',
+        'latest_reactions_meta',
       );
 
       ctx.activityShould('contain the enriched data', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
       });
 
-      ctx.activityShould('not contain anything in own_reactions', () => {
-        ctx.activity.own_reactions.should.eql({});
-      });
+      ctx.activityShould(
+        'not contain anything in own_reactions and own_reactions_meta',
+        () => {
+          ctx.activity.own_reactions.should.eql({});
+          ctx.activity.own_reactions_meta.should.eql({});
+        },
+      );
 
       ctx.activityShould(
         'contain the reaction of bob in latest_reactions',
         () => {
           ctx.activity.latest_reactions.like.should.eql([like]);
+        },
+      );
+      ctx.activityShould(
+        'not contain anything in latest_reactions_meta',
+        () => {
+          ctx.activity.latest_reactions_meta.should.eql({});
         },
       );
     });
@@ -207,7 +233,9 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
+        'own_reactions_meta',
         'latest_reactions',
+        'latest_reactions_meta',
         'reaction_counts',
       );
 
@@ -232,6 +260,13 @@ describe('Enrich story', () => {
             like: [like2, like],
             comment: [comment],
           });
+        },
+      );
+
+      ctx.activityShould(
+        'not contain anything in latest_reactions_meta',
+        () => {
+          ctx.activity.latest_reactions_meta.should.eql({});
         },
       );
 
@@ -264,7 +299,9 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
+        'own_reactions_meta',
         'latest_reactions',
+        'latest_reactions_meta',
         'reaction_counts',
       );
 
