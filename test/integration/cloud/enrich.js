@@ -95,7 +95,7 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_meta',
+        'own_reactions_extra',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -106,9 +106,14 @@ describe('Enrich story', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
 
-      ctx.activityShould('not contain anything in own_reactions_meta', () => {
-        ctx.activity.own_reactions_meta.should.eql({});
-      });
+      ctx.activityShould(
+        'have an empty next for like in own_reactions_extra',
+        () => {
+          ctx.activity.own_reactions_extra.should.eql({
+            like: { next: '' },
+          });
+        },
+      );
     });
 
     describe('and then bob reads alice her feed', () => {
@@ -120,7 +125,7 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_meta',
+        'own_reactions_extra',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -131,9 +136,14 @@ describe('Enrich story', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
 
-      ctx.activityShould('not contain anything in own_reactions_meta', () => {
-        ctx.activity.own_reactions_meta.should.eql({});
-      });
+      ctx.activityShould(
+        'have an empty next for like in own_reactions_extra',
+        () => {
+          ctx.activity.own_reactions_extra.should.eql({
+            like: { next: '' },
+          });
+        },
+      );
     });
 
     describe('and then carl reads alice her feed', () => {
@@ -145,9 +155,9 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_meta',
+        'own_reactions_extra',
         'latest_reactions',
-        'latest_reactions_meta',
+        'latest_reactions_extra',
       );
 
       ctx.activityShould('contain the enriched data', () => {
@@ -155,10 +165,10 @@ describe('Enrich story', () => {
       });
 
       ctx.activityShould(
-        'not contain anything in own_reactions and own_reactions_meta',
+        'not contain anything in own_reactions and own_reactions_extra',
         () => {
           ctx.activity.own_reactions.should.eql({});
-          ctx.activity.own_reactions_meta.should.eql({});
+          ctx.activity.own_reactions_extra.should.eql({});
         },
       );
 
@@ -169,9 +179,11 @@ describe('Enrich story', () => {
         },
       );
       ctx.activityShould(
-        'not contain anything in latest_reactions_meta',
+        'have an empty next for like in latest_reactions_extra',
         () => {
-          ctx.activity.latest_reactions_meta.should.eql({});
+          ctx.activity.latest_reactions_extra.should.eql({
+            like: { next: '' },
+          });
         },
       );
     });
@@ -233,9 +245,9 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_meta',
+        'own_reactions_extra',
         'latest_reactions',
-        'latest_reactions_meta',
+        'latest_reactions_extra',
         'reaction_counts',
       );
 
@@ -264,9 +276,12 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould(
-        'not contain anything in latest_reactions_meta',
+        'not contain an empty next for like and comment in latest_reactions_extra',
         () => {
-          ctx.activity.latest_reactions_meta.should.eql({});
+          ctx.activity.latest_reactions_extra.should.eql({
+            like: { next: '' },
+            comment: { next: '' },
+          });
         },
       );
 
@@ -299,9 +314,9 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_meta',
+        'own_reactions_extra',
         'latest_reactions',
-        'latest_reactions_meta',
+        'latest_reactions_extra',
         'reaction_counts',
       );
 

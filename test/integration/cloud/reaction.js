@@ -60,9 +60,9 @@ describe('Reaction pagination', () => {
     });
     ctx.responseShouldHaveActivityWithFields(
       'own_reactions',
-      'own_reactions_meta',
+      'own_reactions_extra',
       'latest_reactions',
-      'latest_reactions_meta',
+      'latest_reactions_extra',
       'reaction_counts',
     );
 
@@ -88,34 +88,35 @@ describe('Reaction pagination', () => {
     });
 
     ctx.activityShould(
-      'contain correct next urls in latest_reactions_meta and own_reactions_meta',
+      'contain correct next urls in latest_reactions_extra and own_reactions_extra',
       () => {
         let keys = ['like', 'comment', 'clap'];
-        const latest_meta = ctx.activity.latest_reactions_meta;
-        const own_meta = ctx.activity.own_reactions_meta;
-        latest_meta.should.have.all.keys(keys);
-        own_meta.should.have.all.keys(keys);
-        const checkQuery = (meta, reactions, withUser) => {
-          meta.next.should.be.a('string');
-          meta.next.slice(0, 4).should.eql('http');
+        const latest_extra = ctx.activity.latest_reactions_extra;
+        const own_extra = ctx.activity.own_reactions_extra;
+        latest_extra.should.have.all.keys(keys);
+        own_extra.should.have.all.keys(keys);
+        const checkQuery = (extra, kind, reactions, withUser) => {
+          extra.next.should.be.a('string');
+          extra.next.slice(0, 4).should.eql('http');
           const expectedQuery = {
             activity_id: ctx.activity.id,
             id_lt: reactions[4].id,
+            kind,
           };
           if (withUser) {
             expectedQuery.user_id = ctx.bob.user.id;
           }
 
-          const query = url.parse(meta.next, true).query;
+          const query = url.parse(extra.next, true).query;
 
           expect(query).to.eql(expectedQuery);
         };
-        checkQuery(latest_meta.like, likes);
-        checkQuery(latest_meta.comment, comments);
-        checkQuery(latest_meta.clap, claps);
-        checkQuery(own_meta.like, likes, true);
-        checkQuery(own_meta.comment, comments, true);
-        checkQuery(own_meta.clap, claps, true);
+        checkQuery(latest_extra.like, 'like', likes);
+        checkQuery(latest_extra.comment, 'comment', comments);
+        checkQuery(latest_extra.clap, 'clap', claps);
+        checkQuery(own_extra.like, 'like', likes, true);
+        checkQuery(own_extra.comment, 'comment', comments, true);
+        checkQuery(own_extra.clap, 'clap', claps, true);
       },
     );
   });
