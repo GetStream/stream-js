@@ -302,9 +302,6 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe("When alice tries to delete bob's comment", () => {
     ctx.requestShouldError(403, async () => {
-      commentData = {
-        text: 'Alice you are the best!!!!',
-      };
       ctx.response = await ctx.alice.reactions.delete(comment.id);
     });
   });
@@ -322,6 +319,23 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     describe('and then alice reads the reaction by ID', () => {
       ctx.requestShouldError(404, async () => {
         await ctx.alice.reactions.get(comment.id);
+      });
+    });
+
+    describe('and then alice tries to update bob his comment', () => {
+      ctx.requestShouldError(404, async () => {
+        commentData = {
+          text: 'Alice you are the best!!!!',
+        };
+        ctx.response = await ctx.alice.reactions.update(comment.id, {
+          data: commentData,
+        });
+      });
+    });
+
+    describe("and then alice tries to delete bob's comment", () => {
+      ctx.requestShouldError(404, async () => {
+        ctx.response = await ctx.alice.reactions.delete(comment.id);
       });
     });
 
