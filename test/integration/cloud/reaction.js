@@ -1,10 +1,13 @@
 var { CloudContext } = require('./utils');
+var url = require('url');
+var expect = require('expect.js');
 
 describe('Reaction pagination', () => {
   let ctx = new CloudContext();
   let eatActivity;
   let likes = [];
-  let paginationLastCursor;
+  let claps = [];
+  let comments = [];
 
   ctx.createUsers();
 
@@ -28,22 +31,110 @@ describe('Reaction pagination', () => {
           ctx.response = await ctx.bob.react('comment', eatActivity.id, {
             data: { index },
           });
+          ctx.response.user = ctx.bob.user.full;
+          comments.unshift(ctx.response);
         }
         ctx.response = await ctx.bob.react('like', eatActivity.id, {
           data: { index },
         });
+        ctx.response.user = ctx.bob.user.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
           ctx.response = await ctx.bob.react('clap', eatActivity.id, {
             data: { index },
           });
+          ctx.response.user = ctx.bob.user.full;
+          claps.unshift(ctx.response);
         }
       });
     }
   });
 
+  describe('When bob reads alice her feed with all enrichment enabled', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        withOwnReactions: true,
+        withRecentReactions: true,
+        withReactionCounts: true,
+      });
+    });
+    ctx.responseShouldHaveActivityWithFields(
+      'own_reactions',
+      'own_reactions_extra',
+      'latest_reactions',
+      'latest_reactions_extra',
+      'reaction_counts',
+    );
+
+    ctx.activityShould(
+      'contain dave his last reactions in latest_reactions and own_reactions',
+      () => {
+        let lastFiveReactions = {
+          like: likes.slice(0, 5),
+          comment: comments.slice(0, 5),
+          clap: claps.slice(0, 5),
+        };
+        ctx.activity.own_reactions.should.eql(lastFiveReactions);
+        ctx.activity.latest_reactions.should.eql(lastFiveReactions);
+      },
+    );
+
+    ctx.activityShould('contain correct reaction counts', () => {
+      ctx.activity.reaction_counts.should.eql({
+        like: likes.length,
+        comment: comments.length,
+        clap: claps.length,
+      });
+    });
+
+    ctx.activityShould(
+      'contain correct next urls in latest_reactions_extra and own_reactions_extra',
+      () => {
+        let keys = ['like', 'comment', 'clap'];
+        const latest_extra = ctx.activity.latest_reactions_extra;
+        const own_extra = ctx.activity.own_reactions_extra;
+        latest_extra.should.have.all.keys(keys);
+        own_extra.should.have.all.keys(keys);
+        const checkQuery = (extra, kind, reactions, withUser) => {
+          extra.next.should.be.a('string');
+          extra.next.slice(0, 4).should.eql('http');
+          const expectedQuery = {
+            activity_id: ctx.activity.id,
+            id_lt: reactions[4].id,
+            kind,
+          };
+          if (withUser) {
+            expectedQuery.user_id = ctx.bob.user.id;
+          }
+
+          const query = url.parse(extra.next, true).query;
+
+          expect(query).to.eql(expectedQuery);
+        };
+        checkQuery(latest_extra.like, 'like', likes);
+        checkQuery(latest_extra.comment, 'comment', comments);
+        checkQuery(latest_extra.clap, 'clap', claps);
+        checkQuery(own_extra.like, 'like', likes, true);
+        checkQuery(own_extra.comment, 'comment', comments, true);
+        checkQuery(own_extra.clap, 'clap', claps, true);
+      },
+    );
+  });
+
   describe('Paginate the whole thing', () => {
     let resp;
+
+    ctx.test('reactions should be enriched when filtering', async () => {
+      let conditions = {
+        activity_id: eatActivity.id,
+        kind: 'like',
+        limit: 1,
+      };
+      resp = await ctx.alice.reactions.filter(conditions);
+      resp.results.length.should.eql(1);
+      resp.results[0].should.have.all.keys(['user', ...ctx.fields.reaction]);
+      resp.results[0].user.should.eql(ctx.bob.user.full);
+    });
 
     ctx.test('specify page size using limit param', async () => {
       let conditions = {

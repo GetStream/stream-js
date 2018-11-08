@@ -5111,38 +5111,61 @@ StreamReaction.prototype = {
       signature: this.signature
     }, callback);
   },
-  lookup: function lookup(search, callback) {
+  filter: function filter(conditions, callback) {
     /**
-     * lookup reaction by activity id, user id or foreign id
+     * retrieve reactions by activity id or user_id, pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
+     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
+     * the reaction with ID equal to the value provided is included.
+     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
+     * the reaction with ID equal to the value provided is included.
+     * results are limited to 25 at most and are ordered newest to oldest by default.
      * @method lookup
      * @memberof StreamReaction.prototype
-     * @param  {object}   search Reaction Id {activity_id|user_id|foreign_id:string, kinds:[string]}
+     * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example reactions.lookup({by:"activity_id", value:"0c7db91c-67f9-11e8-bcd9-fe00a9219401", kinds:["like"]})
-     * @example reactions.lookup({by:"user_id", value:"john"}, kinds:["like", "comment"]})
-     * @example reactions.lookup({by:"foreign_id", value:"fid"}, kinds:["comment"]})
+     * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.lookup({user_id: "john", kinds:"like"})
      */
-    switch (search.by) {
-      case 'activity_id':
-      case 'user_id':
-      case 'foreign_id':
-        break;
+    var qs = {
+      limit: conditions.limit ? conditions.limit : 20
+    };
 
-      default:
-        throw new errors.SiteError('search.by is required and must be equal to activity_id, user_id or foreign_id');
+    if (conditions.id_lt) {
+      qs.id_lt = conditions.id_lt;
     }
 
-    if (!search.value) {
-      throw new errors.SiteError('Missing search.value');
+    if (conditions.id_lte) {
+      qs.id_lte = conditions.id_lte;
     }
 
-    if (!search.kinds) {
-      throw new errors.SiteError('Missing search.kinds');
+    if (conditions.id_gt) {
+      qs.id_gt = conditions.id_gt;
+    }
+
+    if (conditions.id_gte) {
+      qs.id_gte = conditions.id_gte;
+    }
+
+    if (conditions.user_id && conditions.activity_id) {
+      throw new errors.SiteError('Cannot use both activity_id and user_id params');
+    }
+
+    if (!conditions.user_id && !conditions.activity_id) {
+      throw new errors.SiteError('Must use either activity_id or user_id param');
+    }
+
+    var lookupType = conditions.user_id ? 'user_id' : 'activity_id';
+    var value = conditions.user_id ? conditions.user_id : conditions.activity_id;
+    var url = this.buildURL(lookupType, value);
+
+    if (conditions.kind) {
+      url = this.buildURL(lookupType, value, conditions.kind);
     }
 
     return this.client.get({
-      url: this.build('by', search.by, search.value, search.kinds),
+      url: url,
+      qs: qs,
       signature: this.signature
     }, callback);
   },
