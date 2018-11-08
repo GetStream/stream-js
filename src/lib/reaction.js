@@ -110,9 +110,9 @@ StreamReaction.prototype = {
   filter: function(conditions, callback) {
     /**
      * retrieve reactions by activity id or user_id, pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
-     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used 
+     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
      * the reaction with ID equal to the value provided is included.
-     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used 
+     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
      * the reaction with ID equal to the value provided is included.
      * results are limited to 25 at most and are ordered newest to oldest by default.
      * @method lookup
@@ -135,27 +135,33 @@ StreamReaction.prototype = {
     if (conditions.id_lte) {
       qs.id_lte = conditions.id_lte;
     }
-  
+
     if (conditions.id_gt) {
       qs.id_gt = conditions.id_gt;
     }
-  
+
     if (conditions.id_gte) {
       qs.id_gte = conditions.id_gte;
     }
 
     if (conditions.user_id && conditions.activity_id) {
-      throw new errors.SiteError('Cannot use both activity_id and user_id params');
+      throw new errors.SiteError(
+        'Cannot use both activity_id and user_id params',
+      );
     }
 
     if (!conditions.user_id && !conditions.activity_id) {
-      throw new errors.SiteError('Must use either activity_id or user_id param');
+      throw new errors.SiteError(
+        'Must use either activity_id or user_id param',
+      );
     }
 
     let lookupType = conditions.user_id ? 'user_id' : 'activity_id';
-    let value = conditions.user_id ? conditions.user_id : conditions.activity_id;
+    let value = conditions.user_id
+      ? conditions.user_id
+      : conditions.activity_id;
     let url = this.buildURL(lookupType, value);
-    
+
     if (conditions.kind) {
       url = this.buildURL(lookupType, value, conditions.kind);
     }

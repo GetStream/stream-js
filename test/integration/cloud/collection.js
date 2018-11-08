@@ -14,7 +14,7 @@ describe('Collection CRUD behaviours', () => {
       ctx.response = await ctx.alice
         .collection('food')
         .get(ctx.cheeseBurger.id);
-        delete ctx.response.duration;
+      delete ctx.response.duration;
       ctx.prevResponse = ctx.response;
     });
 
