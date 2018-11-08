@@ -281,7 +281,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         ctx.response = await ctx.alice.reactions.get(comment.id);
       });
 
-      ctx.responseShouldHaveFields('user', ...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.user.full);
@@ -292,7 +292,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.bob.reactions.get(comment.id);
       });
-      ctx.responseShouldHaveFields('user', ...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
     });
 
     describe('and then alice reads bob his feed', () => {

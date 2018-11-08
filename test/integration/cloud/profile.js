@@ -71,7 +71,14 @@ describe('User profile story', () => {
       ctx.response = await ctx.alice.user.profile();
     });
 
-    ctx.responseShouldHaveFields('id', 'created_at', 'updated_at', 'data');
+    ctx.responseShouldHaveFields(
+      'id',
+      'created_at',
+      'updated_at',
+      'data',
+      'followers_count',
+      'following_count',
+    );
   });
 
   describe('When alice tries to create her account again', () => {

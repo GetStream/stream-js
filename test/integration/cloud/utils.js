@@ -64,6 +64,7 @@ class CloudContext {
         'kind',
         'activity_id',
         'user_id',
+        'user',
         'data',
         'created_at',
         'updated_at',
