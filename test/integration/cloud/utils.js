@@ -50,7 +50,15 @@ class CloudContext {
     };
 
     this.fields = {
-      collection: ['id', 'created_at', 'updated_at', 'collection', 'data'],
+      collection: [
+        'id',
+        'created_at',
+        'updated_at',
+        'collection',
+        'data',
+        'duration',
+        'foreign_id',
+      ],
       reaction: [
         'id',
         'kind',
@@ -233,6 +241,7 @@ class CloudContext {
       this.responseShould(
         'have collection and data matching the request',
         () => {
+          delete this.response.duration;
           this.response.collection.should.equal('food');
           this.response.data.should.eql(this.cheeseBurgerData);
         },
@@ -240,6 +249,7 @@ class CloudContext {
 
       this.afterTest(() => {
         this.cheeseBurger = this.alice.objectFromResponse(this.response);
+        delete this.cheeseBurger.duration;
       });
     });
   }

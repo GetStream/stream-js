@@ -125,7 +125,7 @@ StreamReaction.prototype = {
      */
 
     let qs = {
-      limit: conditions.limit ? conditions.limit : 20,
+      limit: conditions.limit ? conditions.limit : 10,
     };
 
     if (conditions.id_lt) {

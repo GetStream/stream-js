@@ -66,6 +66,20 @@ describe('User profile story', () => {
     checkUserResponse(() => ctx.alice.user, aliceData);
   });
 
+  describe('When alice looks at her own profile', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.user.profile();
+    });
+
+    ctx.responseShouldHaveFields(
+      'id',
+      'created_at',
+      'updated_at',
+      'data',
+    );
+
+  });
+
   describe('When alice tries to create her account again', () => {
     ctx.requestShouldError(409, async () => {
       await ctx.alice.user.create(aliceData);
@@ -119,14 +133,6 @@ describe('User profile story', () => {
       );
       await Promise.all(promises);
     });
-  });
-
-  describe('When alice looks at her own profile', () => {
-    ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.user.profile();
-    });
-
-    checkProfileResponse(() => ctx.alice.user, aliceData, 2, 1);
   });
 
   describe("When alice looks at bob's profile", () => {

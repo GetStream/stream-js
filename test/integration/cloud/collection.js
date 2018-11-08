@@ -14,6 +14,7 @@ describe('Collection CRUD behaviours', () => {
       ctx.response = await ctx.alice
         .collection('food')
         .get(ctx.cheeseBurger.id);
+        delete ctx.response.duration;
       ctx.prevResponse = ctx.response;
     });
 
@@ -28,6 +29,7 @@ describe('Collection CRUD behaviours', () => {
   describe('When bob tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.collection('food').get(ctx.cheeseBurger.id);
+      delete ctx.response.duration;
     });
 
     ctx.responseShouldEqualPreviousResponse();

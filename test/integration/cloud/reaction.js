@@ -59,16 +59,6 @@ describe('Reaction pagination', () => {
       resp.results.length.should.eql(25);
     });
   
-    ctx.test('negative limit is ignored and default limit is used instead', async() => {
-      let conditions = {
-        activity_id: eatActivity.id,
-        'kind': 'like',
-        'limit': -1,
-      };
-      resp = await ctx.alice.reactions.filter(conditions);
-      resp.results.length.should.eql(10);
-    });
-  
     ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async() => {
       let conditions = {
         'activity_id': eatActivity.id,
@@ -325,6 +315,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
 
     ctx.responseShould('be empty JSON', () => {
+      delete ctx.response.duration;
       ctx.response.should.eql({});
     });
 
