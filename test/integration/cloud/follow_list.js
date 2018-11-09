@@ -1,7 +1,7 @@
 var { CloudContext } = require('./utils');
 var expect = require('chai').expect;
 
-describe('Read followers', () => {
+describe.skip('Read followers', () => {
   let ctx = new CloudContext();
 
   let bobData = {
@@ -41,7 +41,7 @@ describe('Read followers', () => {
   });
 });
 
-describe('Read followings', () => {
+describe.skip('Read followings', () => {
   let ctx = new CloudContext();
 
   let bobData = {
