@@ -110,7 +110,9 @@ describe('Collection CRUD behaviours', () => {
     });
 
     ctx.responseShould('be empty JSON', async () => {
-      ctx.response.should.eql({});
+      let response = Object.assign({}, ctx.response);
+      delete response.duration;
+      response.should.eql({});
     });
   });
 
@@ -156,12 +158,10 @@ describe('Collection CRUD behaviours', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.collection('food').get(newCheeseBurger.id);
     });
-    ctx.responseShould(
-      'be the same as when the new cheeseburger was added',
-      async () => {
-        ctx.response.should.eql(newCheeseBurger);
-      },
-    );
+
+    ctx.test('be the same data as before', () => {
+      ctx.shouldEqualBesideDuration(ctx.response, newCheeseBurger);
+    });
   });
 
   describe('When alice tries to add an object with a string as data', () => {

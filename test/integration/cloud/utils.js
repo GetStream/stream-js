@@ -11,6 +11,7 @@ class CloudContext {
     this.prevResponse = null;
     this.activity = null;
     this.failed = false;
+    this.runningTest = false;
     this.cheeseBurger = null;
     this.cheeseBurgerData = {
       name: 'cheese burger',
@@ -99,16 +100,27 @@ class CloudContext {
 
   wrapFn(fn) {
     let ctx = this;
+    if (ctx.runningTest) {
+      expect.fail(
+        null,
+        null,
+        'calling ctx.test from within a ctx.test is not supported',
+      );
+    }
+
     if (fn.length == 0) {
       return async function() {
         if (ctx.failed) {
           this.skip();
         }
+        ctx.runningTest = true;
         try {
           await fn();
         } catch (ex) {
           ctx.failed = true;
           throw ex;
+        } finally {
+          ctx.runningTest = false;
         }
       };
     }
@@ -116,11 +128,15 @@ class CloudContext {
       if (ctx.failed) {
         this.skip();
       }
+      ctx.runningTest = true;
       try {
+        this.runningTest = false;
         fn(done);
       } catch (ex) {
         ctx.failed = true;
         throw ex;
+      } finally {
+        ctx.runningTest = false;
       }
     };
   }
@@ -222,11 +238,23 @@ class CloudContext {
     });
   }
 
+  shouldEqualBesideDuration(obj1, obj2) {
+    let obj1Copy = Object.assign({}, obj1, { duration: null });
+    let obj2Copy = Object.assign({}, obj2, { duration: null });
+    obj1Copy.should.eql(obj2Copy);
+  }
+
   responseShouldEqualPreviousResponse() {
     this.responseShould('be the same as the previous response', () => {
       should.exist(this.prevResponse);
       should.exist(this.response);
-      this.response.should.eql(this.prevResponse);
+      let response = Object.assign({}, this.response, {
+        duration: this.response === null,
+      });
+      let prevResponse = Object.assign({}, this.prevResponse, {
+        duration: this.prevResponse === null,
+      });
+      response.should.eql(prevResponse);
     });
   }
 
