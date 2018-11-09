@@ -93,10 +93,7 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
-        'own_reactions',
-        'own_reactions_extra',
-      );
+      ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
@@ -105,15 +102,6 @@ describe('Enrich story', () => {
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
-
-      ctx.activityShould(
-        'have an empty next for like in own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions_extra.should.eql({
-            like: { next: '' },
-          });
-        },
-      );
     });
 
     describe('and then bob reads alice her feed', () => {
@@ -123,10 +111,7 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
-        'own_reactions',
-        'own_reactions_extra',
-      );
+      ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
@@ -135,15 +120,6 @@ describe('Enrich story', () => {
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
-
-      ctx.activityShould(
-        'have an empty next for like in own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions_extra.should.eql({
-            like: { next: '' },
-          });
-        },
-      );
     });
 
     describe('and then carl reads alice her feed', () => {
@@ -155,7 +131,6 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
       );
@@ -164,13 +139,9 @@ describe('Enrich story', () => {
         ctx.activity.object.should.eql(ctx.cheeseBurger.full);
       });
 
-      ctx.activityShould(
-        'not contain anything in own_reactions and own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions.should.eql({});
-          ctx.activity.own_reactions_extra.should.eql({});
-        },
-      );
+      ctx.activityShould('not contain anything in own_reactions', () => {
+        ctx.activity.own_reactions.should.eql({});
+      });
 
       ctx.activityShould(
         'contain the reaction of bob in latest_reactions',
@@ -245,7 +216,6 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
@@ -300,6 +270,7 @@ describe('Enrich story', () => {
     });
 
     ctx.responseShould('be empty JSON', () => {
+      delete ctx.response.duration;
       ctx.response.should.eql({});
     });
 
@@ -314,7 +285,6 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
