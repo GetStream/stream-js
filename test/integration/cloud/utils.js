@@ -161,6 +161,9 @@ class CloudContext {
           if (!(e instanceof stream.errors.StreamApiError)) {
             throw e;
           }
+          if (e.response.statusCode != statusCode) {
+            console.log(e.error);
+          }
           e.response.statusCode.should.equal(statusCode);
           this.response = e.error;
         }

@@ -127,8 +127,8 @@ describe('Permission checking', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
         actor: ctx.bob.user,
-        verb: 'eat',
-        object: ctx.cheeseBurger,
+        verb: 'post',
+        object: 'I love Alice',
         foreign_id: 'fid:123',
         time: at,
       });
