@@ -43,4 +43,10 @@ describe('Permission checking', () => {
         .update({ hacked: true });
     });
   });
+
+  describe('When alice tries to read bobs timeline', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.feed('timeline', ctx.bob.userId).get();
+    });
+  });
 });
