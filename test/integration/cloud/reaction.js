@@ -445,7 +445,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       });
     });
 
-    describe.skip("and then alice tries to delete bob's comment", () => {
+    describe("and then alice tries to delete bob's comment", () => {
       ctx.requestShouldError(404, async () => {
         ctx.response = await ctx.alice.reactions.delete(comment.id);
       });
