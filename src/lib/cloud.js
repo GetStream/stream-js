@@ -5,7 +5,6 @@ var StreamUserSession = require('./user_session');
 var StreamReaction = require('./reaction');
 var StreamFileStore = require('./files');
 var StreamImageStore = require('./images');
-var StreamPermissions = require('./permissions');
 var isObject = require('lodash/isObject');
 var isPlainObject = require('lodash/isPlainObject');
 
@@ -48,10 +47,6 @@ StreamCloudClient.prototype.images = function(token) {
 
 StreamCloudClient.prototype.reactions = function(token) {
   return new StreamReaction(this, token);
-};
-
-StreamCloudClient.prototype.permissions = function(token) {
-  return new StreamPermissions(this, token);
 };
 
 StreamCloudClient.prototype.createUserSession = function(
