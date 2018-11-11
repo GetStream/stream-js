@@ -20,7 +20,7 @@ describe('Collection CRUD behaviours', () => {
     ctx.responseShould(
       'be the same as when the cheeseburger was added',
       async () => {
-        ctx.response.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(ctx.response, ctx.cheeseBurger.full);
       },
     );
   });
