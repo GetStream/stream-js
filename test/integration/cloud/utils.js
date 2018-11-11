@@ -273,15 +273,16 @@ class CloudContext {
       this.responseShould(
         'have collection and data matching the request',
         () => {
-          delete this.response.duration;
           this.response.collection.should.equal('food');
-          this.response.data.should.eql(this.cheeseBurgerData);
+          this.shouldEqualBesideDuration(
+            this.response.data,
+            this.cheeseBurgerData,
+          );
         },
       );
 
       this.afterTest(() => {
         this.cheeseBurger = this.alice.objectFromResponse(this.response);
-        delete this.cheeseBurger.duration;
       });
     });
   }

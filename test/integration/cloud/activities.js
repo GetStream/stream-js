@@ -24,10 +24,10 @@ describe('Get activities', () => {
         .getActivityDetail([ctx.response.id]);
       let activity = response.results[0];
       activity.should.have.property('foreign_id');
-      activity.actor.should.eql(ctx.alice.user.full);
+      ctx.shouldEqualBesideDuration(activity.actor, ctx.alice.user.full);
       activity.verb.should.equal('eat');
-      activity.object.should.eql(ctx.cheeseBurger.full);
-      // activity.object.collection.should.equal('food');
+      ctx.shouldEqualBesideDuration(activity.object, ctx.cheeseBurger.full);
+      activity.object.collection.should.equal('food');
       // activity.object.data.name.should.equal('cheese burger');
     });
   });

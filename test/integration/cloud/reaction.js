@@ -19,7 +19,6 @@ describe('Reaction pagination', () => {
         object: 'cheeseburger',
       });
       eatActivity = ctx.response;
-      delete eatActivity.duration;
       eatActivity.actor = ctx.alice.user.full;
     });
   });
@@ -240,7 +239,6 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         object: 'cheeseburger',
       });
       eatActivity = ctx.response;
-      delete eatActivity.duration;
       eatActivity.actor = ctx.alice.user.full;
     });
   });
@@ -306,7 +304,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
         ctx.activity.should.include(expectedCommentData);
         ctx.activity.actor.should.eql(ctx.bob.user.full);
-        ctx.activity.object.should.eql(eatActivity);
+        ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
         ctx.activity.reaction.should.eql(comment);
         commentActivity = ctx.activity;
       });

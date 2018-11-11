@@ -36,7 +36,10 @@ describe('Enrich story', () => {
       ctx.responseShould('have the activity containing enriched data', () => {
         ctx.activity.actor.should.eql(ctx.alice.user.full);
         ctx.activity.verb.should.eql('eat');
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
         eatCheeseBurgerActivity = ctx.response.results[0];
       });
     });
@@ -62,7 +65,10 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields();
 
       ctx.activityShould('contain enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
     });
   });
@@ -96,7 +102,10 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould('contain the reaction of bob', () => {
@@ -114,7 +123,10 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould('contain the reaction of bob', () => {
@@ -136,7 +148,10 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould('not contain anything in own_reactions', () => {
@@ -222,7 +237,10 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould(
@@ -270,8 +288,7 @@ describe('Enrich story', () => {
     });
 
     ctx.responseShould('be empty JSON', () => {
-      delete ctx.response.duration;
-      ctx.response.should.eql({});
+      ctx.shouldEqualBesideDuration(ctx.response, {});
     });
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {
@@ -291,7 +308,10 @@ describe('Enrich story', () => {
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould(
