@@ -342,6 +342,18 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
+  describe('When bob tries to update his comment with timeline from alice as a target feed', () => {
+    ctx.requestShouldError(403, async () => {
+      commentData = {
+        text: 'Looking yummy! @dave wanna get this on Tuesday?',
+      };
+      ctx.response = await ctx.bob.reactions.update(comment.id, {
+        data: commentData,
+        targetFeeds: [ctx.bob.feed('timeline', ctx.alice.userId)],
+      });
+    });
+  });
+
   describe('When bob updates his comment and tags dave instead of carl', () => {
     ctx.requestShouldNotError(async () => {
       commentData = {

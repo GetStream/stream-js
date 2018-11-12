@@ -49,4 +49,47 @@ describe('Permission checking', () => {
       ctx.response = await ctx.alice.feed('timeline', ctx.bob.userId).get();
     });
   });
+
+  describe('When alice tries to mark her own notification feed', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('notification')
+        .get({ mark_seen: true, mark_read: true });
+    });
+  });
+
+  describe('When alice tries to post to bobs timeline', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice
+        .feed('timeline', ctx.bob.userId)
+        .addActivity({
+          actor: ctx.alice.userId,
+          verb: 'post',
+          object: "I'm writing this directly on your timeline",
+        });
+    });
+  });
+
+  describe('When alice tries to post to someone elses timeline by using to targets', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.feed('user').addActivity({
+        actor: ctx.alice.userId,
+        verb: 'post',
+        object: "I'm writing this on your timeline by using to targets",
+        to: ['timeline:123'],
+      });
+    });
+  });
+
+  describe('When alice tries to post to someone elses timeline by using target feeds when adding a reaction', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.reactions.add(
+        'comment',
+        'f9969ca8-e659-11e8-801f-e4a47194940e',
+        {
+          targetFeeds: ['timeline:123'],
+        },
+      );
+    });
+  });
 });
