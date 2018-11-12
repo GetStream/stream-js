@@ -2,6 +2,7 @@ var { CloudContext } = require('./utils');
 var randUserId = require('../utils/hooks').randUserId;
 var util = require('util');
 
+const someActivityId = 'f9969ca8-e659-11e8-801f-e4a47194940e';
 // eslint-disable-next-line no-unused-vars
 function log(...args) {
   console.log(
@@ -83,13 +84,24 @@ describe('Permission checking', () => {
 
   describe('When alice tries to post to someone elses timeline by using target feeds when adding a reaction', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.reactions.add(
-        'comment',
-        'f9969ca8-e659-11e8-801f-e4a47194940e',
-        {
-          targetFeeds: ['timeline:123'],
-        },
-      );
+      ctx.response = await ctx.alice.reactions.add('comment', someActivityId, {
+        targetFeeds: ['timeline:123'],
+      });
+    });
+  });
+
+  describe('When alice tries to add a reaction burger with bobs user id', () => {
+    ctx.requestShouldError(400, async () => {
+      var reaction = {
+        user_id: ctx.bob.user.id,
+        kind: 'like',
+        activity_id: someActivityId,
+      };
+      await ctx.alice.client.post({
+        url: ctx.alice.reactions.buildURL(),
+        body: reaction,
+        signature: ctx.alice.reactions.signature,
+      });
     });
   });
 });
