@@ -132,4 +132,18 @@ describe('Permission checking', () => {
       await ctx.alice.feed('user', ctx.bob.user.id).following();
     });
   });
+
+  describe('When alice tries to delete an activity from bob his feed', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('user', ctx.bob.user.id)
+        .removeActivity(someActivityId);
+    });
+  });
+
+  describe('When alice tries to delete an activity from her own feed', () => {
+    ctx.requestShouldNotError(async () => {
+      await ctx.alice.feed('user').removeActivity(someActivityId);
+    });
+  });
 });
