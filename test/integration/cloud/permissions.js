@@ -120,4 +120,16 @@ describe('Permission checking', () => {
         .unfollow('user', ctx.alice.user.id);
     });
   });
+
+  describe('When alice tries to list the followers of bob', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice.feed('timeline', ctx.bob.user.id).followers();
+    });
+  });
+
+  describe('When alice tries to make bob unfollow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice.feed('user', ctx.bob.user.id).following();
+    });
+  });
 });

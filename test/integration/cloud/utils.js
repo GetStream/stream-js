@@ -114,6 +114,7 @@ class CloudContext {
           this.skip();
         }
         ctx.runningTest = true;
+        fn = fn.bind(this);
         try {
           await fn();
         } catch (ex) {
@@ -129,6 +130,7 @@ class CloudContext {
         this.skip();
       }
       ctx.runningTest = true;
+      fn = fn.bind(this);
       try {
         this.runningTest = false;
         fn(done);
