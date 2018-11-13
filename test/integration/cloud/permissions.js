@@ -104,4 +104,20 @@ describe('Permission checking', () => {
       });
     });
   });
+
+  describe('When alice tries to make bob follow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('timeline', ctx.bob.user.id)
+        .follow('user', ctx.alice.user.id);
+    });
+  });
+
+  describe('When alice tries to make bob unfollow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('timeline', ctx.bob.user.id)
+        .unfollow('user', ctx.alice.user.id);
+    });
+  });
 });
