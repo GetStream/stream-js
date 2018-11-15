@@ -16,7 +16,6 @@ FrontendCollection.prototype = {
     this.client = client;
     this.collection = name;
     this.token = token;
-    this.signature = this.collection + ' ' + this.token;
   },
 
   buildURL: function(itemId) {
@@ -49,7 +48,7 @@ FrontendCollection.prototype = {
     return this.client.get(
       {
         url: this.buildURL(),
-        signature: this.signature,
+        signature: this.token,
       },
       callback,
     );
@@ -68,7 +67,7 @@ FrontendCollection.prototype = {
     return this.client.get(
       {
         url: this.buildURL(itemId),
-        signature: this.signature,
+        signature: this.token,
       },
       callback,
     );
@@ -96,7 +95,7 @@ FrontendCollection.prototype = {
       {
         url: this.buildURL(),
         body: body,
-        signature: this.signature,
+        signature: this.token,
       },
       callback,
     );
@@ -121,7 +120,7 @@ FrontendCollection.prototype = {
       {
         url: this.buildURL(itemId),
         body: body,
-        signature: this.signature,
+        signature: this.token,
       },
       callback,
     );
@@ -140,7 +139,7 @@ FrontendCollection.prototype = {
     return this.client['delete'](
       {
         url: this.buildURL(itemId),
-        signature: this.signature,
+        signature: this.token,
       },
       callback,
     );
