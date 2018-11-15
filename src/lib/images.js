@@ -2,6 +2,7 @@ var fetch = require('cross-fetch');
 var Headers = require('cross-fetch').Headers;
 var FormData = require('form-data');
 var utils = require('./utils');
+var errors = require('./errors');
 
 var StreamImageStore = function() {
   this.initialize.apply(this, arguments);
@@ -40,7 +41,16 @@ StreamImageStore.prototype = {
         }),
       },
     ).then((r) => {
-      return r.json();
+      let responseData = r.json();
+      if (r.ok) {
+        return responseData;
+      }
+      r.statusCode = r.status;
+      throw new errors.StreamApiError(
+        r.body + ' with HTTP status code ' + r.status,
+        responseData,
+        r,
+      );
     });
   },
   delete: function(uri) {

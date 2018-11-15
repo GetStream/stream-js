@@ -6,6 +6,14 @@ describe('Images', () => {
   let ctx = new CloudContext();
   let imageUrl;
 
+  describe('When alice adds a txt file as image', () => {
+    ctx.requestShouldError(400, async () => {
+      let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
+      ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
+      console.log(ctx.response);
+    });
+  });
+
   describe('When alice adds a new image', () => {
     ctx.requestShouldNotError(async () => {
       let file = fs.createReadStream('./test/integration/cloud/helloworld.jpg');
