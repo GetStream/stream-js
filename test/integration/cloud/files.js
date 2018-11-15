@@ -13,7 +13,7 @@ describe('Files', () => {
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.response.should.have.all.keys('file');
+      ctx.response.should.have.all.keys('file', 'duration');
       fileURL = ctx.response.file;
     });
   });

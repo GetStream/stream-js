@@ -12,7 +12,9 @@ StreamFileStore.prototype = {
     this.client = client;
     this.token = token;
   },
-  upload: function(uri, name) {
+  // React Native does not auto-detect MIME type, you need to pass that via contentType
+  // param. If you don't then Android will refuse to perform the upload
+  upload: function(uri, name, contentType) {
     const data = new FormData();
     let fileField;
 
@@ -21,9 +23,11 @@ StreamFileStore.prototype = {
     } else {
       fileField = {
         uri: uri,
-        type: 'application/octet-stream',
         name: name || uri.split('/').reverse()[0],
       };
+      if (contentType != null) {
+        fileField.type = contentType;
+      }
     }
 
     data.append('file', fileField);
@@ -43,7 +47,8 @@ StreamFileStore.prototype = {
   },
   delete: function(uri) {
     return this.client.delete({
-      url: `files/${uri}`,
+      url: `files/`,
+      qs: { url: uri },
       signature: this.token,
     });
   },

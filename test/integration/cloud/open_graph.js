@@ -11,7 +11,7 @@ describe('OpenGraph story', () => {
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.response.should.eql({
+      ctx.shouldEqualBesideDuration(ctx.response, {
         locale: 'en_US',
         type: 'article',
         title: 'Try out the Stream API with Postman - The Stream Blog',
@@ -25,8 +25,8 @@ describe('OpenGraph story', () => {
               'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
             secure_url:
               'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
-            width: '1600',
-            height: '835',
+            width: 1600,
+            height: 835,
             alt: 'Postman Collection for the Stream API',
           },
         ],
