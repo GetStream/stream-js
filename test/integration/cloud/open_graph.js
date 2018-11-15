@@ -42,9 +42,11 @@ describe('OpenGraph story', () => {
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.response.should.eql({
-        detail: 'document too large (>1MB)',
+      ctx.shouldEqualBesideDuration(ctx.response, {
+        detail: 'url content too big',
         status_code: 400,
+        code: 4,
+        exception: 'InputException',
       });
     });
   });
