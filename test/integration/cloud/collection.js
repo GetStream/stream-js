@@ -87,7 +87,7 @@ describe('Collection CRUD behaviours', () => {
       await collection.client.put({
         url: collection.buildURL(ctx.cheeseBurger.id),
         body: body,
-        signature: collection.signature,
+        signature: collection.token,
       });
     });
   });
