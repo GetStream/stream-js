@@ -10,7 +10,6 @@ describe('Images', () => {
     ctx.requestShouldError(400, async () => {
       let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
-      console.log(ctx.response);
     });
   });
 
