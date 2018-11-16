@@ -97,6 +97,17 @@ describe('Images', () => {
     });
   });
 
+  describe("When bob tries to crop alice's image", () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.bob.images.process(imageUrl, {
+        w: 75,
+        h: 50,
+        crop: 'bottom,right',
+        resize: 'crop',
+      });
+    });
+  });
+
   describe('When alice creates a scaled thumb 140x30', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.images.process(imageUrl, {
@@ -116,6 +127,12 @@ describe('Images', () => {
         res.statusCode.should.eql(200);
         done();
       });
+    });
+  });
+
+  describe("When bob tries to delete alice's image", () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.bob.images.delete(imageUrl);
     });
   });
 

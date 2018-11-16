@@ -27,6 +27,12 @@ describe('Files', () => {
     });
   });
 
+  describe("When bob tries to delete alice's file", () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.bob.files.delete(fileURL);
+    });
+  });
+
   describe('When alice deletes an existing file', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.files.delete(fileURL);
