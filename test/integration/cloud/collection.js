@@ -162,6 +162,49 @@ describe('Collection CRUD behaviours', () => {
     });
   });
 
+  describe('When alice deletes the cheeseburger', () => {
+    let replacementBurger;
+
+    ctx.requestShouldNotError(async () => {
+      replacementBurger = Object.assign(newCheeseBurger, {
+        data: { wopper: true },
+      });
+      ctx.response = await ctx.alice
+        .collection('food')
+        .delete(newCheeseBurger.id);
+    });
+
+    describe('When alice gets the deleted cheeseburger', () => {
+      ctx.requestShouldError(404, async () => {
+        ctx.response = await ctx.alice
+          .collection('food')
+          .get(newCheeseBurger.id);
+      });
+    });
+
+    describe('When alice inserts a new cheeseburger with same ID as before', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.alice
+          .collection('food')
+          .add(replacementBurger.id, replacementBurger.data);
+      });
+    });
+
+    describe('When alice reads the new cheeseburger', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.alice
+          .collection('food')
+          .get(replacementBurger.id);
+      });
+
+      ctx.test('be the same data as before', () => {
+        ctx.response.data.should.eql(replacementBurger.data);
+        ctx.response.id.should.eql(replacementBurger.id);
+        ctx.response.updated_at.should.not.eql(newCheeseBurger.updated_at);
+      });
+    });
+  });
+
   describe('When alice tries to add an object with a string as data', () => {
     ctx.requestShouldError(400, async () => {
       ctx.response = await ctx.alice
