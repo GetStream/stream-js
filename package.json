@@ -111,6 +111,6 @@
     "url": "git://github.com/GetStream/stream-js.git"
   },
   "engines": {
-    "node": ">=4.8 <=10"
+    "node": ">=4.8 <=11"
   }
 }
