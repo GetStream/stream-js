@@ -11,7 +11,7 @@ describe('User profile story', () => {
 
   describe('When alice gets her account without creating it', () => {
     ctx.requestShouldError(404, async () => {
-      ctx.response = await ctx.alice.getUser();
+      ctx.response = await ctx.alice.user(ctx.alice.userId).get();
     });
   });
 
@@ -61,14 +61,16 @@ describe('User profile story', () => {
 
   describe('When alice creates her account', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.createUser(aliceData);
+      ctx.user = await ctx.alice.getOrCreateUser(aliceData);
+      ctx.response = ctx.user.full;
     });
-    checkUserResponse(() => ctx.alice.user, aliceData);
+    checkUserResponse(() => ctx.response, aliceData);
   });
 
   describe('When alice looks at her own profile', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.user.profile();
+      let user = await ctx.user.profile();
+      ctx.response = user.full;
     });
 
     ctx.responseShouldHaveFields(
@@ -83,21 +85,23 @@ describe('User profile story', () => {
 
   describe('When alice tries to create her account again', () => {
     ctx.requestShouldError(409, async () => {
-      await ctx.alice.user.create(aliceData);
+      await ctx.user.create(aliceData);
     });
   });
 
   describe('When bob calls getOrCreate for his user that does not exist yet', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.user.getOrCreate(bobData);
+      ctx.user = await ctx.bob.getOrCreateUser(bobData);
+      ctx.response = ctx.user.full;
     });
-    checkUserResponse(() => ctx.bob.user, bobData);
+    checkUserResponse(() => ctx.response, bobData);
   });
 
   describe('When bob calls getOrCreate for his existing user with new data', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
-      ctx.response = await ctx.bob.user.getOrCreate(newBobData);
+      ctx.user = await ctx.bob.getOrCreateUser(newBobData);
+      ctx.response = ctx.user.full;
     });
 
     ctx.responseShould('be the same as the previous response', () => {
@@ -108,29 +112,48 @@ describe('User profile story', () => {
   describe('When bob updates his existing user', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
-      ctx.response = await ctx.bob.user.update(newBobData);
+      ctx.user = await ctx.user.update(newBobData);
+      ctx.response = ctx.user.full;
     });
-    checkUserResponse(() => ctx.bob.user, newBobData);
+    checkUserResponse(() => ctx.user, newBobData);
     ctx.responseShouldHaveNewUpdatedAt();
   });
 
   describe('When creating follow relationships', () => {
     ctx.requestShouldNotError(async () => {
       let promises = [];
-      promises.push(ctx.alice.followUser(ctx.bob.userId));
-      promises.push(ctx.alice.followUser(ctx.carl.userId));
       promises.push(
-        ctx.alice.feed('timeline').follow('timeline', ctx.dave.userId),
-      );
-      promises.push(ctx.bob.followUser(ctx.alice.userId));
-      promises.push(
-        ctx.bob.feed('notification').follow('user', ctx.alice.userId),
+        ctx.alice.feed('user', ctx.alice.userId).follow('user', ctx.bob.userId),
       );
       promises.push(
-        ctx.carl.feed('notification').follow('user', ctx.alice.userId),
+        ctx.alice
+          .feed('user', ctx.alice.userId)
+          .follow('user', ctx.carl.userId),
       );
       promises.push(
-        ctx.dave.feed('notification').follow('user', ctx.alice.userId),
+        ctx.alice
+          .feed('timeline', ctx.alice.userId)
+          .follow('timeline', ctx.dave.userId),
+      );
+      promises.push(
+        ctx.bob
+          .feed('timeline', ctx.bob.userId)
+          .follow('user', ctx.alice.userId),
+      );
+      promises.push(
+        ctx.bob
+          .feed('notification', ctx.bob.userId)
+          .follow('user', ctx.alice.userId),
+      );
+      promises.push(
+        ctx.carl
+          .feed('notification', ctx.carl.userId)
+          .follow('user', ctx.alice.userId),
+      );
+      promises.push(
+        ctx.dave
+          .feed('notification', ctx.dave.userId)
+          .follow('user', ctx.alice.userId),
       );
       await Promise.all(promises);
     });
@@ -139,7 +162,7 @@ describe('User profile story', () => {
   describe("When alice looks at bob's profile", () => {
     let bobUser;
     ctx.requestShouldNotError(async () => {
-      bobUser = ctx.alice.getUser(ctx.bob.userId);
+      bobUser = ctx.alice.user(ctx.bob.userId).get();
       ctx.response = await bobUser.profile();
     });
 

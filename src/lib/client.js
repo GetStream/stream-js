@@ -765,24 +765,6 @@ StreamClient.prototype = {
     });
   },
 
-  objectFromResponse: function(response) {
-    let object = this.collection(response.collection).object(
-      response.id,
-      response.data,
-    );
-    object.full = response;
-    return object;
-  },
-
-  collectionEntryFromResponse: function(response) {
-    let object = this.collection(response.collection).entry(
-      response.id,
-      response.data,
-    );
-    object.full = response;
-    return object;
-  },
-
   personalizedFeed: function(options = {}, callback) {
     return this.get(
       {

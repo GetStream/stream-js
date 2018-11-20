@@ -300,9 +300,11 @@ class CloudContext {
   aliceAddsCheeseBurger() {
     describe('When alice adds a cheese burger to the food collection', () => {
       this.requestShouldNotError(async () => {
-        this.response = await this.alice
+        this.cheeseBurger = await this.alice
           .collections('food')
-          .add(null, this.cheeseBurgerData);
+          .add(null, this.cheeseBurgerData).full;
+
+        this.response = this.cheeseBurger.full;
       });
 
       this.responseShouldHaveFields(...this.fields.collection);
@@ -319,10 +321,6 @@ class CloudContext {
           );
         },
       );
-
-      this.afterTest(() => {
-        this.cheeseBurger = this.alice.objectFromResponse(this.response);
-      });
     });
   }
 
