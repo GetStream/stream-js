@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "3.23.0",
+  "version": "3.23.1",
   "scripts": {
     "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
@@ -88,6 +88,7 @@
     "quickcheck": "^0.0.4",
     "testdouble": "^3.8.1",
     "typescript": "^2.8.3",
+    "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^3.0.8"
   },
@@ -111,6 +112,6 @@
     "url": "git://github.com/GetStream/stream-js.git"
   },
   "engines": {
-    "node": ">=4.8 <=10"
+    "node": ">=4.8 <=11"
   }
 }
