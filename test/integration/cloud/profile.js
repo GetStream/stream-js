@@ -123,7 +123,9 @@ describe('User profile story', () => {
     ctx.requestShouldNotError(async () => {
       let promises = [];
       promises.push(
-        ctx.alice.feed('user', ctx.alice.userId).follow('user', ctx.bob.userId),
+        ctx.alice
+          .feed('timeline', ctx.alice.userId)
+          .follow('user', ctx.bob.userId),
       );
       promises.push(
         ctx.alice
@@ -162,16 +164,18 @@ describe('User profile story', () => {
   describe("When alice looks at bob's profile", () => {
     let bobUser;
     ctx.requestShouldNotError(async () => {
-      bobUser = ctx.alice.user(ctx.bob.userId).get();
-      ctx.response = await bobUser.profile();
+      bobUser = await ctx.alice.user(ctx.bob.userId).profile();
+      ctx.response = await bobUser.full;
     });
 
-    checkProfileResponse(() => bobUser, newBobData, 1, 1);
+    checkProfileResponse(() => ctx.response, newBobData, 1, 1);
   });
 
   describe('When alice tries to set a string as user data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.user.update('some string');
+      ctx.response = await ctx.alice
+        .user(ctx.alice.userId)
+        .update('some string');
     });
   });
 });
