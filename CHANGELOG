@@ -2,6 +2,22 @@
  Change history
 ================
 
+3.23.1
+======
+:release-date: 2018-11-20
+:by: Jelte Fennema
+
+* Support Node 11.x
+
+
+3.23.0
+======
+:release-date: 2018-10-29
+:by: Jelte Fennema
+
+* Add support for filtering reactions
+
+
 3.22.0
 ======
 :release-date: 2018-10-17
