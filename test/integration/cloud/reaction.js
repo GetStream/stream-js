@@ -30,20 +30,16 @@ describe('Reaction pagination', () => {
       ctx.requestShouldNotError(async () => {
         if (index % 3 == 0) {
           ctx.response = await ctx.bob.react('comment', eatActivity.id, {
-            data: { index },
+            index,
           });
           ctx.response.user = ctx.bob.user.full;
           comments.unshift(ctx.response);
         }
-        ctx.response = await ctx.bob.react('like', eatActivity.id, {
-          data: { index },
-        });
+        ctx.response = await ctx.bob.react('like', eatActivity.id, { index });
         ctx.response.user = ctx.bob.user.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
-          ctx.response = await ctx.bob.react('clap', eatActivity.id, {
-            data: { index },
-          });
+          ctx.response = await ctx.bob.react('clap', eatActivity.id, { index });
           ctx.response.user = ctx.bob.user.full;
           claps.unshift(ctx.response);
         }
@@ -54,9 +50,7 @@ describe('Reaction pagination', () => {
   describe('When bob reads alice her feed with all enrichment enabled', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
-        withOwnReactions: true,
-        withRecentReactions: true,
-        withReactionCounts: true,
+        reactions: { own: true, recent: true, counts: true },
       });
     });
     ctx.responseShouldHaveActivityWithFields(
@@ -249,14 +243,16 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react('comment', eatActivity.id, {
-        data: commentData,
-        targetFeeds: [
+      ctx.response = await ctx.bob.react(
+        'comment',
+        eatActivity.id,
+        commentData,
+        [
           ctx.bob.feed('user', ctx.bob.userId).id,
           ctx.bob.feed('notification', ctx.alice.userId).id,
           ctx.bob.feed('notification', ctx.carl.userId).id,
         ],
-      });
+      );
       comment = ctx.response;
     });
 
@@ -344,9 +340,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Alice you are the best!!!!',
       };
-      ctx.response = await ctx.alice.reactions.update(comment.id, {
-        data: commentData,
-      });
+      ctx.response = await ctx.alice.reactions.update(comment.id, commentData);
     });
   });
 
@@ -355,10 +349,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Looking yummy! @dave wanna get this on Tuesday?',
       };
-      ctx.response = await ctx.bob.reactions.update(comment.id, {
-        data: commentData,
-        targetFeeds: [ctx.bob.feed('timeline', ctx.alice.userId)],
-      });
+      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, [
+        `timeline:${ctx.alice.userId}`,
+      ]);
     });
   });
 
@@ -367,14 +360,11 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Looking yummy! @dave wanna get this on Tuesday?',
       };
-      ctx.response = await ctx.bob.reactions.update(comment.id, {
-        data: commentData,
-        targetFeeds: [
-          ctx.bob.feed('user', ctx.bob.userId).id,
-          ctx.bob.feed('notification', ctx.alice.userId).id,
-          ctx.bob.feed('notification', ctx.dave.userId).id,
-        ],
-      });
+      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, [
+        ctx.bob.feed('user', ctx.bob.userId).id,
+        ctx.bob.feed('notification', ctx.alice.userId).id,
+        ctx.bob.feed('notification', ctx.dave.userId).id,
+      ]);
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -463,9 +453,10 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         commentData = {
           text: 'Alice you are the best!!!!',
         };
-        ctx.response = await ctx.alice.reactions.update(comment.id, {
-          data: commentData,
-        });
+        ctx.response = await ctx.alice.reactions.update(
+          comment.id,
+          commentData,
+        );
       });
     });
 
@@ -512,9 +503,11 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When alice tries to set a string as the reaction data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.react('comment', eatActivity.id, {
-        data: 'some string',
-      });
+      ctx.response = await ctx.alice.react(
+        'comment',
+        eatActivity.id,
+        'some string',
+      );
     });
   });
 });

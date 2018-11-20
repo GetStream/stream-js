@@ -316,7 +316,7 @@ StreamFeed.prototype = {
     // Shortcut options for reaction enrichment
     if (options && options.reactions) {
       if (options.reactions.own != null) {
-        options.ownReactions = options.reactions.own;
+        options.withOwnReactions = options.reactions.own;
       }
       if (options.reactions.recent != null) {
         options.withRecentReactions = options.reactions.recent;

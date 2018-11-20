@@ -175,7 +175,7 @@ StreamReaction.prototype = {
     );
   },
 
-  update: function(id, { data, targetFeeds }, callback) {
+  update: function(id, data, targetFeeds, callback) {
     /**
      * update reaction
      * @method add
