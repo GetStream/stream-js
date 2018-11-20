@@ -11,14 +11,7 @@ var isPlainObject = require('lodash/isPlainObject');
 // Inheriting StreamClient like discribed:
 // https://stackoverflow.com/a/15192747/2570866
 function StreamCloudClient() {
-  let options = arguments[3] || {};
-
-  let location = 'cloud';
-  if (options.location) {
-    location = options.location + '-cloud';
-  }
-  options = { ...options, location };
-  StreamClient.apply(this, [arguments[0], arguments[1], arguments[2], options]);
+  StreamClient.apply(this, arguments);
 }
 
 function createObject(proto) {
