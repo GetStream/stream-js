@@ -1,4 +1,3 @@
-var Collections = require('./collections');
 var Personalization = require('./personalization');
 var request = require('request');
 var StreamFeed = require('./feed');
@@ -10,6 +9,12 @@ var Promise = require('./promise');
 var qs = require('qs');
 var url = require('url');
 var Faye = require('faye');
+var Collections = require('./collections');
+var StreamFileStore = require('./files');
+var StreamImageStore = require('./images');
+var StreamReaction = require('./reaction');
+var StreamUser = require('./user');
+var jwtDecode = require('jwt-decode');
 
 /**
  * @callback requestCallback
@@ -30,7 +35,7 @@ StreamClient.prototype = {
   baseUrl: 'https://api.stream-io-api.com/api/',
   baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
-  initialize: function(apiKey, apiSecret, appId, options = {}) {
+  initialize: function(apiKey, apiSecretOrToken, appId, options = {}) {
     /**
      * Initialize a client
      * @method intialize
@@ -47,7 +52,19 @@ StreamClient.prototype = {
      * stream.connect(apiKey, null, appId);
      */
     this.apiKey = apiKey;
-    this.apiSecret = apiSecret;
+    this.usingApiSecret = !signing.isJWT(apiSecretOrToken);
+    this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
+    this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
+
+    if (this.userToken != null) {
+      let jwtBody = jwtDecode(this.userToken);
+      if (!jwtBody.user_id) {
+        throw new TypeError('user_id is missing in user token');
+      }
+      this.userId = jwtBody.user_id;
+      this.authPayload = jwtBody;
+    }
+
     this.appId = appId;
     this.options = options;
     this.version = this.options.version || 'v1.0';
@@ -108,14 +125,16 @@ StreamClient.prototype = {
     }
 
     this.personalization = new Personalization(this);
-    this.collections = new Collections(this);
 
     /* istanbul ignore next */
-    if (this.browser && this.apiSecret) {
+    if (this.browser && this.usingApiSecret) {
       throw new errors.FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
+    this.files = new StreamFileStore(this, this.getOrCreateToken());
+    this.images = new StreamImageStore(this, this.getOrCreateToken());
+    this.reactions = new StreamReaction(this, this.getOrCreateToken());
   },
 
   getPersonalizationToken: function() {
@@ -149,7 +168,7 @@ StreamClient.prototype = {
         this.apiSecret,
         'collections',
         '*',
-        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
+        { feedId: '*', expireTokens: this.expireTokens },
       );
     } else {
       throw new errors.SiteError(
@@ -366,33 +385,30 @@ StreamClient.prototype = {
     return this.feed(feedSlug, userId).getReadWriteToken();
   },
 
-  feed: function(feedSlug, userId, token, siteId, options) {
+  feed: function(feedSlug, userId, token) {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
      * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug
      * @param {string} userId - The user identifier
-     * @param {string} [token] - The token
-     * @param {string} [siteId] - The site identifier
-     * @param {object} [options] - Additional function options
-     * @param {boolean} [options.readOnly] - A boolean indicating whether to generate a read only token for this feed
+     * @param {string} [token] - The token (DEPRECATED)
      * @return {StreamFeed}
      * @example
-     * client.feed('user', '1', 'token2');
+     * client.feed('user', '1');
      */
 
-    // create the token in server side mode
-    if (this.apiSecret && !token) {
-      options = options || {};
-      var feedId = '' + feedSlug + userId;
-      // use scoped token if read-only access is necessary
-      token = options.readOnly
-        ? this.getReadOnlyToken(feedSlug, userId)
-        : signing.sign(this.apiSecret, feedId);
+    const enrichByDefault = !this.usingApiSecret;
+
+    if (this.usingApiSecret) {
+      var feedId = feedSlug + ':' + userId;
+      token = signing.JWTScopeToken('feed', '*', this.apiSecret, feedId);
+    } else {
+      token = this.userToken;
     }
 
-    var feed = new StreamFeed(this, feedSlug, userId, token, siteId);
+    var feed = new StreamFeed(this, feedSlug, userId, token);
+    feed.enrichByDefault = enrichByDefault;
     return feed;
   },
 
@@ -450,51 +466,6 @@ StreamClient.prototype = {
     // fallbacks handle it differently by default (meteor)
     kwargs.withCredentials = false;
     return kwargs;
-  },
-
-  signActivity: function(activity) {
-    /**
-     * We automatically sign the to parameter when in server side mode
-     * @method signActivities
-     * @memberof StreamClient.prototype
-     * @private
-     * @param  {object}       [activity] Activity to sign
-     */
-    return this.signActivities([activity])[0];
-  },
-
-  signActivities: function(activities) {
-    /**
-     * We automatically sign the to parameter when in server side mode
-     * @method signActivities
-     * @memberof StreamClient.prototype
-     * @private
-     * @param {array} Activities
-     */
-    if (!this.apiSecret) {
-      return activities;
-    }
-
-    var signedActivities = [];
-    for (var i = 0; i < activities.length; i++) {
-      var activity = Object.assign({}, activities[i]);
-      var to = activity.to || [];
-      if (to.length > 0) {
-        var signedTo = [];
-        for (var j = 0; j < to.length; j++) {
-          var feedId = to[j];
-          var feedSlug = feedId.split(':')[0];
-          var userId = feedId.split(':')[1];
-          var token = this.feed(feedSlug, userId).token;
-          var signedFeed = feedId + ' ' + token;
-          signedTo.push(signedFeed);
-        }
-        activity.to = signedTo;
-      }
-      signedActivities.push(activity);
-    }
-
-    return signedActivities;
   },
 
   getFayeAuthorization: function() {
@@ -645,8 +616,22 @@ StreamClient.prototype = {
     return cClient.createUserSession(userToken);
   },
 
+  /**
+   * Deprecated: use createUserToken instead
+   * @param {string} userId
+   * @param {object} extraData
+   */
   createUserSessionToken: function(userId, extraData = {}) {
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.FeedError(
+        'In order to create user tokens you need to initialize the API client with your API Secret',
+      );
+    }
     return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
+  },
+
+  createUserToken: function(userId, extraData = {}) {
+    return this.createUserSessionToken(userId, extraData);
   },
 
   updateActivities: function(activities, callback) {
@@ -656,6 +641,13 @@ StreamClient.prototype = {
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
+
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.FeedError(
+        'This method can only be used server-side using your API Secret',
+      );
+    }
+
     if (!(activities instanceof Array)) {
       throw new TypeError('The activities argument should be an Array');
     }
@@ -686,6 +678,13 @@ StreamClient.prototype = {
      * @param  {object} activity The activity to update
      * @return {Promise}
      */
+
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.FeedError(
+        'This method can only be used server-side using your API Secret',
+      );
+    }
+
     return this.updateActivities([activity], callback);
   },
 
@@ -731,6 +730,65 @@ StreamClient.prototype = {
         url: 'activities/',
         qs: qs,
         signature: authToken,
+      },
+      callback,
+    );
+  },
+
+  getOrCreateToken: function() {
+    return this.usingApiSecret
+      ? signing.JWTScopeToken('*', '*', '*')
+      : this.userToken;
+  },
+
+  collections: function(name) {
+    return new Collections(this, name, this.getOrCreateToken());
+  },
+
+  react: function(kind, activity, options, callback) {
+    return this.reactions.add(kind, activity, options, callback);
+  },
+
+  user: function(userId) {
+    return new StreamUser(this, userId, this.getOrCreateToken());
+  },
+
+  getOrCreateUser: function(data, callback) {
+    return this.user(this.userId).getOrCreate(data, callback);
+  },
+
+  og: function(url) {
+    return this.get({
+      url: 'og/',
+      qs: { url: url },
+      signature: this.getOrCreateToken(),
+    });
+  },
+
+  objectFromResponse: function(response) {
+    let object = this.collection(response.collection).object(
+      response.id,
+      response.data,
+    );
+    object.full = response;
+    return object;
+  },
+
+  collectionEntryFromResponse: function(response) {
+    let object = this.collection(response.collection).entry(
+      response.id,
+      response.data,
+    );
+    object.full = response;
+    return object;
+  },
+
+  personalizedFeed: function(options = {}, callback) {
+    return this.get(
+      {
+        url: 'enrich/personalization/feed/',
+        qs: options,
+        signature: this.getOrCreateToken(),
       },
       callback,
     );
@@ -785,10 +843,18 @@ StreamClient.prototype = {
     if (data.unset && !(data.unset instanceof Array)) {
       throw new TypeError('unset field should be an Array');
     }
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
-      feedId: '*',
-      expireTokens: this.expireTokens,
-    });
+
+    var authToken;
+
+    if (this.usingApiSecret) {
+      authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+        feedId: '*',
+        expireTokens: this.expireTokens,
+      });
+    } else {
+      authToken = this.userToken;
+    }
+
     return this.post(
       {
         url: 'activity/',
@@ -799,6 +865,8 @@ StreamClient.prototype = {
     );
   },
 };
+
+StreamClient.prototype.collection = StreamClient.prototype.collections;
 
 if (qs) {
   StreamClient.prototype.createRedirectUrl = function(

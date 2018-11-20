@@ -37,17 +37,21 @@ describe('Personalized enrichment story', () => {
     let activity;
 
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
-        verb: 'eat',
-        object: ctx.cheeseBurger,
-      });
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          actor: ctx.alice.user,
+          verb: 'eat',
+          object: ctx.cheeseBurger,
+        });
       activity = ctx.response;
     });
 
     describe('When Bob follows alice', () => {
       ctx.requestShouldNotError(async () => {
-        await ctx.bob.followUser(ctx.alice.user);
+        await ctx.bob
+          .feed('timeline', ctx.bob.userId)
+          .follow('user', ctx.alice.userId);
       });
     });
 

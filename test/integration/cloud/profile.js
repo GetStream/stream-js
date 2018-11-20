@@ -11,7 +11,7 @@ describe('User profile story', () => {
 
   describe('When alice gets her account without creating it', () => {
     ctx.requestShouldError(404, async () => {
-      ctx.response = await ctx.alice.user.get();
+      ctx.response = await ctx.alice.getUser();
     });
   });
 
@@ -61,7 +61,7 @@ describe('User profile story', () => {
 
   describe('When alice creates her account', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.user.create(aliceData);
+      ctx.response = await ctx.alice.createUser(aliceData);
     });
     checkUserResponse(() => ctx.alice.user, aliceData);
   });

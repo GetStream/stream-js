@@ -13,11 +13,13 @@ describe('Reaction pagination', () => {
 
   describe('When alice creates 1 activity', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
-        verb: 'eat',
-        object: 'cheeseburger',
-      });
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          actor: ctx.alice.user,
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.user.full;
     });
@@ -233,11 +235,13 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
   ctx.createUsers();
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
-        verb: 'eat',
-        object: 'cheeseburger',
-      });
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          actor: ctx.alice.user,
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.user.full;
     });
@@ -248,9 +252,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response = await ctx.bob.react('comment', eatActivity.id, {
         data: commentData,
         targetFeeds: [
-          ctx.bob.feed('user').id,
-          ctx.bob.feed('notification', ctx.alice.userId),
-          ctx.bob.feed('notification', ctx.carl.userId),
+          ctx.bob.feed('user', ctx.bob.userId).id,
+          ctx.bob.feed('notification', ctx.alice.userId).id,
+          ctx.bob.feed('notification', ctx.carl.userId).id,
         ],
       });
       comment = ctx.response;
@@ -288,9 +292,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.responseShouldHaveFields(...ctx.fields.reaction);
     });
 
-    describe('and then alice reads bob his feed', () => {
+    describe('and then alice reads bob feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
+        ctx.response = await ctx.alice.feed('user', ctx.bob.userId).get();
       });
       ctx.responseShouldHaveActivityWithFields('reaction');
       ctx.activityShould('contain the expected data', () => {
@@ -312,7 +316,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('notification').get();
+        ctx.response = await ctx.alice
+          .feed('notification', ctx.alice.userId)
+          .get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -322,7 +328,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl.feed('notification').get();
+        ctx.response = await ctx.carl
+          .feed('notification', ctx.carl.userId)
+          .get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -362,9 +370,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response = await ctx.bob.reactions.update(comment.id, {
         data: commentData,
         targetFeeds: [
-          ctx.bob.feed('user').id,
-          ctx.bob.feed('notification', ctx.alice.userId),
-          ctx.bob.feed('notification', ctx.dave.userId),
+          ctx.bob.feed('user', ctx.bob.userId).id,
+          ctx.bob.feed('notification', ctx.alice.userId).id,
+          ctx.bob.feed('notification', ctx.dave.userId).id,
         ],
       });
     });
@@ -385,7 +393,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads bob his feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
+        ctx.response = await ctx.alice.feed('user', ctx.bob.userId).get();
       });
       ctx.responseShouldHaveActivityWithFields('reaction');
       ctx.activityShould('contain the expected data', () => {
@@ -396,7 +404,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('notification').get();
+        ctx.response = await ctx.alice
+          .feed('notification', ctx.alice.userId)
+          .get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -406,14 +416,18 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl.feed('notification').get();
+        ctx.response = await ctx.carl
+          .feed('notification', ctx.carl.userId)
+          .get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then dave reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave.feed('notification').get();
+        ctx.response = await ctx.dave
+          .feed('notification', ctx.dave.userId)
+          .get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -463,28 +477,34 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads bob his feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('user', ctx.bob.user).get();
+        ctx.response = await ctx.alice.feed('user', ctx.bob.userId).get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice.feed('notification').get();
+        ctx.response = await ctx.alice
+          .feed('notification', ctx.alice.userId)
+          .get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl.feed('notification').get();
+        ctx.response = await ctx.carl
+          .feed('notification', ctx.carl.userId)
+          .get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then dave reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave.feed('notification').get();
+        ctx.response = await ctx.dave
+          .feed('notification', ctx.dave.userId)
+          .get();
       });
       ctx.responseShouldHaveNoActivities();
     });

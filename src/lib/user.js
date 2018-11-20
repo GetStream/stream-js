@@ -38,7 +38,7 @@ StreamUser.prototype = {
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
 
@@ -69,7 +69,7 @@ StreamUser.prototype = {
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
 
@@ -88,7 +88,7 @@ StreamUser.prototype = {
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
   getOrCreate: function(data, callback) {

@@ -53,7 +53,7 @@ StreamReaction.prototype = {
     );
   },
 
-  add: function(kind, activity, { id, data, targetFeeds } = {}, callback) {
+  add: function(kind, activity, data = {}, targetFeeds = [], callback) {
     /**
      * add reaction
      * @method add
@@ -65,7 +65,7 @@ StreamReaction.prototype = {
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     * @example reactions.add("comment", {"id": "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "text": "I climbed a mountain"}, {"text": "love it!"},)
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
     if (activity instanceof Object) {
       activity = activity.id;
@@ -74,7 +74,6 @@ StreamReaction.prototype = {
     var body = {
       activity_id: activity,
       kind: kind,
-      id: id,
       data: data,
       target_feeds: targetFeeds,
     };

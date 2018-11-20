@@ -5,7 +5,7 @@ describe('Enriching not existing references', () => {
   let ctx = new CloudContext();
   let zeroUUID = '00000000-0000-0000-0000-000000000000';
   (ctx.cheeseBurger = ctx.alice
-    .storage('food')
+    .collections('food')
     .object(randUserId('cheeseburger'), ctx.cheeseBurgerData)),
     describe('When alice eats a cheese burger without adding it to collections', () => {
       ctx.requestShouldNotError(async () => {

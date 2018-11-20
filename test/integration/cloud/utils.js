@@ -1,6 +1,5 @@
 var stream = require('../../../src/getstream');
 var config = require('../utils/config');
-var signing = require('../../../src/lib/signing');
 var randUserId = require('../utils/hooks').randUserId;
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -17,16 +16,56 @@ class CloudContext {
       name: 'cheese burger',
       toppings: ['cheese'],
     };
-    this.client = stream.connectCloud(config.API_KEY, config.APP_ID, {
+    const clientOptions = {
       group: 'testCycle',
-      protocol: 'https',
+      // protocol: 'http',
       keepAlive: false,
-    });
-    this.alice = this.createUserSession('alice');
-    this.bob = this.createUserSession('bob');
-    this.carl = this.createUserSession('carl');
-    this.dave = this.createUserSession('dave');
-    this.root = this.createUserSession('root', { stream_admin: true });
+      // location: 'beta',
+    };
+
+    this.serverSideClient = stream.connect(
+      config.API_KEY,
+      config.API_SECRET,
+      config.APP_ID,
+      clientOptions,
+    );
+
+    // apiKey, apiSecret, appId, options
+    this.alice = stream.connect(
+      config.API_KEY,
+      this.createUserToken('alice'),
+      config.APP_ID,
+      clientOptions,
+    );
+
+    this.bob = stream.connect(
+      config.API_KEY,
+      this.createUserToken('bob'),
+      config.APP_ID,
+      clientOptions,
+    );
+
+    this.carl = stream.connect(
+      config.API_KEY,
+      this.createUserToken('carl'),
+      config.APP_ID,
+      clientOptions,
+    );
+
+    this.dave = stream.connect(
+      config.API_KEY,
+      this.createUserToken('dave'),
+      config.APP_ID,
+      clientOptions,
+    );
+
+    this.root = stream.connect(
+      config.API_KEY,
+      this.createUserToken('root', { stream_admin: true }),
+      config.APP_ID,
+      clientOptions,
+    );
+
     this.userData = {
       alice: {
         name: 'Alice Abbot',
@@ -91,11 +130,9 @@ class CloudContext {
     };
   }
 
-  createUserSession(userId, extraData) {
+  createUserToken(userId, extraData) {
     userId = randUserId(userId);
-    return this.client.createUserSession(
-      signing.JWTUserSessionToken(config.API_SECRET, userId, extraData),
-    );
+    return this.serverSideClient.createUserToken(userId, extraData);
   }
 
   wrapFn(fn) {
@@ -264,7 +301,7 @@ class CloudContext {
     describe('When alice adds a cheese burger to the food collection', () => {
       this.requestShouldNotError(async () => {
         this.response = await this.alice
-          .collection('food')
+          .collections('food')
           .add(null, this.cheeseBurgerData);
       });
 
@@ -292,12 +329,10 @@ class CloudContext {
   createUsers() {
     describe('When creating the users', () => {
       this.noRequestsShouldError(async () => {
-        await Promise.all([
-          this.alice.user.create(this.userData.alice),
-          this.bob.user.create(this.userData.bob),
-          this.carl.user.create(this.userData.carl),
-          this.dave.user.create(this.userData.dave),
-        ]);
+        this.alice.user = await this.alice.getOrCreateUser(this.userData.alice);
+        this.bob.user = await this.bob.getOrCreateUser(this.userData.bob);
+        this.carl.user = await this.carl.getOrCreateUser(this.userData.carl);
+        this.dave.user = await this.dave.getOrCreateUser(this.userData.dave);
       });
     });
   }
