@@ -32,30 +32,6 @@ Collections.prototype = {
     return new CollectionEntry(this, itemId, itemData);
   },
 
-  object: function(itemId, itemData) {
-    return new CollectionEntry(this, itemId, itemData);
-  },
-
-  items: function(options, callback) {
-    /**
-     * get all items from collection
-     * @method items
-     * @memberof Collections.prototype
-     * @param  {object}   options  {limit:}
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.get()
-     * @example collection.get({limit:100})
-     */
-    return this.client.get(
-      {
-        url: this.buildURL(),
-        signature: this.token,
-      },
-      callback,
-    );
-  },
-
   get: function(itemId, callback) {
     /**
      * get item from collection
