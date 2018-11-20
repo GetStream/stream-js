@@ -201,7 +201,7 @@ describe('Enrich story', () => {
         data: {
           text: 'Looks juicy!!!',
         },
-        targetFeeds: [ctx.alice.feed('timeline')],
+        targetFeeds: [ctx.alice.feed('notification')],
       });
     });
 
@@ -282,22 +282,20 @@ describe('Enrich story', () => {
       });
     });
 
-    describe('and then alice reads her timeline with all enrichment enabled', () => {
+    describe('and then alice reads her notification with all enrichment enabled', () => {
       let expectedReactedOnActivity;
       ctx.requestShouldNotError(async () => {
         expectedReactedOnActivity = ctx.activity;
         expectedReactedOnActivity.own_reactions = {};
-        expectedReactedOnActivity.own_reactions_extra = {};
-        ctx.response = await ctx.alice.feed('timeline').get({
+        ctx.response = await ctx.alice.feed('notification').get({
           withRecentReactions: true,
           withOwnReactions: true,
           withReactionCounts: true,
         });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
+      ctx.responseShouldHaveActivityInGroupWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
@@ -315,7 +313,6 @@ describe('Enrich story', () => {
         ctx.activity.own_reactions.should.eql({});
         ctx.activity.latest_reactions.should.eql({});
         ctx.activity.latest_reactions_extra.should.eql({});
-        ctx.activity.reaction_counts.should.include({ like: 0, comment: 0 });
       });
     });
   });
