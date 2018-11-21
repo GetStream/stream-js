@@ -55,7 +55,7 @@ describe('Enrich story', () => {
 
   describe('When bob follows alice', () => {
     ctx.requestShouldNotError(async () => {
-      await ctx.bob.followUser(ctx.alice.user);
+      await ctx.bob.feed('timeline').follow('user', ctx.alice.userId);
     });
     describe('and then bob reads his timeline with own reactions', () => {
       ctx.requestShouldNotError(async () => {
@@ -197,12 +197,14 @@ describe('Enrich story', () => {
 
   describe('When dave comments on that alice ate a cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react('comment', eatCheeseBurgerActivity, {
-        data: {
+      ctx.response = await ctx.dave.react(
+        'comment',
+        eatCheeseBurgerActivity,
+        {
           text: 'Looks juicy!!!',
         },
-        targetFeeds: [ctx.alice.feed('notification')],
-      });
+        [ctx.alice.feed('notification')],
+      );
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reaction);

@@ -385,7 +385,7 @@ StreamClient.prototype = {
     return this.feed(feedSlug, userId).getReadWriteToken();
   },
 
-  feed: function(feedSlug, userId, token) {
+  feed: function(feedSlug, userId=this.userId, token) {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
@@ -405,6 +405,9 @@ StreamClient.prototype = {
       token = signing.JWTScopeToken('feed', '*', this.apiSecret, feedId);
     } else {
       token = this.userToken;
+    }
+    if (userId instanceof StreamUser) {
+      userId = userId.id;
     }
 
     var feed = new StreamFeed(this, feedSlug, userId, token);

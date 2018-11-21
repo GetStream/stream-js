@@ -52,8 +52,8 @@ Collections.prototype = {
         if (callback) {
           callback(response);
         }
-        let object = self
-          .collection(response.collection)
+        let object = self.client
+          .collections(response.collection)
           .object(response.id, response.data);
         object.full = response;
         return object;
@@ -87,24 +87,24 @@ Collections.prototype = {
         signature: this.token,
       })
       .then((response) => {
+        let entry = self.client
+          .collections(response.collection)
+          .entry(response.id, response.data);
+        entry.full = response;
         if (callback) {
-          callback(response);
+          callback(entry);
         }
-        let object = self
-          .collection(response.collection)
-          .object(response.id, response.data);
-        object.full = response;
-        return object;
+        return entry;
       });
   },
 
-  update: function(itemId, objectData, callback) {
+  update: function(entryId, data, callback) {
     /**
-     * Update item in the object collection
+     * Update entry in the collection
      * @method update
      * @memberof Collections.prototype
-     * @param  {object}   itemId  ObjectStore object id
-     * @param  {object}   objectData  ObjectStore data
+     * @param  {object}   entryId  Collection object id
+     * @param  {object}   data  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
@@ -112,11 +112,11 @@ Collections.prototype = {
      */
     var self = this;
     var body = {
-      data: objectData,
+      data,
     };
     return this.client
       .put({
-        url: this.buildURL(itemId),
+        url: this.buildURL(entryId),
         body: body,
         signature: this.token,
       })
@@ -124,7 +124,7 @@ Collections.prototype = {
         if (callback) {
           callback(response);
         }
-        let object = self
+        let object = self.client
           .collection(response.collection)
           .object(response.id, response.data);
         object.full = response;
@@ -132,19 +132,19 @@ Collections.prototype = {
       });
   },
 
-  delete: function(itemId, callback) {
+  delete: function(entryId, callback) {
     /**
-     * Delete item from collection
+     * Delete entry from collection
      * @method delete
      * @memberof Collections.prototype
-     * @param  {object}   itemId  ObjectStore object id
+     * @param  {object}   entryId  Collection entry id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.delete("cheese101")
      */
     return this.client['delete'](
       {
-        url: this.buildURL(itemId),
+        url: this.buildURL(entryId),
         signature: this.token,
       },
       callback,
