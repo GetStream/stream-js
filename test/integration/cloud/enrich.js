@@ -21,7 +21,7 @@ describe('Enrich story', () => {
   describe('When alice eats the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
+        actor: ctx.alice.currentUser,
         verb: 'eat',
         object: ctx.cheeseBurger,
       });
@@ -34,7 +34,7 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields();
 
       ctx.responseShould('have the activity containing enriched data', () => {
-        ctx.activity.actor.should.eql(ctx.alice.user.full);
+        ctx.activity.actor.should.eql(ctx.alice.currentUser.full);
         ctx.activity.verb.should.eql('eat');
         ctx.shouldEqualBesideDuration(
           ctx.activity.object,
@@ -89,7 +89,10 @@ describe('Enrich story', () => {
         user_id: ctx.bob.userId,
       });
       ctx.response.data.should.eql({});
-      like = ctx.reactionToReactionInActivity(ctx.response, ctx.bob.user);
+      like = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.bob.currentUser,
+      );
     });
 
     describe('and then bob reads his timeline with own reactions', () => {
@@ -191,7 +194,10 @@ describe('Enrich story', () => {
         user_id: ctx.dave.userId,
       });
       ctx.response.data.should.eql({});
-      like2 = ctx.reactionToReactionInActivity(ctx.response, ctx.dave.user);
+      like2 = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.dave.currentUser,
+      );
     });
   });
 
@@ -220,7 +226,10 @@ describe('Enrich story', () => {
       ctx.response.data.should.eql({
         text: 'Looks juicy!!!',
       });
-      comment = ctx.reactionToReactionInActivity(ctx.response, ctx.dave.user);
+      comment = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.dave.currentUser,
+      );
     });
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {
@@ -330,7 +339,7 @@ describe('Enrich story', () => {
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave.feed('user', ctx.alice.user).get({
+        ctx.response = await ctx.dave.feed('user', ctx.alice.currentUser).get({
           withRecentReactions: true,
           withOwnReactions: true,
           withReactionCounts: true,

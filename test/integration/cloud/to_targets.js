@@ -10,7 +10,7 @@ describe('To targets', () => {
 
     ctx.requestShouldError(400, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
+        actor: ctx.alice.currentUser,
         verb: 'eat',
         object: ctx.cheeseBurger,
         foreign_id: 'fid:123',
@@ -25,7 +25,7 @@ describe('To targets', () => {
 
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
+        actor: ctx.alice.currentUser,
         verb: 'eat',
         object: ctx.cheeseBurger,
         foreign_id: 'fid:123',
@@ -40,7 +40,7 @@ describe('To targets', () => {
 
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
+        actor: ctx.alice.currentUser,
         verb: 'eat',
         object: ctx.cheeseBurger,
         foreign_id: 'fid:123',

@@ -16,12 +16,12 @@ describe('Reaction pagination', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.user,
+          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: 'cheeseburger',
         });
       eatActivity = ctx.response;
-      eatActivity.actor = ctx.alice.user.full;
+      eatActivity.actor = ctx.alice.currentUser.full;
     });
   });
 
@@ -32,15 +32,15 @@ describe('Reaction pagination', () => {
           ctx.response = await ctx.bob.react('comment', eatActivity.id, {
             index,
           });
-          ctx.response.user = ctx.bob.user.full;
+          ctx.response.user = ctx.bob.currentUser.full;
           comments.unshift(ctx.response);
         }
         ctx.response = await ctx.bob.react('like', eatActivity.id, { index });
-        ctx.response.user = ctx.bob.user.full;
+        ctx.response.user = ctx.bob.currentUser.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
           ctx.response = await ctx.bob.react('clap', eatActivity.id, { index });
-          ctx.response.user = ctx.bob.user.full;
+          ctx.response.user = ctx.bob.currentUser.full;
           claps.unshift(ctx.response);
         }
       });
@@ -95,7 +95,7 @@ describe('Reaction pagination', () => {
             limit: 5,
           };
           if (withUser) {
-            expectedQuery.user_id = ctx.bob.user.id;
+            expectedQuery.user_id = ctx.bob.userId;
           }
 
           const query = url.parse(extra.next, true).query;
@@ -123,7 +123,7 @@ describe('Reaction pagination', () => {
       resp = await ctx.alice.reactions.filter(conditions);
       resp.results.length.should.eql(1);
       resp.results[0].should.have.all.keys(...ctx.fields.reaction);
-      resp.results[0].user.should.eql(ctx.bob.user.full);
+      resp.results[0].user.should.eql(ctx.bob.currentUser.full);
     });
 
     ctx.test('specify page size using limit param', async () => {
@@ -232,12 +232,12 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.user,
+          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: 'cheeseburger',
         });
       eatActivity = ctx.response;
-      eatActivity.actor = ctx.alice.user.full;
+      eatActivity.actor = ctx.alice.currentUser.full;
     });
   });
 
@@ -277,7 +277,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.responseShouldHaveFields(...ctx.fields.reaction);
 
       ctx.test('response should include bob user data', () => {
-        ctx.response.user.should.eql(ctx.bob.user.full);
+        ctx.response.user.should.eql(ctx.bob.currentUser.full);
       });
     });
 
@@ -303,7 +303,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         };
 
         ctx.activity.should.include(expectedCommentData);
-        ctx.activity.actor.should.eql(ctx.bob.user.full);
+        ctx.activity.actor.should.eql(ctx.bob.currentUser.full);
         ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
         ctx.activity.reaction.should.eql(comment);
         commentActivity = ctx.activity;

@@ -61,7 +61,7 @@ describe('User profile story', () => {
 
   describe('When alice creates her account', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.user = await ctx.alice.getOrCreateUser(aliceData);
+      ctx.user = await ctx.alice.currentUser.getOrCreate(aliceData);
       ctx.response = ctx.user.full;
     });
     checkUserResponse(() => ctx.response, aliceData);
@@ -91,7 +91,7 @@ describe('User profile story', () => {
 
   describe('When bob calls getOrCreate for his user that does not exist yet', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.user = await ctx.bob.getOrCreateUser(bobData);
+      ctx.user = await ctx.bob.currentUser.getOrCreate(bobData);
       ctx.response = ctx.user.full;
     });
     checkUserResponse(() => ctx.response, bobData);
@@ -100,7 +100,7 @@ describe('User profile story', () => {
   describe('When bob calls getOrCreate for his existing user with new data', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
-      ctx.user = await ctx.bob.getOrCreateUser(newBobData);
+      ctx.user = await ctx.bob.currentUser.getOrCreate(newBobData);
       ctx.response = ctx.user.full;
     });
 

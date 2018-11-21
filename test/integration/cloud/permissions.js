@@ -17,7 +17,7 @@ describe('Permission checking', () => {
     let at = new Date().toISOString();
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.bob.user,
+        actor: ctx.bob.currentUser,
         verb: 'post',
         object: 'I love Alice',
         foreign_id: 'fid:123',
@@ -27,20 +27,20 @@ describe('Permission checking', () => {
   });
   describe('When alice tries to create another user', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.getUser(randUserId('someone')).create();
+      ctx.response = await ctx.alice.user(randUserId('someone')).create();
     });
   });
   describe('When alice tries to update bob', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice
-        .getUser(ctx.bob.userId)
+        .user(ctx.bob.userId)
         .update({ hacked: true });
     });
   });
   describe('When alice tries to delete bob', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice
-        .getUser(ctx.bob.userId)
+        .user(ctx.bob.userId)
         .update({ hacked: true });
     });
   });
@@ -64,7 +64,7 @@ describe('Permission checking', () => {
       ctx.response = await ctx.alice
         .feed('timeline', ctx.bob.userId)
         .addActivity({
-          actor: ctx.alice.userId,
+          actor: ctx.alice.currentUser,
           verb: 'post',
           object: "I'm writing this directly on your timeline",
         });
@@ -74,7 +74,7 @@ describe('Permission checking', () => {
   describe('When alice tries to post to someone elses timeline by using to targets', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.userId,
+        actor: ctx.alice.currentUser,
         verb: 'post',
         object: "I'm writing this on your timeline by using to targets",
         to: ['timeline:123'],
@@ -93,7 +93,7 @@ describe('Permission checking', () => {
   describe('When alice tries to add a reaction burger with bobs user id', () => {
     ctx.requestShouldError(400, async () => {
       var reaction = {
-        user_id: ctx.bob.user.id,
+        user_id: ctx.bob.userId,
         kind: 'like',
         activity_id: someActivityId,
       };
@@ -108,35 +108,35 @@ describe('Permission checking', () => {
   describe('When alice tries to make bob follow her', () => {
     ctx.requestShouldError(403, async () => {
       await ctx.alice
-        .feed('timeline', ctx.bob.user.id)
-        .follow('user', ctx.alice.user.id);
+        .feed('timeline', ctx.bob.userId)
+        .follow('user', ctx.alice.userId);
     });
   });
 
   describe('When alice tries to make bob unfollow her', () => {
     ctx.requestShouldError(403, async () => {
       await ctx.alice
-        .feed('timeline', ctx.bob.user.id)
-        .unfollow('user', ctx.alice.user.id);
+        .feed('timeline', ctx.bob.userId)
+        .unfollow('user', ctx.alice.userId);
     });
   });
 
   describe('When alice tries to list the followers of bob', () => {
     ctx.requestShouldError(403, async () => {
-      await ctx.alice.feed('timeline', ctx.bob.user.id).followers();
+      await ctx.alice.feed('timeline', ctx.bob.userId).followers();
     });
   });
 
   describe('When alice tries to make bob unfollow her', () => {
     ctx.requestShouldError(403, async () => {
-      await ctx.alice.feed('user', ctx.bob.user.id).following();
+      await ctx.alice.feed('user', ctx.bob.userId).following();
     });
   });
 
   describe('When alice tries to delete an activity from bob his feed', () => {
     ctx.requestShouldError(403, async () => {
       await ctx.alice
-        .feed('user', ctx.bob.user.id)
+        .feed('user', ctx.bob.userId)
         .removeActivity(someActivityId);
     });
   });

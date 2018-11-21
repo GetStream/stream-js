@@ -332,10 +332,10 @@ class CloudContext {
   createUsers() {
     describe('When creating the users', () => {
       this.noRequestsShouldError(async () => {
-        this.alice.user = await this.alice.getOrCreateUser(this.userData.alice);
-        this.bob.user = await this.bob.getOrCreateUser(this.userData.bob);
-        this.carl.user = await this.carl.getOrCreateUser(this.userData.carl);
-        this.dave.user = await this.dave.getOrCreateUser(this.userData.dave);
+        await this.alice.currentUser.getOrCreate(this.userData.alice);
+        await this.bob.currentUser.getOrCreate(this.userData.bob);
+        await this.carl.currentUser.getOrCreate(this.userData.carl);
+        await this.dave.currentUser.getOrCreate(this.userData.dave);
       });
     });
   }

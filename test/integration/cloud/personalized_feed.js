@@ -40,7 +40,7 @@ describe('Personalized enrichment story', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.user,
+          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: ctx.cheeseBurger,
         });
@@ -64,7 +64,7 @@ describe('Personalized enrichment story', () => {
         ctx.requestShouldNotError(async () => {
           ctx.response = await ctx.bob.personalizedFeed({
             feed_slug: 'timeline',
-            normalized_user_id: ctx.bob.user.id,
+            normalized_user_id: ctx.bob.userId,
             withRecentReactions: true,
             withOwnReactions: true,
             withReactionCounts: true,
@@ -99,12 +99,12 @@ describe('Personalized enrichment story', () => {
           ctx.activity.latest_reactions.should.have.all.keys('like');
           ctx.activity.latest_reactions.like.should.have.length(1);
           ctx.activity.latest_reactions.like[0].user.should.eql(
-            ctx.bob.user.full,
+            ctx.bob.currentUser.full,
           );
         });
 
         ctx.responseShould('have the activity containing enriched data', () => {
-          ctx.activity.actor.should.eql(ctx.alice.user.full);
+          ctx.activity.actor.should.eql(ctx.alice.currentUser.full);
           ctx.activity.verb.should.eql('eat');
           ctx.shouldEqualBesideDuration(
             ctx.activity.object,

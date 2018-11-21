@@ -2,6 +2,7 @@ var errors = require('./errors');
 var utils = require('./utils');
 var isObject = require('lodash/isObject');
 var isPlainObject = require('lodash/isPlainObject');
+var StreamUser = require('./user');
 
 var StreamFeed = function() {
   /**
@@ -169,6 +170,9 @@ StreamFeed.prototype = {
      * @example feed.follow('user', '1', callback);
      * @example feed.follow('user', '1', options, callback);
      */
+    if (targetUserId instanceof StreamUser) {
+      targetUserId = targetUserId.id;
+    }
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
 

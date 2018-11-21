@@ -10,7 +10,7 @@ describe('Enriching not existing references', () => {
     describe('When alice eats a cheese burger without adding it to collections', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user').addActivity({
-          actor: ctx.alice.user,
+          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: ctx.cheeseBurger,
           notExistingActivity: `SA:${zeroUUID}`,
@@ -32,9 +32,9 @@ describe('Enriching not existing references', () => {
             ctx.activity.verb.should.eql('eat');
             ctx.activity.actor.should.eql({
               error: 'ReferenceNotFound',
-              reference: ctx.alice.user._streamRef(),
+              reference: ctx.alice.currentUser._streamRef(),
               reference_type: 'user',
-              id: ctx.alice.user.id,
+              id: ctx.alice.userId,
             });
             ctx.activity.object.should.eql({
               collection: 'food',

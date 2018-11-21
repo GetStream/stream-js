@@ -62,6 +62,7 @@ StreamClient.prototype = {
         throw new TypeError('user_id is missing in user token');
       }
       this.userId = jwtBody.user_id;
+      this.currentUser = this.user(this.userId);
       this.authPayload = jwtBody;
     }
 
@@ -754,10 +755,6 @@ StreamClient.prototype = {
 
   user: function(userId) {
     return new StreamUser(this, userId, this.getOrCreateToken());
-  },
-
-  getOrCreateUser: function(data, callback) {
-    return this.user(this.userId).getOrCreate(data, callback);
   },
 
   og: function(url) {
