@@ -49,14 +49,14 @@ Collections.prototype = {
         signature: this.token,
       })
       .then((response) => {
-        if (callback) {
-          callback(response);
-        }
-        let object = self.client
+        let entry = self.client
           .collections(response.collection)
-          .object(response.id, response.data);
-        object.full = response;
-        return object;
+          .entry(response.id, response.data);
+        entry.full = response;
+        if (callback) {
+          callback(entry);
+        }
+        return entry;
       });
   },
 
@@ -121,14 +121,14 @@ Collections.prototype = {
         signature: this.token,
       })
       .then((response) => {
-        if (callback) {
-          callback(response);
-        }
-        let object = self.client
+        let entry = self.client
           .collection(response.collection)
-          .object(response.id, response.data);
-        object.full = response;
-        return object;
+          .entry(response.id, response.data);
+        entry.full = response;
+        if (callback) {
+          callback(entry);
+        }
+        return entry;
       });
   },
 

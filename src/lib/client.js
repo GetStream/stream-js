@@ -385,7 +385,7 @@ StreamClient.prototype = {
     return this.feed(feedSlug, userId).getReadWriteToken();
   },
 
-  feed: function(feedSlug, userId=this.userId, token) {
+  feed: function(feedSlug, userId = this.userId, token) {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed

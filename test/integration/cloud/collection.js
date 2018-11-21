@@ -20,7 +20,7 @@ describe('Collection CRUD behaviours', () => {
     ctx.responseShould(
       'be the same as when the cheeseburger was added',
       async () => {
-        ctx.shouldEqualBesideDuration(ctx.response, ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(ctx.response.full, ctx.cheeseBurger.full);
       },
     );
   });
@@ -60,7 +60,7 @@ describe('Collection CRUD behaviours', () => {
   describe('When alice tries to update the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice
-        .collection('food')
+        .collections('food')
         .update(ctx.cheeseBurger.id, improvedCheeseBurgerData);
     });
     ctx.responseShouldHaveNewUpdatedAt();
@@ -70,7 +70,7 @@ describe('Collection CRUD behaviours', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
       ctx.response = await ctx.alice
-        .collection('food')
+        .collections('food')
         .get(ctx.cheeseBurger.id);
     });
 
@@ -158,7 +158,7 @@ describe('Collection CRUD behaviours', () => {
     });
 
     ctx.test('be the same data as before', () => {
-      ctx.shouldEqualBesideDuration(ctx.response, newCheeseBurger);
+      ctx.shouldEqualBesideDuration(ctx.response.full, newCheeseBurger.full);
     });
   });
 
@@ -166,7 +166,7 @@ describe('Collection CRUD behaviours', () => {
     let replacementBurger;
 
     ctx.requestShouldNotError(async () => {
-      replacementBurger = Object.assign(newCheeseBurger, {
+      replacementBurger = Object.assign(newCheeseBurger.full, {
         data: { wopper: true },
       });
       ctx.response = await ctx.alice
@@ -198,9 +198,10 @@ describe('Collection CRUD behaviours', () => {
       });
 
       ctx.test('be the same data as before', () => {
-        ctx.response.data.should.eql(replacementBurger.data);
-        ctx.response.id.should.eql(replacementBurger.id);
-        ctx.response.updated_at.should.not.eql(newCheeseBurger.updated_at);
+        let response = ctx.response.full;
+        response.data.should.eql(replacementBurger.data);
+        response.id.should.eql(replacementBurger.id);
+        response.updated_at.should.not.eql(newCheeseBurger.updated_at);
       });
     });
   });

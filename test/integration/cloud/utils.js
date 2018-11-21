@@ -228,7 +228,8 @@ class CloudContext {
 
   responseShouldHaveFields(...fields) {
     this.responseShould('have all expected fields', () => {
-      this.response.should.have.all.keys(fields);
+      let response = this.response.full || this.response;
+      response.should.have.all.keys(fields);
     });
   }
 
@@ -271,9 +272,11 @@ class CloudContext {
 
   responseShouldHaveNewUpdatedAt() {
     this.responseShould('have an updated updated_at', () => {
-      should.exist(this.prevResponse.updated_at);
-      should.exist(this.response.updated_at);
-      this.response.updated_at.should.not.equal(this.prevResponse.updated_at);
+      let response = this.response.full || this.response;
+      let prevResponse = this.prevResponse.full || this.prevResponse;
+      should.exist(prevResponse.updated_at);
+      should.exist(response.updated_at);
+      response.updated_at.should.not.equal(prevResponse.updated_at);
     });
   }
 
@@ -287,10 +290,12 @@ class CloudContext {
     this.responseShould('be the same as the previous response', () => {
       should.exist(this.prevResponse);
       should.exist(this.response);
-      let response = Object.assign({}, this.response, {
+      let response = this.response.full || this.response;
+      let prevResponse = this.prevResponse.full || this.prevResponse;
+      response = Object.assign({}, response, {
         duration: this.response === null,
       });
-      let prevResponse = Object.assign({}, this.prevResponse, {
+      prevResponse = Object.assign({}, prevResponse, {
         duration: this.prevResponse === null,
       });
       response.should.eql(prevResponse);
@@ -300,9 +305,9 @@ class CloudContext {
   aliceAddsCheeseBurger() {
     describe('When alice adds a cheese burger to the food collection', () => {
       this.requestShouldNotError(async () => {
-        this.cheeseBurger = (await this.alice
+        this.cheeseBurger = await this.alice
           .collections('food')
-          .add(null, this.cheeseBurgerData));
+          .add(null, this.cheeseBurgerData);
 
         this.response = this.cheeseBurger.full;
       });
