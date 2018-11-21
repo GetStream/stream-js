@@ -91,6 +91,9 @@ StreamFeed.prototype = {
      */
 
     activity = replaceStreamObjects(activity);
+    if (!activity.actor && this.client.currentUser) {
+      activity.actor = this.client.currentUser._streamRef();
+    }
 
     return this.client.post(
       {

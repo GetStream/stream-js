@@ -21,7 +21,6 @@ describe('Enrich story', () => {
   describe('When alice eats the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.currentUser,
         verb: 'eat',
         object: ctx.cheeseBurger,
       });

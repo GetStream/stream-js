@@ -40,7 +40,6 @@ describe('Personalized enrichment story', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: ctx.cheeseBurger,
         });

@@ -16,7 +16,6 @@ describe('Reaction pagination', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: 'cheeseburger',
         });
@@ -232,7 +231,6 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response = await ctx.alice
         .feed('user', ctx.alice.userId)
         .addActivity({
-          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: 'cheeseburger',
         });

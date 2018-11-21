@@ -10,7 +10,6 @@ describe('Enriching not existing references', () => {
     describe('When alice eats a cheese burger without adding it to collections', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user').addActivity({
-          actor: ctx.alice.currentUser,
           verb: 'eat',
           object: ctx.cheeseBurger,
           notExistingActivity: `SA:${zeroUUID}`,

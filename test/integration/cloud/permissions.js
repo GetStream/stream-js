@@ -64,7 +64,6 @@ describe('Permission checking', () => {
       ctx.response = await ctx.alice
         .feed('timeline', ctx.bob.userId)
         .addActivity({
-          actor: ctx.alice.currentUser,
           verb: 'post',
           object: "I'm writing this directly on your timeline",
         });
@@ -74,7 +73,6 @@ describe('Permission checking', () => {
   describe('When alice tries to post to someone elses timeline by using to targets', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.currentUser,
         verb: 'post',
         object: "I'm writing this on your timeline by using to targets",
         to: ['timeline:123'],
