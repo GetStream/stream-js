@@ -84,9 +84,12 @@ describe('Permission checking', () => {
 
   describe('When alice tries to post to someone elses timeline by using target feeds when adding a reaction', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.reactions.add('comment', someActivityId, {
-        targetFeeds: ['timeline:123'],
-      });
+      ctx.response = await ctx.alice.reactions.add(
+        'comment',
+        someActivityId,
+        {},
+        ['timeline:123'],
+      );
     });
   });
 
@@ -97,7 +100,7 @@ describe('Permission checking', () => {
         kind: 'like',
         activity_id: someActivityId,
       };
-      await ctx.alice.client.post({
+      await ctx.alice.post({
         url: ctx.alice.reactions.buildURL(),
         body: reaction,
         signature: ctx.alice.reactions.signature,
