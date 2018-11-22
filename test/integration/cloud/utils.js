@@ -108,6 +108,7 @@ class CloudContext {
         'data',
         'created_at',
         'updated_at',
+        'parent',
       ],
       activity: [
         'id',
