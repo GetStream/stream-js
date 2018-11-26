@@ -609,17 +609,6 @@ StreamClient.prototype = {
     );
   },
 
-  createUserSession: function(userToken) {
-    var cloud = require('./cloud');
-    var cClient = new cloud.StreamCloudClient(
-      this.apiKey,
-      null,
-      this.appId,
-      this.options,
-    );
-    return cClient.createUserSession(userToken);
-  },
-
   /**
    * Deprecated: use createUserToken instead
    * @param {string} userId
