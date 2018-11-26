@@ -23,6 +23,33 @@ describe('[UNIT] Stream Collections (node)', function() {
     td.reset();
   });
 
+  describe('#delete_many', function() {
+    it('should send get request correctly with single id (callback)', function() {
+      var fakedJWT = 'Faked JWT';
+      var collectionName = 'user';
+      var id = 'john';
+      var cb = function() {};
+
+      this.client._collectionsToken = fakedJWT;
+      this.client.collections(collectionName).deleteMany(id, cb);
+
+      td.verify(
+        del(
+          {
+            url: 'collections/',
+            serviceName: 'api',
+            qs: {
+              collection_name: collectionName,
+              ids: id,
+            },
+            signature: fakedJWT,
+          },
+          cb,
+        ),
+      );
+    });
+  });
+
   describe('#upsert', function() {
     it('should send post request correctly with single object (promise)', function() {
       var fakedJWT = 'Faked JWT';
@@ -30,14 +57,14 @@ describe('[UNIT] Stream Collections (node)', function() {
       var data = { id: 'john', username: 'johndoe', favorite_color: 'gray' };
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data);
+      this.client.collections(collectionName).upsert(data);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -54,14 +81,14 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data, cb);
+      this.client.collections(collectionName).upsert(data, cb);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -80,14 +107,14 @@ describe('[UNIT] Stream Collections (node)', function() {
       ];
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data);
+      this.client.collections(collectionName).upsert(data);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = data;
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -107,14 +134,14 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data, cb);
+      this.client.collections(collectionName).upsert(data, cb);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = data;
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -132,12 +159,12 @@ describe('[UNIT] Stream Collections (node)', function() {
       var id = 'john';
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, id);
+      this.client.collections(collectionName).select(id);
 
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
@@ -154,12 +181,12 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, id, cb);
+      this.client.collections(collectionName).select(id, cb);
 
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
@@ -175,12 +202,12 @@ describe('[UNIT] Stream Collections (node)', function() {
       var ids = ['john', 'dave'];
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, ids);
+      this.client.collections(collectionName).select(ids);
 
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: {
               foreign_ids: ids
@@ -203,12 +230,12 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, ids, cb);
+      this.client.collections(collectionName).select(ids, cb);
 
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: {
               foreign_ids: ids
@@ -234,21 +261,21 @@ describe('[UNIT] Stream Collections (node)', function() {
 
         // upsert
         expect(function() {
-          client.collections.upsert(collectionName, data, cb);
+          client.collections(collectionName).upsert(data, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // select
         expect(function() {
-          client.collections.select(collectionName, ids, cb);
+          client.collections(collectionName).select(ids, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // delete
         expect(function() {
-          client.collections.delete(collectionName, cb);
+          client.collections(collectionName).deleteMany(cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });

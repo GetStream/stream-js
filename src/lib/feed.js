@@ -3,6 +3,7 @@ var utils = require('./utils');
 var isObject = require('lodash/isObject');
 var isPlainObject = require('lodash/isPlainObject');
 var StreamUser = require('./user');
+var signing = require('./signing');
 
 var StreamFeed = function() {
   /**
@@ -334,7 +335,7 @@ StreamFeed.prototype = {
       delete options.reactions;
     }
 
-    if (options && options.enrich == null) {
+    if (options && options.enrich == null && this.enrichByDefault) {
       options.enrich = this.enrichByDefault;
     }
 
@@ -354,14 +355,56 @@ StreamFeed.prototype = {
       path = 'feed/';
     }
 
+    let qs = Object.assign(options);
+    delete options.enrich;
+    delete options.reactions;
+
     return this.client.get(
       {
         url: path + this.feedUrl + '/',
-        qs: options,
+        qs: qs,
         signature: this.signature,
       },
       callback,
     );
+  },
+
+  getReadOnlyToken: function() {
+    /**
+     * Returns a token that allows only read operations
+     *
+     * @deprecated since version 4.0
+     * @method getReadOnlyToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadOnlyToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
+  },
+  getReadWriteToken: function() {
+    /**
+     * Returns a token that allows read and write operations
+     * @deprecated since version 4.0
+     * @method getReadWriteToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadWriteToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
   },
 
   getActivityDetail: function(activity_id, options, callback) {

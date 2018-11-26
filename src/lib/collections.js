@@ -162,7 +162,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
 
-    if (!this.usingApiSecret || this.apiKey == null) {
+    if (!this.client.usingApiSecret) {
       throw new errors.FeedError(
         'This method can only be used server-side using your API Secret',
       );
@@ -200,7 +200,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
 
-    if (!this.usingApiSecret || this.apiKey == null) {
+    if (!this.client.usingApiSecret) {
       throw new errors.FeedError(
         'This method can only be used server-side using your API Secret',
       );
@@ -213,9 +213,10 @@ Collections.prototype = {
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
+
     var params = {
       foreign_ids: ids
-        .map(function(id) {
+        .map((id) => {
           return this.collection + ':' + id;
         })
         .join(','),
@@ -243,7 +244,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
 
-    if (!this.usingApiSecret || this.apiKey == null) {
+    if (!this.client.usingApiSecret) {
       throw new errors.FeedError(
         'This method can only be used server-side using your API Secret',
       );
@@ -263,7 +264,7 @@ Collections.prototype = {
       .join(',');
 
     var params = {
-      collection_name: this.collectionName,
+      collection_name: this.collection,
       ids: ids,
     };
 

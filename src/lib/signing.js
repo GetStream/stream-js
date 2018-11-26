@@ -127,6 +127,9 @@ exports.isJWTSignature = exports.isJWT = function(signature) {
    * @param {string} signature - Signature to check
    * @return {boolean}
    */
+  if (signature == null || signature.length == 0) {
+    return false;
+  }
   var token = signature.split(' ')[1] || signature;
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
 };

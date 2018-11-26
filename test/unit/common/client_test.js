@@ -157,20 +157,6 @@ describe('[UNIT] Stream Client (Common)', function() {
         expect(e).to.be.a(errors.FeedError);
       });
     });
-
-    it('(6) throw without secret and token', function() {
-      var self = this;
-
-      function toThrow() {
-        self.client.feed('user', 'jaap');
-      }
-
-      self.client.apiSecret = undefined;
-
-      expect(toThrow).to.throwException(function(e) {
-        expect(e).to.be.a(errors.FeedError);
-      });
-    });
   });
 
   describe('#wrapPromiseTask', function() {
@@ -316,41 +302,6 @@ describe('[UNIT] Stream Client (Common)', function() {
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
       expect(kwargs.headers['Authorization']).to.be(signature);
       expect(kwargs.url).to.contain('personalization.stream-io-api.com');
-    });
-  });
-
-  describe('#signActivities', function() {
-    it('(1) without to', function() {
-      var activities = [{ object: 0, actor: 'matthisk', verb: 'tweet' }];
-
-      var output = this.client.signActivities(activities);
-
-      expect(output).to.eql(activities);
-    });
-
-    it('(2) with to', function() {
-      var activities = [
-        { object: 0, actor: 'matthisk', verb: 'tweet', to: ['global:feed'] },
-      ];
-
-      var output = this.client.signActivities(activities);
-
-      expect(activities[0].to).to.eql(['global:feed']);
-      expect(output[0].to[0].split(' ')[0]).to.be('global:feed');
-
-      if (this.client.apiSecret) {
-        var token = this.client.feed('global', 'feed').token;
-        expect(output[0].to[0].split(' ')[1]).to.be(token);
-      }
-    });
-
-    it('(3) without secret', function() {
-      var activities = [{ object: 0, actor: 'matthisk', verb: 'tweet' }];
-
-      this.client.apiSecret = undefined;
-      var output = this.client.signActivities(activities);
-
-      expect(output).to.equal(activities);
     });
   });
 

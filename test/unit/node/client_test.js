@@ -458,21 +458,6 @@ describe('[UNIT] Stream Client (Node)', function() {
     });
   });
 
-  describe('createUserSession', function() {
-    it('should return a user session', function() {
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
-      var token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM';
-      var userSession = client.createUserSession(token);
-      expect(userSession.userId).to.be('42');
-      expect(userSession.token).to.be(token);
-      expect(userSession.client).to.not.be(null);
-    });
-  });
-
   describe('connect', function() {
     it('#LOCAL', function() {
       process.env['LOCAL'] = 1;
