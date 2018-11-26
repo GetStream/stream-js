@@ -18,9 +18,9 @@ class CloudContext {
     };
     const clientOptions = {
       group: 'testCycle',
-      protocol: 'http',
+      // protocol: 'http',
+      // location: 'beta',
       keepAlive: false,
-      location: 'beta',
     };
 
     this.serverSideClient = stream.connect(
