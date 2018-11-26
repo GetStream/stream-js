@@ -87,6 +87,40 @@ StreamReaction.prototype = {
     );
   },
 
+  addChild: function(kind, reaction, data = {}, targetFeeds = [], callback) {
+    /**
+     * add reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   kind  kind of reaction
+     * @param  {string}   reaction Reaction or a ReactionID
+     * @param  {object}   data  data related to reaction
+     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
+     */
+    if (reaction instanceof Object) {
+      reaction = reaction.id;
+    }
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
+    var body = {
+      parent: reaction,
+      kind: kind,
+      data: data,
+      target_feeds: targetFeeds,
+    };
+    return this.client.post(
+      {
+        url: this.buildURL(),
+        body: body,
+        signature: this.signature,
+      },
+      callback,
+    );
+  },
+
   get: function(id, callback) {
     /**
      * get reaction
@@ -108,7 +142,7 @@ StreamReaction.prototype = {
 
   filter: function(conditions, callback) {
     /**
-     * retrieve reactions by activity id or user_id, pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
+     * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
      * the reaction with ID equal to the value provided is included.
      * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
@@ -143,22 +177,29 @@ StreamReaction.prototype = {
       qs.id_gte = conditions.id_gte;
     }
 
-    if (conditions.user_id && conditions.activity_id) {
+    if (
+      (conditions.user_id
+        ? 1
+        : 0 + conditions.activity_id
+          ? 1
+          : 0 + conditions.reaction_id
+            ? 1
+            : 0) != 1
+    ) {
       throw new errors.SiteError(
-        'Cannot use both activity_id and user_id params',
+        'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );
     }
 
-    if (!conditions.user_id && !conditions.activity_id) {
-      throw new errors.SiteError(
-        'Must use either activity_id or user_id param',
-      );
-    }
+    let lookupType =
+      (conditions.user_id && 'user_id') ||
+      (conditions.activity_id && 'activity_id') ||
+      (conditions.reaction_id && 'reaction_id');
+    let value =
+      (conditions.user_id && conditions.user_id) ||
+      (conditions.activity_id && conditions.activity_id) ||
+      (conditions.reaction_id && conditions.reaction_id);
 
-    let lookupType = conditions.user_id ? 'user_id' : 'activity_id';
-    let value = conditions.user_id
-      ? conditions.user_id
-      : conditions.activity_id;
     let url = this.buildURL(lookupType, value);
 
     if (conditions.kind) {

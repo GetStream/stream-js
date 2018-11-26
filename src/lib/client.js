@@ -757,6 +757,17 @@ StreamClient.prototype = {
     return new StreamUser(this, userId, this.getOrCreateToken());
   },
 
+  setUser: function(data) {
+    let body = Object.assign(data);
+    delete body.id;
+    return this.user(this.userId)
+      .getOrCreate(body)
+      .then((user) => {
+        this.currentUser = user;
+        return user;
+      });
+  },
+
   og: function(url) {
     return this.get({
       url: 'og/',

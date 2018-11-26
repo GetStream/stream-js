@@ -18,9 +18,9 @@ class CloudContext {
     };
     const clientOptions = {
       group: 'testCycle',
-      // protocol: 'http',
+      protocol: 'http',
       keepAlive: false,
-      // location: 'beta',
+      location: 'beta',
     };
 
     this.serverSideClient = stream.connect(
@@ -109,6 +109,8 @@ class CloudContext {
         'created_at',
         'updated_at',
         'parent',
+        'children',
+        'children_counters',
       ],
       activity: [
         'id',
@@ -333,10 +335,10 @@ class CloudContext {
   createUsers() {
     describe('When creating the users', () => {
       this.noRequestsShouldError(async () => {
-        await this.alice.currentUser.getOrCreate(this.userData.alice);
-        await this.bob.currentUser.getOrCreate(this.userData.bob);
-        await this.carl.currentUser.getOrCreate(this.userData.carl);
-        await this.dave.currentUser.getOrCreate(this.userData.dave);
+        await this.alice.setUser(this.userData.alice);
+        await this.bob.setUser(this.userData.bob);
+        await this.carl.setUser(this.userData.carl);
+        await this.dave.setUser(this.userData.dave);
       });
     });
   }

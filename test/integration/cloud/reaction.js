@@ -214,6 +214,385 @@ describe('Reaction pagination', () => {
   });
 });
 
+describe('Nested reactions pagination', () => {
+  let ctx = new CloudContext();
+  let eatActivity;
+  let daveComment;
+  let carlComment;
+  let carlCommentLikes = [];
+  let daveCommentLikes = [];
+
+  ctx.createUsers();
+
+  describe('When alice eats a cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
+      eatActivity = ctx.response;
+    });
+  });
+
+  describe('When bob comments on that alice ate the cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.react('comment', eatActivity.id, {
+        text: 'bob likes this!',
+      });
+    });
+  });
+
+  describe('When dave comments on that alice ate the cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.dave.react('comment', eatActivity.id, {
+        text: 'dave likes this!',
+      });
+      daveComment = ctx.response;
+    });
+  });
+
+  describe('When carl comments on that alice ate the cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.carl.react('comment', eatActivity.id, {
+        text: 'carl likes this!',
+      });
+      carlComment = ctx.response;
+    });
+  });
+
+  describe("and then alice likes dave's comment 33 times", () => {
+    ctx.requestShouldNotError(async () => {
+      for (let i = 0; i < 33; i++) {
+        daveCommentLikes.push(
+          await ctx.alice.reactions.addChild('like', daveComment, { i }),
+        );
+      }
+    });
+  });
+
+  describe("and then alice unlikes carl's comment 33 times", () => {
+    ctx.requestShouldNotError(async () => {
+      for (let i = 0; i < 33; i++) {
+        carlCommentLikes.push(
+          await ctx.alice.reactions.addChild('unlike', carlComment, { i }),
+        );
+      }
+    });
+  });
+
+  describe('pagination time', () => {
+    let resp;
+
+    ctx.test(
+      'alice reads the children reactions for dave comment five at the time in descending order',
+      async () => {
+        let done = false;
+        let readChildren = [];
+        let conditions = {
+          reaction_id: daveComment.id,
+          limit: 5,
+        };
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null
+              ? true
+              : false;
+          conditions.id_lt = resp.results[resp.results.length - 1].id;
+          readChildren = readChildren.concat(resp.results);
+        }
+        readChildren.should.eql(daveCommentLikes.reverse());
+      },
+    );
+
+    ctx.test(
+      'alice reads the children reactions for carl comment four at the time in descending order',
+      async () => {
+        let done = false;
+        let readChildren = [];
+        let conditions = {
+          reaction_id: carlComment.id,
+          limit: 4,
+        };
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null
+              ? true
+              : false;
+          conditions.id_lt = resp.results[resp.results.length - 1].id;
+          readChildren = readChildren.concat(resp.results);
+        }
+        readChildren.should.eql(carlCommentLikes.reverse());
+      },
+    );
+  });
+});
+
+describe('Nested reactions violations', () => {
+  let ctx = new CloudContext();
+
+  ctx.createUsers();
+
+  describe('When a reaction is added to a reaction that does not exist', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.bob.reactions.addChild('comment', {
+        id: 'does-not-exist',
+      });
+    });
+  });
+});
+
+describe('Nested reactions madness', () => {
+  let ctx = new CloudContext();
+  let eatActivity;
+  let comment;
+  let commentData = {
+    text: 'Looking yummy! @carl wanna get this on Tuesday?',
+  };
+  let likeReaction;
+  let children = [];
+
+  ctx.createUsers();
+
+  describe('When alice eats a cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
+      eatActivity = ctx.response;
+      eatActivity.actor = ctx.alice.currentUser.full;
+    });
+  });
+
+  describe('When bob comments on that alice ate the cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.react(
+        'comment',
+        eatActivity.id,
+        commentData,
+      );
+      comment = ctx.response;
+    });
+  });
+
+  describe("and then alice likes Bob's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.reactions.addChild('like', comment);
+      likeReaction = ctx.response;
+    });
+  });
+
+  describe("and then alice likes her own like Bob's comment", () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.addChild('like', likeReaction);
+    });
+  });
+
+  describe('and then alice reads the comment reaction', () => {
+    ctx.requestShouldNotError(async () => {
+      let reaction = await ctx.alice.reactions.get(comment.id);
+      reaction.children_counters.should.have.all.keys('like');
+      reaction.children_counters.like.should.eql(1);
+      reaction.children.should.have.length(1);
+    });
+  });
+
+  describe("and then alice likes Bob's comment 103 times", () => {
+    ctx.requestShouldNotError(async () => {
+      let promises = [];
+      for (let i = 0; i < 103; i++) {
+        promises.push(ctx.alice.reactions.addChild('like', comment));
+      }
+      children = await Promise.all(promises);
+    });
+  });
+
+  describe('and then alice reads the comment reaction', () => {
+    ctx.requestShouldNotError(async () => {
+      let reaction = await ctx.alice.reactions.get(comment.id);
+      reaction.children_counters.like.should.eql(104);
+      reaction.children.should.have.length(10);
+    });
+  });
+
+  describe('and then alice deletes 103 likes', () => {
+    ctx.requestShouldNotError(async () => {
+      let promises = [];
+      for (let i = 0; i < children.length; i++) {
+        promises.push(ctx.alice.reactions.delete(children[i].id));
+      }
+      children = await Promise.all(promises);
+    });
+  });
+
+  describe('and then alice reads the comment reaction', () => {
+    ctx.requestShouldNotError(async () => {
+      let reaction = await ctx.alice.reactions.get(comment.id);
+      reaction.children_counters.like.should.eql(1);
+      reaction.children.should.have.length(1);
+      reaction.children[0].should.eql(likeReaction);
+    });
+  });
+
+  describe('and then alice reads the comment reaction', () => {
+    ctx.requestShouldNotError(async () => {
+      let reaction = await ctx.alice.reactions.get(comment.id);
+      reaction.children_counters.like.should.eql(1);
+      reaction.children.should.have.length(1);
+      reaction.children[0].should.eql(likeReaction);
+    });
+  });
+
+  describe('and then alice reads the activity', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .get({ limit: 1, reactions: { own: true, recent: true } });
+    });
+
+    ctx.responseShouldHaveActivityWithFields(
+      'own_reactions',
+      'latest_reactions',
+      'latest_reactions_extra',
+    );
+
+    ctx.test('the activity should have the whole reaction trail', () => {
+      let activity = ctx.response.results[0];
+      activity.latest_reactions.should.have.all.keys('comment');
+      activity.latest_reactions.comment.should.have.length(1);
+      activity.latest_reactions.comment[0].children.should.have.length(1);
+      activity.latest_reactions.comment[0].children_counters.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].children_counters.like.should.eql(1);
+    });
+  });
+
+  describe('and then alice creates 3 different kind of children reactions', () => {
+    ctx.requestShouldNotError(async () => {
+      let promises = [];
+      for (let i = 0; i < 29; i++) {
+        let kind;
+        switch (i % 3) {
+          case 2:
+            kind = 'like';
+            break;
+          case 1:
+            kind = 'unlike';
+            break;
+          case 0:
+            kind = 'clap';
+            break;
+          default:
+            break;
+        }
+        promises.push(await ctx.alice.reactions.addChild(kind, comment));
+      }
+      await Promise.all(promises);
+    });
+
+    describe('and then alice reads the comment reaction', () => {
+      ctx.requestShouldNotError(async () => {
+        let reaction = await ctx.alice.reactions.get(comment.id);
+        reaction.children_counters.should.eql({
+          clap: 10,
+          like: 10,
+          unlike: 10,
+        });
+        reaction.children.should.have.length(10);
+      });
+    });
+
+    describe('and then alice reads the activity', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.alice.feed('user', ctx.alice.userId).get({
+          limit: 1,
+          reactions: { own: true, recent: true, counts: true },
+        });
+      });
+
+      ctx.responseShouldHaveActivityWithFields(
+        'own_reactions',
+        'latest_reactions',
+        'latest_reactions_extra',
+        'reaction_counts',
+      );
+
+      ctx.test('the activity should have the whole reaction trail', () => {
+        let activity = ctx.response.results[0];
+        activity.latest_reactions.should.have.all.keys('comment');
+        activity.latest_reactions.comment.should.have.length(1);
+        activity.reaction_counts.should.have.all.keys(
+          'like',
+          'unlike',
+          'clap',
+          'comment',
+        );
+        activity.reaction_counts.should.eql({
+          clap: 10,
+          like: 10,
+          unlike: 10,
+          comment: 1,
+        });
+      });
+    });
+
+    describe('bob deletes his comment', () => {
+      ctx.requestShouldNotError(async () => {
+        await ctx.bob.reactions.delete(comment.id);
+      });
+    });
+
+    describe('and then alice reads the comment reaction', () => {
+      ctx.requestShouldError(404, async () => {
+        await ctx.alice.reactions.get(comment.id);
+      });
+    });
+
+    describe('and then alice reads the activity', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.alice.feed('user', ctx.alice.userId).get({
+          limit: 1,
+          reactions: { own: true, recent: true, counts: true },
+        });
+      });
+
+      ctx.responseShouldHaveActivityWithFields(
+        'own_reactions',
+        'latest_reactions',
+        'latest_reactions_extra',
+        'reaction_counts',
+      );
+
+      ctx.test(
+        'the activity should have no reactions and the counts should be all to 0',
+        () => {
+          let activity = ctx.response.results[0];
+          activity.latest_reactions.should.eql({});
+          activity.reaction_counts.should.have.all.keys(
+            'like',
+            'unlike',
+            'clap',
+            'comment',
+          );
+          activity.reaction_counts.should.eql({
+            clap: 0,
+            like: 0,
+            unlike: 0,
+            comment: 0,
+          });
+        },
+      );
+    });
+  });
+});
+
 describe('Reaction CRUD and posting reactions to feeds', () => {
   let ctx = new CloudContext();
 
@@ -427,6 +806,32 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
   describe("When alice tries to delete bob's comment", () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.reactions.delete(comment.id);
+    });
+  });
+
+  describe("and then alice likes Bob's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.addChild('like', comment);
+    });
+  });
+
+  describe('and then alice reads her feed again', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .get({ reactions: { recent: true } });
+    });
+    ctx.responseShouldHaveActivityWithFields(
+      'latest_reactions',
+      'latest_reactions_extra',
+    );
+    ctx.activityShould('contain the activity with the nested like', () => {
+      ctx.activity.latest_reactions.should.have.all.keys('comment');
+      ctx.activity.latest_reactions['comment'].should.have.length(1);
+      let comment = ctx.activity.latest_reactions['comment'][0];
+      comment.should.have.all.keys(...ctx.fields.reaction);
+      comment.children.should.have.length(1);
+      comment.children[0].parent.should.eql(comment.id);
     });
   });
 
