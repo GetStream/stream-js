@@ -94,6 +94,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0",
+    "@stream-io/xmlhttp-request": "^0.4.0",
     "Base64": "^1.0.1",
     "cross-fetch": "^2.2.2",
     "faye": "^1.2.4",
@@ -104,8 +105,7 @@
     "lodash": "^4.17.10",
     "qs": "^6.5.1",
     "request": "^2.86.0",
-    "whatwg-fetch": "^2.0.4",
-    "xmlhttp-request": "https://github.com/GetStream/xmlhttp-request#2474db1c2829697bcf2788fee49156b62ad8bcfd"
+    "whatwg-fetch": "^2.0.4"
   },
   "repository": {
     "type": "git",
