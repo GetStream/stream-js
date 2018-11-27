@@ -33,7 +33,7 @@
     "postversion": "./bin/postversion.sh"
   },
   "browser": {
-    "request": "xmlhttp-request",
+    "request": "@stream-io/xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
     "./lib/lib/batch_operations.js": false,
@@ -43,7 +43,7 @@
     "https": false
   },
   "react-native": {
-    "request": "xmlhttp-request",
+    "request": "@stream-io/xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
     "./lib/lib/batch_operations.js": false,
