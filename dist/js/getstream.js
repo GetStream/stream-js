@@ -3725,6 +3725,12 @@ Collections.prototype = {
     this.client = client;
     this.token = token;
   },
+  createUserReference: function createUserReference(userId) {
+    return "SU:".concat(userId);
+  },
+  createReference: function createReference(collection, entryId) {
+    return "SO:".concat(collection, ":").concat(entryId);
+  },
   buildURL: function buildURL(collection, itemId) {
     var url = 'collections/' + collection + '/';
 
