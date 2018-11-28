@@ -3,9 +3,9 @@ var { CloudContext } = require('./utils');
 describe('Personalized enrichment story', () => {
   let ctx = new CloudContext();
   ctx.createUsers();
-  ctx.aliceAddsCheeseBurger();
 
-  describe('When alice reads her personalization feed', () => {
+  // skipping this one in favor of the one with the error below
+  describe.skip('When alice reads her personalization feed', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.personalizedFeed({
         feed_slug: 'timeline',
@@ -14,12 +14,33 @@ describe('Personalized enrichment story', () => {
     ctx.responseShouldHaveNoActivities();
   });
 
+  describe('When alice reads her personalization feed', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.personalizedFeed({
+        feed_slug: 'timeline',
+      });
+    });
+    ctx.responseShould(
+      'contain detail with info on max number of activities for endpoint',
+      () => {
+        ctx.response.detail.should.eql(
+          'This endpoint will not work if your app has more than 1000 activities. \nIf you would like to implement personalization at scale for your app please reach out to our data science team at https://getstream.io/personalization/#personalization-contact',
+        );
+      },
+    );
+  });
+
   describe("When alice reads bob's personalization feed", () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.bob.personalizedFeed({
+      ctx.response = await ctx.alice.personalizedFeed({
         feed_slug: 'timeline',
-        user_id: 'alice',
+        user_id: 'bob',
       });
+    });
+    ctx.responseShould('be permission error', () => {
+      ctx.response.code.should.eql(17);
+      ctx.response.exception.should.eql('NotAllowedException');
+      ctx.response.detail.should.eql("You don't have permission to do this");
     });
   });
 
@@ -33,7 +54,7 @@ describe('Personalized enrichment story', () => {
     });
   });
 
-  describe('When alice adds an activity to her timeline with collection and reaction data', () => {
+  describe.skip('When alice adds an activity to her timeline with collection and reaction data', () => {
     let activity;
 
     ctx.requestShouldNotError(async () => {
