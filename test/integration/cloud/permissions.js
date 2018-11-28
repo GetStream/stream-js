@@ -86,23 +86,32 @@ describe('Permission checking', () => {
         'comment',
         someActivityId,
         {},
-        ['timeline:123'],
+        { targetFeeds: ['timeline:123'] },
       );
     });
   });
 
-  describe('When alice tries to add a reaction burger with bobs user id', () => {
+  describe('When alice tries to add a reaction with bobs user id', () => {
     ctx.requestShouldError(400, async () => {
-      var reaction = {
-        user_id: ctx.bob.userId,
-        kind: 'like',
-        activity_id: someActivityId,
-      };
-      await ctx.alice.post({
-        url: ctx.alice.reactions.buildURL(),
-        body: reaction,
-        signature: ctx.alice.reactions.signature,
-      });
+      ctx.response = await ctx.alice.reactions.add(
+        'like',
+        {},
+        {
+          userId: ctx.bob.userId,
+        },
+      );
+    });
+  });
+
+  describe('When alice tries to add a child reaction with bobs user id', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'like',
+        someActivityId,
+        {
+          userId: ctx.bob.userId,
+        },
+      );
     });
   });
 

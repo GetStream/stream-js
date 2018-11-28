@@ -632,11 +632,13 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         'comment',
         eatActivity.id,
         commentData,
-        [
-          ctx.bob.feed('user', ctx.bob.userId).id,
-          ctx.bob.feed('notification', ctx.alice.userId).id,
-          ctx.bob.feed('notification', ctx.carl.userId).id,
-        ],
+        {
+          targetFeeds: [
+            ctx.bob.feed('user', ctx.bob.userId).id,
+            ctx.bob.feed('notification', ctx.alice.userId).id,
+            ctx.bob.feed('notification', ctx.carl.userId).id,
+          ],
+        },
       );
       comment = ctx.response;
     });
@@ -734,9 +736,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Looking yummy! @dave wanna get this on Tuesday?',
       };
-      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, [
-        `timeline:${ctx.alice.userId}`,
-      ]);
+      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, {
+        targetFeeds: [`timeline:${ctx.alice.userId}`],
+      });
     });
   });
 
@@ -745,11 +747,13 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Looking yummy! @dave wanna get this on Tuesday?',
       };
-      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, [
-        ctx.bob.feed('user', ctx.bob.userId).id,
-        ctx.bob.feed('notification', ctx.alice.userId).id,
-        ctx.bob.feed('notification', ctx.dave.userId).id,
-      ]);
+      ctx.response = await ctx.bob.reactions.update(comment.id, commentData, {
+        targetFeeds: [
+          ctx.bob.feed('user', ctx.bob.userId).id,
+          ctx.bob.feed('notification', ctx.alice.userId).id,
+          ctx.bob.feed('notification', ctx.dave.userId).id,
+        ],
+      });
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -919,6 +923,118 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         eatActivity.id,
         'some string',
       );
+    });
+  });
+});
+
+describe('Reaction CRUD server side', () => {
+  let ctx = new CloudContext();
+
+  let eatActivity;
+  let comment;
+  let like;
+  let commentData = {
+    text: 'Looking yummy! @carl wanna get this on Tuesday?',
+  };
+
+  ctx.createUsers();
+  describe('When alice eats a cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
+      eatActivity = ctx.response;
+      eatActivity.actor = ctx.alice.currentUser.full;
+    });
+  });
+
+  describe('When server side bob comments on that alice ate the cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.serverSideClient.reactions.add(
+        'comment',
+        eatActivity.id,
+        commentData,
+        {
+          targetFeeds: [
+            ctx.bob.feed('user', ctx.bob.userId),
+            ctx.bob.feed('notification', ctx.alice.userId).id,
+            ctx.bob.feed('notification', ctx.carl.userId).id,
+          ],
+          userId: ctx.bob.userId,
+        },
+      );
+      comment = ctx.response;
+    });
+
+    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+
+    ctx.responseShouldHaveUUID();
+
+    ctx.responseShould('have data matching the request', () => {
+      ctx.response.should.deep.include({
+        kind: 'comment',
+        activity_id: eatActivity.id,
+        user_id: ctx.bob.userId,
+      });
+      ctx.response.data.should.eql(commentData);
+    });
+
+    describe('and then alice reads the reaction by ID', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.alice.reactions.get(comment.id);
+      });
+
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+
+      ctx.test('response should include bob user data', () => {
+        ctx.response.user.should.eql(ctx.bob.currentUser.full);
+      });
+    });
+
+    describe("and then server side alice likes bob's comment", () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.serverSideClient.reactions.addChild(
+          'like',
+          comment,
+          {},
+          {
+            userId: ctx.alice.userId,
+          },
+        );
+        like = ctx.response;
+      });
+    });
+
+    describe('and then bob reads the like by ID', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.bob.reactions.get(like.id);
+      });
+
+      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+
+      ctx.test('response should include alice user data', () => {
+        ctx.response.user.should.eql(ctx.alice.currentUser.full);
+      });
+    });
+
+    describe("and then alice tries to delete bob's comment", () => {
+      ctx.requestShouldError(403, async () => {
+        ctx.response = await ctx.alice.reactions.delete(comment.id);
+      });
+    });
+
+    describe('When bob deletes his comment', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.bob.reactions.delete(comment.id);
+      });
+
+      ctx.responseShould('be empty JSON', () => {
+        delete ctx.response.duration;
+        ctx.response.should.eql({});
+      });
     });
   });
 });

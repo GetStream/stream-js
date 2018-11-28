@@ -731,7 +731,7 @@ StreamClient.prototype = {
 
   getOrCreateToken: function() {
     return this.usingApiSecret
-      ? signing.JWTScopeToken('*', '*', '*')
+      ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' })
       : this.userToken;
   },
 

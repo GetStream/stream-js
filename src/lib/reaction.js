@@ -53,7 +53,13 @@ StreamReaction.prototype = {
     );
   },
 
-  add: function(kind, activity, data = {}, targetFeeds = [], callback) {
+  add: function(
+    kind,
+    activity,
+    data = {},
+    { targetFeeds = [], userId } = {},
+    callback,
+  ) {
     /**
      * add reaction
      * @method add
@@ -76,6 +82,7 @@ StreamReaction.prototype = {
       kind: kind,
       data: data,
       target_feeds: targetFeeds,
+      user_id: userId,
     };
     return this.client.post(
       {
@@ -87,7 +94,13 @@ StreamReaction.prototype = {
     );
   },
 
-  addChild: function(kind, reaction, data = {}, targetFeeds = [], callback) {
+  addChild: function(
+    kind,
+    reaction,
+    data = {},
+    { targetFeeds = [], userId } = {},
+    callback,
+  ) {
     /**
      * add reaction
      * @method add
@@ -110,6 +123,7 @@ StreamReaction.prototype = {
       kind: kind,
       data: data,
       target_feeds: targetFeeds,
+      user_id: userId,
     };
     return this.client.post(
       {
@@ -216,7 +230,7 @@ StreamReaction.prototype = {
     );
   },
 
-  update: function(id, data, targetFeeds, callback) {
+  update: function(id, data, { targetFeeds = [] } = {}, callback) {
     /**
      * update reaction
      * @method add

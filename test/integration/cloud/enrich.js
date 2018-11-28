@@ -214,7 +214,7 @@ describe('Enrich story', () => {
         {
           text: 'Looks juicy!!!',
         },
-        [ctx.alice.feed('notification')],
+        { targetFeeds: [ctx.alice.feed('notification')] },
       );
     });
 
