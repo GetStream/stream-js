@@ -3696,22 +3696,19 @@ var Collections = function Collections() {
 };
 
 Collections.prototype = {
-  initialize: function initialize(client, name, token) {
+  initialize: function initialize(client, token) {
     /**
      * Initialize a feed object
      * @method intialize
      * @memberof Collections.prototype
      * @param {StreamCloudClient} client Stream client this collection is constructed from
-     * @param {string} name ObjectStore name
      * @param {string} token JWT token
-     * @example new Collections(client, "food", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
-    this.collection = name;
     this.token = token;
   },
-  buildURL: function buildURL(itemId) {
-    var url = 'collections/' + this.collection + '/';
+  buildURL: function buildURL(collection, itemId) {
+    var url = 'collections/' + collection + '/';
 
     if (itemId === undefined) {
       return url;
@@ -3719,25 +3716,26 @@ Collections.prototype = {
 
     return url + itemId + '/';
   },
-  entry: function entry(itemId, itemData) {
-    return new CollectionEntry(this, itemId, itemData);
+  entry: function entry(collection, itemId, itemData) {
+    return new CollectionEntry(this, collection, itemId, itemData);
   },
-  get: function get(itemId, callback) {
+  get: function get(collection, itemId, callback) {
     /**
      * get item from collection
      * @method get
      * @memberof Collections.prototype
-     * @param  {object}   itemId  ObjectStore object id
+     * @param  {string}   collection  collection name
+     * @param  {object}   itemId  id for this entry
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
     var self = this;
     return this.client.get({
-      url: this.buildURL(itemId),
+      url: this.buildURL(collection, itemId),
       signature: this.token
     }).then(function (response) {
-      var entry = self.client.collections(response.collection).entry(response.id, response.data);
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
       entry.full = response;
 
       if (callback) {
@@ -3747,16 +3745,17 @@ Collections.prototype = {
       return entry;
     });
   },
-  add: function add(itemId, itemData, callback) {
+  add: function add(collection, itemId, itemData, callback) {
     /**
      * Add item to collection
      * @method add
      * @memberof Collections.prototype
-     * @param  {string}   itemId  ObjectStore id
+     * @param  {string}   collection  collection name
+     * @param  {string}   itemId  entry id
      * @param  {object}   itemData  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     var self = this;
 
@@ -3769,11 +3768,11 @@ Collections.prototype = {
       data: itemData
     };
     return this.client.post({
-      url: this.buildURL(),
+      url: this.buildURL(collection),
       body: body,
       signature: this.token
     }).then(function (response) {
-      var entry = self.client.collections(response.collection).entry(response.id, response.data);
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
       entry.full = response;
 
       if (callback) {
@@ -3783,7 +3782,7 @@ Collections.prototype = {
       return entry;
     });
   },
-  update: function update(entryId, data, callback) {
+  update: function update(collection, entryId, data, callback) {
     /**
      * Update entry in the collection
      * @method update
@@ -3793,18 +3792,18 @@ Collections.prototype = {
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
-     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     var self = this;
     var body = {
       data: data
     };
     return this.client.put({
-      url: this.buildURL(entryId),
+      url: this.buildURL(collection, entryId),
       body: body,
       signature: this.token
     }).then(function (response) {
-      var entry = self.client.collection(response.collection).entry(response.id, response.data);
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
       entry.full = response;
 
       if (callback) {
@@ -3814,7 +3813,7 @@ Collections.prototype = {
       return entry;
     });
   },
-  delete: function _delete(entryId, callback) {
+  delete: function _delete(collection, entryId, callback) {
     /**
      * Delete entry from collection
      * @method delete
@@ -3822,14 +3821,14 @@ Collections.prototype = {
      * @param  {object}   entryId  Collection entry id
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example collection.delete("cheese101")
+     * @example collection.delete("food", "cheese101")
      */
     return this.client['delete']({
-      url: this.buildURL(entryId),
+      url: this.buildURL(collection, entryId),
       signature: this.token
     }, callback);
   },
-  upsert: function upsert(data, callback) {
+  upsert: function upsert(collection, data, callback) {
     /**
      * Upsert one or more items within a collection.
      *
@@ -3854,7 +3853,7 @@ Collections.prototype = {
     var data_json = {
       data: {}
     };
-    data_json['data'][this.collection] = data;
+    data_json['data'][collection] = data;
     return this.client.post({
       url: 'collections/',
       serviceName: 'api',
@@ -3862,9 +3861,7 @@ Collections.prototype = {
       signature: this.client.getCollectionsToken()
     }, callback);
   },
-  select: function select(ids, callback) {
-    var _this = this;
-
+  select: function select(collection, ids, callback) {
     /**
      * Select all objects with ids from the collection.
      *
@@ -3888,7 +3885,7 @@ Collections.prototype = {
 
     var params = {
       foreign_ids: ids.map(function (id) {
-        return _this.collection + ':' + id;
+        return collection + ':' + id;
       }).join(',')
     };
     return this.client.get({
@@ -3898,7 +3895,7 @@ Collections.prototype = {
       signature: this.client.getCollectionsToken()
     }, callback);
   },
-  deleteMany: function deleteMany(ids, callback) {
+  deleteMany: function deleteMany(collection, ids, callback) {
     /**
      * Remove all objects by id from the collection.
      *
@@ -3924,7 +3921,7 @@ Collections.prototype = {
       return id.toString();
     }).join(',');
     var params = {
-      collection_name: this.collection,
+      collection_name: collection,
       ids: ids
     };
     return this.client.delete({
@@ -3941,8 +3938,8 @@ var CollectionEntry = function CollectionEntry() {
 };
 
 CollectionEntry.prototype = {
-  initialize: function initialize(store, id, data) {
-    this.collection = store.collection;
+  initialize: function initialize(store, collection, id, data) {
+    this.collection = collection;
     this.store = store;
     this.id = id;
     this.data = data;
@@ -3951,7 +3948,7 @@ CollectionEntry.prototype = {
     return "SO:".concat(this.collection, ":").concat(this.id);
   },
   get: function get(callback) {
-    var _this2 = this;
+    var _this = this;
 
     /**
      * get item from collection and sync data
@@ -3961,7 +3958,29 @@ CollectionEntry.prototype = {
      * @return {Promise} Promise object
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
-    return this.store.get(this.id).then(function (response) {
+    return this.store.get(this.collection, this.id).then(function (response) {
+      _this.data = response.data;
+      _this.full = response;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  },
+  add: function add(callback) {
+    var _this2 = this;
+
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    return this.store.add(this.collection, this.id, this.data).then(function (response) {
       _this2.data = response.data;
       _this2.full = response;
 
@@ -3972,30 +3991,8 @@ CollectionEntry.prototype = {
       return response;
     });
   },
-  add: function add(callback) {
-    var _this3 = this;
-
-    /**
-     * Add item to collection
-     * @method add
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    return this.store.add(this.id, this.data).then(function (response) {
-      _this3.data = response.data;
-      _this3.full = response;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return response;
-    });
-  },
   update: function update(callback) {
-    var _this4 = this;
+    var _this3 = this;
 
     /**
      * Update item in the object storage
@@ -4006,9 +4003,9 @@ CollectionEntry.prototype = {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    return this.store.update(this.id, this.data).then(function (response) {
-      _this4.data = response.data;
-      _this4.full = response;
+    return this.store.update(this.collection, this.id, this.data).then(function (response) {
+      _this3.data = response.data;
+      _this3.full = response;
 
       if (callback) {
         callback(response);
@@ -4018,7 +4015,7 @@ CollectionEntry.prototype = {
     });
   },
   delete: function _delete(callback) {
-    var _this5 = this;
+    var _this4 = this;
 
     /**
      * Delete item from collection
@@ -4028,9 +4025,9 @@ CollectionEntry.prototype = {
      * @return {Promise} Promise object
      * @example collection.delete("cheese101")
      */
-    return this.store.delete(this.id).then(function (response) {
-      _this5.data = null;
-      _this5.full = null;
+    return this.store.delete(this.collection, this.id).then(function (response) {
+      _this4.data = null;
+      _this4.full = null;
 
       if (callback) {
         callback(response);
@@ -6995,6 +6992,7 @@ StreamClient.prototype = {
       throw new errors.FeedError('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
     }
 
+    this.collections = new Collections(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this, this.getOrCreateToken());
     this.images = new StreamImageStore(this, this.getOrCreateToken());
     this.reactions = new StreamReaction(this, this.getOrCreateToken());
@@ -7536,9 +7534,6 @@ StreamClient.prototype = {
   },
   getOrCreateToken: function getOrCreateToken() {
     return this.usingApiSecret ? signing.JWTScopeToken('*', '*', '*') : this.userToken;
-  },
-  collections: function collections(name) {
-    return new Collections(this, name, this.getOrCreateToken());
   },
   react: function react(kind, activity, options, callback) {
     return this.reactions.add(kind, activity, options, callback);
