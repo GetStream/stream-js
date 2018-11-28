@@ -104,7 +104,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
     "qs": "^6.5.1",
-    "request": "^2.86.0",
+    "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4"
   },
   "repository": {
