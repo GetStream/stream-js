@@ -133,6 +133,7 @@ StreamClient.prototype = {
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
+    this.collections = new Collections(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this, this.getOrCreateToken());
     this.images = new StreamImageStore(this, this.getOrCreateToken());
     this.reactions = new StreamReaction(this, this.getOrCreateToken());
@@ -732,10 +733,6 @@ StreamClient.prototype = {
     return this.usingApiSecret
       ? signing.JWTScopeToken('*', '*', '*')
       : this.userToken;
-  },
-
-  collections: function(name) {
-    return new Collections(this, name, this.getOrCreateToken());
   },
 
   react: function(kind, activity, options, callback) {

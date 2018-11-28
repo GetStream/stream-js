@@ -4,9 +4,11 @@ var randUserId = require('../utils/hooks').randUserId;
 describe('Enriching not existing references', () => {
   let ctx = new CloudContext();
   let zeroUUID = '00000000-0000-0000-0000-000000000000';
-  (ctx.cheeseBurger = ctx.alice
-    .collections('food')
-    .entry(randUserId('cheeseburger'), ctx.cheeseBurgerData)),
+  (ctx.cheeseBurger = ctx.alice.collections.entry(
+    'food',
+    randUserId('cheeseburger'),
+    ctx.cheeseBurgerData,
+  )),
     describe('When alice eats a cheese burger without adding it to collections', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user').addActivity({

@@ -11,9 +11,10 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When alice tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .collection('food')
-        .get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.alice.collections.get(
+        'food',
+        ctx.cheeseBurger.id,
+      );
       ctx.prevResponse = ctx.response;
     });
 
@@ -27,7 +28,7 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When bob tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.collection('food').get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.bob.collections.get('food', ctx.cheeseBurger.id);
     });
 
     ctx.responseShouldEqualPreviousResponse();
@@ -35,33 +36,41 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When bob tries to add the improved cheeseburger with the same ID', () => {
     ctx.requestShouldError(409, async () => {
-      ctx.response = await ctx.bob
-        .collection('food')
-        .add(ctx.cheeseBurger.id, improvedCheeseBurgerData);
+      ctx.response = await ctx.bob.collections.add(
+        'food',
+        ctx.cheeseBurger.id,
+        improvedCheeseBurgerData,
+      );
     });
   });
 
   describe('When alice tries to add the improved cheeseburger with the same ID', () => {
     ctx.requestShouldError(409, async () => {
-      ctx.response = await ctx.alice
-        .collection('food')
-        .add(ctx.cheeseBurger.id, improvedCheeseBurgerData);
+      ctx.response = await ctx.alice.collections.add(
+        'food',
+        ctx.cheeseBurger.id,
+        improvedCheeseBurgerData,
+      );
     });
   });
 
   describe('When bob tries to update the cheeseburger', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.bob
-        .collection('food')
-        .update(ctx.cheeseBurger.id, improvedCheeseBurgerData);
+      ctx.response = await ctx.bob.collections.update(
+        'food',
+        ctx.cheeseBurger.id,
+        improvedCheeseBurgerData,
+      );
     });
   });
 
   describe('When alice tries to update the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .collections('food')
-        .update(ctx.cheeseBurger.id, improvedCheeseBurgerData);
+      ctx.response = await ctx.alice.collections.update(
+        'food',
+        ctx.cheeseBurger.id,
+        improvedCheeseBurgerData,
+      );
     });
     ctx.responseShouldHaveNewUpdatedAt();
   });
@@ -69,9 +78,10 @@ describe('Collection CRUD behaviours', () => {
   describe('When alice then tries to get the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.prevResponse = ctx.response;
-      ctx.response = await ctx.alice
-        .collections('food')
-        .get(ctx.cheeseBurger.id);
+      ctx.response = await ctx.alice.collections.get(
+        'food',
+        ctx.cheeseBurger.id,
+      );
     });
 
     ctx.responseShouldEqualPreviousResponse();
@@ -79,32 +89,33 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When alice tries to change the ID of cheeseburger in an update call', () => {
     ctx.requestShouldError(400, async () => {
-      let collection = ctx.alice.collection('food');
       var body = {
         id: 1234,
         data: improvedCheeseBurgerData,
       };
-      await collection.client.put({
-        url: collection.buildURL(ctx.cheeseBurger.id),
+      await ctx.alice.collections.client.put({
+        url: ctx.alice.collections.buildURL('food', ctx.cheeseBurger.id),
         body: body,
-        signature: collection.token,
+        signature: ctx.alice.collections.token,
       });
     });
   });
 
   describe('When bob tries to delete the cheeseburger', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.bob
-        .collection('food')
-        .delete(ctx.cheeseBurger.id);
+      ctx.response = await ctx.bob.collections.delete(
+        'food',
+        ctx.cheeseBurger.id,
+      );
     });
   });
 
   describe('When alice tries to delete the cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .collection('food')
-        .delete(ctx.cheeseBurger.id);
+      ctx.response = await ctx.alice.collections.delete(
+        'food',
+        ctx.cheeseBurger.id,
+      );
     });
 
     ctx.responseShould('be empty JSON', async () => {
@@ -116,13 +127,13 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When alice then tries to get the cheeseburger', () => {
     ctx.requestShouldError(404, async () => {
-      await ctx.alice.collection('food').get(ctx.cheeseBurger.id);
+      await ctx.alice.collections.get('food', ctx.cheeseBurger.id);
     });
   });
 
   describe('When alice tries to create an object with an illegal character in the id', () => {
     ctx.requestShouldError(400, async () => {
-      await ctx.alice.collection('food').add('!abcdee!', {});
+      await ctx.alice.collections.add('food', '!abcdee!', {});
     });
   });
 
@@ -131,9 +142,11 @@ describe('Collection CRUD behaviours', () => {
   describe('When alice tries to add a new cheeseburger with a provided ID', () => {
     let newCheeseBurgerID = randUserId('cheeseburger');
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .collection('food')
-        .add(newCheeseBurgerID, ctx.cheeseBurgerData);
+      ctx.response = await ctx.alice.collections.add(
+        'food',
+        newCheeseBurgerID,
+        ctx.cheeseBurgerData,
+      );
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.collection);
@@ -154,7 +167,10 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When alice tries to get the new cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.collection('food').get(newCheeseBurger.id);
+      ctx.response = await ctx.alice.collections.get(
+        'food',
+        newCheeseBurger.id,
+      );
     });
 
     ctx.test('be the same data as before', () => {
@@ -169,32 +185,37 @@ describe('Collection CRUD behaviours', () => {
       replacementBurger = Object.assign(newCheeseBurger.full, {
         data: { wopper: true },
       });
-      ctx.response = await ctx.alice
-        .collection('food')
-        .delete(newCheeseBurger.id);
+      ctx.response = await ctx.alice.collections.delete(
+        'food',
+        newCheeseBurger.id,
+      );
     });
 
     describe('When alice gets the deleted cheeseburger', () => {
       ctx.requestShouldError(404, async () => {
-        ctx.response = await ctx.alice
-          .collection('food')
-          .get(newCheeseBurger.id);
+        ctx.response = await ctx.alice.collections.get(
+          'food',
+          newCheeseBurger.id,
+        );
       });
     });
 
     describe('When alice inserts a new cheeseburger with same ID as before', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice
-          .collection('food')
-          .add(replacementBurger.id, replacementBurger.data);
+        ctx.response = await ctx.alice.collections.add(
+          'food',
+          replacementBurger.id,
+          replacementBurger.data,
+        );
       });
     });
 
     describe('When alice reads the new cheeseburger', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice
-          .collection('food')
-          .get(replacementBurger.id);
+        ctx.response = await ctx.alice.collections.get(
+          'food',
+          replacementBurger.id,
+        );
       });
 
       ctx.test('be the same data as before', () => {
@@ -208,15 +229,17 @@ describe('Collection CRUD behaviours', () => {
 
   describe('When alice tries to add an object with a string as data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice
-        .collection('food')
-        .add(null, 'some string');
+      ctx.response = await ctx.alice.collections.add(
+        'food',
+        null,
+        'some string',
+      );
     });
   });
 
   describe('When alice tries to add an object with empty data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.collection('food').add(null, {});
+      ctx.response = await ctx.alice.collections.add('food', null, {});
     });
   });
 });

@@ -31,7 +31,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).deleteMany(id, cb);
+      this.client.collections.deleteMany(collectionName, id, cb);
 
       td.verify(
         del(
@@ -57,7 +57,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var data = { id: 'john', username: 'johndoe', favorite_color: 'gray' };
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).upsert(data);
+      this.client.collections.upsert(collectionName, data);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
@@ -81,7 +81,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).upsert(data, cb);
+      this.client.collections.upsert(collectionName, data, cb);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
@@ -107,7 +107,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       ];
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).upsert(data);
+      this.client.collections.upsert(collectionName, data);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = data;
@@ -134,7 +134,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).upsert(data, cb);
+      this.client.collections.upsert(collectionName, data, cb);
 
       var expected_body = { data: {} };
       expected_body.data[collectionName] = data;
@@ -159,7 +159,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var id = 'john';
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).select(id);
+      this.client.collections.select(collectionName, id);
 
       td.verify(
         get(
@@ -181,7 +181,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).select(id, cb);
+      this.client.collections.select(collectionName, id, cb);
 
       td.verify(
         get(
@@ -202,7 +202,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var ids = ['john', 'dave'];
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).select(ids);
+      this.client.collections.select(collectionName, ids);
 
       td.verify(
         get(
@@ -230,7 +230,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       var cb = function() {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections(collectionName).select(ids, cb);
+      this.client.collections.select(collectionName, ids, cb);
 
       td.verify(
         get(
@@ -261,21 +261,21 @@ describe('[UNIT] Stream Collections (node)', function() {
 
         // upsert
         expect(function() {
-          client.collections(collectionName).upsert(data, cb);
+          client.collections.upsert(collectionName, data, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // select
         expect(function() {
-          client.collections(collectionName).select(ids, cb);
+          client.collections.select(collectionName, ids, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // delete
         expect(function() {
-          client.collections(collectionName).deleteMany(cb);
+          client.collections.deleteMany(collectionName, ids, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });
