@@ -168,7 +168,7 @@ Collections.prototype = {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
@@ -206,7 +206,7 @@ Collections.prototype = {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
@@ -250,7 +250,7 @@ Collections.prototype = {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }

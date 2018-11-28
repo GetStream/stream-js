@@ -17,7 +17,7 @@ module.exports = {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
@@ -49,7 +49,7 @@ module.exports = {
       qs = {};
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
@@ -91,7 +91,7 @@ module.exports = {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }

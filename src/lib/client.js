@@ -52,7 +52,8 @@ StreamClient.prototype = {
      * stream.connect(apiKey, null, appId);
      */
     this.apiKey = apiKey;
-    this.usingApiSecret = !signing.isJWT(apiSecretOrToken);
+    this.usingApiSecret =
+      apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
 
@@ -637,7 +638,7 @@ StreamClient.prototype = {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
@@ -674,7 +675,7 @@ StreamClient.prototype = {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
+      throw new errors.SiteError(
         'This method can only be used server-side using your API Secret',
       );
     }
