@@ -16,7 +16,7 @@ class CloudContext {
       name: 'cheese burger',
       toppings: ['cheese'],
     };
-    const clientOptions = {
+    this.clientOptions = {
       group: 'testCycle',
       keepAlive: false,
     };
@@ -25,44 +25,14 @@ class CloudContext {
       config.API_KEY,
       config.API_SECRET,
       config.APP_ID,
-      clientOptions,
+      this.clientOptions,
     );
 
     // apiKey, apiSecret, appId, options
-    this.alice = stream.connect(
-      config.API_KEY,
-      this.createUserToken('alice'),
-      config.APP_ID,
-      clientOptions,
-    );
-
-    this.bob = stream.connect(
-      config.API_KEY,
-      this.createUserToken('bob'),
-      config.APP_ID,
-      clientOptions,
-    );
-
-    this.carl = stream.connect(
-      config.API_KEY,
-      this.createUserToken('carl'),
-      config.APP_ID,
-      clientOptions,
-    );
-
-    this.dave = stream.connect(
-      config.API_KEY,
-      this.createUserToken('dave'),
-      config.APP_ID,
-      clientOptions,
-    );
-
-    this.root = stream.connect(
-      config.API_KEY,
-      this.createUserToken('root', { stream_admin: true }),
-      config.APP_ID,
-      clientOptions,
-    );
+    this.alice = this.createUserClient('alice');
+    this.bob = this.createUserClient('bob');
+    this.carl = this.createUserClient('carl');
+    this.dave = this.createUserClient('dave');
 
     this.userData = {
       alice: {
@@ -134,6 +104,15 @@ class CloudContext {
   createUserToken(userId, extraData) {
     userId = randUserId(userId);
     return this.serverSideClient.createUserToken(userId, extraData);
+  }
+
+  createUserClient(userId, extraData) {
+    return stream.connect(
+      config.API_KEY,
+      this.createUserToken(userId, extraData),
+      config.APP_ID,
+      this.clientOptions,
+    );
   }
 
   wrapFn(fn) {
