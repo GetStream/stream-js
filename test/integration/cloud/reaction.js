@@ -28,17 +28,25 @@ describe('Reaction pagination', () => {
     for (let index = 0; index < 25; index++) {
       ctx.requestShouldNotError(async () => {
         if (index % 3 == 0) {
-          ctx.response = await ctx.bob.react('comment', eatActivity.id, {
-            index,
-          });
+          ctx.response = await ctx.bob.reactions.add(
+            'comment',
+            eatActivity.id,
+            {
+              index,
+            },
+          );
           ctx.response.user = ctx.bob.currentUser.full;
           comments.unshift(ctx.response);
         }
-        ctx.response = await ctx.bob.react('like', eatActivity.id, { index });
+        ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, {
+          index,
+        });
         ctx.response.user = ctx.bob.currentUser.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
-          ctx.response = await ctx.bob.react('clap', eatActivity.id, { index });
+          ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, {
+            index,
+          });
           ctx.response.user = ctx.bob.currentUser.full;
           claps.unshift(ctx.response);
         }
@@ -238,7 +246,7 @@ describe('Nested reactions pagination', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react('comment', eatActivity.id, {
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, {
         text: 'bob likes this!',
       });
     });
@@ -246,7 +254,7 @@ describe('Nested reactions pagination', () => {
 
   describe('When dave comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react('comment', eatActivity.id, {
+      ctx.response = await ctx.dave.reactions.add('comment', eatActivity.id, {
         text: 'dave likes this!',
       });
       daveComment = ctx.response;
@@ -255,7 +263,7 @@ describe('Nested reactions pagination', () => {
 
   describe('When carl comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.carl.react('comment', eatActivity.id, {
+      ctx.response = await ctx.carl.reactions.add('comment', eatActivity.id, {
         text: 'carl likes this!',
       });
       carlComment = ctx.response;
@@ -372,7 +380,7 @@ describe('Nested reactions madness', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react(
+      ctx.response = await ctx.bob.reactions.add(
         'comment',
         eatActivity.id,
         commentData,
@@ -620,7 +628,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react(
+      ctx.response = await ctx.bob.reactions.add(
         'comment',
         eatActivity.id,
         commentData,
@@ -906,7 +914,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When alice tries to set a string as the reaction data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.react(
+      ctx.response = await ctx.alice.reactions.add(
         'comment',
         eatActivity.id,
         'some string',

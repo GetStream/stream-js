@@ -74,7 +74,10 @@ describe('Enrich story', () => {
 
   describe('When bob likes that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react('like', eatCheeseBurgerActivity.id);
+      ctx.response = await ctx.bob.reactions.add(
+        'like',
+        eatCheeseBurgerActivity.id,
+      );
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -179,7 +182,10 @@ describe('Enrich story', () => {
 
   describe('When dave also likes that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react('like', eatCheeseBurgerActivity.id);
+      ctx.response = await ctx.dave.reactions.add(
+        'like',
+        eatCheeseBurgerActivity.id,
+      );
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reaction);
@@ -202,7 +208,7 @@ describe('Enrich story', () => {
 
   describe('When dave comments on that alice ate a cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react(
+      ctx.response = await ctx.dave.reactions.add(
         'comment',
         eatCheeseBurgerActivity,
         {

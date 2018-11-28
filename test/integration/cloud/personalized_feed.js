@@ -77,7 +77,7 @@ describe('Personalized enrichment story', () => {
 
     describe('When Bob likes the activity', () => {
       ctx.requestShouldNotError(async () => {
-        await ctx.bob.react('like', activity.id);
+        await ctx.bob.reactions.add('like', activity.id);
       });
 
       describe('and then bob reads his personalized feed', () => {

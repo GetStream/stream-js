@@ -735,10 +735,6 @@ StreamClient.prototype = {
       : this.userToken;
   },
 
-  react: function(kind, activity, options, callback) {
-    return this.reactions.add(kind, activity, options, callback);
-  },
-
   user: function(userId) {
     return new StreamUser(this, userId, this.getOrCreateToken());
   },
