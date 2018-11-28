@@ -7246,8 +7246,9 @@ StreamClient.prototype = {
     var enrichByDefault = !this.usingApiSecret;
 
     if (this.usingApiSecret) {
-      var feedId = feedSlug + ':' + userId;
-      token = signing.JWTScopeToken('feed', '*', this.apiSecret, feedId);
+      token = signing.JWTScopeToken(this.apiSecret, 'feed', '*', {
+        feedId: '*'
+      });
     } else {
       token = this.userToken;
     }
