@@ -17,6 +17,13 @@ Collections.prototype = {
     this.token = token;
   },
 
+  createUserReference: function(userId) {
+    return `SU:${userId}`;
+  },
+  createReference: function(collection, entryId) {
+    return `SO:${collection}:${entryId}`;
+  },
+
   buildURL: function(collection, itemId) {
     var url = 'collections/' + collection + '/';
     if (itemId === undefined) {
