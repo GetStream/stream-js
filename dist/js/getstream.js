@@ -3330,7 +3330,12 @@ StreamReaction.prototype = {
   },
   add: function add(kind, activity) {
     var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var targetFeeds = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
+    var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        _ref$targetFeeds = _ref.targetFeeds,
+        targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
+        userId = _ref.userId;
+
     var callback = arguments.length > 4 ? arguments[4] : undefined;
 
     /**
@@ -3355,7 +3360,8 @@ StreamReaction.prototype = {
       activity_id: activity,
       kind: kind,
       data: data,
-      target_feeds: targetFeeds
+      target_feeds: targetFeeds,
+      user_id: userId
     };
     return this.client.post({
       url: this.buildURL(),
@@ -3365,7 +3371,12 @@ StreamReaction.prototype = {
   },
   addChild: function addChild(kind, reaction) {
     var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    var targetFeeds = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        _ref2$targetFeeds = _ref2.targetFeeds,
+        targetFeeds = _ref2$targetFeeds === void 0 ? [] : _ref2$targetFeeds,
+        userId = _ref2.userId;
+
     var callback = arguments.length > 4 ? arguments[4] : undefined;
 
     /**
@@ -3390,7 +3401,8 @@ StreamReaction.prototype = {
       parent: reaction,
       kind: kind,
       data: data,
-      target_feeds: targetFeeds
+      target_feeds: targetFeeds,
+      user_id: userId
     };
     return this.client.post({
       url: this.buildURL(),
@@ -3467,7 +3479,13 @@ StreamReaction.prototype = {
       signature: this.signature
     }, callback);
   },
-  update: function update(id, data, targetFeeds, callback) {
+  update: function update(id, data) {
+    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref3$targetFeeds = _ref3.targetFeeds,
+        targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds;
+
+    var callback = arguments.length > 3 ? arguments[3] : undefined;
+
     /**
      * update reaction
      * @method add
@@ -3839,7 +3857,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError('This method can only be used server-side using your API Secret');
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     var last = arguments[arguments.length - 1]; // callback is always the last argument
@@ -3872,7 +3890,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError('This method can only be used server-side using your API Secret');
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     var last = arguments[arguments.length - 1]; // callback is always the last argument
@@ -3906,7 +3924,7 @@ Collections.prototype = {
      * @return {Promise} Promise object.
      */
     if (!this.client.usingApiSecret) {
-      throw new errors.FeedError('This method can only be used server-side using your API Secret');
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     var last = arguments[arguments.length - 1]; // callback is always the last argument
@@ -6920,7 +6938,7 @@ StreamClient.prototype = {
      * stream.connect(apiKey, null, appId);
      */
     this.apiKey = apiKey;
-    this.usingApiSecret = !signing.isJWT(apiSecretOrToken);
+    this.usingApiSecret = apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
 
@@ -7447,7 +7465,7 @@ StreamClient.prototype = {
      * @return {Promise}
      */
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError('This method can only be used server-side using your API Secret');
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     if (!(activities instanceof Array)) {
@@ -7475,7 +7493,7 @@ StreamClient.prototype = {
      * @return {Promise}
      */
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError('This method can only be used server-side using your API Secret');
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     return this.updateActivities([activity], callback);
@@ -7533,10 +7551,9 @@ StreamClient.prototype = {
     }, callback);
   },
   getOrCreateToken: function getOrCreateToken() {
-    return this.usingApiSecret ? signing.JWTScopeToken('*', '*', '*') : this.userToken;
-  },
-  react: function react(kind, activity, options, callback) {
-    return this.reactions.add(kind, activity, options, callback);
+    return this.usingApiSecret ? signing.JWTScopeToken(this.apiSecret, '*', '*', {
+      feedId: '*'
+    }) : this.userToken;
   },
   user: function user(userId) {
     return new StreamUser(this, userId, this.getOrCreateToken());
