@@ -933,6 +933,7 @@ describe('Reaction CRUD server side', () => {
   let eatActivity;
   let comment;
   let like;
+  let expectedCommentData;
   let commentData = {
     text: 'Looking yummy! @carl wanna get this on Tuesday?',
   };
@@ -991,6 +992,29 @@ describe('Reaction CRUD server side', () => {
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.currentUser.full);
+      });
+    });
+
+    describe('and then alice reads bob feed his from the server side', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.serverSideClient
+          .feed('user', ctx.bob.userId)
+          .get({ enrich: true });
+      });
+      ctx.responseShouldHaveActivityWithFields('reaction');
+      ctx.activityShould('contain the expected data', () => {
+        expectedCommentData = {
+          verb: 'comment',
+          foreign_id: `reaction:${comment.id}`,
+          time: comment.created_at.slice(0, -1), // chop off the Z suffix
+          target: '',
+          origin: null,
+        };
+
+        ctx.activity.should.include(expectedCommentData);
+        ctx.activity.actor.should.eql(ctx.bob.currentUser.full);
+        ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
+        ctx.activity.reaction.should.eql(comment);
       });
     });
 
