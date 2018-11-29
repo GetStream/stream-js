@@ -745,14 +745,18 @@ StreamClient.prototype = {
   },
 
   setUser: function(data) {
+    if (this.usingApiSecret) {
+      throw new errors.SiteError(
+        'This method can only be used client-side using a user token',
+      );
+    }
+
     let body = Object.assign(data);
     delete body.id;
-    return this.user(this.userId)
-      .getOrCreate(body)
-      .then((user) => {
-        this.currentUser = user;
-        return user;
-      });
+    return this.currentUser.getOrCreate(body).then((user) => {
+      this.currentUser = user;
+      return user;
+    });
   },
 
   og: function(url) {
