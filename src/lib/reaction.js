@@ -84,14 +84,21 @@ StreamReaction.prototype = {
       target_feeds: targetFeeds,
       user_id: userId,
     };
-    return this.client.post(
-      {
-        url: this.buildURL(),
-        body: body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client
+      .post(
+        {
+          url: this.buildURL(),
+          body: body,
+          signature: this.signature,
+        },
+        callback,
+      )
+      .then((response) => {
+        if (callback) {
+          callback(response.reaction);
+        }
+        return response.reaction;
+      });
   },
 
   addChild: function(
@@ -125,14 +132,21 @@ StreamReaction.prototype = {
       target_feeds: targetFeeds,
       user_id: userId,
     };
-    return this.client.post(
-      {
-        url: this.buildURL(),
-        body: body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client
+      .post(
+        {
+          url: this.buildURL(),
+          body: body,
+          signature: this.signature,
+        },
+        callback,
+      )
+      .then((response) => {
+        if (callback) {
+          callback(response.reaction);
+        }
+        return response.reaction;
+      });
   },
 
   get: function(id, callback) {
@@ -145,13 +159,20 @@ StreamReaction.prototype = {
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get(
-      {
-        url: this.buildURL(id),
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client
+      .get(
+        {
+          url: this.buildURL(id),
+          signature: this.signature,
+        },
+        callback,
+      )
+      .then((response) => {
+        if (callback) {
+          callback(response.reaction);
+        }
+        return response.reaction;
+      });
   },
 
   filter: function(conditions, callback) {
@@ -248,14 +269,21 @@ StreamReaction.prototype = {
       data: data,
       target_feeds: targetFeeds,
     };
-    return this.client.put(
-      {
-        url: this.buildURL(id),
-        body: body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client
+      .put(
+        {
+          url: this.buildURL(id),
+          body: body,
+          signature: this.signature,
+        },
+        callback,
+      )
+      .then((response) => {
+        if (callback) {
+          callback(response.reaction);
+        }
+        return response.reaction;
+      });
   },
 
   delete: function(id, callback) {
