@@ -57,6 +57,19 @@ class CloudContext {
       },
     };
 
+    const reactionFields = [
+      'id',
+      'kind',
+      'activity_id',
+      'user_id',
+      'user',
+      'data',
+      'created_at',
+      'updated_at',
+      'parent',
+      'children',
+      'children_counters',
+    ];
     this.fields = {
       collection: [
         'id',
@@ -67,19 +80,8 @@ class CloudContext {
         'duration',
         'foreign_id',
       ],
-      reaction: [
-        'id',
-        'kind',
-        'activity_id',
-        'user_id',
-        'user',
-        'data',
-        'created_at',
-        'updated_at',
-        'parent',
-        'children',
-        'children_counters',
-      ],
+      reaction: reactionFields,
+      reactionResponse: ['duration', ...reactionFields],
       activity: [
         'id',
         'foreign_id',

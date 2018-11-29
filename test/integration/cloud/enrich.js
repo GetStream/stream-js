@@ -80,7 +80,7 @@ describe('Enrich story', () => {
       );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -95,6 +95,7 @@ describe('Enrich story', () => {
         ctx.response,
         ctx.bob.currentUser,
       );
+      delete like.duration;
     });
 
     describe('and then bob reads his timeline with own reactions', () => {
@@ -188,7 +189,7 @@ describe('Enrich story', () => {
       );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -203,6 +204,7 @@ describe('Enrich story', () => {
         ctx.response,
         ctx.dave.currentUser,
       );
+      delete like2.duration;
     });
   });
 
@@ -218,7 +220,7 @@ describe('Enrich story', () => {
       );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -235,6 +237,7 @@ describe('Enrich story', () => {
         ctx.response,
         ctx.dave.currentUser,
       );
+      delete comment.duration;
     });
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {

@@ -35,18 +35,21 @@ describe('Reaction pagination', () => {
               index,
             },
           );
+          delete ctx.response.duration;
           ctx.response.user = ctx.bob.currentUser.full;
           comments.unshift(ctx.response);
         }
         ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, {
           index,
         });
+        delete ctx.response.duration;
         ctx.response.user = ctx.bob.currentUser.full;
         likes.unshift(ctx.response);
         if (index % 4 == 0) {
           ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, {
             index,
           });
+          delete ctx.response.duration;
           ctx.response.user = ctx.bob.currentUser.full;
           claps.unshift(ctx.response);
         }
@@ -273,9 +276,13 @@ describe('Nested reactions pagination', () => {
   describe("and then alice likes dave's comment 33 times", () => {
     ctx.requestShouldNotError(async () => {
       for (let i = 0; i < 33; i++) {
-        daveCommentLikes.push(
-          await ctx.alice.reactions.addChild('like', daveComment, { i }),
+        const response = await ctx.alice.reactions.addChild(
+          'like',
+          daveComment,
+          { i },
         );
+        delete response.duration;
+        daveCommentLikes.push(response);
       }
     });
   });
@@ -283,9 +290,13 @@ describe('Nested reactions pagination', () => {
   describe("and then alice unlikes carl's comment 33 times", () => {
     ctx.requestShouldNotError(async () => {
       for (let i = 0; i < 33; i++) {
-        carlCommentLikes.push(
-          await ctx.alice.reactions.addChild('unlike', carlComment, { i }),
+        const response = await ctx.alice.reactions.addChild(
+          'unlike',
+          carlComment,
+          { i },
         );
+        delete response.duration;
+        carlCommentLikes.push(response);
       }
     });
   });
@@ -444,7 +455,7 @@ describe('Nested reactions madness', () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counters.like.should.eql(1);
       reaction.children.should.have.length(1);
-      reaction.children[0].should.eql(likeReaction);
+      ctx.shouldEqualBesideDuration(reaction.children[0], likeReaction);
     });
   });
 
@@ -453,7 +464,7 @@ describe('Nested reactions madness', () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counters.like.should.eql(1);
       reaction.children.should.have.length(1);
-      reaction.children[0].should.eql(likeReaction);
+      ctx.shouldEqualBesideDuration(reaction.children[0], likeReaction);
     });
   });
 
@@ -627,7 +638,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       comment = ctx.response;
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -645,7 +656,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         ctx.response = await ctx.alice.reactions.get(comment.id);
       });
 
-      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.currentUser.full);
@@ -656,7 +667,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.bob.reactions.get(comment.id);
       });
-      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
     });
 
     describe('and then alice reads bob feed', () => {
@@ -676,7 +687,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         ctx.activity.should.include(expectedCommentData);
         ctx.activity.actor.should.eql(ctx.bob.currentUser.full);
         ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
-        ctx.activity.reaction.should.eql(comment);
+        ctx.shouldEqualBesideDuration(ctx.activity.reaction, comment);
         commentActivity = ctx.activity;
       });
     });
@@ -740,7 +751,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       });
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -954,7 +965,7 @@ describe('Reaction CRUD server side', () => {
       comment = ctx.response;
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -972,7 +983,7 @@ describe('Reaction CRUD server side', () => {
         ctx.response = await ctx.alice.reactions.get(comment.id);
       });
 
-      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.currentUser.full);
@@ -998,7 +1009,7 @@ describe('Reaction CRUD server side', () => {
         ctx.activity.should.include(expectedCommentData);
         ctx.activity.actor.should.eql(ctx.bob.currentUser.full);
         ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
-        ctx.activity.reaction.should.eql(comment);
+        ctx.shouldEqualBesideDuration(ctx.activity.reaction, comment);
       });
     });
 
@@ -1021,7 +1032,7 @@ describe('Reaction CRUD server side', () => {
         ctx.response = await ctx.bob.reactions.get(like.id);
       });
 
-      ctx.responseShouldHaveFields(...ctx.fields.reaction);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
       ctx.test('response should include alice user data', () => {
         ctx.response.user.should.eql(ctx.alice.currentUser.full);
