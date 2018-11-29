@@ -403,13 +403,16 @@ StreamClient.prototype = {
 
     const enrichByDefault = !this.usingApiSecret;
 
-    if (this.usingApiSecret) {
-      token = signing.JWTScopeToken(this.apiSecret, 'feed', '*', {
-        feedId: '*',
-      });
-    } else {
-      token = this.userToken;
+    if (token === undefined) {
+      if (this.usingApiSecret) {
+        token = signing.JWTScopeToken(this.apiSecret, 'feed', '*', {
+          feedId: '*',
+        });
+      } else {
+        token = this.userToken;
+      }
     }
+
     if (userId instanceof StreamUser) {
       userId = userId.id;
     }
