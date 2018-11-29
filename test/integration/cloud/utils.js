@@ -67,8 +67,8 @@ class CloudContext {
       'created_at',
       'updated_at',
       'parent',
-      'children',
-      'children_counters',
+      'latest_children',
+      'children_counts',
     ];
     this.fields = {
       collection: [

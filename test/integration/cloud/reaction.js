@@ -416,9 +416,9 @@ describe('Nested reactions madness', () => {
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
-      reaction.children_counters.should.have.all.keys('like');
-      reaction.children_counters.like.should.eql(1);
-      reaction.children.should.have.length(1);
+      reaction.children_counts.should.have.all.keys('like');
+      reaction.children_counts.like.should.eql(1);
+      reaction.latest_children.should.have.length(1);
     });
   });
 
@@ -435,8 +435,8 @@ describe('Nested reactions madness', () => {
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
-      reaction.children_counters.like.should.eql(104);
-      reaction.children.should.have.length(10);
+      reaction.children_counts.like.should.eql(104);
+      reaction.latest_children.should.have.length(10);
     });
   });
 
@@ -453,18 +453,18 @@ describe('Nested reactions madness', () => {
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
-      reaction.children_counters.like.should.eql(1);
-      reaction.children.should.have.length(1);
-      ctx.shouldEqualBesideDuration(reaction.children[0], likeReaction);
+      reaction.children_counts.like.should.eql(1);
+      reaction.latest_children.should.have.length(1);
+      ctx.shouldEqualBesideDuration(reaction.latest_children[0], likeReaction);
     });
   });
 
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
-      reaction.children_counters.like.should.eql(1);
-      reaction.children.should.have.length(1);
-      ctx.shouldEqualBesideDuration(reaction.children[0], likeReaction);
+      reaction.children_counts.like.should.eql(1);
+      reaction.latest_children.should.have.length(1);
+      ctx.shouldEqualBesideDuration(reaction.latest_children[0], likeReaction);
     });
   });
 
@@ -485,11 +485,13 @@ describe('Nested reactions madness', () => {
       let activity = ctx.response.results[0];
       activity.latest_reactions.should.have.all.keys('comment');
       activity.latest_reactions.comment.should.have.length(1);
-      activity.latest_reactions.comment[0].children.should.have.length(1);
-      activity.latest_reactions.comment[0].children_counters.should.have.all.keys(
+      activity.latest_reactions.comment[0].latest_children.should.have.length(
+        1,
+      );
+      activity.latest_reactions.comment[0].children_counts.should.have.all.keys(
         'like',
       );
-      activity.latest_reactions.comment[0].children_counters.like.should.eql(1);
+      activity.latest_reactions.comment[0].children_counts.like.should.eql(1);
     });
   });
 
@@ -519,12 +521,12 @@ describe('Nested reactions madness', () => {
     describe('and then alice reads the comment reaction', () => {
       ctx.requestShouldNotError(async () => {
         let reaction = await ctx.alice.reactions.get(comment.id);
-        reaction.children_counters.should.eql({
+        reaction.children_counts.should.eql({
           clap: 10,
           like: 10,
           unlike: 10,
         });
-        reaction.children.should.have.length(10);
+        reaction.latest_children.should.have.length(10);
       });
     });
 
@@ -837,8 +839,8 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.activity.latest_reactions['comment'].should.have.length(1);
       let comment = ctx.activity.latest_reactions['comment'][0];
       comment.should.have.all.keys(...ctx.fields.reaction);
-      comment.children.should.have.length(1);
-      comment.children[0].parent.should.eql(comment.id);
+      comment.latest_children.should.have.length(1);
+      comment.latest_children[0].parent.should.eql(comment.id);
     });
   });
 
