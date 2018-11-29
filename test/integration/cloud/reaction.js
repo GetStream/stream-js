@@ -536,16 +536,8 @@ describe('Nested reactions madness', () => {
         let activity = ctx.response.results[0];
         activity.latest_reactions.should.have.all.keys('comment');
         activity.latest_reactions.comment.should.have.length(1);
-        activity.reaction_counts.should.have.all.keys(
-          'like',
-          'unlike',
-          'clap',
-          'comment',
-        );
+        activity.reaction_counts.should.have.all.keys('comment');
         activity.reaction_counts.should.eql({
-          clap: 10,
-          like: 10,
-          unlike: 10,
           comment: 1,
         });
       });
@@ -583,16 +575,8 @@ describe('Nested reactions madness', () => {
         () => {
           let activity = ctx.response.results[0];
           activity.latest_reactions.should.eql({});
-          activity.reaction_counts.should.have.all.keys(
-            'like',
-            'unlike',
-            'clap',
-            'comment',
-          );
+          activity.reaction_counts.should.have.all.keys('comment');
           activity.reaction_counts.should.eql({
-            clap: 0,
-            like: 0,
-            unlike: 0,
             comment: 0,
           });
         },
