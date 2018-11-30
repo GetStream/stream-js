@@ -550,7 +550,12 @@ describe('Nested reactions madness', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user', ctx.alice.userId).get({
           limit: 1,
-          reactions: { own: true, recent: true, counts: true },
+          reactions: {
+            own: true,
+            recent: true,
+            counts: true,
+            own_children: true,
+          },
         });
       });
 

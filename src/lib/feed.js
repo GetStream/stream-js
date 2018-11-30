@@ -332,6 +332,9 @@ StreamFeed.prototype = {
       if (options.reactions.counts != null) {
         options.withReactionCounts = options.reactions.counts;
       }
+      if (options.reactions.own_children != null) {
+        options.withOwnChildren = options.reactions.own_children;
+      }
       delete options.reactions;
     }
 
@@ -348,7 +351,8 @@ StreamFeed.prototype = {
       (options.enrich === true ||
         options.ownReactions != null ||
         options.withRecentReactions != null ||
-        options.withReactionCounts != null)
+        options.withReactionCounts != null ||
+        options.withOwnChildren != null)
     ) {
       path = 'enrich/feed/';
     } else {

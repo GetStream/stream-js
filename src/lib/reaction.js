@@ -171,48 +171,22 @@ StreamReaction.prototype = {
      * @example reactions.lookup({user_id: "john", kinds:"like"})
      */
 
-    let qs = {
-      limit: conditions.limit ? conditions.limit : 10,
-    };
-
-    if (conditions.id_lt) {
-      qs.id_lt = conditions.id_lt;
+    let { user_id, activity_id, reaction_id, ...qs } = conditions;
+    if (!qs.limit) {
+      qs.limit = 10;
     }
 
-    if (conditions.id_lte) {
-      qs.id_lte = conditions.id_lte;
-    }
-
-    if (conditions.id_gt) {
-      qs.id_gt = conditions.id_gt;
-    }
-
-    if (conditions.id_gte) {
-      qs.id_gte = conditions.id_gte;
-    }
-
-    if (
-      (conditions.user_id
-        ? 1
-        : 0 + conditions.activity_id
-          ? 1
-          : 0 + conditions.reaction_id
-            ? 1
-            : 0) != 1
-    ) {
+    if ((user_id ? 1 : 0 + activity_id ? 1 : 0 + reaction_id ? 1 : 0) != 1) {
       throw new errors.SiteError(
         'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );
     }
 
     let lookupType =
-      (conditions.user_id && 'user_id') ||
-      (conditions.activity_id && 'activity_id') ||
-      (conditions.reaction_id && 'reaction_id');
-    let value =
-      (conditions.user_id && conditions.user_id) ||
-      (conditions.activity_id && conditions.activity_id) ||
-      (conditions.reaction_id && conditions.reaction_id);
+      (user_id && 'user_id') ||
+      (activity_id && 'activity_id') ||
+      (reaction_id && 'reaction_id');
+    let value = user_id || activity_id || reaction_id;
 
     let url = this.buildURL(lookupType, value);
 
