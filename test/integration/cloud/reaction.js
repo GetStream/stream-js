@@ -565,6 +565,11 @@ describe('Nested reactions madness', () => {
         let activity = ctx.response.results[0];
         activity.latest_reactions.should.have.all.keys('comment');
         activity.latest_reactions.comment.should.have.length(1);
+        const comment = activity.latest_reactions.comment[0];
+        comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+        comment.own_children.clap.should.have.length(5);
+        comment.own_children.like.should.have.length(5);
+        comment.own_children.unlike.should.have.length(5);
         activity.reaction_counts.should.have.all.keys('comment');
         activity.reaction_counts.should.eql({
           comment: 1,
