@@ -418,7 +418,8 @@ describe('Nested reactions madness', () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.should.have.all.keys('like');
       reaction.children_counts.like.should.eql(1);
-      reaction.latest_children.should.have.length(1);
+      reaction.latest_children.should.have.all.keys('like');
+      reaction.latest_children.like.should.have.length(1);
     });
   });
 
@@ -436,7 +437,8 @@ describe('Nested reactions madness', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(104);
-      reaction.latest_children.should.have.length(10);
+      reaction.latest_children.should.have.all.keys('like');
+      reaction.latest_children.like.should.have.length(10);
     });
   });
 
@@ -454,8 +456,12 @@ describe('Nested reactions madness', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
-      reaction.latest_children.should.have.length(1);
-      ctx.shouldEqualBesideDuration(reaction.latest_children[0], likeReaction);
+      reaction.latest_children.should.have.all.keys('like');
+      reaction.latest_children.like.should.have.length(1);
+      ctx.shouldEqualBesideDuration(
+        reaction.latest_children.like[0],
+        likeReaction,
+      );
     });
   });
 
@@ -463,8 +469,12 @@ describe('Nested reactions madness', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
-      reaction.latest_children.should.have.length(1);
-      ctx.shouldEqualBesideDuration(reaction.latest_children[0], likeReaction);
+      reaction.latest_children.should.have.all.keys('like');
+      reaction.latest_children.like.should.have.length(1);
+      ctx.shouldEqualBesideDuration(
+        reaction.latest_children.like[0],
+        likeReaction,
+      );
     });
   });
 
@@ -485,7 +495,10 @@ describe('Nested reactions madness', () => {
       let activity = ctx.response.results[0];
       activity.latest_reactions.should.have.all.keys('comment');
       activity.latest_reactions.comment.should.have.length(1);
-      activity.latest_reactions.comment[0].latest_children.should.have.length(
+      activity.latest_reactions.comment[0].latest_children.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].latest_children.like.should.have.length(
         1,
       );
       activity.latest_reactions.comment[0].children_counts.should.have.all.keys(
@@ -526,7 +539,10 @@ describe('Nested reactions madness', () => {
           like: 10,
           unlike: 10,
         });
-        reaction.latest_children.should.have.length(10);
+        reaction.latest_children.should.have.all.keys('like', 'clap', 'unlike');
+        reaction.latest_children.clap.should.have.length(3);
+        reaction.latest_children.like.should.have.length(3);
+        reaction.latest_children.unlike.should.have.length(4);
       });
     });
 
@@ -839,8 +855,9 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.activity.latest_reactions['comment'].should.have.length(1);
       let comment = ctx.activity.latest_reactions['comment'][0];
       comment.should.have.all.keys(...ctx.fields.reaction);
-      comment.latest_children.should.have.length(1);
-      comment.latest_children[0].parent.should.eql(comment.id);
+      comment.latest_children.should.have.all.keys('like');
+      comment.latest_children.like.should.have.length(1);
+      comment.latest_children.like[0].parent.should.eql(comment.id);
     });
   });
 
