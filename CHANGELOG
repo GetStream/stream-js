@@ -18,6 +18,7 @@ This release merges frontend and backend usage of the client for a much better e
   `client.collections.add(collectionName, id, data)`. The same is done for `update`, `delete`, `get`
 * Rename `client.collections.delete` to `client.collections.delete_many`
 * `session.react` was removed in favor of `client.reactions.add`
+* `session.followUser` was removed in favor of using `client.follow`
 * the arguments for `session.reactions.add` have slightly changed
 ```
 // old
