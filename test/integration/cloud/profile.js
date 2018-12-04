@@ -183,6 +183,10 @@ describe('User profile story', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.user(ctx.alice.userId).delete();
     });
+
+    ctx.requestShouldError(404, async () => {
+      ctx.response = await ctx.alice.user(ctx.alice.userId).get();
+    });
   });
 
   describe('When alice tries to delete bob', () => {
