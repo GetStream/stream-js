@@ -25,6 +25,20 @@ StreamUser.prototype = {
     return `SU:${this.id}`;
   },
 
+  delete: function(callback) {
+    return this.client
+      .delete({
+        url: this.url,
+        signature: this.token,
+      })
+      .then((response) => {
+        if (callback) {
+          callback(response);
+        }
+        return response;
+      });
+  },
+
   get: function(options, callback) {
     return this.client
       .get({

@@ -178,4 +178,16 @@ describe('User profile story', () => {
         .update('some string');
     });
   });
+
+  describe('When alice deletes her profile', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.user(ctx.alice.userId).delete();
+    });
+  });
+
+  describe('When alice tries to delete bob', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.user(ctx.bob.userId).delete();
+    });
+  });
 });
