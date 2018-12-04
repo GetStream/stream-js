@@ -2,6 +2,42 @@
  Change history
 ================
 
+4.0.0
+=====
+:release-date: 2018-12-03
+:by: Jelte Fennema
+
+This release merges frontend and backend usage of the client for a much better experience. To do this it has same breaking changes
+
+### BREAKING CHANGES
+
+* Remove `createUserSession`. This is replaced by using the user token as the
+  second argument to `stream.connect`, i.e. `stream.connect(apiKey, userToken,
+  appId)`. All calls you did on the user session can now be done the same way on the client (except for the things mentioned below).
+* Change `userSession.collection(collectionName).add(id, data)` to
+  `client.collections.add(collectionName, id, data)`. The same is done for `update`, `delete`, `get`
+* Rename `client.collections.delete` to `client.collections.delete_many`
+* `session.react` was removed in favor of `client.reactions.add`
+* `session.followUser` was removed in favor of using `client.follow`
+* the arguments for `session.reactions.add` have slightly changed
+```
+// old
+session.reactions.add(kind, activity, {data, targetFeeds})
+// new
+client.reactions.add(kind, activity, data, {targetFeeds})
+```
+* `session.user` is replaced with `client.currentUser`
+* `session.getUser(id)` is replaced with `client.user(id)`
+* Remove `client.collections.createReference(collection, entryId)` with `client.collections.entry(collection, itemId)`
+* Remove `client.collections.createUserReference(userId)` with `client.user(userId)`
+
+### New features
+
+* `client.reactions.addChild()` was added to create reactions to reactions
+* responses from user(id).get/add/update and collections.get/add/update apis
+  can now be used directly in an activity and will be replaced by a reference automatically
+
+
 3.23.1
 ======
 :release-date: 2018-11-20

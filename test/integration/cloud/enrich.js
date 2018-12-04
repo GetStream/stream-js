@@ -21,7 +21,6 @@ describe('Enrich story', () => {
   describe('When alice eats the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.alice.user,
         verb: 'eat',
         object: ctx.cheeseBurger,
       });
@@ -34,9 +33,12 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields();
 
       ctx.responseShould('have the activity containing enriched data', () => {
-        ctx.activity.actor.should.eql(ctx.alice.user.full);
+        ctx.activity.actor.should.eql(ctx.alice.currentUser.full);
         ctx.activity.verb.should.eql('eat');
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
         eatCheeseBurgerActivity = ctx.response.results[0];
       });
     });
@@ -52,7 +54,7 @@ describe('Enrich story', () => {
 
   describe('When bob follows alice', () => {
     ctx.requestShouldNotError(async () => {
-      await ctx.bob.followUser(ctx.alice.user);
+      await ctx.bob.feed('timeline').follow('user', ctx.alice.userId);
     });
     describe('and then bob reads his timeline with own reactions', () => {
       ctx.requestShouldNotError(async () => {
@@ -62,17 +64,23 @@ describe('Enrich story', () => {
       ctx.responseShouldHaveActivityWithFields();
 
       ctx.activityShould('contain enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
     });
   });
 
   describe('When bob likes that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.react('like', eatCheeseBurgerActivity.id);
+      ctx.response = await ctx.bob.reactions.add(
+        'like',
+        eatCheeseBurgerActivity.id,
+      );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -83,7 +91,11 @@ describe('Enrich story', () => {
         user_id: ctx.bob.userId,
       });
       ctx.response.data.should.eql({});
-      like = ctx.reactionToReactionInActivity(ctx.response, ctx.bob.user);
+      like = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.bob.currentUser,
+      );
+      delete like.duration;
     });
 
     describe('and then bob reads his timeline with own reactions', () => {
@@ -93,27 +105,18 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
-        'own_reactions',
-        'own_reactions_extra',
-      );
+      ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
-
-      ctx.activityShould(
-        'have an empty next for like in own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions_extra.should.eql({
-            like: { next: '' },
-          });
-        },
-      );
     });
 
     describe('and then bob reads alice her feed', () => {
@@ -123,27 +126,18 @@ describe('Enrich story', () => {
           .get({ withOwnReactions: true });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
-        'own_reactions',
-        'own_reactions_extra',
-      );
+      ctx.responseShouldHaveActivityWithFields('own_reactions');
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould('contain the reaction of bob', () => {
         ctx.activity.own_reactions.like.should.eql([like]);
       });
-
-      ctx.activityShould(
-        'have an empty next for like in own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions_extra.should.eql({
-            like: { next: '' },
-          });
-        },
-      );
     });
 
     describe('and then carl reads alice her feed', () => {
@@ -155,22 +149,20 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
-      ctx.activityShould(
-        'not contain anything in own_reactions and own_reactions_extra',
-        () => {
-          ctx.activity.own_reactions.should.eql({});
-          ctx.activity.own_reactions_extra.should.eql({});
-        },
-      );
+      ctx.activityShould('not contain anything in own_reactions', () => {
+        ctx.activity.own_reactions.should.eql({});
+      });
 
       ctx.activityShould(
         'contain the reaction of bob in latest_reactions',
@@ -191,10 +183,13 @@ describe('Enrich story', () => {
 
   describe('When dave also likes that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react('like', eatCheeseBurgerActivity.id);
+      ctx.response = await ctx.dave.reactions.add(
+        'like',
+        eatCheeseBurgerActivity.id,
+      );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -205,21 +200,27 @@ describe('Enrich story', () => {
         user_id: ctx.dave.userId,
       });
       ctx.response.data.should.eql({});
-      like2 = ctx.reactionToReactionInActivity(ctx.response, ctx.dave.user);
+      like2 = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.dave.currentUser,
+      );
+      delete like2.duration;
     });
   });
 
   describe('When dave comments on that alice ate a cheeseburger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.dave.react('comment', eatCheeseBurgerActivity, {
-        data: {
+      ctx.response = await ctx.dave.reactions.add(
+        'comment',
+        eatCheeseBurgerActivity,
+        {
           text: 'Looks juicy!!!',
         },
-        targetFeeds: [ctx.alice.feed('timeline')],
-      });
+        { targetFeeds: [ctx.alice.feed('notification')] },
+      );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reaction);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
 
     ctx.responseShouldHaveUUID();
 
@@ -232,7 +233,11 @@ describe('Enrich story', () => {
       ctx.response.data.should.eql({
         text: 'Looks juicy!!!',
       });
-      comment = ctx.reactionToReactionInActivity(ctx.response, ctx.dave.user);
+      comment = ctx.reactionToReactionInActivity(
+        ctx.response,
+        ctx.dave.currentUser,
+      );
+      delete comment.duration;
     });
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {
@@ -246,14 +251,16 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould(
@@ -294,22 +301,20 @@ describe('Enrich story', () => {
       });
     });
 
-    describe('and then alice reads her timeline with all enrichment enabled', () => {
+    describe('and then alice reads her notification with all enrichment enabled', () => {
       let expectedReactedOnActivity;
       ctx.requestShouldNotError(async () => {
         expectedReactedOnActivity = ctx.activity;
         expectedReactedOnActivity.own_reactions = {};
-        expectedReactedOnActivity.own_reactions_extra = {};
-        ctx.response = await ctx.alice.feed('timeline').get({
+        ctx.response = await ctx.alice.feed('notification').get({
           withRecentReactions: true,
           withOwnReactions: true,
           withReactionCounts: true,
         });
       });
 
-      ctx.responseShouldHaveActivityWithFields(
+      ctx.responseShouldHaveActivityInGroupWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
@@ -327,7 +332,6 @@ describe('Enrich story', () => {
         ctx.activity.own_reactions.should.eql({});
         ctx.activity.latest_reactions.should.eql({});
         ctx.activity.latest_reactions_extra.should.eql({});
-        ctx.activity.reaction_counts.should.include({ like: 0, comment: 0 });
       });
     });
   });
@@ -338,12 +342,12 @@ describe('Enrich story', () => {
     });
 
     ctx.responseShould('be empty JSON', () => {
-      ctx.response.should.eql({});
+      ctx.shouldEqualBesideDuration(ctx.response, {});
     });
 
     describe('and then dave reads alice her feed with all enrichment enabled', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave.feed('user', ctx.alice.user).get({
+        ctx.response = await ctx.dave.feed('user', ctx.alice.currentUser).get({
           withRecentReactions: true,
           withOwnReactions: true,
           withReactionCounts: true,
@@ -352,14 +356,16 @@ describe('Enrich story', () => {
 
       ctx.responseShouldHaveActivityWithFields(
         'own_reactions',
-        'own_reactions_extra',
         'latest_reactions',
         'latest_reactions_extra',
         'reaction_counts',
       );
 
       ctx.activityShould('contain the enriched data', () => {
-        ctx.activity.object.should.eql(ctx.cheeseBurger.full);
+        ctx.shouldEqualBesideDuration(
+          ctx.activity.object,
+          ctx.cheeseBurger.full,
+        );
       });
 
       ctx.activityShould(

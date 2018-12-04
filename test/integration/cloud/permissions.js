@@ -2,122 +2,13 @@ var { CloudContext } = require('./utils');
 var randUserId = require('../utils/hooks').randUserId;
 var util = require('util');
 
+const someActivityId = 'f9969ca8-e659-11e8-801f-e4a47194940e';
 // eslint-disable-next-line no-unused-vars
 function log(...args) {
   console.log(
     util.inspect(...args, { showHidden: false, depth: null, colors: true }),
   );
 }
-
-describe('Permission managament', () => {
-  let ctx = new CloudContext();
-  let policies;
-  let fixedPolicies = [];
-  describe('When alice requests to see the policies', () => {
-    ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.permissions.get();
-    });
-  });
-
-  describe('When root requests to see the policy', () => {
-    ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.root.permissions.get();
-      policies = ctx.response.policies;
-      // log(policies);
-    });
-  });
-
-  describe('When root tries to clear the default policies', () => {
-    ctx.noRequestsShouldError(async () => {
-      let deleteRequests = [];
-      for (let p of policies) {
-        if (p.priority > 0 && p.priority < 1000) {
-          deleteRequests.push(ctx.root.permissions.delete(p.priority));
-        } else {
-          fixedPolicies.push(p);
-        }
-      }
-      await Promise.all(deleteRequests);
-    });
-    describe('and then requests to see the policies', () => {
-      ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.root.permissions.get();
-        policies = ctx.response.policies;
-      });
-      ctx.test('the policies should be there again', () => {
-        policies.should.have.lengthOf.above(fixedPolicies.length);
-      });
-    });
-  });
-
-  describe('When root tries to overwrite a default policy', () => {
-    ctx.requestShouldError(409, async () => {
-      await ctx.root.permissions.add(policies[1]);
-    });
-  });
-
-  describe('When alice tries to delete a default policy', () => {
-    ctx.requestShouldError(403, async () => {
-      await ctx.alice.permissions.delete(policies[1].priority);
-    });
-  });
-
-  describe('When root tries to delete a fixed policy', () => {
-    ctx.requestShouldError(400, async () => {
-      await ctx.root.permissions.delete(policies[0].priority);
-    });
-  });
-
-  describe('When root tries to delete a single default policy', () => {
-    ctx.requestShouldNotError(async () => {
-      await ctx.root.permissions.delete(policies[1].priority);
-    });
-    describe('and then requests to see the policies', () => {
-      ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.root.permissions.get();
-      });
-      ctx.test('the policy should be removed', () => {
-        ctx.response.policies.should.have.lengthOf(policies.length - 1);
-        ctx.response.policies[1].should.eql(policies[2]);
-      });
-    });
-
-    describe('and then alice tries to add the policy again', () => {
-      ctx.requestShouldError(403, async () => {
-        await ctx.alice.permissions.add(policies[1]);
-      });
-    });
-
-    describe('and then root tries to add the policy again', () => {
-      ctx.requestShouldNotError(async () => {
-        await ctx.root.permissions.add(policies[1]);
-      });
-    });
-
-    describe('and then requests to see the policies', () => {
-      ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.root.permissions.get();
-      });
-      ctx.test('the policy should be there again', () => {
-        ctx.response.policies.should.have.lengthOf(policies.length);
-        ctx.response.policies[1].priority.should.eql(policies[1].priority);
-      });
-    });
-  });
-
-  // Clean up policies again
-  after(async () => {
-    let deleteRequests = [];
-    for (let p of policies) {
-      if (p.priority > 0 && p.priority < 1000) {
-        deleteRequests.push(ctx.root.permissions.delete(p.priority));
-      } else {
-        fixedPolicies.push(p);
-      }
-    }
-    await Promise.all(deleteRequests);
-  });
-});
 
 describe('Permission checking', () => {
   let ctx = new CloudContext();
@@ -126,9 +17,9 @@ describe('Permission checking', () => {
     let at = new Date().toISOString();
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
-        actor: ctx.bob.user,
-        verb: 'eat',
-        object: ctx.cheeseBurger,
+        actor: ctx.bob.currentUser,
+        verb: 'post',
+        object: 'I love Alice',
         foreign_id: 'fid:123',
         time: at,
       });
@@ -136,21 +27,133 @@ describe('Permission checking', () => {
   });
   describe('When alice tries to create another user', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.getUser(randUserId('someone')).create();
+      ctx.response = await ctx.alice.user(randUserId('someone')).create();
     });
   });
   describe('When alice tries to update bob', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice
-        .getUser(ctx.bob.userId)
+        .user(ctx.bob.userId)
         .update({ hacked: true });
     });
   });
   describe('When alice tries to delete bob', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice
-        .getUser(ctx.bob.userId)
+        .user(ctx.bob.userId)
         .update({ hacked: true });
+    });
+  });
+
+  describe('When alice tries to read bobs timeline', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.feed('timeline', ctx.bob.userId).get();
+    });
+  });
+
+  describe('When alice tries to mark her own notification feed', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('notification')
+        .get({ mark_seen: true, mark_read: true });
+    });
+  });
+
+  describe('When alice tries to post to bobs timeline', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice
+        .feed('timeline', ctx.bob.userId)
+        .addActivity({
+          verb: 'post',
+          object: "I'm writing this directly on your timeline",
+        });
+    });
+  });
+
+  describe('When alice tries to post to someone elses timeline by using to targets', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.feed('user').addActivity({
+        verb: 'post',
+        object: "I'm writing this on your timeline by using to targets",
+        to: ['timeline:123'],
+      });
+    });
+  });
+
+  describe('When alice tries to post to someone elses timeline by using target feeds when adding a reaction', () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.alice.reactions.add(
+        'comment',
+        someActivityId,
+        {},
+        { targetFeeds: ['timeline:123'] },
+      );
+    });
+  });
+
+  describe('When alice tries to add a reaction with bobs user id', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.add(
+        'like',
+        {},
+        {
+          userId: ctx.bob.userId,
+        },
+      );
+    });
+  });
+
+  describe('When alice tries to add a child reaction with bobs user id', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'like',
+        someActivityId,
+        {
+          userId: ctx.bob.userId,
+        },
+      );
+    });
+  });
+
+  describe('When alice tries to make bob follow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('timeline', ctx.bob.userId)
+        .follow('user', ctx.alice.userId);
+    });
+  });
+
+  describe('When alice tries to make bob unfollow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('timeline', ctx.bob.userId)
+        .unfollow('user', ctx.alice.userId);
+    });
+  });
+
+  describe('When alice tries to list the followers of bob', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice.feed('timeline', ctx.bob.userId).followers();
+    });
+  });
+
+  describe('When alice tries to make bob unfollow her', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice.feed('user', ctx.bob.userId).following();
+    });
+  });
+
+  describe('When alice tries to delete an activity from bob his feed', () => {
+    ctx.requestShouldError(403, async () => {
+      await ctx.alice
+        .feed('user', ctx.bob.userId)
+        .removeActivity(someActivityId);
+    });
+  });
+
+  describe('When alice tries to delete an activity from her own feed', () => {
+    ctx.requestShouldNotError(async () => {
+      await ctx.alice.feed('user').removeActivity(someActivityId);
     });
   });
 });

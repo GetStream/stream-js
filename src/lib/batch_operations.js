@@ -15,6 +15,13 @@ module.exports = {
      * @param  {requestCallback} callback Callback called on completion
      * @return {Promise}           Promise object
      */
+
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.SiteError(
+        'This method can only be used server-side using your API Secret',
+      );
+    }
+
     return this.makeSignedRequest(
       {
         url: 'feed/add_to_many/',
@@ -40,6 +47,12 @@ module.exports = {
      */
     var activityCopyLimit,
       qs = {};
+
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.SiteError(
+        'This method can only be used server-side using your API Secret',
+      );
+    }
 
     if (typeof callbackOrActivityCopyLimit === 'number') {
       activityCopyLimit = callbackOrActivityCopyLimit;
@@ -76,6 +89,13 @@ module.exports = {
      * @param  {requestCallback} [callback] Callback called on completion
      * @return {Promise}           Promise object
      */
+
+    if (!this.usingApiSecret || this.apiKey == null) {
+      throw new errors.SiteError(
+        'This method can only be used server-side using your API Secret',
+      );
+    }
+
     return this.makeSignedRequest(
       {
         url: 'unfollow_many/',

@@ -23,6 +23,33 @@ describe('[UNIT] Stream Collections (node)', function() {
     td.reset();
   });
 
+  describe('#delete_many', function() {
+    it('should send get request correctly with single id (callback)', function() {
+      var fakedJWT = 'Faked JWT';
+      var collectionName = 'user';
+      var id = 'john';
+      var cb = function() {};
+
+      this.client._collectionsToken = fakedJWT;
+      this.client.collections.deleteMany(collectionName, id, cb);
+
+      td.verify(
+        del(
+          {
+            url: 'collections/',
+            serviceName: 'api',
+            qs: {
+              collection_name: collectionName,
+              ids: id,
+            },
+            signature: fakedJWT,
+          },
+          cb,
+        ),
+      );
+    });
+  });
+
   describe('#upsert', function() {
     it('should send post request correctly with single object (promise)', function() {
       var fakedJWT = 'Faked JWT';
@@ -37,7 +64,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -61,7 +88,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -87,7 +114,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -114,7 +141,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         post(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             body: expected_body,
             signature: fakedJWT,
@@ -137,7 +164,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
@@ -159,7 +186,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: { foreign_ids: collectionName + ':' + id },
             signature: fakedJWT,
@@ -180,7 +207,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: {
               foreign_ids: ids
@@ -208,7 +235,7 @@ describe('[UNIT] Stream Collections (node)', function() {
       td.verify(
         get(
           {
-            url: 'meta/',
+            url: 'collections/',
             serviceName: 'api',
             qs: {
               foreign_ids: ids
@@ -248,7 +275,7 @@ describe('[UNIT] Stream Collections (node)', function() {
 
         // delete
         expect(function() {
-          client.collections.delete(collectionName, cb);
+          client.collections.deleteMany(collectionName, ids, cb);
         }).to.throwException(function(e) {
           expect(e).to.be.a(errors.SiteError);
         });

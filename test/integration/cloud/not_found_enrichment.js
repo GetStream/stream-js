@@ -4,13 +4,14 @@ var randUserId = require('../utils/hooks').randUserId;
 describe('Enriching not existing references', () => {
   let ctx = new CloudContext();
   let zeroUUID = '00000000-0000-0000-0000-000000000000';
-  (ctx.cheeseBurger = ctx.alice
-    .storage('food')
-    .object(randUserId('cheeseburger'), ctx.cheeseBurgerData)),
+  (ctx.cheeseBurger = ctx.alice.collections.entry(
+    'food',
+    randUserId('cheeseburger'),
+    ctx.cheeseBurgerData,
+  )),
     describe('When alice eats a cheese burger without adding it to collections', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user').addActivity({
-          actor: ctx.alice.user,
           verb: 'eat',
           object: ctx.cheeseBurger,
           notExistingActivity: `SA:${zeroUUID}`,
@@ -32,9 +33,9 @@ describe('Enriching not existing references', () => {
             ctx.activity.verb.should.eql('eat');
             ctx.activity.actor.should.eql({
               error: 'ReferenceNotFound',
-              reference: ctx.alice.user._streamRef(),
+              reference: ctx.alice.currentUser._streamRef(),
               reference_type: 'user',
-              id: ctx.alice.user.id,
+              id: ctx.alice.userId,
             });
             ctx.activity.object.should.eql({
               collection: 'food',

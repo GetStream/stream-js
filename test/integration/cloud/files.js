@@ -13,7 +13,7 @@ describe('Files', () => {
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.response.should.have.all.keys('file');
+      ctx.response.should.have.all.keys('file', 'duration');
       fileURL = ctx.response.file;
     });
   });
@@ -24,6 +24,12 @@ describe('Files', () => {
         res.statusCode.should.eql(200);
         done();
       });
+    });
+  });
+
+  describe("When bob tries to delete alice's file", () => {
+    ctx.requestShouldError(403, async () => {
+      ctx.response = await ctx.bob.files.delete(fileURL);
     });
   });
 

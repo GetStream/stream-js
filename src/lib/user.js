@@ -33,12 +33,13 @@ StreamUser.prototype = {
         qs: options,
       })
       .then((response) => {
-        this.full = response;
-        this.data = response.data;
+        this.full = Object.assign({}, response);
+        delete this.full.duration;
+        this.data = this.full.data;
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
 
@@ -64,12 +65,13 @@ StreamUser.prototype = {
         signature: this.token,
       })
       .then((response) => {
-        this.full = response;
-        this.data = response.data;
+        this.full = Object.assign({}, response);
+        delete this.full.duration;
+        this.data = this.full.data;
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
 
@@ -83,12 +85,13 @@ StreamUser.prototype = {
         signature: this.token,
       })
       .then((response) => {
-        this.full = response;
-        this.data = response.data;
+        this.full = Object.assign({}, response);
+        delete this.full.duration;
+        this.data = this.full.data;
         if (callback) {
           callback(response);
         }
-        return response;
+        return this;
       });
   },
   getOrCreate: function(data, callback) {

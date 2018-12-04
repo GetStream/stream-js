@@ -1,6 +1,5 @@
 var stream = require('../../../src/getstream');
 var config = require('../utils/config');
-var signing = require('../../../src/lib/signing');
 var randUserId = require('../utils/hooks').randUserId;
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -11,21 +10,30 @@ class CloudContext {
     this.prevResponse = null;
     this.activity = null;
     this.failed = false;
+    this.runningTest = false;
     this.cheeseBurger = null;
     this.cheeseBurgerData = {
       name: 'cheese burger',
       toppings: ['cheese'],
     };
-    this.client = stream.connectCloud(config.API_KEY, config.APP_ID, {
+    this.clientOptions = {
       group: 'testCycle',
-      protocol: 'https',
       keepAlive: false,
-    });
-    this.alice = this.createUserSession('alice');
-    this.bob = this.createUserSession('bob');
-    this.carl = this.createUserSession('carl');
-    this.dave = this.createUserSession('dave');
-    this.root = this.createUserSession('root', { stream_admin: true });
+    };
+
+    this.serverSideClient = stream.connect(
+      config.API_KEY,
+      config.API_SECRET,
+      config.APP_ID,
+      this.clientOptions,
+    );
+
+    // apiKey, apiSecret, appId, options
+    this.alice = this.createUserClient('alice');
+    this.bob = this.createUserClient('bob');
+    this.carl = this.createUserClient('carl');
+    this.dave = this.createUserClient('dave');
+
     this.userData = {
       alice: {
         name: 'Alice Abbot',
@@ -49,17 +57,31 @@ class CloudContext {
       },
     };
 
+    const reactionFields = [
+      'id',
+      'kind',
+      'activity_id',
+      'user_id',
+      'user',
+      'data',
+      'created_at',
+      'updated_at',
+      'parent',
+      'latest_children',
+      'children_counts',
+    ];
     this.fields = {
-      collection: ['id', 'created_at', 'updated_at', 'collection', 'data'],
-      reaction: [
+      collection: [
         'id',
-        'kind',
-        'activity_id',
-        'user_id',
-        'data',
         'created_at',
         'updated_at',
+        'collection',
+        'data',
+        'duration',
+        'foreign_id',
       ],
+      reaction: reactionFields,
+      reactionResponse: ['duration', ...reactionFields],
       activity: [
         'id',
         'foreign_id',
@@ -81,25 +103,44 @@ class CloudContext {
     };
   }
 
-  createUserSession(userId, extraData) {
+  createUserToken(userId, extraData) {
     userId = randUserId(userId);
-    return this.client.createUserSession(
-      signing.JWTUserSessionToken(config.API_SECRET, userId, extraData),
+    return this.serverSideClient.createUserToken(userId, extraData);
+  }
+
+  createUserClient(userId, extraData) {
+    return stream.connect(
+      config.API_KEY,
+      this.createUserToken(userId, extraData),
+      config.APP_ID,
+      this.clientOptions,
     );
   }
 
   wrapFn(fn) {
     let ctx = this;
+    if (ctx.runningTest) {
+      expect.fail(
+        null,
+        null,
+        'calling ctx.test from within a ctx.test is not supported',
+      );
+    }
+
     if (fn.length == 0) {
       return async function() {
         if (ctx.failed) {
           this.skip();
         }
+        ctx.runningTest = true;
+        fn = fn.bind(this);
         try {
           await fn();
         } catch (ex) {
           ctx.failed = true;
           throw ex;
+        } finally {
+          ctx.runningTest = false;
         }
       };
     }
@@ -107,11 +148,16 @@ class CloudContext {
       if (ctx.failed) {
         this.skip();
       }
+      ctx.runningTest = true;
+      fn = fn.bind(this);
       try {
+        this.runningTest = false;
         fn(done);
       } catch (ex) {
         ctx.failed = true;
         throw ex;
+      } finally {
+        ctx.runningTest = false;
       }
     };
   }
@@ -152,6 +198,9 @@ class CloudContext {
           if (!(e instanceof stream.errors.StreamApiError)) {
             throw e;
           }
+          if (e.response.statusCode != statusCode) {
+            console.log(e.error);
+          }
           e.response.statusCode.should.equal(statusCode);
           this.response = e.error;
         }
@@ -161,7 +210,8 @@ class CloudContext {
 
   responseShouldHaveFields(...fields) {
     this.responseShould('have all expected fields', () => {
-      this.response.should.have.all.keys(fields);
+      let response = this.response.full || this.response;
+      response.should.have.all.keys(fields);
     });
   }
 
@@ -204,26 +254,46 @@ class CloudContext {
 
   responseShouldHaveNewUpdatedAt() {
     this.responseShould('have an updated updated_at', () => {
-      should.exist(this.prevResponse.updated_at);
-      should.exist(this.response.updated_at);
-      this.response.updated_at.should.not.equal(this.prevResponse.updated_at);
+      let response = this.response.full || this.response;
+      let prevResponse = this.prevResponse.full || this.prevResponse;
+      should.exist(prevResponse.updated_at);
+      should.exist(response.updated_at);
+      response.updated_at.should.not.equal(prevResponse.updated_at);
     });
+  }
+
+  shouldEqualBesideDuration(obj1, obj2) {
+    let obj1Copy = Object.assign({}, obj1, { duration: null });
+    let obj2Copy = Object.assign({}, obj2, { duration: null });
+    obj1Copy.should.eql(obj2Copy);
   }
 
   responseShouldEqualPreviousResponse() {
     this.responseShould('be the same as the previous response', () => {
       should.exist(this.prevResponse);
       should.exist(this.response);
-      this.response.should.eql(this.prevResponse);
+      let response = this.response.full || this.response;
+      let prevResponse = this.prevResponse.full || this.prevResponse;
+      response = Object.assign({}, response, {
+        duration: this.response === null,
+      });
+      prevResponse = Object.assign({}, prevResponse, {
+        duration: this.prevResponse === null,
+      });
+      response.should.eql(prevResponse);
     });
   }
 
   aliceAddsCheeseBurger() {
     describe('When alice adds a cheese burger to the food collection', () => {
       this.requestShouldNotError(async () => {
-        this.response = await this.alice
-          .collection('food')
-          .add(null, this.cheeseBurgerData);
+        this.cheeseBurger = await this.alice.collections.add(
+          'food',
+          null,
+          this.cheeseBurgerData,
+        );
+
+        this.response = this.cheeseBurger.full;
       });
 
       this.responseShouldHaveFields(...this.fields.collection);
@@ -234,25 +304,22 @@ class CloudContext {
         'have collection and data matching the request',
         () => {
           this.response.collection.should.equal('food');
-          this.response.data.should.eql(this.cheeseBurgerData);
+          this.shouldEqualBesideDuration(
+            this.response.data,
+            this.cheeseBurgerData,
+          );
         },
       );
-
-      this.afterTest(() => {
-        this.cheeseBurger = this.alice.objectFromResponse(this.response);
-      });
     });
   }
 
   createUsers() {
     describe('When creating the users', () => {
       this.noRequestsShouldError(async () => {
-        await Promise.all([
-          this.alice.user.create(this.userData.alice),
-          this.bob.user.create(this.userData.bob),
-          this.carl.user.create(this.userData.carl),
-          this.dave.user.create(this.userData.dave),
-        ]);
+        await this.alice.setUser(this.userData.alice);
+        await this.bob.setUser(this.userData.bob);
+        await this.carl.setUser(this.userData.carl);
+        await this.dave.setUser(this.userData.dave);
       });
     });
   }

@@ -1,5 +1,8 @@
 var errors = require('./errors');
 var utils = require('./utils');
+var isObject = require('lodash/isObject');
+var isPlainObject = require('lodash/isPlainObject');
+var StreamUser = require('./user');
 var signing = require('./signing');
 
 var StreamFeed = function() {
@@ -10,6 +13,21 @@ var StreamFeed = function() {
    */
   this.initialize.apply(this, arguments);
 };
+
+function replaceStreamObjects(obj) {
+  let cloned = obj;
+  if (Array.isArray(obj)) {
+    cloned = obj.map((v) => replaceStreamObjects(v));
+  } else if (isPlainObject(obj)) {
+    cloned = {};
+    for (let k in obj) {
+      cloned[k] = replaceStreamObjects(obj[k]);
+    }
+  } else if (isObject(obj) && obj._streamRef !== undefined) {
+    cloned = obj._streamRef();
+  }
+  return cloned;
+}
 
 StreamFeed.prototype = {
   initialize: function(client, feedSlug, userId, token) {
@@ -58,6 +76,8 @@ StreamFeed.prototype = {
     // faye setup
     this.notificationChannel =
       'site-' + this.client.appId + '-feed-' + this.feedTogether;
+
+    this.enrichByDefault = false;
   },
 
   addActivity: function(activity, callback) {
@@ -70,7 +90,11 @@ StreamFeed.prototype = {
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object
      */
-    activity = this.client.signActivity(activity);
+
+    activity = replaceStreamObjects(activity);
+    if (!activity.actor && this.client.currentUser) {
+      activity.actor = this.client.currentUser._streamRef();
+    }
 
     return this.client.post(
       {
@@ -120,7 +144,7 @@ StreamFeed.prototype = {
      * @param  {requestCallback} callback   Callback to call on completion
      * @return {Promise}               XHR request object
      */
-    activities = this.client.signActivities(activities);
+    activities = replaceStreamObjects(activities);
     var data = {
       activities: activities,
     };
@@ -150,6 +174,9 @@ StreamFeed.prototype = {
      * @example feed.follow('user', '1', callback);
      * @example feed.follow('user', '1', options, callback);
      */
+    if (targetUserId instanceof StreamUser) {
+      targetUserId = targetUserId.id;
+    }
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
 
@@ -284,6 +311,8 @@ StreamFeed.prototype = {
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
+    var path;
+
     if (options && options['mark_read'] && options['mark_read'].join) {
       options['mark_read'] = options['mark_read'].join(',');
     }
@@ -292,12 +321,115 @@ StreamFeed.prototype = {
       options['mark_seen'] = options['mark_seen'].join(',');
     }
 
+    // Shortcut options for reaction enrichment
+    if (options && options.reactions) {
+      if (options.reactions.own != null) {
+        options.withOwnReactions = options.reactions.own;
+      }
+      if (options.reactions.recent != null) {
+        options.withRecentReactions = options.reactions.recent;
+      }
+      if (options.reactions.counts != null) {
+        options.withReactionCounts = options.reactions.counts;
+      }
+      if (options.reactions.own_children != null) {
+        options.withOwnChildren = options.reactions.own_children;
+      }
+      delete options.reactions;
+    }
+
+    if (options && options.enrich == null && this.enrichByDefault) {
+      options.enrich = this.enrichByDefault;
+    }
+
+    if (!options) {
+      options = { enrich: this.enrichByDefault };
+    }
+
+    if (
+      options &&
+      (options.enrich === true ||
+        options.ownReactions != null ||
+        options.withRecentReactions != null ||
+        options.withReactionCounts != null ||
+        options.withOwnChildren != null)
+    ) {
+      path = 'enrich/feed/';
+    } else {
+      path = 'feed/';
+    }
+
+    let qs = Object.assign(options);
+    delete options.enrich;
+    delete options.reactions;
+
     return this.client.get(
       {
-        url: 'feed/' + this.feedUrl + '/',
-        qs: options,
+        url: path + this.feedUrl + '/',
+        qs: qs,
         signature: this.signature,
       },
+      callback,
+    );
+  },
+
+  getReadOnlyToken: function() {
+    /**
+     * Returns a token that allows only read operations
+     *
+     * @deprecated since version 4.0
+     * @method getReadOnlyToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadOnlyToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
+  },
+  getReadWriteToken: function() {
+    /**
+     * Returns a token that allows read and write operations
+     * @deprecated since version 4.0
+     * @method getReadWriteToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadWriteToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens,
+    });
+  },
+
+  getActivityDetail: function(activity_id, options, callback) {
+    /**
+     * Retrieves one activity from a feed and adds enrichment
+     * @method getActivityDetail
+     * @memberof StreamFeed.prototype
+     * @param  {array}    ids  Additional options
+     * @param  {object}   options  Additional options
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example feed.getActivityDetail(activity_id)
+     * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
+     * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
+     */
+    return this.get(
+      Object.assign(
+        { id_lte: activity_id, id_gte: activity_id, limit: 1 },
+        options,
+      ),
       callback,
     );
   },
@@ -356,44 +488,6 @@ StreamFeed.prototype = {
       delete this.client.subscriptions['/' + this.notificationChannel];
       streamSubscription.fayeSubscription.cancel();
     }
-  },
-
-  getReadOnlyToken: function() {
-    /**
-     * Returns a token that allows only read operations
-     *
-     * @method getReadOnlyToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadOnlyToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: feedId,
-      expireTokens: this.client.expireTokens,
-    });
-  },
-
-  getReadWriteToken: function() {
-    /**
-     * Returns a token that allows read and write operations
-     *
-     * @method getReadWriteToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadWriteToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: feedId,
-      expireTokens: this.client.expireTokens,
-    });
   },
 
   updateActivityToTargets: function(
