@@ -2496,6 +2496,18 @@ StreamUser.prototype = {
   _streamRef: function _streamRef() {
     return "SU:".concat(this.id);
   },
+  delete: function _delete(callback) {
+    return this.client.delete({
+      url: this.url,
+      signature: this.token
+    }).then(function (response) {
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  },
   get: function get(options, callback) {
     var _this = this;
 
