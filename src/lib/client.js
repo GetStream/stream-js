@@ -45,6 +45,7 @@ StreamClient.prototype = {
      * @param {string} [appId] - id of the app
      * @param {object} [options] - additional options
      * @param {string} [options.location] - which data center to use
+     * @param {string} [options.baseUrl] - base url for custom stream servers
      * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
      * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
      * stream.connect(apiKey, apiSecret)
@@ -82,7 +83,7 @@ StreamClient.prototype = {
       : false;
     // which data center to use
     this.location = this.options.location;
-    this.baseUrl = this.getBaseUrl();
+    this.baseUrl = this.options.baseUrl ? this.options.baseUrl : this.getBaseUrl();
 
     if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
       this.fayeUrl = 'http://localhost:9999/faye/';
