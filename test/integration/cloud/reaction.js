@@ -136,6 +136,15 @@ describe('Reaction pagination', () => {
       resp.results[0].user.should.eql(ctx.bob.currentUser.full);
     });
 
+    ctx.test('the activity should be returned', async () => {
+      let conditions = {
+        activity_id: eatActivity.id,
+        limit: 1,
+      };
+      resp = await ctx.alice.reactions.filter(conditions);
+      ctx.shouldEqualBesideDuration(resp.activity, eatActivity);
+    });
+
     ctx.test('specify page size using limit param', async () => {
       let conditions = {
         activity_id: eatActivity.id,
@@ -868,6 +877,17 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       comment.latest_children.should.have.all.keys('like');
       comment.latest_children.like.should.have.length(1);
       comment.latest_children.like[0].parent.should.eql(comment.id);
+    });
+  });
+
+  describe('When bob updates his comment', () => {
+    ctx.requestShouldNotError(async () => {
+      commentData = {
+        text: 'Alice you are the best!!!!',
+      };
+      ctx.response = await ctx.bob.reactions.update(comment.id, commentData);
+      ctx.response.created_at.should.eql(comment.created_at);
+      ctx.response.updated_at.should.not.eql(comment.updated_at);
     });
   });
 
