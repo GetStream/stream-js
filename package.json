@@ -3,7 +3,7 @@
     "name": "Thierry Schellenbach",
     "company": "Stream.io Inc"
   },
-  "name": "getstream",
+  "name": "getstream-pho",
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./lib/getstream.js",
   "module": "./lib/getstream.js",
@@ -109,7 +109,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/GetStream/stream-js.git"
+    "url": "git://github.com/esokullu/stream-js.git"
   },
   "engines": {
     "node": ">=4.8 <=11"
