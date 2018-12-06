@@ -2496,6 +2496,9 @@ StreamUser.prototype = {
   _streamRef: function _streamRef() {
     return "SU:".concat(this.id);
   },
+  ref: function ref() {
+    return this._streamRef();
+  },
   delete: function _delete(callback) {
     return this.client.delete({
       url: this.url,
