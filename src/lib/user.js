@@ -25,6 +25,10 @@ StreamUser.prototype = {
     return `SU:${this.id}`;
   },
 
+  ref: function() {
+    return this._streamRef();
+  },
+
   delete: function(callback) {
     return this.client
       .delete({
