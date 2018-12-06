@@ -140,6 +140,7 @@ describe('Reaction pagination', () => {
       let conditions = {
         activity_id: eatActivity.id,
         limit: 1,
+        with_activity_data: true,
       };
       resp = await ctx.alice.reactions.filter(conditions);
       ctx.shouldEqualBesideDuration(resp.activity, eatActivity);
