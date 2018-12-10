@@ -405,8 +405,8 @@ StreamClient.prototype = {
 
     if (token === undefined) {
       if (this.usingApiSecret) {
-        token = signing.JWTScopeToken(this.apiSecret, 'feed', '*', {
-          feedId: '*',
+        token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
+          feedId: userId,
         });
       } else {
         token = this.userToken;
