@@ -392,6 +392,7 @@ StreamFeed.prototype = {
       expireTokens: this.client.expireTokens,
     });
   },
+
   getReadWriteToken: function() {
     /**
      * Returns a token that allows read and write operations
