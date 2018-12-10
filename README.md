@@ -40,25 +40,50 @@ This package can be integrated into React Native applications. Remember to not e
 
 ### Usage
 
+### API client setup Node
+
 ```javascript
 var stream = require('getstream');
 // Instantiate a new client (server side)
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
-// Instantiate a new client (client side)
-client = stream.connect('YOUR_API_KEY');
-// Find your API keys here https://getstream.io/dashboard/
+```
 
+### API client setup Node + Browser
+
+If you want to use the API client directly on your web/mobile app you need to generate a user token server-side and pass it.
+
+#### Server-side token generation
+
+```javascript
+var stream = require('getstream');
+// Instantiate a new client (server side)
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+// Optionally supply the app identifier and an object specifying the data center to use
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
+// Create a token for user with id "the-user-id"
+const userToken = client.createUserToken('the-user-id');
+```
+
+#### Client API init
+
+```javascript
+var stream = require('getstream');
+
+// Instantiate new client with a user token
+client = stream.connect('apikey', userToken,  'appid');
+```
+
+#### Examples
+
+```javascript
 // Instantiate a feed object server side
 user1 = client.feed('user', '1');
-// Instantiate a feed object client side
-// Generate a feed's token using server side signing (see below for stream-js or https://getstream.io/docs/ for other languages)
-user1 = client.feed('user', '1', 'FEED_TOKEN');
 
 // Get activities from 5 to 10 (slow pagination)
 user1.get({limit:5, offset:5}, callback);
-// (Recommended & faster) Filter on an id less than a given UUID
+// Filter on an id less than a given UUID
 user1.get({limit:5, id_lt:"e561de8f-00f1-11e4-b400-0cc47a024be0"});
 
 // All API calls are performed asynchronous and return a Promise object
@@ -133,6 +158,7 @@ activity = {
   'target': 'Board:1'
 };
 
+// ⚠️ server-side only!
 client.addToMany(activity, feeds);
 
 // Batch create follow relations (let flat:1 follow user:1, user:2 and user:3 feeds in one single request)
@@ -142,6 +168,7 @@ var follows = [
   {'source': 'flat:1', 'target': 'user:3'}
 ];
 
+// ⚠️ server-side only!
 client.followMany(follows);
 
 // Updating parts of an activity
@@ -170,16 +197,7 @@ client.activityPartialUpdate({
   unset: unset,
 })
 
-// creating a feed token server side
-token = user1.token;
-// passed to client via template or api and initialized as such
-user1 = client.feed('user', '1', token);
-
-// creating a read-only feed token server side
-readonlyToken = client.feed('user', '1').getReadOnlyToken();
-// passed to client via template or api and initialized as such
-user1 = client.feed('user', '1', readonlyToken);
-
+// ⚠️ server-side only!
 // Create redirect urls
 var impression = {
     'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
@@ -217,13 +235,11 @@ Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notificati
 
 ```javascript
 var stream = require('getstream');
-// NOTE: the site id is needed for subscribing
-// server side example:
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID');
+
+// ⚠️ userToken is generated server-side (see previous section)
+client = stream.connect('YOUR_API_KEY', userToken, 'APP_ID');
 user1 = client.feed('user', '1');
-// same two lines but client side (generate the feed token server side)
-client = stream.connect('YOUR_API_KEY', null, 'APP_ID');
-user1 = client.feed('user', '1', 'feedtoken');
+
 // subscribe to the changes
 var subscription = user1.subscribe(function (data) {
 	console.log(data);
