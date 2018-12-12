@@ -111,6 +111,11 @@
     "type": "git",
     "url": "git://github.com/GetStream/stream-js.git"
   },
+  "files": [
+    "dist",
+    "lib",
+    "types"
+  ],
   "engines": {
     "node": ">=4.8 <=11"
   }
