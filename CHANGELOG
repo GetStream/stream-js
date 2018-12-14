@@ -2,6 +2,27 @@
  Change history
 ================
 
+4.0.7
+=====
+:release-date: 2018-12-10
+:by: Jelte Fennema
+
+Update some dependencies that had vulnerabilities. `npm audit` is now clean.
+
+4.0.6
+=====
+:release-date: 2018-12-11
+:by: Tommaso Barbugli
+
+Fix a bad release with a big file in the publish on npm
+
+4.0.5
+=====
+:release-date: 2018-12-10
+:by: Tommaso Barbugli
+
+Bugfix release: follow/unfollow stopped working server-side due to bad JWT generation code
+
 4.0.4
 =====
 :release-date: 2018-12-10
