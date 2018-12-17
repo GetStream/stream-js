@@ -56,7 +56,7 @@ module.exports = (env, argv = []) => ({
 
   resolve: {
     alias: {
-      request: 'xmlhttp-request',
+      request: '@stream-io/xmlhttp-request',
     },
   },
 });
