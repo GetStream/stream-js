@@ -94,7 +94,7 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "Base64": "^1.0.1",
-    "cross-fetch": "^2.2.2",
+    "@stream-io/cross-fetch": "^3.0.1",
     "faye": "^1.2.4",
     "form-data": "^2.3.2",
     "http-signature": "~1.2.0",

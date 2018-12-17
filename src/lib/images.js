@@ -1,5 +1,5 @@
-var fetch = require('cross-fetch');
-var Headers = require('cross-fetch').Headers;
+var fetch = require('@stream-io/cross-fetch');
+var Headers = require('@stream-io/cross-fetch').Headers;
 var FormData = require('form-data');
 var utils = require('./utils');
 
