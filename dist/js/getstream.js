@@ -7669,14 +7669,21 @@ StreamClient.prototype = {
       throw new TypeError('Missing ids or foreignIDTimes params');
     }
 
-    var authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
-      feedId: '*',
-      expireTokens: this.expireTokens
-    });
+    var token;
+
+    if (this.usingApiSecret) {
+      token = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+        feedId: '*',
+        expireTokens: this.expireTokens
+      });
+    } else {
+      token = this.userToken;
+    }
+
     return this.get({
       url: 'activities/',
       qs: qs,
-      signature: authToken
+      signature: token
     }, callback);
   },
   getOrCreateToken: function getOrCreateToken() {
