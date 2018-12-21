@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.9 - 2018-12-17
+:by: Jelte Fennema
+
+### Fixed
+- Allow using `getActivities` with user token authentication
+
+
+## 4.0.8 - 2018-12-17
+:by: Jelte Fennema
+
+Use forked cross-fetch for better react native support
+
+
 ## 4.0.7 - 2018-12-10
 :by: Jelte Fennema
 
