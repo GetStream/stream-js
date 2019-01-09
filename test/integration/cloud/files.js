@@ -18,6 +18,13 @@ describe('Files', () => {
     });
   });
 
+  describe('When alice adds a big file', () => {
+    ctx.requestShouldError(413, async () => {
+      let file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
+      ctx.response = await ctx.alice.files.upload(file, 'toolarge2.jpeg');
+    });
+  });
+
   describe('When the file is requested', () => {
     ctx.test('should return 200', function(done) {
       request.get(fileURL, function(err, res) {

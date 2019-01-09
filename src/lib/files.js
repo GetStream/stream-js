@@ -43,11 +43,18 @@ StreamFileStore.prototype = {
         }),
       },
     ).then((r) => {
-      return r.json().then((responseData) => {
-        if (r.ok) {
-          return responseData;
-        }
+      if (r.ok) {
+        return r.json();
+      }
+      // error
+      return r.text().then((responseData) => {
         r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {
+          // ignore json parsing errors
+        }
         throw new errors.StreamApiError(
           JSON.stringify(responseData) + ' with HTTP status code ' + r.status,
           responseData,
