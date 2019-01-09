@@ -42,15 +42,11 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
     it('(1)', function() {
       feed.addActivity(activity);
-      let expectedUrl = 'feed/user/matthisk/';
-      if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk/';
-      }
 
       td.verify(
         post(
           {
-            url: expectedUrl,
+            url: 'feed/user/matthisk/',
             body: activity,
             signature: 'usermatthisk token',
           },
@@ -62,15 +58,11 @@ describe('[UNIT] Stream Feed (Common)', function() {
     it('(2)', function() {
       var cb = function() {};
       feed.addActivity(activity, cb);
-      let expectedUrl = 'feed/user/matthisk/';
-      if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk/';
-      }
 
       td.verify(
         post(
           {
-            url: expectedUrl,
+            url: 'feed/user/matthisk/',
             body: activity,
             signature: 'usermatthisk token',
           },
@@ -85,15 +77,11 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
     it('(1)', function() {
       feed.addActivities(activities);
-      let expectedUrl = 'feed/user/matthisk/';
-      if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk/';
-      }
 
       td.verify(
         post(
           {
-            url: expectedUrl,
+            url: 'feed/user/matthisk/',
             body: { activities: activities },
             signature: 'usermatthisk token',
           },
@@ -105,15 +93,11 @@ describe('[UNIT] Stream Feed (Common)', function() {
     it('(2)', function() {
       var cb = function() {};
       feed.addActivities(activities, cb);
-      let expectedUrl = 'feed/user/matthisk/';
-      if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk/';
-      }
 
       td.verify(
         post(
           {
-            url: expectedUrl,
+            url: 'feed/user/matthisk/',
             body: { activities: activities },
             signature: 'usermatthisk token',
           },
@@ -406,11 +390,15 @@ describe('[UNIT] Stream Feed (Common)', function() {
   describe('#get', function() {
     it('(1) default', function() {
       feed.get({});
+      let expectedUrl = 'feed/user/matthisk/';
+      if (feed.client.enrichByDefault) {
+        expectedUrl = 'enrich/feed/user/matthisk/';
+      }
 
       td.verify(
         get(
           {
-            url: 'feed/user/matthisk/',
+            url: expectedUrl,
             qs: {},
             signature: 'usermatthisk token',
           },
@@ -423,10 +411,14 @@ describe('[UNIT] Stream Feed (Common)', function() {
       var cb = function cb() {};
       feed.get({}, cb);
 
+      let expectedUrl = 'feed/user/matthisk/';
+      if (feed.client.enrichByDefault) {
+        expectedUrl = 'enrich/feed/user/matthisk/';
+      }
       td.verify(
         get(
           {
-            url: 'feed/user/matthisk/',
+            url: expectedUrl,
             qs: {},
             signature: 'usermatthisk token',
           },
@@ -440,11 +432,15 @@ describe('[UNIT] Stream Feed (Common)', function() {
         mark_read: ['a', 'b'],
         mark_seen: ['c', 'd'],
       });
+      let expectedUrl = 'feed/user/matthisk/';
+      if (feed.client.enrichByDefault) {
+        expectedUrl = 'enrich/feed/user/matthisk/';
+      }
 
       td.verify(
         get(
           {
-            url: 'feed/user/matthisk/',
+            url: expectedUrl,
             qs: {
               mark_read: 'a,b',
               mark_seen: 'c,d',
@@ -465,11 +461,15 @@ describe('[UNIT] Stream Feed (Common)', function() {
         },
         cb,
       );
+      let expectedUrl = 'feed/user/matthisk/';
+      if (feed.client.enrichByDefault) {
+        expectedUrl = 'enrich/feed/user/matthisk/';
+      }
 
       td.verify(
         get(
           {
-            url: 'feed/user/matthisk/',
+            url: expectedUrl,
             qs: {
               mark_read: 'a,b',
               mark_seen: 'c,d',
