@@ -202,6 +202,7 @@ class CloudContext {
             console.log(e.error);
           }
           e.response.statusCode.should.equal(statusCode);
+          this.error = e;
           this.response = e.error;
         }
       },

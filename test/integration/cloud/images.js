@@ -11,6 +11,9 @@ describe('Images', () => {
       let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
     });
+    ctx.responseShould('have useful error message', () => {
+      ctx.response.detail.should.equal('File type text/plain is not supported');
+    });
   });
 
   describe('When alice adds a new image', () => {

@@ -43,16 +43,17 @@ StreamFileStore.prototype = {
         }),
       },
     ).then((r) => {
-      let responseData = r.json();
-      if (r.ok) {
-        return responseData;
-      }
-      r.statusCode = r.status;
-      throw new errors.StreamApiError(
-        r.body + ' with HTTP status code ' + r.status,
-        responseData,
-        r,
-      );
+      return r.json().then((responseData) => {
+        if (r.ok) {
+          return responseData;
+        }
+        r.statusCode = r.status;
+        throw new errors.StreamApiError(
+          JSON.stringify(responseData) + ' with HTTP status code ' + r.status,
+          responseData,
+          r,
+        );
+      });
     });
   },
   delete: function(uri) {
