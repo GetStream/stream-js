@@ -42,9 +42,9 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
     it('(1)', function() {
       feed.addActivity(activity);
-      let expectedUrl = 'feed/user/matthisk';
+      let expectedUrl = 'feed/user/matthisk/';
       if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk';
+        expectedUrl = 'enrich/feed/user/matthisk/';
       }
 
       td.verify(
@@ -62,9 +62,9 @@ describe('[UNIT] Stream Feed (Common)', function() {
     it('(2)', function() {
       var cb = function() {};
       feed.addActivity(activity, cb);
-      let expectedUrl = 'feed/user/matthisk';
+      let expectedUrl = 'feed/user/matthisk/';
       if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk';
+        expectedUrl = 'enrich/feed/user/matthisk/';
       }
 
       td.verify(
@@ -85,9 +85,9 @@ describe('[UNIT] Stream Feed (Common)', function() {
 
     it('(1)', function() {
       feed.addActivities(activities);
-      let expectedUrl = 'feed/user/matthisk';
+      let expectedUrl = 'feed/user/matthisk/';
       if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk';
+        expectedUrl = 'enrich/feed/user/matthisk/';
       }
 
       td.verify(
@@ -105,9 +105,9 @@ describe('[UNIT] Stream Feed (Common)', function() {
     it('(2)', function() {
       var cb = function() {};
       feed.addActivities(activities, cb);
-      let expectedUrl = 'feed/user/matthisk';
+      let expectedUrl = 'feed/user/matthisk/';
       if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk';
+        expectedUrl = 'enrich/feed/user/matthisk/';
       }
 
       td.verify(
