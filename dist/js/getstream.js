@@ -350,7 +350,7 @@ var Class    = __webpack_require__(1),
     array    = __webpack_require__(16),
     extend   = __webpack_require__(0),
     Logging  = __webpack_require__(8),
-    Timeouts = __webpack_require__(52),
+    Timeouts = __webpack_require__(51),
     Channel  = __webpack_require__(26);
 
 var Transport = extend(Class({ className: 'Transport',
@@ -1530,7 +1530,7 @@ module.exports = copyObject;
 
 
 var extend       = __webpack_require__(0),
-    EventEmitter = __webpack_require__(55);
+    EventEmitter = __webpack_require__(54);
 
 var Publisher = {
   countListeners: function(eventType) {
@@ -1711,15 +1711,15 @@ module.exports = {
 
 var _extends = __webpack_require__(10);
 
-var _objectSpread = __webpack_require__(67);
+var _objectSpread = __webpack_require__(66);
 
 var _typeof = __webpack_require__(18);
 
-var jwt = __webpack_require__(65);
+var jwt = __webpack_require__(64);
 
 var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
-var Base64 = __webpack_require__(64);
+var Base64 = __webpack_require__(63);
 
 function decodeBase64Url(base64UrlString) {
   try {
@@ -2463,7 +2463,7 @@ module.exports = {
 
 
 // rawAsap provides everything we need except exception management.
-var rawAsap = __webpack_require__(61);
+var rawAsap = __webpack_require__(60);
 // RawTasks are recycled to reduce GC churn.
 var freeTasks = [];
 // We queue errors to ensure they are thrown in right order (FIFO).
@@ -2665,7 +2665,7 @@ module.exports = StreamUser;
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(74);
+var root = __webpack_require__(73);
 
 /** Built-in value references. */
 var Symbol = root.Symbol;
@@ -3230,9 +3230,30 @@ module.exports = request;
 
 /***/ }),
 /* 32 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-/* (ignored) */
+var objectWithoutPropertiesLoose = __webpack_require__(79);
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutProperties;
 
 /***/ }),
 /* 33 */
@@ -3242,6 +3263,12 @@ module.exports = request;
 
 /***/ }),
 /* 34 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports) {
 
 /**
@@ -3285,10 +3312,10 @@ module.exports = typeof window !== 'undefined' && window.atob && window.atob.bin
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var atob = __webpack_require__(34);
+var atob = __webpack_require__(35);
 
 function b64DecodeUnicode(str) {
   return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
@@ -3324,13 +3351,13 @@ module.exports = function(str) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var base64_url_decode = __webpack_require__(35);
+var base64_url_decode = __webpack_require__(36);
 
 function InvalidTokenError(message) {
   this.message = message;
@@ -3357,58 +3384,10 @@ module.exports.InvalidTokenError = InvalidTokenError;
 
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-module.exports = _objectWithoutPropertiesLoose;
-
-/***/ }),
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var objectWithoutPropertiesLoose = __webpack_require__(37);
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-module.exports = _objectWithoutProperties;
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _objectWithoutProperties = __webpack_require__(38);
+var _objectWithoutProperties = __webpack_require__(32);
 
 var errors = __webpack_require__(4);
 
@@ -3650,7 +3629,7 @@ StreamReaction.prototype = {
 module.exports = StreamReaction;
 
 /***/ }),
-/* 40 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _extends = __webpack_require__(10);
@@ -3701,14 +3680,21 @@ StreamImageStore.prototype = {
         Authorization: this.token
       })
     }).then(function (r) {
-      var responseData = r.json();
-
       if (r.ok) {
-        return responseData;
-      }
+        return r.json();
+      } // error
 
-      r.statusCode = r.status;
-      throw new errors.StreamApiError(r.body + ' with HTTP status code ' + r.status, responseData, r);
+
+      return r.text().then(function (responseData) {
+        r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {// ignore json parsing errors
+        }
+
+        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
+      });
     });
   },
   delete: function _delete(uri) {
@@ -3754,7 +3740,7 @@ StreamImageStore.prototype = {
 module.exports = StreamImageStore;
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var fetch = __webpack_require__(11);
@@ -3803,14 +3789,21 @@ StreamFileStore.prototype = {
         Authorization: this.token
       })
     }).then(function (r) {
-      var responseData = r.json();
-
       if (r.ok) {
-        return responseData;
-      }
+        return r.json();
+      } // error
 
-      r.statusCode = r.status;
-      throw new errors.StreamApiError(r.body + ' with HTTP status code ' + r.status, responseData, r);
+
+      return r.text().then(function (responseData) {
+        r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {// ignore json parsing errors
+        }
+
+        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
+      });
     });
   },
   delete: function _delete(uri) {
@@ -3826,7 +3819,7 @@ StreamFileStore.prototype = {
 module.exports = StreamFileStore;
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var errors = __webpack_require__(4);
@@ -4180,7 +4173,7 @@ CollectionEntry.prototype = {
 module.exports = Collections;
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4231,7 +4224,7 @@ module.exports = Subscription;
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4244,7 +4237,7 @@ module.exports = Class(Deferrable);
 
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4298,7 +4291,7 @@ module.exports = Extensible;
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4360,7 +4353,7 @@ module.exports = Error;
 
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4432,7 +4425,7 @@ module.exports = JSONP;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4524,7 +4517,7 @@ module.exports = CORS;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4629,7 +4622,7 @@ module.exports = EventSource;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4647,7 +4640,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4661,7 +4654,7 @@ var Class      = __webpack_require__(1),
     copyObject = __webpack_require__(13),
     extend     = __webpack_require__(0),
     toJSON     = __webpack_require__(7),
-    ws         = __webpack_require__(50),
+    ws         = __webpack_require__(49),
     Deferrable = __webpack_require__(6),
     Transport  = __webpack_require__(5);
 
@@ -4816,7 +4809,7 @@ module.exports = WebSocket;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4850,7 +4843,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4858,17 +4851,17 @@ module.exports = {
 
 var Transport = __webpack_require__(5);
 
-Transport.register('websocket', __webpack_require__(51));
-Transport.register('eventsource', __webpack_require__(49));
+Transport.register('websocket', __webpack_require__(50));
+Transport.register('eventsource', __webpack_require__(48));
 Transport.register('long-polling', __webpack_require__(22));
-Transport.register('cross-origin-long-polling', __webpack_require__(48));
-Transport.register('callback-polling', __webpack_require__(47));
+Transport.register('cross-origin-long-polling', __webpack_require__(47));
+Transport.register('callback-polling', __webpack_require__(46));
 
 module.exports = Transport;
 
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4880,7 +4873,7 @@ var Class     = __webpack_require__(1),
     extend    = __webpack_require__(0),
     Logging   = __webpack_require__(8),
     Publisher = __webpack_require__(14),
-    Transport = __webpack_require__(53),
+    Transport = __webpack_require__(52),
     Scheduler = __webpack_require__(21);
 
 var Dispatcher = Class({ className: 'Dispatcher',
@@ -5061,7 +5054,7 @@ module.exports = Dispatcher;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports) {
 
 /*
@@ -5238,7 +5231,7 @@ EventEmitter.prototype.listeners = function(type) {
 
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5255,7 +5248,7 @@ module.exports = function(options, validKeys) {
 
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5269,16 +5262,16 @@ var asap            = __webpack_require__(28),
     browser         = __webpack_require__(15),
     constants       = __webpack_require__(27),
     extend          = __webpack_require__(0),
-    validateOptions = __webpack_require__(56),
+    validateOptions = __webpack_require__(55),
     Deferrable      = __webpack_require__(6),
     Logging         = __webpack_require__(8),
     Publisher       = __webpack_require__(14),
     Channel         = __webpack_require__(26),
-    Dispatcher      = __webpack_require__(54),
-    Error           = __webpack_require__(46),
-    Extensible      = __webpack_require__(45),
-    Publication     = __webpack_require__(44),
-    Subscription    = __webpack_require__(43);
+    Dispatcher      = __webpack_require__(53),
+    Error           = __webpack_require__(45),
+    Extensible      = __webpack_require__(44),
+    Publication     = __webpack_require__(43),
+    Subscription    = __webpack_require__(42);
 
 var Client = Class({ className: 'Client',
   UNCONNECTED:        1,
@@ -5649,7 +5642,7 @@ module.exports = Client;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5661,7 +5654,7 @@ var constants = __webpack_require__(27),
 var Faye = {
   VERSION:    constants.VERSION,
 
-  Client:     __webpack_require__(57),
+  Client:     __webpack_require__(56),
   Scheduler:  __webpack_require__(21)
 };
 
@@ -5671,6 +5664,12 @@ module.exports = Faye;
 
 
 /***/ }),
+/* 58 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
 /* 59 */
 /***/ (function(module, exports) {
 
@@ -5678,12 +5677,6 @@ module.exports = Faye;
 
 /***/ }),
 /* 60 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5914,7 +5907,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Promise = __webpack_require__(9);
@@ -5922,13 +5915,13 @@ var Promise = __webpack_require__(9);
 module.exports = Promise;
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports) {
 
 // empty (null-loader)
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function () {
@@ -5998,13 +5991,13 @@ module.exports = Promise;
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports) {
 
 function _defineProperty(obj, key, value) {
@@ -6025,10 +6018,10 @@ function _defineProperty(obj, key, value) {
 module.exports = _defineProperty;
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(66);
+var defineProperty = __webpack_require__(65);
 
 function _objectSpread(target) {
   for (var i = 1; i < arguments.length; i++) {
@@ -6052,7 +6045,7 @@ function _objectSpread(target) {
 module.exports = _objectSpread;
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, exports) {
 
 /**
@@ -6087,7 +6080,7 @@ module.exports = isObjectLike;
 
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports) {
 
 /**
@@ -6108,10 +6101,10 @@ module.exports = overArg;
 
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var overArg = __webpack_require__(69);
+var overArg = __webpack_require__(68);
 
 /** Built-in value references. */
 var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -6120,7 +6113,7 @@ module.exports = getPrototype;
 
 
 /***/ }),
-/* 71 */
+/* 70 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -6148,7 +6141,7 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 72 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Symbol = __webpack_require__(30);
@@ -6200,7 +6193,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 73 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -6211,10 +6204,10 @@ module.exports = freeGlobal;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var freeGlobal = __webpack_require__(73);
+var freeGlobal = __webpack_require__(72);
 
 /** Detect free variable `self`. */
 var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
@@ -6226,12 +6219,12 @@ module.exports = root;
 
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Symbol = __webpack_require__(30),
-    getRawTag = __webpack_require__(72),
-    objectToString = __webpack_require__(71);
+    getRawTag = __webpack_require__(71),
+    objectToString = __webpack_require__(70);
 
 /** `Object#toString` result references. */
 var nullTag = '[object Null]',
@@ -6260,12 +6253,12 @@ module.exports = baseGetTag;
 
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(75),
-    getPrototype = __webpack_require__(70),
-    isObjectLike = __webpack_require__(68);
+var baseGetTag = __webpack_require__(74),
+    getPrototype = __webpack_require__(69),
+    isObjectLike = __webpack_require__(67);
 
 /** `Object#toString` result references. */
 var objectTag = '[object Object]';
@@ -6328,7 +6321,7 @@ module.exports = isPlainObject;
 
 
 /***/ }),
-/* 77 */
+/* 76 */
 /***/ (function(module, exports) {
 
 /**
@@ -6365,7 +6358,7 @@ module.exports = isObject;
 
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _extends = __webpack_require__(10);
@@ -6376,9 +6369,9 @@ var errors = __webpack_require__(4);
 
 var utils = __webpack_require__(12);
 
-var isObject = __webpack_require__(77);
+var isObject = __webpack_require__(76);
 
-var isPlainObject = __webpack_require__(76);
+var isPlainObject = __webpack_require__(75);
 
 var StreamUser = __webpack_require__(29);
 
@@ -6657,52 +6650,19 @@ StreamFeed.prototype = {
 
     if (options && options['mark_seen'] && options['mark_seen'].join) {
       options['mark_seen'] = options['mark_seen'].join(',');
-    } // Shortcut options for reaction enrichment
-
-
-    if (options && options.reactions) {
-      if (options.reactions.own != null) {
-        options.withOwnReactions = options.reactions.own;
-      }
-
-      if (options.reactions.recent != null) {
-        options.withRecentReactions = options.reactions.recent;
-      }
-
-      if (options.reactions.counts != null) {
-        options.withReactionCounts = options.reactions.counts;
-      }
-
-      if (options.reactions.own_children != null) {
-        options.withOwnChildren = options.reactions.own_children;
-      }
-
-      delete options.reactions;
     }
 
-    if (options && options.enrich == null && this.enrichByDefault) {
-      options.enrich = this.enrichByDefault;
-    }
+    this.client.replaceReactionOptions(options);
 
-    if (!options) {
-      options = {
-        enrich: this.enrichByDefault
-      };
-    }
-
-    if (options && (options.enrich === true || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null)) {
+    if (this.client.shouldUseEnrichEndpoint(options)) {
       path = 'enrich/feed/';
     } else {
       path = 'feed/';
     }
 
-    var qs = _extends(options);
-
-    delete options.enrich;
-    delete options.reactions;
     return this.client.get({
       url: path + this.feedUrl + '/',
-      qs: qs,
+      qs: options,
       signature: this.signature
     }, callback);
   },
@@ -6874,7 +6834,7 @@ StreamFeed.prototype = {
 module.exports = StreamFeed;
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, exports) {
 
 var Personalization = function Personalization() {
@@ -6988,16 +6948,39 @@ Personalization.prototype = {
 module.exports = Personalization;
 
 /***/ }),
+/* 79 */
+/***/ (function(module, exports) {
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutPropertiesLoose;
+
+/***/ }),
 /* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {var _extends = __webpack_require__(10);
 
-var Personalization = __webpack_require__(79);
+var _objectWithoutProperties = __webpack_require__(32);
+
+var Personalization = __webpack_require__(78);
 
 var request = __webpack_require__(31);
 
-var StreamFeed = __webpack_require__(78);
+var StreamFeed = __webpack_require__(77);
 
 var signing = __webpack_require__(17);
 
@@ -7005,27 +6988,27 @@ var errors = __webpack_require__(4);
 
 var utils = __webpack_require__(12);
 
-var BatchOperations = __webpack_require__(63);
+var BatchOperations = __webpack_require__(62);
 
-var Promise = __webpack_require__(62);
+var Promise = __webpack_require__(61);
 
-var qs = __webpack_require__(60);
+var qs = __webpack_require__(59);
 
-var url = __webpack_require__(59);
+var url = __webpack_require__(58);
 
-var Faye = __webpack_require__(58);
+var Faye = __webpack_require__(57);
 
-var Collections = __webpack_require__(42);
+var Collections = __webpack_require__(41);
 
-var StreamFileStore = __webpack_require__(41);
+var StreamFileStore = __webpack_require__(40);
 
-var StreamImageStore = __webpack_require__(40);
+var StreamImageStore = __webpack_require__(39);
 
-var StreamReaction = __webpack_require__(39);
+var StreamReaction = __webpack_require__(38);
 
 var StreamUser = __webpack_require__(29);
 
-var jwtDecode = __webpack_require__(36);
+var jwtDecode = __webpack_require__(37);
 /**
  * @callback requestCallback
  * @param {object} [errors]
@@ -7067,6 +7050,7 @@ StreamClient.prototype = {
     this.usingApiSecret = apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
+    this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
       var jwtBody = jwtDecode(this.userToken);
@@ -7114,9 +7098,9 @@ StreamClient.prototype = {
         keepAlive = true;
       }
 
-      var http = __webpack_require__(33);
+      var http = __webpack_require__(34);
 
-      var https = __webpack_require__(32);
+      var https = __webpack_require__(33);
 
       var httpsAgent = new https.Agent({
         keepAlive: keepAlive,
@@ -7369,8 +7353,6 @@ StreamClient.prototype = {
      * @example
      * client.feed('user', '1');
      */
-    var enrichByDefault = !this.usingApiSecret;
-
     if (token === undefined) {
       if (this.usingApiSecret) {
         token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
@@ -7386,7 +7368,6 @@ StreamClient.prototype = {
     }
 
     var feed = new StreamFeed(this, feedSlug, userId, token);
-    feed.enrichByDefault = enrichByDefault;
     return feed;
   },
   enrichUrl: function enrichUrl(relativeUrl, serviceName) {
@@ -7404,6 +7385,37 @@ StreamClient.prototype = {
     var base_url = this.getBaseUrl(serviceName);
     var url = base_url + this.version + '/' + relativeUrl;
     return url;
+  },
+  replaceReactionOptions: function replaceReactionOptions(options) {
+    // Shortcut options for reaction enrichment
+    if (options && options.reactions) {
+      if (options.reactions.own != null) {
+        options.withOwnReactions = options.reactions.own;
+      }
+
+      if (options.reactions.recent != null) {
+        options.withRecentReactions = options.reactions.recent;
+      }
+
+      if (options.reactions.counts != null) {
+        options.withReactionCounts = options.reactions.counts;
+      }
+
+      if (options.reactions.own_children != null) {
+        options.withOwnChildren = options.reactions.own_children;
+      }
+
+      delete options.reactions;
+    }
+  },
+  shouldUseEnrichEndpoint: function shouldUseEnrichEndpoint(options) {
+    if (options && options.enrich) {
+      var result = options.enrich;
+      delete options.enrich;
+      return result;
+    }
+
+    return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
   },
   enrichKwargs: function enrichKwargs(kwargs) {
     /**
@@ -7634,33 +7646,51 @@ StreamClient.prototype = {
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
-    var qs = {};
+    var ids = params.ids,
+        foreignIDTimes = params.foreignIDTimes,
+        qs = _objectWithoutProperties(params, ["ids", "foreignIDTimes"]);
 
-    if (params.ids) {
-      var ids = params.ids;
-
+    if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
 
       qs['ids'] = ids.join(',');
-    } else if (params.foreignIDTimes) {
-      var list = params.foreignIDTimes;
-
-      if (!(list instanceof Array)) {
+    } else if (foreignIDTimes) {
+      if (!(foreignIDTimes instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
 
       var foreignIDs = [];
       var timestamps = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-      for (var i in list) {
-        if (!(list[i] instanceof Object)) {
-          throw new TypeError('foreignIDTimes elements should be Objects');
+      try {
+        for (var _iterator = foreignIDTimes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var fidTime = _step.value;
+
+          if (!(fidTime instanceof Object)) {
+            throw new TypeError('foreignIDTimes elements should be Objects');
+          }
+
+          foreignIDs.push(fidTime.foreignID);
+          timestamps.push(fidTime.time);
         }
-
-        foreignIDs.push(list[i].foreignID);
-        timestamps.push(list[i].time);
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
       }
 
       qs['foreign_ids'] = foreignIDs.join(',');
@@ -7680,8 +7710,17 @@ StreamClient.prototype = {
       token = this.userToken;
     }
 
+    var path;
+    this.replaceReactionOptions(qs);
+
+    if (this.shouldUseEnrichEndpoint(qs)) {
+      path = 'enrich/activities/';
+    } else {
+      path = 'activities/';
+    }
+
     return this.get({
-      url: 'activities/',
+      url: path,
       qs: qs,
       signature: token
     }, callback);
