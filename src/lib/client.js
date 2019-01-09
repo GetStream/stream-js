@@ -56,6 +56,7 @@ StreamClient.prototype = {
       apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
+    this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
       let jwtBody = jwtDecode(this.userToken);
@@ -401,8 +402,6 @@ StreamClient.prototype = {
      * client.feed('user', '1');
      */
 
-    const enrichByDefault = !this.usingApiSecret;
-
     if (token === undefined) {
       if (this.usingApiSecret) {
         token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
@@ -418,7 +417,6 @@ StreamClient.prototype = {
     }
 
     var feed = new StreamFeed(this, feedSlug, userId, token);
-    feed.enrichByDefault = enrichByDefault;
     return feed;
   },
 
@@ -436,6 +434,41 @@ StreamClient.prototype = {
     var base_url = this.getBaseUrl(serviceName);
     var url = base_url + this.version + '/' + relativeUrl;
     return url;
+  },
+
+  replaceReactionOptions: function(options) {
+    // Shortcut options for reaction enrichment
+    if (options && options.reactions) {
+      if (options.reactions.own != null) {
+        options.withOwnReactions = options.reactions.own;
+      }
+      if (options.reactions.recent != null) {
+        options.withRecentReactions = options.reactions.recent;
+      }
+      if (options.reactions.counts != null) {
+        options.withReactionCounts = options.reactions.counts;
+      }
+      if (options.reactions.own_children != null) {
+        options.withOwnChildren = options.reactions.own_children;
+      }
+      delete options.reactions;
+    }
+  },
+
+  shouldUseEnrichEndpoint: function(options) {
+    if (options && options.enrich) {
+      let result = options.enrich;
+      delete options.enrich;
+      return result;
+    }
+
+    return (
+      this.enrichByDefault ||
+      options.ownReactions != null ||
+      options.withRecentReactions != null ||
+      options.withReactionCounts != null ||
+      options.withOwnChildren != null
+    );
   },
 
   enrichKwargs: function(kwargs) {
@@ -694,26 +727,24 @@ StreamClient.prototype = {
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
-    var qs = {};
-    if (params.ids) {
-      var ids = params.ids;
+    var { ids, foreignIDTimes, ...qs } = params;
+    if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
       qs['ids'] = ids.join(',');
-    } else if (params.foreignIDTimes) {
-      var list = params.foreignIDTimes;
-      if (!(list instanceof Array)) {
+    } else if (foreignIDTimes) {
+      if (!(foreignIDTimes instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
       var foreignIDs = [];
       var timestamps = [];
-      for (var i in list) {
-        if (!(list[i] instanceof Object)) {
+      for (var fidTime of foreignIDTimes) {
+        if (!(fidTime instanceof Object)) {
           throw new TypeError('foreignIDTimes elements should be Objects');
         }
-        foreignIDs.push(list[i].foreignID);
-        timestamps.push(list[i].time);
+        foreignIDs.push(fidTime.foreignID);
+        timestamps.push(fidTime.time);
       }
       qs['foreign_ids'] = foreignIDs.join(',');
       qs['timestamps'] = timestamps.join(',');
@@ -730,9 +761,18 @@ StreamClient.prototype = {
     } else {
       token = this.userToken;
     }
+
+    let path;
+    this.replaceReactionOptions(qs);
+    if (this.shouldUseEnrichEndpoint(qs)) {
+      path = 'enrich/activities/';
+    } else {
+      path = 'activities/';
+    }
+
     return this.get(
       {
-        url: 'activities/',
+        url: path,
         qs: qs,
         signature: token,
       },

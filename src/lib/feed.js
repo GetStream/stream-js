@@ -321,52 +321,17 @@ StreamFeed.prototype = {
       options['mark_seen'] = options['mark_seen'].join(',');
     }
 
-    // Shortcut options for reaction enrichment
-    if (options && options.reactions) {
-      if (options.reactions.own != null) {
-        options.withOwnReactions = options.reactions.own;
-      }
-      if (options.reactions.recent != null) {
-        options.withRecentReactions = options.reactions.recent;
-      }
-      if (options.reactions.counts != null) {
-        options.withReactionCounts = options.reactions.counts;
-      }
-      if (options.reactions.own_children != null) {
-        options.withOwnChildren = options.reactions.own_children;
-      }
-      delete options.reactions;
-    }
-
-    if (options && options.enrich == null && this.enrichByDefault) {
-      options.enrich = this.enrichByDefault;
-    }
-
-    if (!options) {
-      options = { enrich: this.enrichByDefault };
-    }
-
-    if (
-      options &&
-      (options.enrich === true ||
-        options.ownReactions != null ||
-        options.withRecentReactions != null ||
-        options.withReactionCounts != null ||
-        options.withOwnChildren != null)
-    ) {
+    this.client.replaceReactionOptions(options);
+    if (this.client.shouldUseEnrichEndpoint(options)) {
       path = 'enrich/feed/';
     } else {
       path = 'feed/';
     }
 
-    let qs = Object.assign(options);
-    delete options.enrich;
-    delete options.reactions;
-
     return this.client.get(
       {
         url: path + this.feedUrl + '/',
-        qs: qs,
+        qs: options,
         signature: this.signature,
       },
       callback,

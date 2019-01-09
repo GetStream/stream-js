@@ -20,6 +20,7 @@ describe('Reaction pagination', () => {
           object: 'cheeseburger',
         });
       eatActivity = ctx.response;
+      delete eatActivity.duration;
       eatActivity.actor = ctx.alice.currentUser.full;
     });
   });
@@ -136,14 +137,25 @@ describe('Reaction pagination', () => {
       resp.results[0].user.should.eql(ctx.bob.currentUser.full);
     });
 
-    ctx.test('the activity should be returned', async () => {
-      let conditions = {
-        activity_id: eatActivity.id,
-        limit: 1,
-        with_activity_data: true,
-      };
-      resp = await ctx.alice.reactions.filter(conditions);
-      ctx.shouldEqualBesideDuration(resp.activity, eatActivity);
+    describe('when filtering with with_activity_data', () => {
+      ctx.requestShouldNotError(async () => {
+        let conditions = {
+          activity_id: eatActivity.id,
+          limit: 1,
+          with_activity_data: true,
+        };
+        ctx.response = await ctx.alice.reactions.filter(conditions);
+        ctx.activity = ctx.response.activity;
+      });
+      ctx.activityShouldHaveFields(
+        'latest_reactions',
+        'latest_reactions_extra',
+        'own_reactions',
+        'reaction_counts',
+      );
+      ctx.test('the activity should be returned', async () => {
+        ctx.activity.should.deep.include(eatActivity);
+      });
     });
 
     ctx.test('specify page size using limit param', async () => {

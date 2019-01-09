@@ -11,6 +11,16 @@ describe('Images', () => {
       let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
     });
+    ctx.responseShould('have useful error message', () => {
+      ctx.response.detail.should.equal('File type text/plain is not supported');
+    });
+  });
+
+  describe('When alice adds a big file', () => {
+    ctx.requestShouldError(413, async () => {
+      let file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
+      ctx.response = await ctx.alice.images.upload(file, 'toolarge2.jpeg');
+    });
   });
 
   describe('When alice adds a new image', () => {

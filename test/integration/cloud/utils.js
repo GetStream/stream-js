@@ -202,6 +202,7 @@ class CloudContext {
             console.log(e.error);
           }
           e.response.statusCode.should.equal(statusCode);
+          this.error = e;
           this.response = e.error;
         }
       },
@@ -228,10 +229,7 @@ class CloudContext {
       this.response.results[0].activities.should.be.lengthOf(1);
       this.activity = this.response.results[0].activities[0];
     });
-
-    this.test('the activity should have all expected fields', () => {
-      this.activity.should.have.all.keys(...this.fields.activity, ...fields);
-    });
+    this.activityShouldHaveFields(...fields);
   }
 
   responseShouldHaveActivityWithFields(...fields) {
@@ -240,7 +238,10 @@ class CloudContext {
       this.response.results.should.be.lengthOf(1);
       this.activity = this.response.results[0];
     });
+    this.activityShouldHaveFields(...fields);
+  }
 
+  activityShouldHaveFields(...fields) {
     this.test('the activity should have all expected fields', () => {
       this.activity.should.have.all.keys(...this.fields.activity, ...fields);
     });
