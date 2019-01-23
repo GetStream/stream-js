@@ -15,6 +15,7 @@ var StreamImageStore = require('./images');
 var StreamReaction = require('./reaction');
 var StreamUser = require('./user');
 var jwtDecode = require('jwt-decode');
+var assignIn = require('lodash/assignIn');
 
 /**
  * @callback requestCallback
@@ -857,25 +858,93 @@ StreamClient.prototype = {
      *   ]
      * })
      */
-    if (data.foreignID) {
-      data['foreign_id'] = data.foreignID;
-      delete data.foreignID;
-    }
-    if (
-      data.id === undefined &&
-      (data.foreign_id === undefined || data.time === undefined)
-    ) {
-      throw new TypeError('Missing id or foreign ID and time');
-    }
-    if (data.set && !(data.set instanceof Object)) {
-      throw new TypeError('set field should be an Object');
-    }
-    if (data.unset && !(data.unset instanceof Array)) {
-      throw new TypeError('unset field should be an Array');
-    }
+    return this.activitiesPartialUpdate([data], callback).then((response) => {
+      var activity = response.activities[0];
+      delete response.activities;
+      assignIn(activity, response);
+      return activity;
+    });
+  },
 
+  activitiesPartialUpdate: function(changes, callback) {
+    /**
+     * Update multiple activities with partial operations.
+     * @since
+     * @param {array} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+     * @return {Promise}
+     * @xample
+     * client.activitiesPartialUpdate([
+     *   {
+     *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
+     *     set: {
+     *       "product.price.eur": 12.99,
+     *       "colors": {
+     *         "blue": "#0000ff",
+     *         "green": "#00ff00",
+     *       },
+     *     },
+     *     unset: [ "popularity", "size.x2" ],
+     *   },
+     *   {
+     *     id: "8d2dcad8-1e34-11e9-8b10-9cb6d0925edd",
+     *     set: {
+     *       "product.price.eur": 17.99,
+     *       "colors": {
+     *         "red": "#ff0000",
+     *         "green": "#00ff00",
+     *       },
+     *     },
+     *     unset: [ "rating" ],
+     *   },
+     * ])
+     * @example
+     * client.activitiesPartialUpdate([
+     *   {
+     *     foreignID: "product:123",
+     *     time: "2016-11-10T13:20:00.000000",
+     *     set: {
+     *       ...
+     *     },
+     *     unset: [
+     *       ...
+     *     ]
+     *   },
+     *   {
+     *     foreignID: "product:321",
+     *     time: "2016-11-10T13:20:00.000000",
+     *     set: {
+     *       ...
+     *     },
+     *     unset: [
+     *       ...
+     *     ]
+     *   },
+     * ])
+     */
+    if (!(changes instanceof Array)) {
+      throw new TypeError('changes should be an Array');
+    }
+    changes.forEach(function(item) {
+      if (!(item instanceof Object)) {
+        throw new TypeError(`changeset should be and Object`);
+      }
+      if (item.foreignID) {
+        item.foreign_id = item.foreignID;
+      }
+      if (
+        item.id === undefined &&
+        (item.foreign_id === undefined || item.time === undefined)
+      ) {
+        throw new TypeError('missing id or foreign ID and time');
+      }
+      if (item.set && !(item.set instanceof Object)) {
+        throw new TypeError('set field should be an Object');
+      }
+      if (item.unset && !(item.unset instanceof Array)) {
+        throw new TypeError('unset field should be an Array');
+      }
+    });
     var authToken;
-
     if (this.usingApiSecret) {
       authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
         feedId: '*',
@@ -888,7 +957,9 @@ StreamClient.prototype = {
     return this.post(
       {
         url: 'activity/',
-        body: data,
+        body: {
+          changes: changes,
+        },
         signature: authToken,
       },
       callback,
