@@ -37,7 +37,7 @@ describe('OpenGraph story', () => {
   describe('When alice requests opengraph info for a binary blob', () => {
     ctx.requestShouldError(400, async () => {
       ctx.response = await ctx.alice.og(
-        'https://github.com/buger/goreplay/releases/download/v0.16.1/gor_0.16.1_mac.tar.gz',
+        'https://github.com/buger/goreplay/releases/download/v0.14.0/gor.exe',
       );
     });
 
