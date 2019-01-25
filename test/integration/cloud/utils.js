@@ -18,7 +18,6 @@ class CloudContext {
     };
     this.clientOptions = {
       group: 'testCycle',
-      keepAlive: false,
     };
 
     this.serverSideClient = stream.connect(
