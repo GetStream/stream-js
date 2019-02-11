@@ -1,8 +1,1 @@
-**/*{.,-}min.js
-test/integration/utils/kjur.js
-/dist/
-/lib/
-/bin/
-.git
-docs
-**/*.sh
+.eslintignore
