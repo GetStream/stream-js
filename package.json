@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "scripts": {
     "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
