@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.2.0 - 2019-02-12
+
+:by: Mircea Cosbuc
+
+- Add support for batch activity partial update
+
+## 4.1.0 - 2019-01-09
+
+## :by: Jelte Fennema
+
+- Add support for enriched `getActivities`
+- Improve file error handling
+
 ## 4.0.9 - 2018-12-17
 :by: Jelte Fennema
 
