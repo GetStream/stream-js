@@ -103,7 +103,8 @@ describe('Reaction pagination', () => {
           extra.next.slice(0, 4).should.eql('http');
           const expectedQuery = {
             id_lt: reactions[4].id,
-            limit: 5,
+            limit: '5',
+            withOwnChildren: 'false',
           };
           if (withUser) {
             expectedQuery.user_id = ctx.bob.userId;
