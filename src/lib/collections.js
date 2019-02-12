@@ -162,7 +162,7 @@ Collections.prototype = {
      *
      * @method upsert
      * @memberof Collections.prototype
-     * @param {object or array} data - A single json object or an array of objects
+     * @param {object|array} data - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */
@@ -200,7 +200,7 @@ Collections.prototype = {
      *
      * @method select
      * @memberof Collections.prototype
-     * @param {object or array} ids - A single json object or an array of objects
+     * @param {object|array} ids - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */
@@ -244,7 +244,7 @@ Collections.prototype = {
      *
      * @method delete
      * @memberof Collections.prototype
-     * @param {object or array} ids - A single json object or an array of objects
+     * @param {object|array} ids - A single json object or an array of objects
      * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */

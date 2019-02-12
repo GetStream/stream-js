@@ -4,8 +4,8 @@ var validUserIdRe = /^[\w-]+$/;
 
 function validateFeedId(feedId) {
   /*
-  	 * Validate that the feedId matches the spec user:1
-  	 */
+   * Validate that the feedId matches the spec user:1
+   */
   var parts = feedId.split(':');
   if (parts.length !== 2) {
     throw new errors.FeedError(
@@ -24,8 +24,8 @@ exports.validateFeedId = validateFeedId;
 
 function validateFeedSlug(feedSlug) {
   /*
-  	 * Validate that the feedSlug matches \w
-  	 */
+   * Validate that the feedSlug matches \w
+   */
   var valid = validFeedSlugRe.test(feedSlug);
   if (!valid) {
     throw new errors.FeedError(
@@ -40,8 +40,8 @@ exports.validateFeedSlug = validateFeedSlug;
 
 function validateUserId(userId) {
   /*
-  	 * Validate the userId matches \w
-  	 */
+   * Validate the userId matches \w
+   */
   var valid = validUserIdRe.test(userId);
   if (!valid) {
     throw new errors.FeedError(

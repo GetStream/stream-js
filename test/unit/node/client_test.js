@@ -327,6 +327,7 @@ describe('[UNIT] Stream Client (Node)', function() {
     describe('by ID', function() {
       it('(1) works', function() {
         var post = td.function();
+        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
         var data = {
@@ -349,6 +350,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
       it('(2) works - callback', function() {
         var post = td.function();
+        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
         var data = {
@@ -374,6 +376,7 @@ describe('[UNIT] Stream Client (Node)', function() {
     describe('by foreign ID and time', function() {
       it('(1) works', function() {
         var post = td.function();
+        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
         var data = {
@@ -397,6 +400,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
       it('(2) works - callback', function() {
         var post = td.function();
+        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
         var data = {
@@ -408,6 +412,207 @@ describe('[UNIT] Stream Client (Node)', function() {
         var fn = function() {};
 
         this.client.activityPartialUpdate(data, fn);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            fn,
+          ),
+        );
+      });
+    });
+  });
+
+  describe('#activitiesPartialUpdate', function() {
+    it('throws', function() {
+      var self = this;
+
+      function isGoingToThrow1() {
+        self.client.activitiesPartialUpdate({});
+      }
+
+      function isGoingToThrow2() {
+        self.client.activitiesPartialUpdate(null);
+      }
+
+      function isGoingToThrow3() {
+        self.client.activitiesPartialUpdate(['one object']);
+      }
+
+      function isGoingToThrow4() {
+        self.client.activitiesPartialUpdate([
+          {
+            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+            unset: ['tag'],
+          },
+          {},
+        ]);
+      }
+
+      function isGoingToThrow5() {
+        self.client.activitiesPartialUpdate([
+          {
+            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+            set: 'wrong',
+          },
+        ]);
+      }
+
+      function isGoingToThrow6() {
+        self.client.activitiesPartialUpdate([
+          {
+            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+            unset: 'wrong',
+          },
+        ]);
+      }
+
+      function isGoingToThrow7() {
+        self.client.activitiesPartialUpdate([
+          {
+            foreign_id: 'product:123',
+          },
+        ]);
+      }
+
+      function isGoingToThrow8() {
+        self.client.activitiesPartialUpdate([
+          {
+            time: '2016-11-10T13:20:00.000000',
+          },
+        ]);
+      }
+
+      function isTypeError(err) {
+        expect(err).to.be.a(TypeError);
+      }
+
+      expect(isGoingToThrow1).to.throwException(isTypeError);
+      expect(isGoingToThrow2).to.throwException(isTypeError);
+      expect(isGoingToThrow3).to.throwException(isTypeError);
+      expect(isGoingToThrow4).to.throwException(isTypeError);
+      expect(isGoingToThrow5).to.throwException(isTypeError);
+      expect(isGoingToThrow6).to.throwException(isTypeError);
+      expect(isGoingToThrow7).to.throwException(isTypeError);
+      expect(isGoingToThrow8).to.throwException(isTypeError);
+    });
+
+    describe('by ID', function() {
+      it('(1) works', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var changes = [
+          {
+            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+            set: { 'foo.bar': 42 },
+            unset: ['baz'],
+          },
+          {
+            id: '8d2dcad8-1e34-11e9-8b10-9cb6d0925edd',
+            set: { 'foo.baz': 43 },
+            unset: ['bar'],
+          },
+        ];
+
+        this.client.activitiesPartialUpdate(changes);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            undefined,
+          ),
+        );
+      });
+
+      it('(2) works - callback', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var changes = [
+          {
+            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+            set: { 'foo.bar': 42 },
+            unset: ['baz'],
+          },
+          {
+            id: '8d2dcad8-1e34-11e9-8b10-9cb6d0925edd',
+            set: { 'foo.baz': 43 },
+            unset: ['bar'],
+          },
+        ];
+        var fn = function() {};
+
+        this.client.activitiesPartialUpdate(changes, fn);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            fn,
+          ),
+        );
+      });
+    });
+
+    describe('by foreign ID and time', function() {
+      it('(1) works', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var changes = [
+          {
+            foreign_id: 'product:123',
+            time: '2016-11-10T13:20:00.000000',
+            set: { 'foo.bar': 42 },
+            unset: ['baz'],
+          },
+          {
+            foreign_id: 'product:321',
+            time: '2016-11-10T13:20:00.000000',
+            set: { 'foo.baz': 43 },
+            unset: ['bar'],
+          },
+        ];
+
+        this.client.activitiesPartialUpdate(changes);
+
+        td.verify(
+          post(
+            td.matchers.contains({
+              url: 'activity/',
+            }),
+            undefined,
+          ),
+        );
+      });
+
+      it('(2) works - callback', function() {
+        var post = td.function();
+        td.replace(this.client, 'post', post);
+
+        var changes = [
+          {
+            foreign_id: 'product:123',
+            time: '2016-11-10T13:20:00.000000',
+            set: { 'foo.bar': 42 },
+            unset: ['baz'],
+          },
+          {
+            foreign_id: 'product:321',
+            time: '2016-11-10T13:20:00.000000',
+            set: { 'foo.baz': 43 },
+            unset: ['bar'],
+          },
+        ];
+        var fn = function() {};
+
+        this.client.activitiesPartialUpdate(changes, fn);
 
         td.verify(
           post(
