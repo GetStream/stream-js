@@ -4,6 +4,7 @@ var StreamFeed = require('../../../src/lib/feed'),
   td = require('testdouble'),
   stream = require('../../../src/getstream'),
   StreamClient = require('../../../src/lib/client');
+var jwtDecode = require('jwt-decode');
 
 describe('[UNIT] Stream Client instantiation (Node)', function() {
   it('with secret', function() {
@@ -657,9 +658,27 @@ describe('[UNIT] Stream Client (Node)', function() {
         'abcdefghijklmnop',
       );
       var token = client.createUserSessionToken('42', { a: 'b' });
+      const jwtBody = jwtDecode(token);
+      expect(jwtBody).to.eql({
+        user_id: '42',
+        a: 'b',
+      });
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIiLCJhIjoiYiJ9.tnHcqgTi__BExVZ3Tl0awZQe_p3A7wJ3y_uNlsxg4DM',
       );
+    });
+    it('with expireTokens', function() {
+      const client = stream.connect(
+        '12345',
+        'abcdefghijklmnop',
+        1234,
+        { expireTokens: true },
+      );
+      const token = client.createUserSessionToken('42');
+      const timestamp = Date.now() / 1000;
+      const jwtBody = jwtDecode(token);
+      expect(jwtBody.user_id).to.eql('42');
+      expect(jwtBody.iat).to.be.within(timestamp - 1, timestamp);
     });
   });
 

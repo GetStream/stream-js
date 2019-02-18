@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.2.1 - 2019-02-18
+
+:by: Jelte Fennema
+
+- Add support for the `expireTokens` option of the client to `createUserToken`
+
+
 ## 4.2.0 - 2019-02-12
 
 :by: Mircea Cosbuc

@@ -660,7 +660,9 @@ StreamClient.prototype = {
         'In order to create user tokens you need to initialize the API client with your API Secret',
       );
     }
-    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData);
+    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData, {
+      noTimestamp: !this.expireTokens,
+    });
   },
 
   createUserToken: function(userId, extraData = {}) {
