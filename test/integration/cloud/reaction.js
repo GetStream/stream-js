@@ -788,6 +788,20 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
+  describe('When bob tries to add a comment with the same id again', () => {
+    ctx.requestShouldError(409, async () => {
+      commentData = {
+        text: 'Looking yummy! @dave wanna get this on Tuesday?',
+      };
+      ctx.response = await ctx.bob.reactions.add(
+        'comment',
+        eatActivity.id,
+        commentData,
+        { id: comment.id },
+      );
+    });
+  });
+
   describe('When bob updates his comment and tags dave instead of carl', () => {
     ctx.requestShouldNotError(async () => {
       commentData = {
