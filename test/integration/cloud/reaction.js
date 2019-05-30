@@ -540,16 +540,18 @@ describe('Nested reactions madness', () => {
     });
   });
 
+  describe("and then alice like her own like Bob's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.reactions.addChild('like', likeReaction);
+    });
+  });
+
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
       reaction.latest_children.should.have.all.keys('like');
       reaction.latest_children.like.should.have.length(1);
-      ctx.shouldEqualBesideDuration(
-        reaction.latest_children.like[0],
-        likeReaction,
-      );
     });
   });
 
