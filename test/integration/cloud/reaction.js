@@ -385,6 +385,64 @@ describe('Nested reactions violations', () => {
       });
     });
   });
+
+  let eatActivity;
+  let commentFirstLevel;
+  let commentSecondLevel;
+  let commentThirdLevel;
+
+  describe('When alice eats a cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
+      eatActivity = ctx.response;
+      eatActivity.actor = ctx.alice.currentUser.full;
+    });
+  });
+
+  describe('When a reaction is added at the first nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, {
+        text: 'Looking yummy! @carl wanna get this on Tuesday?',
+      });
+      commentFirstLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the second nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'comment',
+        commentFirstLevel,
+        { text: 'Yes!' },
+      );
+      commentSecondLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the third nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.addChild(
+        'comment',
+        commentSecondLevel,
+        { text: 'I want too!' },
+      );
+      commentThirdLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the forth+ nesting level', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'like',
+        commentThirdLevel,
+      );
+    });
+  });
 });
 
 describe('Nested reactions madness', () => {
@@ -427,12 +485,6 @@ describe('Nested reactions madness', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.reactions.addChild('like', comment);
       likeReaction = ctx.response;
-    });
-  });
-
-  describe("and then alice likes her own like Bob's comment", () => {
-    ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.reactions.addChild('like', likeReaction);
     });
   });
 
