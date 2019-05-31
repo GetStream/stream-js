@@ -19,6 +19,8 @@ describe('OpenGraph story', () => {
           "Many of us at Stream use Postman regularly as we build and test our services. We're also always looking for ways to make it quick and easy for other developers to try the service. One of our goals is to help people see first hand how simple it is to build powerful social apps with Stream.",
         url: 'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
         site_name: 'The Stream Blog',
+        favicon:
+          'https://getstream-blog.imgix.net/blog/wp-content/uploads/2016/08/8597527.png?w=32&h=32',
         images: [
           {
             image:
@@ -27,7 +29,6 @@ describe('OpenGraph story', () => {
               'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
             width: 1600,
             height: 835,
-            alt: 'Postman Collection for the Stream API',
           },
         ],
       });
