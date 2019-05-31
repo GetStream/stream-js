@@ -207,9 +207,7 @@ describe('Reaction pagination', () => {
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readLikes = readLikes.concat(resp.results);
         }
@@ -232,9 +230,7 @@ describe('Reaction pagination', () => {
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           readLikesReversed = resp.results
             .slice()
             .reverse()
@@ -253,8 +249,10 @@ describe('Nested reactions pagination', () => {
   let eatActivity;
   let daveComment;
   let carlComment;
+  let aliceDaveComment;
   let carlCommentLikes = [];
   let daveCommentLikes = [];
+  let aliceDaveCommentLikes = [];
 
   ctx.createUsers();
 
@@ -324,6 +322,30 @@ describe('Nested reactions pagination', () => {
     });
   });
 
+  describe("and then alice comments dave's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      aliceDaveComment = await ctx.alice.reactions.addChild(
+        'comment',
+        daveComment,
+        { text: 'I like' },
+      );
+    });
+  });
+
+  describe("and then alice unlikes own comment of dave's comment 33 times", () => {
+    ctx.requestShouldNotError(async () => {
+      for (let i = 0; i < 33; i++) {
+        const response = await ctx.alice.reactions.addChild(
+          'unlike',
+          aliceDaveComment,
+          { i },
+        );
+        delete response.duration;
+        aliceDaveCommentLikes.push(response);
+      }
+    });
+  });
+
   describe('pagination time', () => {
     let resp;
 
@@ -334,14 +356,13 @@ describe('Nested reactions pagination', () => {
         let readChildren = [];
         let conditions = {
           reaction_id: daveComment.id,
+          kind: 'like',
           limit: 5,
         };
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readChildren = readChildren.concat(resp.results);
         }
@@ -356,18 +377,38 @@ describe('Nested reactions pagination', () => {
         let readChildren = [];
         let conditions = {
           reaction_id: carlComment.id,
+          kind: 'unlike',
           limit: 4,
         };
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readChildren = readChildren.concat(resp.results);
         }
         readChildren.should.eql(carlCommentLikes.reverse());
+      },
+    );
+
+    ctx.test(
+      'alice reads the children reactions for alice comment of dave comment four at the time in descending order',
+      async () => {
+        let done = false;
+        let readChildren = [];
+        let conditions = {
+          reaction_id: aliceDaveComment.id,
+          kind: 'unlike',
+          limit: 4,
+        };
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null;
+          conditions.id_lt = resp.results[resp.results.length - 1].id;
+          readChildren = readChildren.concat(resp.results);
+        }
+        readChildren.should.eql(aliceDaveCommentLikes.reverse());
       },
     );
   });
@@ -582,6 +623,19 @@ describe('Nested reactions madness', () => {
         'like',
       );
       activity.latest_reactions.comment[0].children_counts.like.should.eql(1);
+
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.like.should.have.length(
+        1,
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.like.should.eql(
+        1,
+      );
     });
   });
 
