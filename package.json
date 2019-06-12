@@ -99,15 +99,15 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0",
+    "@stream-io/cross-fetch": "^3.0.1",
     "@stream-io/xmlhttp-request": "^0.4.0",
     "Base64": "^1.0.1",
-    "@stream-io/cross-fetch": "^3.0.1",
     "faye": "^1.2.4",
     "form-data": "^2.3.2",
     "http-signature": "~1.2.0",
     "jsonwebtoken": "^8.4.0",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "qs": "^6.5.1",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4"
