@@ -1,7 +1,9 @@
 new stream.Client('key', undefined, 'apiSecret');
 
+// prettier-ignore
 stream.connect('abc', 'def', 'ghi'); // $ExpectType StreamClient
 
+// prettier-ignore
 const client = stream.connect('abc', 'def', 'ghi');
 client.feed('feedSlug', 'user'); // $ExpectType Feed
 

@@ -17,12 +17,12 @@ module.exports = function(config) {
     //   base: 'SauceLabs',
     //   browserName: 'safari',
     // },
-//     SL_IE_10: {
-//       base: 'SauceLabs',
-//       browserName: 'internet explorer',
-//       platform: 'Windows 8',
-//       version: '10',
-//     },
+    //     SL_IE_10: {
+    //       base: 'SauceLabs',
+    //       browserName: 'internet explorer',
+    //       platform: 'Windows 8',
+    //       version: '10',
+    //     },
     SL_IE_11: {
       base: 'SauceLabs',
       browserName: 'internet explorer',
