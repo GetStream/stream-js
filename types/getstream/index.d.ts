@@ -1,4 +1,4 @@
-// TypeScript Version: 2.2
+// TypeScript Version: 2.4
 
 export as namespace stream;
 
@@ -12,9 +12,81 @@ export function connect(
   options?: object,
 ): stream.Client;
 
+export class CollectionEntry {
+  constructor(store: Collections, collection: string, id: string, data: object);
+
+  // Get the entry from the Collection
+  get(): Promise<object>;
+  get(
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Add the entry to the Collection
+  add(): Promise<object>;
+  add(
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Update the entry in the object storage
+  update(): Promise<object>;
+  update(
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Delete the entry from the collection
+  delete(): Promise<object>;
+  delete(
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+}
+
 export class Collections {
   /** Construct Collections. */
-  constructor(client: StreamClient);
+  constructor(client: StreamClient, token: string);
+
+  // Build the URL for a collection or collection item
+  buildURL(collection: string, itemId?: string): string;
+
+  // Instantiate a collection entry object
+  entry(
+    collection: string,
+    itemId?: string,
+    itemData?: object,
+  ): CollectionEntry;
+
+  // Get a collection entry
+  get(collection: string, itemId: string): Promise<object>;
+  get(
+    collection: string,
+    itemId: string,
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Add a single entry to a collection
+  add(collection: string, itemId: string, itemData?: object): Promise<object>;
+  add(
+    collection: string,
+    itemId: string,
+    itemData?: object,
+    callback?: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Update a single collection entry
+  update(collection: string, entryId: string, data?: object): Promise<object>;
+  update(
+    collection: string,
+    entryId: string,
+    data?: object,
+    callback?: (err: object, httpResponse: object, body: object) => void,
+  ): void;
+
+  // Delete a single collection entry
+  delete(collection: string, entryId: string): Promise<object>;
+  delete(
+    collection: string,
+    entryId: string,
+    callback: (err: object, httpResponse: object, body: object) => void,
+  ): void;
 
   // Upsert one or more items within a collection.
   upsert(
@@ -33,12 +105,12 @@ export class Collections {
   select(collectionName: string, ids: object | object[]): Promise<object>;
 
   // Remove all objects by id from the collection.
-  delete(
+  deleteMany(
     collectionName: string,
     ids: object | object[],
     callback: (err: object, httpResponse: object, body: object) => void,
   ): void;
-  delete(collectionName: string, ids: object | object[]): Promise<object>;
+  deleteMany(collectionName: string, ids: object | object[]): Promise<object>;
 }
 
 export class Personalization {
