@@ -1,5 +1,4 @@
-// TypeScript Version: 2.2
-
+// TypeScript Version: 3.2
 export as namespace stream;
 
 /**
@@ -12,15 +11,75 @@ export function connect(
   options?: object,
 ): stream.Client;
 
+export class CollectionEntry {
+  constructor(store: Collections, collection: string, id: string, data: object);
+
+  // Get the entry from the Collection
+  get(): Promise<object>;
+  get(callback: RestCallback): void;
+
+  // Add the entry to the Collection
+  add(): Promise<object>;
+  add(callback: RestCallback): void;
+
+  // Update the entry in the object storage
+  update(): Promise<object>;
+  update(callback: RestCallback): void;
+
+  // Delete the entry from the collection
+  delete(): Promise<object>;
+  delete(callback: RestCallback): void;
+}
+
 export class Collections {
   /** Construct Collections. */
-  constructor(client: StreamClient);
+  constructor(client: StreamClient, token: string);
+
+  // Build the URL for a collection or collection item
+  buildURL(collection: string, itemId?: string): string;
+
+  // Instantiate a collection entry object
+  entry(
+    collection: string,
+    itemId?: string,
+    itemData?: object,
+  ): CollectionEntry;
+
+  // Get a collection entry
+  get(collection: string, itemId: string): Promise<object>;
+  get(
+    collection: string,
+    itemId: string,
+    callback: GenericCallback<CollectionEntry>,
+  ): void;
+
+  // Add a single entry to a collection
+  add(collection: string, itemId: string, itemData?: object): Promise<object>;
+  add(
+    collection: string,
+    itemId: string,
+    itemData?: object,
+    callback?: GenericCallback<CollectionEntry>,
+  ): void;
+
+  // Update a single collection entry
+  update(collection: string, entryId: string, data?: object): Promise<object>;
+  update(
+    collection: string,
+    entryId: string,
+    data?: object,
+    callback?: GenericCallback<CollectionEntry>,
+  ): void;
+
+  // Delete a single collection entry
+  delete(collection: string, entryId: string): Promise<object>;
+  delete(collection: string, entryId: string, callback: RestCallback): void;
 
   // Upsert one or more items within a collection.
   upsert(
     collectionName: string,
     data: object | object[],
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   upsert(collectionName: string, data: object | object[]): Promise<object>;
 
@@ -28,17 +87,17 @@ export class Collections {
   select(
     collectionName: string,
     ids: object | object[],
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   select(collectionName: string, ids: object | object[]): Promise<object>;
 
   // Remove all objects by id from the collection.
-  delete(
+  deleteMany(
     collectionName: string,
     ids: object | object[],
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
-  delete(collectionName: string, ids: object | object[]): Promise<object>;
+  deleteMany(collectionName: string, ids: object | object[]): Promise<object>;
 }
 
 export class Personalization {
@@ -46,45 +105,24 @@ export class Personalization {
   constructor(client: StreamClient);
 
   // Get personalized activities for this feed.
-  get(
-    resource: string,
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
-  get(
-    resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  get(resource: string, options: object, callback: RestCallback): void;
+  get(resource: string, callback: RestCallback): void;
   get(resource: string, options?: object): Promise<object>;
 
   // Post data to personalization endpoint.
-  post(
-    resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
-  post(
-    resource: string,
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  post(resource: string, callback: RestCallback): void;
+  post(resource: string, options: object, callback: RestCallback): void;
   post(
     resource: string,
     options: object,
     data: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   post(resource: string, options?: object, data?: object): Promise<object>;
 
   // Delete metadata or activites
-  delete(
-    resource: string,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
-  delete(
-    resource: string,
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  delete(resource: string, callback: RestCallback): void;
+  delete(resource: string, options: object, callback: RestCallback): void;
   delete(resource: string, options?: object): Promise<object>;
 }
 
@@ -98,37 +136,28 @@ export class Feed {
   );
 
   // Add activity
-  addActivity(activity: object): Promise<object>;
-  addActivity(
-    activity: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  addActivity(activity: Activity): Promise<object>;
+  addActivity(activity: Activity, callback: RestCallback): void;
 
   // Remove activity
-  removeActivity(activityId: string | object): Promise<object>;
-  removeActivity(
-    activityId: string | object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  removeActivity(activityId: string | Activity): Promise<object>;
+  removeActivity(activityId: string | Activity, callback: RestCallback): void;
 
   // Add activities
-  addActivities(activities: object[]): Promise<object>;
-  addActivities(
-    activities: object[],
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  addActivities(activities: Activity[]): Promise<object>;
+  addActivities(activities: Activity[], callback: RestCallback): void;
 
   // Follow feed
   follow(
     targetSlug: string,
     targetUserId: string,
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   follow(
     targetSlug: string,
     targetUserId: string,
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   follow(
     targetSlug: string,
@@ -140,13 +169,13 @@ export class Feed {
   unfollow(
     targetSlug: string,
     targetUserId: string,
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   unfollow(
     targetSlug: string,
     targetUserId: string,
     options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
+    callback: RestCallback,
   ): void;
   unfollow(
     targetSlug: string,
@@ -156,32 +185,111 @@ export class Feed {
 
   // List followed feeds
   following(options: object): Promise<object>;
-  following(
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  following(options: object, callback: RestCallback): void;
 
   // List followers
   followers(options: object): Promise<object>;
-  followers(
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  followers(options: object, callback: RestCallback): void;
 
   // Get feed
   get(options?: object): Promise<object>;
-  get(
-    options: object,
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
-
-  // Subscribe to realtime
-  /** Subscribe to Faye realtime source. */
-  subscribe(callback: (data: object) => void): Promise<object>;
+  get(options: object, callback: RestCallback): void;
 
   // Get tokens
   getReadOnlyToken(): string;
   getReadWriteToken(): string;
+
+  // Activity details
+  getActivityDetail(activityId: string, options?: object): Promise<object>;
+  getActivityDetail(
+    activityId: string,
+    options: object,
+    callback: RestCallback,
+  ): void;
+
+  // Subscriptions
+  getFayeClient(): object; // would like to return `Faye.Client` here, but they haven't release any ts def files yet
+  subscribe(callback: GenericCallback): Promise<object>;
+  unsubscribe(): void;
+
+  // Updates an activity's "to" fields
+  updateActivityToTargets(
+    foreign_id: string,
+    time: string,
+    new_targets: string[],
+    added_targets: string[],
+    removed_targets: string[],
+  ): Promise<object>;
+}
+
+export class Reaction {
+  /** Construct Reaction. */
+  constructor(client: StreamClient);
+
+  add(
+    kind: string,
+    activity: string | Activity,
+    data?: object,
+    targetFeeds?: string[],
+  ): Promise<object>;
+  add(
+    kind: string,
+    activity: string | Activity,
+    data: object,
+    targetFeeds: string[],
+    callback: RestCallback,
+  ): void;
+
+  addChild(
+    kind: string,
+    reaction: string | Activity,
+    data?: object,
+    targetFeeds?: string[],
+  ): Promise<object>;
+  addChild(
+    kind: string,
+    reaction: string | Activity,
+    data: object,
+    targetFeeds: string[],
+    callback: RestCallback,
+  ): void;
+
+  get(id: string): Promise<object>;
+  get(id: string, callback: RestCallback): void;
+
+  filter(conditions: object): Promise<object>;
+  filter(conditions: object, callback: RestCallback): void;
+
+  update(id: string, data: object, targetFeeds?: string[]): Promise<object>;
+  update(
+    id: string,
+    data: object,
+    targetFeeds: string[],
+    callback: RestCallback,
+  ): void;
+
+  delete(id: string): Promise<object>;
+  delete(id: string, callback: RestCallback): void;
+}
+
+export class User {
+  /** Construct User. */
+  constructor(client: StreamClient, userId: string);
+
+  delete(): Promise<object>;
+  delete(callback: GenericCallback): void;
+
+  get(options: object): Promise<object>;
+  get(options: object, callback: GenericCallback): void;
+
+  create(data: object): Promise<object>;
+  create(data: object, callback: GenericCallback): void;
+
+  update(data: object): Promise<object>;
+  update(data: object, callback: GenericCallback): void;
+
+  getOrCreate(options: object): Promise<object>;
+  getOrCreate(options: object, callback: GenericCallback): void;
 }
 
 export class StreamClient {
@@ -224,20 +332,20 @@ export class StreamClient {
    * addToMany.
    * Available in node environments with batchOperations enabled.
    */
-  addToMany(activity: object, feeds: string[]): Promise<object>;
+  addToMany(activity: Activity, feeds: string[]): Promise<object>;
   /**
    * addToMany.
    * Available in node environments with batchOperations enabled.
    */
-  addToMany(
-    activity: object,
-    feeds: string[],
-    callback: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  addToMany(activity: Activity, feeds: string[], callback: RestCallback): void;
 
   // Collections sub-component
   collections: Collections;
   personalization: Personalization;
+  reactions: Reaction;
+
+  // Instantiate a StreamUser class for the given user ID
+  user(userId: string): User;
 
   // Follow many feeds
   /**
@@ -296,3 +404,33 @@ export namespace errors {
      */
   }
 }
+
+export interface Activity {
+  actor: string;
+  verb: string;
+  object: string;
+  time?: string;
+  to?: string[];
+  foreign_id?: string;
+  [customFieldKey: string]: any;
+
+  // reserved words
+  activity_id?: never;
+  activity?: never;
+  analytics?: never;
+  extra_context?: never;
+  id?: never;
+  is_read?: never;
+  is_seen?: never;
+  origin?: never;
+  score?: never;
+  site_id?: never;
+}
+
+export type RestCallback = (
+  err: object,
+  httpResponse: object,
+  body: object,
+) => void;
+
+export type GenericCallback<T = any> = (data: T) => void;

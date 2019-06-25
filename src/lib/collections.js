@@ -106,6 +106,7 @@ Collections.prototype = {
      * Update entry in the collection
      * @method update
      * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
      * @param  {object}   entryId  Collection object id
      * @param  {object}   data  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion

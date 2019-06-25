@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "scripts": {
     "build": "babel src --out-dir lib",
     "dtslint": "dtslint types/getstream",
@@ -91,23 +91,23 @@
     "null-loader": "^0.1.1",
     "nyc": "^12.0.2",
     "prettier": "^1.13.7",
-    "testdouble": "^3.8.1",
-    "typescript": "^2.8.3",
+    "testdouble": "^3.12.0",
+    "typescript": "^3.2.4",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^3.0.8"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0",
+    "@stream-io/cross-fetch": "^3.0.1",
     "@stream-io/xmlhttp-request": "^0.4.0",
     "Base64": "^1.0.1",
-    "@stream-io/cross-fetch": "^3.0.1",
     "faye": "^1.2.4",
     "form-data": "^2.3.2",
     "http-signature": "~1.2.0",
     "jsonwebtoken": "^8.4.0",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "qs": "^6.5.1",
     "request": "^2.88.0",
     "whatwg-fetch": "^2.0.4"
@@ -122,6 +122,6 @@
     "types"
   ],
   "engines": {
-    "node": ">=4.8 <=11"
+    "node": ">=4.8 <=12"
   }
 }
