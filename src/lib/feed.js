@@ -377,24 +377,24 @@ StreamFeed.prototype = {
     });
   },
 
-  getActivityDetail: function(activity_id, options, callback) {
+  getActivityDetail: function(activityId, options, callback) {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
      * @memberof StreamFeed.prototype
-     * @param  {array}    ids  Additional options
+     * @param  {string}   activityId Identifier of activity to retrieve
      * @param  {object}   options  Additional options
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example feed.getActivityDetail(activity_id)
-     * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
-     * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
-     * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId)
+     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
+     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
     return this.get(
       Object.assign(
-        { id_lte: activity_id, id_gte: activity_id, limit: 1 },
-        options,
+        { id_lte: activityId, id_gte: activityId, limit: 1 },
+        options || {},
       ),
       callback,
     );
