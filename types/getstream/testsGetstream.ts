@@ -19,15 +19,16 @@ feed.unfollow('feedSlug', 'user', { keep_history: true }); // $ExpectType Promis
 feed.unfollow('feedSlug', 'user', { keep_history: true }, callback); // $ExpectType void
 feed.unfollow('feedSlug', 'user', callback); // $ExpectType void
 
+let entryCallback = (data: any) => {};
 let collections = client.collections; // $ExpectType Collections
 collections.buildURL('events', 'login-134'); // $ExpectType string
 collections.entry('events', 'login-134', { user: 'john', source: 'website' }); // $ExpectType CollectionEntry
 collections.get('events', 'login-134'); // $ExpectType Promise<object>
-collections.get('events', 'login-134', callback); // $ExpectType void
+collections.get('events', 'login-134', entryCallback); // $ExpectType void
 collections.add('events', 'login-123', { user: 'john' }); // $ExpectType Promise<object>
-collections.add('events', 'login-1', { user: 'mo' }, callback); // $ExpectType void
+collections.add('events', 'login-1', { user: 'mo' }, entryCallback); // $ExpectType void
 collections.update('events', 'login-2', { user: 'jo' }); // $ExpectType Promise<object>
-collections.update('events', 'login-2', { user: 'jo' }, callback); // $ExpectType void
+collections.update('events', 'login-2', { user: 'jo' }, entryCallback); // $ExpectType void
 collections.delete('events', 'login-134'); // $ExpectType Promise<object>
 collections.delete('events', 'login-134', callback); // $ExpectType void
 collections.upsert('events', { id: 'login-1', user: 'jo' }); // $ExpectType Promise<object>
