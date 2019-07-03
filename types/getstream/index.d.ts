@@ -321,6 +321,22 @@ export class StreamClient {
     options?: object,
   ): Feed;
 
+  // Update activity
+  updateActivity(activity: object, callback: RestCallback): void;
+  updateActivity(activity: object): Promise<object>;
+
+  // Retrieve activities by ID or foreign ID and time
+  getActivities(params: object, callback: RestCallback): void;
+  getActivities(params: object): Promise<object>;
+
+  // Partially update activity
+  activityPartialUpdate(data: object, callback: RestCallback): void;
+  activityPartialUpdate(data: object): Promise<object>;
+
+  // Partially update multiple activities
+  activitiesPartialUpdate(changes: object, callback: RestCallback): void;
+  activitiesPartialUpdate(changes: object): Promise<object>;
+
   // Update activities
   updateActivities(
     activities: object[],
