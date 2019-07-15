@@ -1,4 +1,4 @@
-// TypeScript Version: 3.2
+// TypeScript Version: 3.5
 export as namespace stream;
 
 /**
@@ -140,8 +140,8 @@ export class Feed {
   addActivity(activity: Activity, callback: RestCallback): void;
 
   // Remove activity
-  removeActivity(activityId: string | Activity): Promise<object>;
-  removeActivity(activityId: string | Activity, callback: RestCallback): void;
+  removeActivity(activityId: string | object): Promise<object>;
+  removeActivity(activityId: string | object, callback: RestCallback): void;
 
   // Add activities
   addActivities(activities: Activity[]): Promise<object>;
@@ -192,7 +192,7 @@ export class Feed {
   followers(options: object, callback: RestCallback): void;
 
   // Get feed
-  get(options?: object): Promise<object>;
+  get(options: object): Promise<object>;
   get(options: object, callback: RestCallback): void;
 
   // Get tokens
@@ -242,13 +242,13 @@ export class Reaction {
 
   addChild(
     kind: string,
-    reaction: string | Activity,
+    reaction: string | Reaction,
     data?: object,
     targetFeeds?: string[],
   ): Promise<object>;
   addChild(
     kind: string,
-    reaction: string | Activity,
+    reaction: string | Reaction,
     data: object,
     targetFeeds: string[],
     callback: RestCallback,
