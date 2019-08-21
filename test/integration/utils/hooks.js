@@ -54,10 +54,7 @@ function initBrowser() {
 }
 
 function beforeEachNode() {
-  this.client = stream.connect(
-    config.API_KEY,
-    config.API_SECRET,
-  );
+  this.client = stream.connect(config.API_KEY, config.API_SECRET);
   this.client = stream.connect(
     config.API_KEY,
     config.API_SECRET,
@@ -87,16 +84,11 @@ function beforeEachNode() {
 
 function beforeEachBrowser() {
   this.client = stream.connect(config.API_KEY);
-  this.client = stream.connect(
-    config.API_KEY,
-    null,
-    config.APP_ID,
-    {
-      group: 'browserTestCycle',
-      location: 'qa',
-      protocol: 'https',
-    },
-  );
+  this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+    group: 'browserTestCycle',
+    location: 'qa',
+    protocol: 'https',
+  });
 
   if (this.localRun) {
     this.client.baseUrl = 'http://localhost:8000/api/';

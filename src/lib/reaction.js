@@ -48,8 +48,8 @@ StreamReaction.prototype = {
   },
 
   _convertTargetFeeds: function(targetFeeds = []) {
-    return targetFeeds.map(
-      (elem) => (typeof elem === 'string' ? elem : elem.id),
+    return targetFeeds.map((elem) =>
+      typeof elem === 'string' ? elem : elem.id,
     );
   },
 
@@ -57,7 +57,7 @@ StreamReaction.prototype = {
     kind,
     activity,
     data = {},
-    { targetFeeds = [], userId } = {},
+    { targetFeeds = [], userId, targetFeedsExtraData } = {},
     callback,
   ) {
     /**
@@ -84,6 +84,9 @@ StreamReaction.prototype = {
       target_feeds: targetFeeds,
       user_id: userId,
     };
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
     return this.client.post(
       {
         url: this.buildURL(),
@@ -98,7 +101,7 @@ StreamReaction.prototype = {
     kind,
     reaction,
     data = {},
-    { targetFeeds = [], userId } = {},
+    { targetFeeds = [], userId, targetFeedsExtraData } = {},
     callback,
   ) {
     /**
@@ -125,6 +128,9 @@ StreamReaction.prototype = {
       target_feeds: targetFeeds,
       user_id: userId,
     };
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
     return this.client.post(
       {
         url: this.buildURL(),
@@ -204,7 +210,12 @@ StreamReaction.prototype = {
     );
   },
 
-  update: function(id, data, { targetFeeds = [] } = {}, callback) {
+  update: function(
+    id,
+    data,
+    { targetFeeds = [], targetFeedsExtraData } = {},
+    callback,
+  ) {
     /**
      * update reaction
      * @method add
@@ -222,6 +233,9 @@ StreamReaction.prototype = {
       data: data,
       target_feeds: targetFeeds,
     };
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
     return this.client.put(
       {
         url: this.buildURL(id),

@@ -1,16 +1,8 @@
 new stream.Client('key', undefined, 'apiSecret');
 
-stream.connect(
-  'abc',
-  'def',
-  'ghi',
-); // $ExpectType StreamClient
+stream.connect('abc', 'def', 'ghi'); // $ExpectType StreamClient
 
-const client = stream.connect(
-  'abc',
-  'def',
-  'ghi',
-);
+const client = stream.connect('abc', 'def', 'ghi');
 client.feed('feedSlug', 'user'); // $ExpectType Feed
 
 let feed = client.feed('feedSlug', 'user');
