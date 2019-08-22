@@ -57,7 +57,7 @@ StreamReaction.prototype = {
     kind,
     activity,
     data = {},
-    { targetFeeds = [], userId, targetFeedsExtraData } = {},
+    { id, targetFeeds = [], userId, targetFeedsExtraData } = {},
     callback,
   ) {
     /**
@@ -78,6 +78,7 @@ StreamReaction.prototype = {
     }
     targetFeeds = this._convertTargetFeeds(targetFeeds);
     var body = {
+      id: id,
       activity_id: activity,
       kind: kind,
       data: data,

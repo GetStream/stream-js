@@ -207,9 +207,7 @@ describe('Reaction pagination', () => {
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readLikes = readLikes.concat(resp.results);
         }
@@ -232,9 +230,7 @@ describe('Reaction pagination', () => {
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           readLikesReversed = resp.results
             .slice()
             .reverse()
@@ -253,8 +249,10 @@ describe('Nested reactions pagination', () => {
   let eatActivity;
   let daveComment;
   let carlComment;
+  let aliceDaveComment;
   let carlCommentLikes = [];
   let daveCommentLikes = [];
+  let aliceDaveCommentLikes = [];
 
   ctx.createUsers();
 
@@ -324,6 +322,30 @@ describe('Nested reactions pagination', () => {
     });
   });
 
+  describe("and then alice comments dave's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      aliceDaveComment = await ctx.alice.reactions.addChild(
+        'comment',
+        daveComment,
+        { text: 'I like' },
+      );
+    });
+  });
+
+  describe("and then alice unlikes own comment of dave's comment 33 times", () => {
+    ctx.requestShouldNotError(async () => {
+      for (let i = 0; i < 33; i++) {
+        const response = await ctx.alice.reactions.addChild(
+          'unlike',
+          aliceDaveComment,
+          { i },
+        );
+        delete response.duration;
+        aliceDaveCommentLikes.push(response);
+      }
+    });
+  });
+
   describe('pagination time', () => {
     let resp;
 
@@ -334,14 +356,13 @@ describe('Nested reactions pagination', () => {
         let readChildren = [];
         let conditions = {
           reaction_id: daveComment.id,
+          kind: 'like',
           limit: 5,
         };
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readChildren = readChildren.concat(resp.results);
         }
@@ -356,18 +377,38 @@ describe('Nested reactions pagination', () => {
         let readChildren = [];
         let conditions = {
           reaction_id: carlComment.id,
+          kind: 'unlike',
           limit: 4,
         };
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
           done =
-            resp.next === undefined || resp.next === '' || resp.next === null
-              ? true
-              : false;
+            resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readChildren = readChildren.concat(resp.results);
         }
         readChildren.should.eql(carlCommentLikes.reverse());
+      },
+    );
+
+    ctx.test(
+      'alice reads the children reactions for alice comment of dave comment four at the time in descending order',
+      async () => {
+        let done = false;
+        let readChildren = [];
+        let conditions = {
+          reaction_id: aliceDaveComment.id,
+          kind: 'unlike',
+          limit: 4,
+        };
+        while (!done) {
+          resp = await ctx.alice.reactions.filter(conditions);
+          done =
+            resp.next === undefined || resp.next === '' || resp.next === null;
+          conditions.id_lt = resp.results[resp.results.length - 1].id;
+          readChildren = readChildren.concat(resp.results);
+        }
+        readChildren.should.eql(aliceDaveCommentLikes.reverse());
       },
     );
   });
@@ -383,6 +424,64 @@ describe('Nested reactions violations', () => {
       ctx.response = await ctx.bob.reactions.addChild('comment', {
         id: 'does-not-exist',
       });
+    });
+  });
+
+  let eatActivity;
+  let commentFirstLevel;
+  let commentSecondLevel;
+  let commentThirdLevel;
+
+  describe('When alice eats a cheese burger', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice
+        .feed('user', ctx.alice.userId)
+        .addActivity({
+          verb: 'eat',
+          object: 'cheeseburger',
+        });
+      eatActivity = ctx.response;
+      eatActivity.actor = ctx.alice.currentUser.full;
+    });
+  });
+
+  describe('When a reaction is added at the first nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, {
+        text: 'Looking yummy! @carl wanna get this on Tuesday?',
+      });
+      commentFirstLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the second nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'comment',
+        commentFirstLevel,
+        { text: 'Yes!' },
+      );
+      commentSecondLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the third nesting level', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.addChild(
+        'comment',
+        commentSecondLevel,
+        { text: 'I want too!' },
+      );
+      commentThirdLevel = ctx.response;
+    });
+  });
+
+  describe('When a reaction is added at the forth+ nesting level', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.alice.reactions.addChild(
+        'like',
+        commentThirdLevel,
+      );
     });
   });
 });
@@ -427,12 +526,6 @@ describe('Nested reactions madness', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.reactions.addChild('like', comment);
       likeReaction = ctx.response;
-    });
-  });
-
-  describe("and then alice likes her own like Bob's comment", () => {
-    ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.reactions.addChild('like', likeReaction);
     });
   });
 
@@ -488,16 +581,18 @@ describe('Nested reactions madness', () => {
     });
   });
 
+  describe("and then alice like her own like Bob's comment", () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.reactions.addChild('like', likeReaction);
+    });
+  });
+
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
       let reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
       reaction.latest_children.should.have.all.keys('like');
       reaction.latest_children.like.should.have.length(1);
-      ctx.shouldEqualBesideDuration(
-        reaction.latest_children.like[0],
-        likeReaction,
-      );
     });
   });
 
@@ -528,6 +623,19 @@ describe('Nested reactions madness', () => {
         'like',
       );
       activity.latest_reactions.comment[0].children_counts.like.should.eql(1);
+
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.like.should.have.length(
+        1,
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.should.have.all.keys(
+        'like',
+      );
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.like.should.eql(
+        1,
+      );
     });
   });
 
@@ -789,6 +897,20 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.response = await ctx.bob.reactions.update(comment.id, commentData, {
         targetFeeds: [`timeline:${ctx.alice.userId}`],
       });
+    });
+  });
+
+  describe('When bob tries to add a comment with the same id again', () => {
+    ctx.requestShouldError(409, async () => {
+      commentData = {
+        text: 'Looking yummy! @dave wanna get this on Tuesday?',
+      };
+      ctx.response = await ctx.bob.reactions.add(
+        'comment',
+        eatActivity.id,
+        commentData,
+        { id: comment.id },
+      );
     });
   });
 

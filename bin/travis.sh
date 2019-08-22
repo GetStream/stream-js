@@ -9,6 +9,7 @@ fi
 ./bin/coveralls.sh
 if [ "${RUN_LINTERS:='no'}" == "yes" ]; then
     npm run lint
+    npm run dtslint
 fi
 npm install -g bower
 bower install getstream

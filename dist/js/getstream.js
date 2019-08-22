@@ -4992,6 +4992,7 @@ StreamReaction.prototype = {
     var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        id = _ref.id,
         _ref$targetFeeds = _ref.targetFeeds,
         targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
         userId = _ref.userId;
@@ -5017,6 +5018,7 @@ StreamReaction.prototype = {
 
     targetFeeds = this._convertTargetFeeds(targetFeeds);
     var body = {
+      id: id,
       activity_id: activity,
       kind: kind,
       data: data,
@@ -5468,6 +5470,7 @@ Collections.prototype = {
      * Update entry in the collection
      * @method update
      * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
      * @param  {object}   entryId  Collection object id
      * @param  {object}   data  ObjectStore data
      * @param  {requestCallback} callback Callback to call on completion
@@ -8119,25 +8122,25 @@ StreamFeed.prototype = {
       expireTokens: this.client.expireTokens
     });
   },
-  getActivityDetail: function getActivityDetail(activity_id, options, callback) {
+  getActivityDetail: function getActivityDetail(activityId, options, callback) {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
      * @memberof StreamFeed.prototype
-     * @param  {array}    ids  Additional options
+     * @param  {string}   activityId Identifier of activity to retrieve
      * @param  {object}   options  Additional options
      * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
-     * @example feed.getActivityDetail(activity_id)
-     * @example feed.getActivityDetail(activity_id, {withRecentReactions: true})
-     * @example feed.getActivityDetail(activity_id, {withReactionCounts: true})
-     * @example feed.getActivityDetail(activity_id, {withOwnReactions: true, withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId)
+     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
+     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
     return this.get(_extends({
-      id_lte: activity_id,
-      id_gte: activity_id,
+      id_lte: activityId,
+      id_gte: activityId,
       limit: 1
-    }, options), callback);
+    }, options || {}), callback);
   },
   getFayeClient: function getFayeClient() {
     /**
