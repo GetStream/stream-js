@@ -46,17 +46,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -76,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 125);
+/******/ 	return __webpack_require__(__webpack_require__.s = 47);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -100,6 +115,32 @@ module.exports = function(dest, source, overwrite) {
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -129,123 +170,7 @@ module.exports = function(parent, methods) {
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-  isURI: function(uri) {
-    return uri && uri.protocol && uri.host && uri.path;
-  },
-
-  isSameOrigin: function(uri) {
-    return uri.protocol === location.protocol &&
-           uri.hostname === location.hostname &&
-           uri.port     === location.port;
-  },
-
-  parse: function(url) {
-    if (typeof url !== 'string') return url;
-    var uri = {}, parts, query, pairs, i, n, data;
-
-    var consume = function(name, pattern) {
-      url = url.replace(pattern, function(match) {
-        uri[name] = match;
-        return '';
-      });
-      uri[name] = uri[name] || '';
-    };
-
-    consume('protocol', /^[a-z]+\:/i);
-    consume('host',     /^\/\/[^\/\?#]+/);
-
-    if (!/^\//.test(url) && !uri.host)
-      url = location.pathname.replace(/[^\/]*$/, '') + url;
-
-    consume('pathname', /^[^\?#]*/);
-    consume('search',   /^\?[^#]*/);
-    consume('hash',     /^#.*/);
-
-    uri.protocol = uri.protocol || location.protocol;
-
-    if (uri.host) {
-      uri.host     = uri.host.substr(2);
-      parts        = uri.host.split(':');
-      uri.hostname = parts[0];
-      uri.port     = parts[1] || '';
-    } else {
-      uri.host     = location.host;
-      uri.hostname = location.hostname;
-      uri.port     = location.port;
-    }
-
-    uri.pathname = uri.pathname || '/';
-    uri.path = uri.pathname + uri.search;
-
-    query = uri.search.replace(/^\?/, '');
-    pairs = query ? query.split('&') : [];
-    data  = {};
-
-    for (i = 0, n = pairs.length; i < n; i++) {
-      parts = pairs[i].split('=');
-      data[decodeURIComponent(parts[0] || '')] = decodeURIComponent(parts[1] || '');
-    }
-
-    uri.query = data;
-
-    uri.href = this.stringify(uri);
-    return uri;
-  },
-
-  stringify: function(uri) {
-    var string = uri.protocol + '//' + uri.hostname;
-    if (uri.port) string += ':' + uri.port;
-    string += uri.pathname + this.queryString(uri.query) + (uri.hash || '');
-    return string;
-  },
-
-  queryString: function(query) {
-    var pairs = [];
-    for (var key in query) {
-      if (!query.hasOwnProperty(key)) continue;
-      pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key]));
-    }
-    if (pairs.length === 0) return '';
-    return '?' + pairs.join('&');
-  }
-};
-
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports) {
 
 var errors = module.exports;
@@ -337,21 +262,111 @@ errors.StreamApiError = function StreamApiError(msg, data, response) {
 errors.StreamApiError.prototype = new ErrorAbstract();
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+  isURI: function(uri) {
+    return uri && uri.protocol && uri.host && uri.path;
+  },
+
+  isSameOrigin: function(uri) {
+    return uri.protocol === location.protocol &&
+           uri.hostname === location.hostname &&
+           uri.port     === location.port;
+  },
+
+  parse: function(url) {
+    if (typeof url !== 'string') return url;
+    var uri = {}, parts, query, pairs, i, n, data;
+
+    var consume = function(name, pattern) {
+      url = url.replace(pattern, function(match) {
+        uri[name] = match;
+        return '';
+      });
+      uri[name] = uri[name] || '';
+    };
+
+    consume('protocol', /^[a-z]+\:/i);
+    consume('host',     /^\/\/[^\/\?#]+/);
+
+    if (!/^\//.test(url) && !uri.host)
+      url = location.pathname.replace(/[^\/]*$/, '') + url;
+
+    consume('pathname', /^[^\?#]*/);
+    consume('search',   /^\?[^#]*/);
+    consume('hash',     /^#.*/);
+
+    uri.protocol = uri.protocol || location.protocol;
+
+    if (uri.host) {
+      uri.host     = uri.host.substr(2);
+      parts        = uri.host.split(':');
+      uri.hostname = parts[0];
+      uri.port     = parts[1] || '';
+    } else {
+      uri.host     = location.host;
+      uri.hostname = location.hostname;
+      uri.port     = location.port;
+    }
+
+    uri.pathname = uri.pathname || '/';
+    uri.path = uri.pathname + uri.search;
+
+    query = uri.search.replace(/^\?/, '');
+    pairs = query ? query.split('&') : [];
+    data  = {};
+
+    for (i = 0, n = pairs.length; i < n; i++) {
+      parts = pairs[i].split('=');
+      data[decodeURIComponent(parts[0] || '')] = decodeURIComponent(parts[1] || '');
+    }
+
+    uri.query = data;
+
+    uri.href = this.stringify(uri);
+    return uri;
+  },
+
+  stringify: function(uri) {
+    var string = uri.protocol + '//' + uri.hostname;
+    if (uri.port) string += ':' + uri.port;
+    string += uri.pathname + this.queryString(uri.query) + (uri.hash || '');
+    return string;
+  },
+
+  queryString: function(query) {
+    var pairs = [];
+    for (var key in query) {
+      if (!query.hasOwnProperty(key)) continue;
+      pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(query[key]));
+    }
+    if (pairs.length === 0) return '';
+    return '?' + pairs.join('&');
+  }
+};
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var Class    = __webpack_require__(1),
-    Cookie   = __webpack_require__(37).Cookie,
-    Promise  = __webpack_require__(9),
-    URI      = __webpack_require__(3),
-    array    = __webpack_require__(19),
+var Class    = __webpack_require__(2),
+    Cookie   = __webpack_require__(33).Cookie,
+    Promise  = __webpack_require__(8),
+    URI      = __webpack_require__(4),
+    array    = __webpack_require__(20),
     extend   = __webpack_require__(0),
-    Logging  = __webpack_require__(8),
-    Timeouts = __webpack_require__(98),
-    Channel  = __webpack_require__(39);
+    Logging  = __webpack_require__(9),
+    Timeouts = __webpack_require__(73),
+    Channel  = __webpack_require__(31);
 
 var Transport = extend(Class({ className: 'Transport',
   DEFAULT_PORTS: {'http:': 80, 'https:': 443, 'ws:': 80, 'wss:': 443},
@@ -553,78 +568,67 @@ extend(Transport.prototype, Timeouts);
 
 module.exports = Transport;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(16)))
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
+function _extends() {
+  module.exports = _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
 
-var Promise   = __webpack_require__(9);
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
 
-module.exports = {
-  then: function(callback, errback) {
-    var self = this;
-    if (!this._promise)
-      this._promise = new Promise(function(resolve, reject) {
-        self._resolve = resolve;
-        self._reject  = reject;
-      });
+    return target;
+  };
 
-    if (arguments.length === 0)
-      return this._promise;
-    else
-      return this._promise.then(callback, errback);
-  },
+  return _extends.apply(this, arguments);
+}
 
-  callback: function(callback, context) {
-    return this.then(function(value) { callback.call(context, value) });
-  },
-
-  errback: function(callback, context) {
-    return this.then(null, function(reason) { callback.call(context, reason) });
-  },
-
-  timeout: function(seconds, message) {
-    this.then();
-    var self = this;
-    this._timer = global.setTimeout(function() {
-      self._reject(message);
-    }, seconds * 1000);
-  },
-
-  setDeferredStatus: function(status, value) {
-    if (this._timer) global.clearTimeout(this._timer);
-
-    this.then();
-
-    if (status === 'succeeded')
-      this._resolve(value);
-    else if (status === 'failed')
-      this._reject(value);
-    else
-      delete this._promise;
-  }
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+module.exports = _extends;
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
 
-
-// http://assanka.net/content/tech/2009/09/02/json2-js-vs-prototype/
-
-module.exports = function(object) {
-  return JSON.stringify(object, function(key, value) {
-    return (this[key] instanceof Array) ? this[key] : value;
-  });
-};
+module.exports = isObject;
 
 
 /***/ }),
@@ -634,61 +638,7 @@ module.exports = function(object) {
 "use strict";
 
 
-var toJSON = __webpack_require__(7);
-
-var Logging = {
-  LOG_LEVELS: {
-    fatal:  4,
-    error:  3,
-    warn:   2,
-    info:   1,
-    debug:  0
-  },
-
-  writeLog: function(messageArgs, level) {
-    var logger = Logging.logger || (Logging.wrapper || Logging).logger;
-    if (!logger) return;
-
-    var args   = Array.prototype.slice.apply(messageArgs),
-        banner = '[Faye',
-        klass  = this.className,
-
-        message = args.shift().replace(/\?/g, function() {
-          try {
-            return toJSON(args.shift());
-          } catch (error) {
-            return '[Object]';
-          }
-        });
-
-    if (klass) banner += '.' + klass;
-    banner += '] ';
-
-    if (typeof logger[level] === 'function')
-      logger[level](banner + message);
-    else if (typeof logger === 'function')
-      logger(banner + message);
-  }
-};
-
-for (var key in Logging.LOG_LEVELS)
-  (function(level) {
-    Logging[level] = function() {
-      this.writeLog(arguments, level);
-    };
-  })(key);
-
-module.exports = Logging;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var asap = __webpack_require__(41);
+var asap = __webpack_require__(29);
 
 var PENDING   = 0,
     FULFILLED = 1,
@@ -850,68 +800,276 @@ module.exports = Promise;
 
 
 /***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var toJSON = __webpack_require__(10);
+
+var Logging = {
+  LOG_LEVELS: {
+    fatal:  4,
+    error:  3,
+    warn:   2,
+    info:   1,
+    debug:  0
+  },
+
+  writeLog: function(messageArgs, level) {
+    var logger = Logging.logger || (Logging.wrapper || Logging).logger;
+    if (!logger) return;
+
+    var args   = Array.prototype.slice.apply(messageArgs),
+        banner = '[Faye',
+        klass  = this.className,
+
+        message = args.shift().replace(/\?/g, function() {
+          try {
+            return toJSON(args.shift());
+          } catch (error) {
+            return '[Object]';
+          }
+        });
+
+    if (klass) banner += '.' + klass;
+    banner += '] ';
+
+    if (typeof logger[level] === 'function')
+      logger[level](banner + message);
+    else if (typeof logger === 'function')
+      logger(banner + message);
+  }
+};
+
+for (var key in Logging.LOG_LEVELS)
+  (function(level) {
+    Logging[level] = function() {
+      this.writeLog(arguments, level);
+    };
+  })(key);
+
+module.exports = Logging;
+
+
+/***/ }),
 /* 10 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-}
+"use strict";
 
-module.exports = isObject;
+
+// http://assanka.net/content/tech/2009/09/02/json2-js-vs-prototype/
+
+module.exports = function(object) {
+  return JSON.stringify(object, function(key, value) {
+    return (this[key] instanceof Array) ? this[key] : value;
+  });
+};
 
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function _extends() {
-  module.exports = _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
 
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
+var Promise   = __webpack_require__(8);
 
-    return target;
-  };
+module.exports = {
+  then: function(callback, errback) {
+    var self = this;
+    if (!this._promise)
+      this._promise = new Promise(function(resolve, reject) {
+        self._resolve = resolve;
+        self._reject  = reject;
+      });
 
-  return _extends.apply(this, arguments);
-}
+    if (arguments.length === 0)
+      return this._promise;
+    else
+      return this._promise.then(callback, errback);
+  },
 
-module.exports = _extends;
+  callback: function(callback, context) {
+    return this.then(function(value) { callback.call(context, value) });
+  },
+
+  errback: function(callback, context) {
+    return this.then(null, function(reason) { callback.call(context, reason) });
+  },
+
+  timeout: function(seconds, message) {
+    this.then();
+    var self = this;
+    this._timer = global.setTimeout(function() {
+      self._reject(message);
+    }, seconds * 1000);
+  },
+
+  setDeferredStatus: function(status, value) {
+    if (this._timer) global.clearTimeout(this._timer);
+
+    this.then();
+
+    if (status === 'succeeded')
+      this._resolve(value);
+    else if (status === 'failed')
+      this._reject(value);
+    else
+      delete this._promise;
+  }
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _typeof = __webpack_require__(17);
+
+var errors = __webpack_require__(3);
+
+var validFeedSlugRe = /^[\w]+$/;
+var validUserIdRe = /^[\w-]+$/;
+
+function validateFeedId(feedId) {
+  /*
+   * Validate that the feedId matches the spec user:1
+   */
+  var parts = feedId.split(':');
+
+  if (parts.length !== 2) {
+    throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
+  }
+
+  var feedSlug = parts[0];
+  var userId = parts[1];
+  validateFeedSlug(feedSlug);
+  validateUserId(userId);
+  return feedId;
+}
+
+exports.validateFeedId = validateFeedId;
+
+function validateFeedSlug(feedSlug) {
+  /*
+   * Validate that the feedSlug matches \w
+   */
+  var valid = validFeedSlugRe.test(feedSlug);
+
+  if (!valid) {
+    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _: ' + feedSlug);
+  }
+
+  return feedSlug;
+}
+
+exports.validateFeedSlug = validateFeedSlug;
+
+function validateUserId(userId) {
+  /*
+   * Validate the userId matches \w
+   */
+  var valid = validUserIdRe.test(userId);
+
+  if (!valid) {
+    throw new errors.FeedError('Invalid userId, please use letters, numbers, - or _: ' + userId);
+  }
+
+  return userId;
+}
+
+exports.validateUserId = validateUserId;
+
+function rfc3986(str) {
+  return str.replace(/[!'()*]/g, function (c) {
+    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+
+exports.rfc3986 = rfc3986;
+
+function isReadableStream(obj) {
+  return _typeof(obj) === 'object' && _typeof(obj._read === 'function') && _typeof(obj._readableState === 'object');
+}
+
+exports.isReadableStream = isReadableStream;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(26),
+    getRawTag = __webpack_require__(55),
+    objectToString = __webpack_require__(56);
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  return (symToStringTag && symToStringTag in Object(value))
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return value != null && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports) {
 
 var realFetch = this && this.fetch;
@@ -1460,546 +1618,7 @@ exports.default = __root__.fetch
 
 
 /***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return value != null && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(44),
-    getRawTag = __webpack_require__(117),
-    objectToString = __webpack_require__(116);
-
-/** `Object#toString` result references. */
-var nullTag = '[object Null]',
-    undefinedTag = '[object Undefined]';
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * The base implementation of `getTag` without fallbacks for buggy environments.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the `toStringTag`.
- */
-function baseGetTag(value) {
-  if (value == null) {
-    return value === undefined ? undefinedTag : nullTag;
-  }
-  return (symToStringTag && symToStringTag in Object(value))
-    ? getRawTag(value)
-    : objectToString(value);
-}
-
-module.exports = baseGetTag;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = __webpack_require__(22);
-
-var errors = __webpack_require__(4);
-
-var validFeedSlugRe = /^[\w]+$/;
-var validUserIdRe = /^[\w-]+$/;
-
-function validateFeedId(feedId) {
-  /*
-   * Validate that the feedId matches the spec user:1
-   */
-  var parts = feedId.split(':');
-
-  if (parts.length !== 2) {
-    throw new errors.FeedError('Invalid feedId, expected something like user:1 got ' + feedId);
-  }
-
-  var feedSlug = parts[0];
-  var userId = parts[1];
-  validateFeedSlug(feedSlug);
-  validateUserId(userId);
-  return feedId;
-}
-
-exports.validateFeedId = validateFeedId;
-
-function validateFeedSlug(feedSlug) {
-  /*
-   * Validate that the feedSlug matches \w
-   */
-  var valid = validFeedSlugRe.test(feedSlug);
-
-  if (!valid) {
-    throw new errors.FeedError('Invalid feedSlug, please use letters, numbers or _: ' + feedSlug);
-  }
-
-  return feedSlug;
-}
-
-exports.validateFeedSlug = validateFeedSlug;
-
-function validateUserId(userId) {
-  /*
-   * Validate the userId matches \w
-   */
-  var valid = validUserIdRe.test(userId);
-
-  if (!valid) {
-    throw new errors.FeedError('Invalid userId, please use letters, numbers, - or _: ' + userId);
-  }
-
-  return userId;
-}
-
-exports.validateUserId = validateUserId;
-
-function rfc3986(str) {
-  return str.replace(/[!'()*]/g, function (c) {
-    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
-  });
-}
-
-exports.rfc3986 = rfc3986;
-
-function isReadableStream(obj) {
-  return _typeof(obj) === 'object' && _typeof(obj._read === 'function') && _typeof(obj._readableState === 'object');
-}
-
-exports.isReadableStream = isReadableStream;
-
-/***/ }),
 /* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var copyObject = function(object) {
-  var clone, i, key;
-  if (object instanceof Array) {
-    clone = [];
-    i = object.length;
-    while (i--) clone[i] = copyObject(object[i]);
-    return clone;
-  } else if (typeof object === 'object') {
-    clone = (object === null) ? null : {};
-    for (key in object) clone[key] = copyObject(object[key]);
-    return clone;
-  } else {
-    return object;
-  }
-};
-
-module.exports = copyObject;
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var extend       = __webpack_require__(0),
-    EventEmitter = __webpack_require__(101);
-
-var Publisher = {
-  countListeners: function(eventType) {
-    return this.listeners(eventType).length;
-  },
-
-  bind: function(eventType, listener, context) {
-    var slice   = Array.prototype.slice,
-        handler = function() { listener.apply(context, slice.call(arguments)) };
-
-    this._listeners = this._listeners || [];
-    this._listeners.push([eventType, listener, context, handler]);
-    return this.on(eventType, handler);
-  },
-
-  unbind: function(eventType, listener, context) {
-    this._listeners = this._listeners || [];
-    var n = this._listeners.length, tuple;
-
-    while (n--) {
-      tuple = this._listeners[n];
-      if (tuple[0] !== eventType) continue;
-      if (listener && (tuple[1] !== listener || tuple[2] !== context)) continue;
-      this._listeners.splice(n, 1);
-      this.removeListener(eventType, tuple[3]);
-    }
-  }
-};
-
-extend(Publisher, EventEmitter.prototype);
-Publisher.trigger = Publisher.emit;
-
-module.exports = Publisher;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var Event = {
-  _registry: [],
-
-  on: function(element, eventName, callback, context) {
-    var wrapped = function() { callback.call(context) };
-
-    if (element.addEventListener)
-      element.addEventListener(eventName, wrapped, false);
-    else
-      element.attachEvent('on' + eventName, wrapped);
-
-    this._registry.push({
-      _element:   element,
-      _type:      eventName,
-      _callback:  callback,
-      _context:     context,
-      _handler:   wrapped
-    });
-  },
-
-  detach: function(element, eventName, callback, context) {
-    var i = this._registry.length, register;
-    while (i--) {
-      register = this._registry[i];
-
-      if ((element    && element    !== register._element)  ||
-          (eventName  && eventName  !== register._type)     ||
-          (callback   && callback   !== register._callback) ||
-          (context    && context    !== register._context))
-        continue;
-
-      if (register._element.removeEventListener)
-        register._element.removeEventListener(register._type, register._handler, false);
-      else
-        register._element.detachEvent('on' + register._type, register._handler);
-
-      this._registry.splice(i,1);
-      register = null;
-    }
-  }
-};
-
-if (global.onunload !== undefined)
-  Event.on(global, 'unload', Event.detach, Event);
-
-module.exports = {
-  Event: Event
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-  commonElement: function(lista, listb) {
-    for (var i = 0, n = lista.length; i < n; i++) {
-      if (this.indexOf(listb, lista[i]) !== -1)
-        return lista[i];
-    }
-    return null;
-  },
-
-  indexOf: function(list, needle) {
-    if (list.indexOf) return list.indexOf(needle);
-
-    for (var i = 0, n = list.length; i < n; i++) {
-      if (list[i] === needle) return i;
-    }
-    return -1;
-  },
-
-  map: function(object, callback, context) {
-    if (object.map) return object.map(callback, context);
-    var result = [];
-
-    if (object instanceof Array) {
-      for (var i = 0, n = object.length; i < n; i++) {
-        result.push(callback.call(context || null, object[i], i));
-      }
-    } else {
-      for (var key in object) {
-        if (!object.hasOwnProperty(key)) continue;
-        result.push(callback.call(context || null, key, object[key]));
-      }
-    }
-    return result;
-  },
-
-  filter: function(array, callback, context) {
-    if (array.filter) return array.filter(callback, context);
-    var result = [];
-    for (var i = 0, n = array.length; i < n; i++) {
-      if (callback.call(context || null, array[i], i))
-        result.push(array[i]);
-    }
-    return result;
-  },
-
-  asyncEach: function(list, iterator, callback, context) {
-    var n       = list.length,
-        i       = -1,
-        calls   = 0,
-        looping = false;
-
-    var iterate = function() {
-      calls -= 1;
-      i += 1;
-      if (i === n) return callback && callback.call(context);
-      iterator(list[i], resume);
-    };
-
-    var loop = function() {
-      if (looping) return;
-      looping = true;
-      while (calls > 0) iterate();
-      looping = false;
-    };
-
-    var resume = function() {
-      calls += 1;
-      loop();
-    };
-    resume();
-  }
-};
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _extends = __webpack_require__(11);
-
-var _objectSpread = __webpack_require__(113);
-
-var _typeof = __webpack_require__(22);
-
-var jwt = __webpack_require__(111);
-
-var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-
-var Base64 = __webpack_require__(110);
-
-function decodeBase64Url(base64UrlString) {
-  try {
-    return Base64.atob(toBase64(base64UrlString));
-  } catch (e) {
-    /* istanbul ignore else */
-    if (e.name === 'InvalidCharacterError') {
-      return undefined;
-    } else {
-      throw e;
-    }
-  }
-}
-
-function safeJsonParse(thing) {
-  if (_typeof(thing) === 'object') return thing;
-
-  try {
-    return JSON.parse(thing);
-  } catch (e) {
-    return undefined;
-  }
-}
-
-function padString(string) {
-  var segmentLength = 4;
-  var diff = string.length % segmentLength;
-  if (!diff) return string;
-  var padLength = segmentLength - diff;
-
-  while (padLength--) {
-    string += '=';
-  }
-
-  return string;
-}
-
-function toBase64(base64UrlString) {
-  var b64str = padString(base64UrlString).replace(/\-/g, '+') // eslint-disable-line no-useless-escape
-  .replace(/_/g, '/');
-  return b64str;
-}
-
-function headerFromJWS(jwsSig) {
-  var encodedHeader = jwsSig.split('.', 1)[0];
-  return safeJsonParse(decodeBase64Url(encodedHeader));
-}
-
-exports.headerFromJWS = headerFromJWS;
-
-exports.JWTScopeToken = function (apiSecret, resource, action, opts) {
-  /**
-   * Creates the JWT token for feedId, resource and action using the apiSecret
-   * @method JWTScopeToken
-   * @memberof signing
-   * @private
-   * @param {string} apiSecret - API Secret key
-   * @param {string} resource - JWT payload resource
-   * @param {string} action - JWT payload action
-   * @param {object} [options] - Optional additional options
-   * @param {string} [options.feedId] - JWT payload feed identifier
-   * @param {string} [options.userId] - JWT payload user identifier
-   * @return {string} JWT Token
-   */
-  var options = opts || {},
-      noTimestamp = options.expireTokens ? !options.expireTokens : true;
-  var payload = {
-    resource: resource,
-    action: action
-  };
-
-  if (options.feedId) {
-    payload['feed_id'] = options.feedId;
-  }
-
-  if (options.userId) {
-    payload['user_id'] = options.userId;
-  }
-
-  var token = jwt.sign(payload, apiSecret, {
-    algorithm: 'HS256',
-    noTimestamp: noTimestamp
-  });
-  return token;
-};
-
-exports.JWTUserSessionToken = function (apiSecret, userId) {
-  var extraData = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  var jwtOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-  /**
-   * Creates the JWT token that can be used for a UserSession
-   * @method JWTUserSessionToken
-   * @memberof signing
-   * @private
-   * @param {string} apiSecret - API Secret key
-   * @param {string} userId - The user_id key in the JWT payload
-   * @param {string} [extraData] - Extra that should be part of the JWT token
-   * @param {object} [jwtOptions] - Options that can be past to jwt.sign
-   * @return {string} JWT Token
-   */
-  if (typeof userId !== 'string') {
-    throw new TypeError('userId should be a string');
-  }
-
-  var payload = _objectSpread({
-    user_id: userId
-  }, extraData);
-
-  var opts = _extends({
-    algorithm: 'HS256',
-    noTimestamp: true
-  }, jwtOptions);
-
-  var token = jwt.sign(payload, apiSecret, opts);
-  return token;
-};
-
-exports.isJWTSignature = exports.isJWT = function (signature) {
-  /**
-   * check if token is a valid JWT token
-   * @method isJWTSignature
-   * @memberof signing
-   * @private
-   * @param {string} signature - Signature to check
-   * @return {boolean}
-   */
-  if (signature == null || signature.length == 0) {
-    return false;
-  }
-
-  var token = signature.split(' ')[1] || signature;
-  return JWS_REGEX.test(token) && !!headerFromJWS(token);
-};
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(43);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-
-/***/ }),
-/* 23 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2189,924 +1808,434 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 24 */
+/* 17 */
 /***/ (function(module, exports) {
 
-module.exports = function(module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
+function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return _typeof2(obj);
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(27);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _extends = __webpack_require__(6);
+
+var _defineProperty = __webpack_require__(59);
+
+var _typeof = __webpack_require__(17);
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { if (i % 2) { var source = arguments[i] != null ? arguments[i] : {}; ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(arguments[i])); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(arguments[i], key)); }); } } return target; }
+
+var jwt = __webpack_require__(60);
+
+var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
+
+var Base64 = __webpack_require__(61);
+
+function decodeBase64Url(base64UrlString) {
+  try {
+    return Base64.atob(toBase64(base64UrlString));
+  } catch (e) {
+    /* istanbul ignore else */
+    if (e.name === 'InvalidCharacterError') {
+      return undefined;
+    } else {
+      throw e;
+    }
+  }
+}
+
+function safeJsonParse(thing) {
+  if (_typeof(thing) === 'object') return thing;
+
+  try {
+    return JSON.parse(thing);
+  } catch (e) {
+    return undefined;
+  }
+}
+
+function padString(string) {
+  var segmentLength = 4;
+  var diff = string.length % segmentLength;
+  if (!diff) return string;
+  var padLength = segmentLength - diff;
+
+  while (padLength--) {
+    string += '=';
+  }
+
+  return string;
+}
+
+function toBase64(base64UrlString) {
+  var b64str = padString(base64UrlString).replace(/\-/g, '+') // eslint-disable-line no-useless-escape
+  .replace(/_/g, '/');
+  return b64str;
+}
+
+function headerFromJWS(jwsSig) {
+  var encodedHeader = jwsSig.split('.', 1)[0];
+  return safeJsonParse(decodeBase64Url(encodedHeader));
+}
+
+exports.headerFromJWS = headerFromJWS;
+
+exports.JWTScopeToken = function (apiSecret, resource, action, opts) {
+  /**
+   * Creates the JWT token for feedId, resource and action using the apiSecret
+   * @method JWTScopeToken
+   * @memberof signing
+   * @private
+   * @param {string} apiSecret - API Secret key
+   * @param {string} resource - JWT payload resource
+   * @param {string} action - JWT payload action
+   * @param {object} [options] - Optional additional options
+   * @param {string} [options.feedId] - JWT payload feed identifier
+   * @param {string} [options.userId] - JWT payload user identifier
+   * @return {string} JWT Token
+   */
+  var options = opts || {},
+      noTimestamp = options.expireTokens ? !options.expireTokens : true;
+  var payload = {
+    resource: resource,
+    action: action
+  };
+
+  if (options.feedId) {
+    payload['feed_id'] = options.feedId;
+  }
+
+  if (options.userId) {
+    payload['user_id'] = options.userId;
+  }
+
+  var token = jwt.sign(payload, apiSecret, {
+    algorithm: 'HS256',
+    noTimestamp: noTimestamp
+  });
+  return token;
 };
 
+exports.JWTUserSessionToken = function (apiSecret, userId) {
+  var extraData = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var jwtOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
+  /**
+   * Creates the JWT token that can be used for a UserSession
+   * @method JWTUserSessionToken
+   * @memberof signing
+   * @private
+   * @param {string} apiSecret - API Secret key
+   * @param {string} userId - The user_id key in the JWT payload
+   * @param {string} [extraData] - Extra that should be part of the JWT token
+   * @param {object} [jwtOptions] - Options that can be past to jwt.sign
+   * @return {string} JWT Token
+   */
+  if (typeof userId !== 'string') {
+    throw new TypeError('userId should be a string');
+  }
 
-/** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = 9007199254740991;
+  var payload = _objectSpread({
+    user_id: userId
+  }, extraData);
 
-/** Used to detect unsigned integer values. */
-var reIsUint = /^(?:0|[1-9]\d*)$/;
+  var opts = _extends({
+    algorithm: 'HS256',
+    noTimestamp: true
+  }, jwtOptions);
 
-/**
- * Checks if `value` is a valid array-like index.
- *
- * @private
- * @param {*} value The value to check.
- * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
- * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
- */
-function isIndex(value, length) {
-  var type = typeof value;
-  length = length == null ? MAX_SAFE_INTEGER : length;
+  var token = jwt.sign(payload, apiSecret, opts);
+  return token;
+};
 
-  return !!length &&
-    (type == 'number' ||
-      (type != 'symbol' && reIsUint.test(value))) &&
-        (value > -1 && value % 1 == 0 && value < length);
-}
-
-module.exports = isIndex;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-/** Used as references for various `Number` constants. */
-var MAX_SAFE_INTEGER = 9007199254740991;
-
-/**
- * Checks if `value` is a valid array-like length.
- *
- * **Note:** This method is loosely based on
- * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
- * @example
- *
- * _.isLength(3);
- * // => true
- *
- * _.isLength(Number.MIN_VALUE);
- * // => false
- *
- * _.isLength(Infinity);
- * // => false
- *
- * _.isLength('3');
- * // => false
- */
-function isLength(value) {
-  return typeof value == 'number' &&
-    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-}
-
-module.exports = isLength;
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isFunction = __webpack_require__(30),
-    isLength = __webpack_require__(26);
-
-/**
- * Checks if `value` is array-like. A value is considered array-like if it's
- * not a function and has a `value.length` that's an integer greater than or
- * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
- * @example
- *
- * _.isArrayLike([1, 2, 3]);
- * // => true
- *
- * _.isArrayLike(document.body.children);
- * // => true
- *
- * _.isArrayLike('abc');
- * // => true
- *
- * _.isArrayLike(_.noop);
- * // => false
- */
-function isArrayLike(value) {
-  return value != null && isLength(value.length) && !isFunction(value);
-}
-
-module.exports = isArrayLike;
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports) {
-
-/**
- * This method returns the first argument it receives.
- *
- * @static
- * @since 0.1.0
- * @memberOf _
- * @category Util
- * @param {*} value Any value.
- * @returns {*} Returns `value`.
- * @example
- *
- * var object = { 'a': 1 };
- *
- * console.log(_.identity(object) === object);
- * // => true
- */
-function identity(value) {
-  return value;
-}
-
-module.exports = identity;
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-/**
- * Performs a
- * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * comparison between two values to determine if they are equivalent.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to compare.
- * @param {*} other The other value to compare.
- * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
- * @example
- *
- * var object = { 'a': 1 };
- * var other = { 'a': 1 };
- *
- * _.eq(object, object);
- * // => true
- *
- * _.eq(object, other);
- * // => false
- *
- * _.eq('a', 'a');
- * // => true
- *
- * _.eq('a', Object('a'));
- * // => false
- *
- * _.eq(NaN, NaN);
- * // => true
- */
-function eq(value, other) {
-  return value === other || (value !== value && other !== other);
-}
-
-module.exports = eq;
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(14),
-    isObject = __webpack_require__(10);
-
-/** `Object#toString` result references. */
-var asyncTag = '[object AsyncFunction]',
-    funcTag = '[object Function]',
-    genTag = '[object GeneratorFunction]',
-    proxyTag = '[object Proxy]';
-
-/**
- * Checks if `value` is classified as a `Function` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a function, else `false`.
- * @example
- *
- * _.isFunction(_);
- * // => true
- *
- * _.isFunction(/abc/);
- * // => false
- */
-function isFunction(value) {
-  if (!isObject(value)) {
+exports.isJWTSignature = exports.isJWT = function (signature) {
+  /**
+   * check if token is a valid JWT token
+   * @method isJWTSignature
+   * @memberof signing
+   * @private
+   * @param {string} signature - Signature to check
+   * @return {boolean}
+   */
+  if (signature == null || signature.length == 0) {
     return false;
   }
-  // The use of `Object#toString` avoids issues with the `typeof` operator
-  // in Safari 9 which returns 'object' for typed arrays and other constructors.
-  var tag = baseGetTag(value);
-  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
-}
 
-module.exports = isFunction;
-
+  var token = signature.split(' ')[1] || signature;
+  return JWS_REGEX.test(token) && !!headerFromJWS(token);
+};
 
 /***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var getNative = __webpack_require__(78);
-
-var defineProperty = (function() {
-  try {
-    var func = getNative(Object, 'defineProperty');
-    func({}, '', {});
-    return func;
-  } catch (e) {}
-}());
-
-module.exports = defineProperty;
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var defineProperty = __webpack_require__(31);
-
-/**
- * The base implementation of `assignValue` and `assignMergeValue` without
- * value checks.
- *
- * @private
- * @param {Object} object The object to modify.
- * @param {string} key The key of the property to assign.
- * @param {*} value The value to assign.
- */
-function baseAssignValue(object, key, value) {
-  if (key == '__proto__' && defineProperty) {
-    defineProperty(object, key, {
-      'configurable': true,
-      'enumerable': true,
-      'value': value,
-      'writable': true
-    });
-  } else {
-    object[key] = value;
-  }
-}
-
-module.exports = baseAssignValue;
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-/* eslint-env browser */
-module.exports = typeof self == 'object' ? self.FormData : window.FormData;
-
-
-/***/ }),
-/* 34 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var extend = __webpack_require__(0);
+module.exports = {
+  commonElement: function(lista, listb) {
+    for (var i = 0, n = lista.length; i < n; i++) {
+      if (this.indexOf(listb, lista[i]) !== -1)
+        return lista[i];
+    }
+    return null;
+  },
 
-var Scheduler = function(message, options) {
-  this.message  = message;
-  this.options  = options;
-  this.attempts = 0;
+  indexOf: function(list, needle) {
+    if (list.indexOf) return list.indexOf(needle);
+
+    for (var i = 0, n = list.length; i < n; i++) {
+      if (list[i] === needle) return i;
+    }
+    return -1;
+  },
+
+  map: function(object, callback, context) {
+    if (object.map) return object.map(callback, context);
+    var result = [];
+
+    if (object instanceof Array) {
+      for (var i = 0, n = object.length; i < n; i++) {
+        result.push(callback.call(context || null, object[i], i));
+      }
+    } else {
+      for (var key in object) {
+        if (!object.hasOwnProperty(key)) continue;
+        result.push(callback.call(context || null, key, object[key]));
+      }
+    }
+    return result;
+  },
+
+  filter: function(array, callback, context) {
+    if (array.filter) return array.filter(callback, context);
+    var result = [];
+    for (var i = 0, n = array.length; i < n; i++) {
+      if (callback.call(context || null, array[i], i))
+        result.push(array[i]);
+    }
+    return result;
+  },
+
+  asyncEach: function(list, iterator, callback, context) {
+    var n       = list.length,
+        i       = -1,
+        calls   = 0,
+        looping = false;
+
+    var iterate = function() {
+      calls -= 1;
+      i += 1;
+      if (i === n) return callback && callback.call(context);
+      iterator(list[i], resume);
+    };
+
+    var loop = function() {
+      if (looping) return;
+      looping = true;
+      while (calls > 0) iterate();
+      looping = false;
+    };
+
+    var resume = function() {
+      calls += 1;
+      loop();
+    };
+    resume();
+  }
 };
-
-extend(Scheduler.prototype, {
-  getTimeout: function() {
-    return this.options.timeout;
-  },
-
-  getInterval: function() {
-    return this.options.interval;
-  },
-
-  isDeliverable: function() {
-    var attempts = this.options.attempts,
-        made     = this.attempts,
-        deadline = this.options.deadline,
-        now      = new Date().getTime();
-
-    if (attempts !== undefined && made >= attempts)
-      return false;
-
-    if (deadline !== undefined && now > deadline)
-      return false;
-
-    return true;
-  },
-
-  send: function() {
-    this.attempts += 1;
-  },
-
-  succeed: function() {},
-
-  fail: function() {},
-
-  abort: function() {}
-});
-
-module.exports = Scheduler;
 
 
 /***/ }),
-/* 35 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var Class     = __webpack_require__(1),
-    URI       = __webpack_require__(3),
-    browser   = __webpack_require__(18),
-    extend    = __webpack_require__(0),
-    toJSON    = __webpack_require__(7),
-    Transport = __webpack_require__(5);
+var Event = {
+  _registry: [],
 
-var XHR = extend(Class(Transport, {
-  encode: function(messages) {
-    return toJSON(messages);
+  on: function(element, eventName, callback, context) {
+    var wrapped = function() { callback.call(context) };
+
+    if (element.addEventListener)
+      element.addEventListener(eventName, wrapped, false);
+    else
+      element.attachEvent('on' + eventName, wrapped);
+
+    this._registry.push({
+      _element:   element,
+      _type:      eventName,
+      _callback:  callback,
+      _context:     context,
+      _handler:   wrapped
+    });
   },
 
-  request: function(messages) {
-    var href = this.endpoint.href,
-        self = this,
-        xhr;
+  detach: function(element, eventName, callback, context) {
+    var i = this._registry.length, register;
+    while (i--) {
+      register = this._registry[i];
 
-    // Prefer XMLHttpRequest over ActiveXObject if they both exist
-    if (global.XMLHttpRequest) {
-      xhr = new XMLHttpRequest();
-    } else if (global.ActiveXObject) {
-      xhr = new ActiveXObject('Microsoft.XMLHTTP');
-    } else {
-      return this._handleError(messages);
-    }
+      if ((element    && element    !== register._element)  ||
+          (eventName  && eventName  !== register._type)     ||
+          (callback   && callback   !== register._callback) ||
+          (context    && context    !== register._context))
+        continue;
 
-    xhr.open('POST', href, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Pragma', 'no-cache');
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-    var headers = this._dispatcher.headers;
-    for (var key in headers) {
-      if (!headers.hasOwnProperty(key)) continue;
-      xhr.setRequestHeader(key, headers[key]);
-    }
-
-    var abort = function() { xhr.abort() };
-    if (global.onbeforeunload !== undefined)
-      browser.Event.on(global, 'beforeunload', abort);
-
-    xhr.onreadystatechange = function() {
-      if (!xhr || xhr.readyState !== 4) return;
-
-      var replies    = null,
-          status     = xhr.status,
-          text       = xhr.responseText,
-          successful = (status >= 200 && status < 300) || status === 304 || status === 1223;
-
-      if (global.onbeforeunload !== undefined)
-        browser.Event.detach(global, 'beforeunload', abort);
-
-      xhr.onreadystatechange = function() {};
-      xhr = null;
-
-      if (!successful) return self._handleError(messages);
-
-      try {
-        replies = JSON.parse(text);
-      } catch (error) {}
-
-      if (replies)
-        self._receive(replies);
+      if (register._element.removeEventListener)
+        register._element.removeEventListener(register._type, register._handler, false);
       else
-        self._handleError(messages);
-    };
+        register._element.detachEvent('on' + register._type, register._handler);
 
-    xhr.send(this.encode(messages));
-    return xhr;
-  }
-}), {
-  isUsable: function(dispatcher, endpoint, callback, context) {
-    var usable = (navigator.product === 'ReactNative')
-              || URI.isSameOrigin(endpoint);
-
-    callback.call(context, usable);
-  }
-});
-
-module.exports = XHR;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Class = __webpack_require__(1);
-
-module.exports = Class({
-  initialize: function() {
-    this._index = {};
-  },
-
-  add: function(item) {
-    var key = (item.id !== undefined) ? item.id : item;
-    if (this._index.hasOwnProperty(key)) return false;
-    this._index[key] = item;
-    return true;
-  },
-
-  forEach: function(block, context) {
-    for (var key in this._index) {
-      if (this._index.hasOwnProperty(key))
-        block.call(context, this._index[key]);
+      this._registry.splice(i,1);
+      register = null;
     }
-  },
-
-  isEmpty: function() {
-    for (var key in this._index) {
-      if (this._index.hasOwnProperty(key)) return false;
-    }
-    return true;
-  },
-
-  member: function(item) {
-    for (var key in this._index) {
-      if (this._index[key] === item) return true;
-    }
-    return false;
-  },
-
-  remove: function(item) {
-    var key = (item.id !== undefined) ? item.id : item;
-    var removed = this._index[key];
-    delete this._index[key];
-    return removed;
-  },
-
-  toArray: function() {
-    var array = [];
-    this.forEach(function(item) { array.push(item) });
-    return array;
   }
-});
+};
 
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {};
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
+if (global.onunload !== undefined)
+  Event.on(global, 'unload', Event.detach, Event);
 
 module.exports = {
-  CHANNEL_NAME:     /^\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*$/,
-  CHANNEL_PATTERN:  /^(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*\/\*{1,2}$/,
-  ERROR:            /^([0-9][0-9][0-9]:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*(,(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)*:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*|[0-9][0-9][0-9]::(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)$/,
-  VERSION:          /^([0-9])+(\.(([a-z]|[A-Z])|[0-9])(((([a-z]|[A-Z])|[0-9])|\-|\_))*)*$/
+  Event: Event
 };
 
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 39 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Class     = __webpack_require__(1),
-    extend    = __webpack_require__(0),
-    Publisher = __webpack_require__(17),
-    Grammar   = __webpack_require__(38);
+var extend       = __webpack_require__(0),
+    EventEmitter = __webpack_require__(70);
 
-var Channel = Class({
-  initialize: function(name) {
-    this.id = this.name = name;
+var Publisher = {
+  countListeners: function(eventType) {
+    return this.listeners(eventType).length;
   },
 
-  push: function(message) {
-    this.trigger('message', message);
+  bind: function(eventType, listener, context) {
+    var slice   = Array.prototype.slice,
+        handler = function() { listener.apply(context, slice.call(arguments)) };
+
+    this._listeners = this._listeners || [];
+    this._listeners.push([eventType, listener, context, handler]);
+    return this.on(eventType, handler);
   },
 
-  isUnused: function() {
-    return this.countListeners('message') === 0;
+  unbind: function(eventType, listener, context) {
+    this._listeners = this._listeners || [];
+    var n = this._listeners.length, tuple;
+
+    while (n--) {
+      tuple = this._listeners[n];
+      if (tuple[0] !== eventType) continue;
+      if (listener && (tuple[1] !== listener || tuple[2] !== context)) continue;
+      this._listeners.splice(n, 1);
+      this.removeListener(eventType, tuple[3]);
+    }
   }
-});
-
-extend(Channel.prototype, Publisher);
-
-extend(Channel, {
-  HANDSHAKE:    '/meta/handshake',
-  CONNECT:      '/meta/connect',
-  SUBSCRIBE:    '/meta/subscribe',
-  UNSUBSCRIBE:  '/meta/unsubscribe',
-  DISCONNECT:   '/meta/disconnect',
-
-  META:         'meta',
-  SERVICE:      'service',
-
-  expand: function(name) {
-    var segments = this.parse(name),
-        channels = ['/**', name];
-
-    var copy = segments.slice();
-    copy[copy.length - 1] = '*';
-    channels.push(this.unparse(copy));
-
-    for (var i = 1, n = segments.length; i < n; i++) {
-      copy = segments.slice(0, i);
-      copy.push('**');
-      channels.push(this.unparse(copy));
-    }
-
-    return channels;
-  },
-
-  isValid: function(name) {
-    return Grammar.CHANNEL_NAME.test(name) ||
-           Grammar.CHANNEL_PATTERN.test(name);
-  },
-
-  parse: function(name) {
-    if (!this.isValid(name)) return null;
-    return name.split('/').slice(1);
-  },
-
-  unparse: function(segments) {
-    return '/' + segments.join('/');
-  },
-
-  isMeta: function(name) {
-    var segments = this.parse(name);
-    return segments ? (segments[0] === this.META) : null;
-  },
-
-  isService: function(name) {
-    var segments = this.parse(name);
-    return segments ? (segments[0] === this.SERVICE) : null;
-  },
-
-  isSubscribable: function(name) {
-    if (!this.isValid(name)) return null;
-    return !this.isMeta(name) && !this.isService(name);
-  },
-
-  Set: Class({
-    initialize: function() {
-      this._channels = {};
-    },
-
-    getKeys: function() {
-      var keys = [];
-      for (var key in this._channels) keys.push(key);
-      return keys;
-    },
-
-    remove: function(name) {
-      delete this._channels[name];
-    },
-
-    hasSubscription: function(name) {
-      return this._channels.hasOwnProperty(name);
-    },
-
-    subscribe: function(names, subscription) {
-      var name;
-      for (var i = 0, n = names.length; i < n; i++) {
-        name = names[i];
-        var channel = this._channels[name] = this._channels[name] || new Channel(name);
-        channel.bind('message', subscription);
-      }
-    },
-
-    unsubscribe: function(name, subscription) {
-      var channel = this._channels[name];
-      if (!channel) return false;
-      channel.unbind('message', subscription);
-
-      if (channel.isUnused()) {
-        this.remove(name);
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    distributeMessage: function(message) {
-      var channels = Channel.expand(message.channel);
-
-      for (var i = 0, n = channels.length; i < n; i++) {
-        var channel = this._channels[channels[i]];
-        if (channel) channel.trigger('message', message);
-      }
-    }
-  })
-});
-
-module.exports = Channel;
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  VERSION:          '1.2.4',
-
-  BAYEUX_VERSION:   '1.0',
-  ID_LENGTH:        160,
-  JSONP_CALLBACK:   'jsonpcallback',
-  CONNECTION_TYPES: ['long-polling', 'cross-origin-long-polling', 'callback-polling', 'websocket', 'eventsource', 'in-process'],
-
-  MANDATORY_CONNECTION_TYPES: ['long-polling', 'callback-polling', 'in-process']
 };
 
+extend(Publisher, EventEmitter.prototype);
+Publisher.trigger = Publisher.emit;
+
+module.exports = Publisher;
+
 
 /***/ }),
-/* 41 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-// rawAsap provides everything we need except exception management.
-var rawAsap = __webpack_require__(107);
-// RawTasks are recycled to reduce GC churn.
-var freeTasks = [];
-// We queue errors to ensure they are thrown in right order (FIFO).
-// Array-as-queue is good enough here, since we are just dealing with exceptions.
-var pendingErrors = [];
-var requestErrorThrow = rawAsap.makeRequestCallFromTimer(throwFirstError);
-
-function throwFirstError() {
-    if (pendingErrors.length) {
-        throw pendingErrors.shift();
-    }
-}
-
-/**
- * Calls a task as soon as possible after returning, in its own event, with priority
- * over other events like animation, reflow, and repaint. An error thrown from an
- * event will not interrupt, nor even substantially slow down the processing of
- * other events, but will be rather postponed to a lower priority event.
- * @param {{call}} task A callable object, typically a function that takes no
- * arguments.
- */
-module.exports = asap;
-function asap(task) {
-    var rawTask;
-    if (freeTasks.length) {
-        rawTask = freeTasks.pop();
-    } else {
-        rawTask = new RawTask();
-    }
-    rawTask.task = task;
-    rawAsap(rawTask);
-}
-
-// We wrap tasks with recyclable task objects.  A task object implements
-// `call`, just like a function.
-function RawTask() {
-    this.task = null;
-}
-
-// The sole purpose of wrapping the task is to catch the exception and recycle
-// the task object after its single use.
-RawTask.prototype.call = function () {
-    try {
-        this.task.call();
-    } catch (error) {
-        if (asap.onerror) {
-            // This hook exists purely for testing purposes.
-            // Its name will be periodically randomized to break any code that
-            // depends on its existence.
-            asap.onerror(error);
-        } else {
-            // In a web browser, exceptions are not fatal. However, to avoid
-            // slowing down the queue of pending tasks, we rethrow the error in a
-            // lower priority turn.
-            pendingErrors.push(error);
-            requestErrorThrow();
-        }
-    } finally {
-        this.task = null;
-        freeTasks[freeTasks.length] = this;
-    }
-};
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _extends = __webpack_require__(11);
-
-var StreamUser = function StreamUser() {
-  this.initialize.apply(this, arguments);
-};
-
-StreamUser.prototype = {
-  initialize: function initialize(client, userId, userAuthToken) {
-    /**
-     * Initialize a user session object
-     * @method intialize
-     * @memberof StreamUser.prototype
-     * @param {StreamClient} client Stream client this collection is constructed from
-     * @param {string} userId The ID of the user
-     * @param {string} token JWT token
-     * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
-     */
-    this.client = client;
-    this.id = userId;
-    this.data = undefined;
-    this.full = undefined;
-    this.token = userAuthToken;
-    this.url = 'user/' + this.id + '/';
-  },
-  _streamRef: function _streamRef() {
-    return "SU:".concat(this.id);
-  },
-  ref: function ref() {
-    return this._streamRef();
-  },
-  delete: function _delete(callback) {
-    return this.client.delete({
-      url: this.url,
-      signature: this.token
-    }).then(function (response) {
-      if (callback) {
-        callback(response);
-      }
-
-      return response;
-    });
-  },
-  get: function get(options, callback) {
-    var _this = this;
-
-    return this.client.get({
-      url: this.url,
-      signature: this.token,
-      qs: options
-    }).then(function (response) {
-      _this.full = _extends({}, response);
-      delete _this.full.duration;
-      _this.data = _this.full.data;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return _this;
-    });
-  },
-  _chooseData: function _chooseData(data) {
-    if (data !== undefined) {
-      return data;
-    }
-
-    if (this.data !== undefined) {
-      return this.data;
-    }
-
-    return {};
-  },
-  create: function create(data, options, callback) {
-    var _this2 = this;
-
-    return this.client.post({
-      url: 'user/',
-      body: {
-        id: this.id,
-        data: this._chooseData(data)
-      },
-      qs: options,
-      signature: this.token
-    }).then(function (response) {
-      _this2.full = _extends({}, response);
-      delete _this2.full.duration;
-      _this2.data = _this2.full.data;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return _this2;
-    });
-  },
-  update: function update(data, callback) {
-    var _this3 = this;
-
-    return this.client.put({
-      url: this.url,
-      body: {
-        data: this._chooseData(data)
-      },
-      signature: this.token
-    }).then(function (response) {
-      _this3.full = _extends({}, response);
-      delete _this3.full.duration;
-      _this3.data = _this3.full.data;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return _this3;
-    });
-  },
-  getOrCreate: function getOrCreate(data, callback) {
-    return this.create(data, {
-      get_or_create: true
-    }, callback);
-  },
-  profile: function profile(callback) {
-    return this.get({
-      with_follow_counts: true
-    }, callback);
+var copyObject = function(object) {
+  var clone, i, key;
+  if (object instanceof Array) {
+    clone = [];
+    i = object.length;
+    while (i--) clone[i] = copyObject(object[i]);
+    return clone;
+  } else if (typeof object === 'object') {
+    clone = (object === null) ? null : {};
+    for (key in object) clone[key] = copyObject(object[key]);
+    return clone;
+  } else {
+    return object;
   }
 };
-module.exports = StreamUser;
+
+module.exports = copyObject;
+
 
 /***/ }),
-/* 43 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
-var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+var objectWithoutPropertiesLoose = __webpack_require__(51);
 
-module.exports = freeGlobal;
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+module.exports = _objectWithoutProperties;
 
 /***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var root = __webpack_require__(21);
-
-/** Built-in value references. */
-var Symbol = root.Symbol;
-
-module.exports = Symbol;
-
-
-/***/ }),
-/* 45 */
+/* 25 */
 /***/ (function(module, exports) {
 
 // Browser Request
@@ -3661,2369 +2790,538 @@ module.exports = request;
 
 
 /***/ }),
-/* 46 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var objectWithoutPropertiesLoose = __webpack_require__(121);
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-module.exports = _objectWithoutProperties;
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports) {
-
-/**
- * This function is like
- * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
- * except that it includes inherited enumerable properties.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-function nativeKeysIn(object) {
-  var result = [];
-  if (object != null) {
-    for (var key in Object(object)) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-
-module.exports = nativeKeysIn;
-
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports) {
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Checks if `value` is likely a prototype object.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
- */
-function isPrototype(value) {
-  var Ctor = value && value.constructor,
-      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
-
-  return value === proto;
-}
-
-module.exports = isPrototype;
-
-
-/***/ }),
-/* 51 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(10),
-    isPrototype = __webpack_require__(50),
-    nativeKeysIn = __webpack_require__(49);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
- *
- * @private
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- */
-function baseKeysIn(object) {
-  if (!isObject(object)) {
-    return nativeKeysIn(object);
-  }
-  var isProto = isPrototype(object),
-      result = [];
-
-  for (var key in object) {
-    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-
-module.exports = baseKeysIn;
-
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(43);
-
-/** Detect free variable `exports`. */
-var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-/** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-/** Detect the popular CommonJS extension `module.exports`. */
-var moduleExports = freeModule && freeModule.exports === freeExports;
-
-/** Detect free variable `process` from Node.js. */
-var freeProcess = moduleExports && freeGlobal.process;
-
-/** Used to access faster Node.js helpers. */
-var nodeUtil = (function() {
-  try {
-    // Use `util.types` for Node.js 10+.
-    var types = freeModule && freeModule.require && freeModule.require('util').types;
-
-    if (types) {
-      return types;
-    }
-
-    // Legacy `process.binding('util')` for Node.js < 10.
-    return freeProcess && freeProcess.binding && freeProcess.binding('util');
-  } catch (e) {}
-}());
-
-module.exports = nodeUtil;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)(module)))
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports) {
-
-/**
- * The base implementation of `_.unary` without support for storing metadata.
- *
- * @private
- * @param {Function} func The function to cap arguments for.
- * @returns {Function} Returns the new capped function.
- */
-function baseUnary(func) {
-  return function(value) {
-    return func(value);
-  };
-}
-
-module.exports = baseUnary;
-
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(14),
-    isLength = __webpack_require__(26),
-    isObjectLike = __webpack_require__(13);
-
-/** `Object#toString` result references. */
-var argsTag = '[object Arguments]',
-    arrayTag = '[object Array]',
-    boolTag = '[object Boolean]',
-    dateTag = '[object Date]',
-    errorTag = '[object Error]',
-    funcTag = '[object Function]',
-    mapTag = '[object Map]',
-    numberTag = '[object Number]',
-    objectTag = '[object Object]',
-    regexpTag = '[object RegExp]',
-    setTag = '[object Set]',
-    stringTag = '[object String]',
-    weakMapTag = '[object WeakMap]';
-
-var arrayBufferTag = '[object ArrayBuffer]',
-    dataViewTag = '[object DataView]',
-    float32Tag = '[object Float32Array]',
-    float64Tag = '[object Float64Array]',
-    int8Tag = '[object Int8Array]',
-    int16Tag = '[object Int16Array]',
-    int32Tag = '[object Int32Array]',
-    uint8Tag = '[object Uint8Array]',
-    uint8ClampedTag = '[object Uint8ClampedArray]',
-    uint16Tag = '[object Uint16Array]',
-    uint32Tag = '[object Uint32Array]';
-
-/** Used to identify `toStringTag` values of typed arrays. */
-var typedArrayTags = {};
-typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-typedArrayTags[uint32Tag] = true;
-typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
-typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
-typedArrayTags[errorTag] = typedArrayTags[funcTag] =
-typedArrayTags[mapTag] = typedArrayTags[numberTag] =
-typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
-typedArrayTags[setTag] = typedArrayTags[stringTag] =
-typedArrayTags[weakMapTag] = false;
-
-/**
- * The base implementation of `_.isTypedArray` without Node.js optimizations.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
- */
-function baseIsTypedArray(value) {
-  return isObjectLike(value) &&
-    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
-}
-
-module.exports = baseIsTypedArray;
-
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseIsTypedArray = __webpack_require__(54),
-    baseUnary = __webpack_require__(53),
-    nodeUtil = __webpack_require__(52);
-
-/* Node.js helper references. */
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-
-/**
- * Checks if `value` is classified as a typed array.
- *
- * @static
- * @memberOf _
- * @since 3.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
- * @example
- *
- * _.isTypedArray(new Uint8Array);
- * // => true
- *
- * _.isTypedArray([]);
- * // => false
- */
-var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-
-module.exports = isTypedArray;
-
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports) {
-
-/**
- * This method returns `false`.
- *
- * @static
- * @memberOf _
- * @since 4.13.0
- * @category Util
- * @returns {boolean} Returns `false`.
- * @example
- *
- * _.times(2, _.stubFalse);
- * // => [false, false]
- */
-function stubFalse() {
-  return false;
-}
-
-module.exports = stubFalse;
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(21),
-    stubFalse = __webpack_require__(56);
-
-/** Detect free variable `exports`. */
-var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports;
-
-/** Detect free variable `module`. */
-var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
-
-/** Detect the popular CommonJS extension `module.exports`. */
-var moduleExports = freeModule && freeModule.exports === freeExports;
+var root = __webpack_require__(18);
 
 /** Built-in value references. */
-var Buffer = moduleExports ? root.Buffer : undefined;
+var Symbol = root.Symbol;
 
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
-
-/**
- * Checks if `value` is a buffer.
- *
- * @static
- * @memberOf _
- * @since 4.3.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
- * @example
- *
- * _.isBuffer(new Buffer(2));
- * // => true
- *
- * _.isBuffer(new Uint8Array(2));
- * // => false
- */
-var isBuffer = nativeIsBuffer || stubFalse;
-
-module.exports = isBuffer;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)(module)))
-
-/***/ }),
-/* 58 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-module.exports = isArray;
+module.exports = Symbol;
 
 
 /***/ }),
-/* 59 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGetTag = __webpack_require__(14),
-    isObjectLike = __webpack_require__(13);
+/* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
-/** `Object#toString` result references. */
-var argsTag = '[object Arguments]';
+module.exports = freeGlobal;
 
-/**
- * The base implementation of `_.isArguments`.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
- */
-function baseIsArguments(value) {
-  return isObjectLike(value) && baseGetTag(value) == argsTag;
-}
-
-module.exports = baseIsArguments;
-
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 60 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsArguments = __webpack_require__(59),
-    isObjectLike = __webpack_require__(13);
+var _extends = __webpack_require__(6);
 
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Built-in value references. */
-var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-/**
- * Checks if `value` is likely an `arguments` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an `arguments` object,
- *  else `false`.
- * @example
- *
- * _.isArguments(function() { return arguments; }());
- * // => true
- *
- * _.isArguments([1, 2, 3]);
- * // => false
- */
-var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
-  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
-    !propertyIsEnumerable.call(value, 'callee');
-};
-
-module.exports = isArguments;
-
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports) {
-
-/**
- * The base implementation of `_.times` without support for iteratee shorthands
- * or max array length checks.
- *
- * @private
- * @param {number} n The number of times to invoke `iteratee`.
- * @param {Function} iteratee The function invoked per iteration.
- * @returns {Array} Returns the array of results.
- */
-function baseTimes(n, iteratee) {
-  var index = -1,
-      result = Array(n);
-
-  while (++index < n) {
-    result[index] = iteratee(index);
-  }
-  return result;
-}
-
-module.exports = baseTimes;
-
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseTimes = __webpack_require__(61),
-    isArguments = __webpack_require__(60),
-    isArray = __webpack_require__(58),
-    isBuffer = __webpack_require__(57),
-    isIndex = __webpack_require__(25),
-    isTypedArray = __webpack_require__(55);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Creates an array of the enumerable property names of the array-like `value`.
- *
- * @private
- * @param {*} value The value to query.
- * @param {boolean} inherited Specify returning inherited property names.
- * @returns {Array} Returns the array of property names.
- */
-function arrayLikeKeys(value, inherited) {
-  var isArr = isArray(value),
-      isArg = !isArr && isArguments(value),
-      isBuff = !isArr && !isArg && isBuffer(value),
-      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
-      skipIndexes = isArr || isArg || isBuff || isType,
-      result = skipIndexes ? baseTimes(value.length, String) : [],
-      length = result.length;
-
-  for (var key in value) {
-    if ((inherited || hasOwnProperty.call(value, key)) &&
-        !(skipIndexes && (
-           // Safari 9 has enumerable `arguments.length` in strict mode.
-           key == 'length' ||
-           // Node.js 0.10 has enumerable non-index properties on buffers.
-           (isBuff && (key == 'offset' || key == 'parent')) ||
-           // PhantomJS 2 has enumerable non-index properties on typed arrays.
-           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
-           // Skip index properties.
-           isIndex(key, length)
-        ))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-
-module.exports = arrayLikeKeys;
-
-
-/***/ }),
-/* 63 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayLikeKeys = __webpack_require__(62),
-    baseKeysIn = __webpack_require__(51),
-    isArrayLike = __webpack_require__(27);
-
-/**
- * Creates an array of the own and inherited enumerable property names of `object`.
- *
- * **Note:** Non-object values are coerced to objects.
- *
- * @static
- * @memberOf _
- * @since 3.0.0
- * @category Object
- * @param {Object} object The object to query.
- * @returns {Array} Returns the array of property names.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- *   this.b = 2;
- * }
- *
- * Foo.prototype.c = 3;
- *
- * _.keysIn(new Foo);
- * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
- */
-function keysIn(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
-}
-
-module.exports = keysIn;
-
-
-/***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var eq = __webpack_require__(29),
-    isArrayLike = __webpack_require__(27),
-    isIndex = __webpack_require__(25),
-    isObject = __webpack_require__(10);
-
-/**
- * Checks if the given arguments are from an iteratee call.
- *
- * @private
- * @param {*} value The potential iteratee value argument.
- * @param {*} index The potential iteratee index or key argument.
- * @param {*} object The potential iteratee object argument.
- * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
- *  else `false`.
- */
-function isIterateeCall(value, index, object) {
-  if (!isObject(object)) {
-    return false;
-  }
-  var type = typeof index;
-  if (type == 'number'
-        ? (isArrayLike(object) && isIndex(index, object.length))
-        : (type == 'string' && index in object)
-      ) {
-    return eq(object[index], value);
-  }
-  return false;
-}
-
-module.exports = isIterateeCall;
-
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports) {
-
-/** Used to detect hot functions by number of calls within a span of milliseconds. */
-var HOT_COUNT = 800,
-    HOT_SPAN = 16;
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeNow = Date.now;
-
-/**
- * Creates a function that'll short out and invoke `identity` instead
- * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
- * milliseconds.
- *
- * @private
- * @param {Function} func The function to restrict.
- * @returns {Function} Returns the new shortable function.
- */
-function shortOut(func) {
-  var count = 0,
-      lastCalled = 0;
-
-  return function() {
-    var stamp = nativeNow(),
-        remaining = HOT_SPAN - (stamp - lastCalled);
-
-    lastCalled = stamp;
-    if (remaining > 0) {
-      if (++count >= HOT_COUNT) {
-        return arguments[0];
-      }
-    } else {
-      count = 0;
-    }
-    return func.apply(undefined, arguments);
-  };
-}
-
-module.exports = shortOut;
-
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports) {
-
-/**
- * Creates a function that returns `value`.
- *
- * @static
- * @memberOf _
- * @since 2.4.0
- * @category Util
- * @param {*} value The value to return from the new function.
- * @returns {Function} Returns the new constant function.
- * @example
- *
- * var objects = _.times(2, _.constant({ 'a': 1 }));
- *
- * console.log(objects);
- * // => [{ 'a': 1 }, { 'a': 1 }]
- *
- * console.log(objects[0] === objects[1]);
- * // => true
- */
-function constant(value) {
-  return function() {
-    return value;
-  };
-}
-
-module.exports = constant;
-
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var constant = __webpack_require__(66),
-    defineProperty = __webpack_require__(31),
-    identity = __webpack_require__(28);
-
-/**
- * The base implementation of `setToString` without support for hot loop shorting.
- *
- * @private
- * @param {Function} func The function to modify.
- * @param {Function} string The `toString` result.
- * @returns {Function} Returns `func`.
- */
-var baseSetToString = !defineProperty ? identity : function(func, string) {
-  return defineProperty(func, 'toString', {
-    'configurable': true,
-    'enumerable': false,
-    'value': constant(string),
-    'writable': true
-  });
-};
-
-module.exports = baseSetToString;
-
-
-/***/ }),
-/* 68 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseSetToString = __webpack_require__(67),
-    shortOut = __webpack_require__(65);
-
-/**
- * Sets the `toString` method of `func` to return `string`.
- *
- * @private
- * @param {Function} func The function to modify.
- * @param {Function} string The `toString` result.
- * @returns {Function} Returns `func`.
- */
-var setToString = shortOut(baseSetToString);
-
-module.exports = setToString;
-
-
-/***/ }),
-/* 69 */
-/***/ (function(module, exports) {
-
-/**
- * A faster alternative to `Function#apply`, this function invokes `func`
- * with the `this` binding of `thisArg` and the arguments of `args`.
- *
- * @private
- * @param {Function} func The function to invoke.
- * @param {*} thisArg The `this` binding of `func`.
- * @param {Array} args The arguments to invoke `func` with.
- * @returns {*} Returns the result of `func`.
- */
-function apply(func, thisArg, args) {
-  switch (args.length) {
-    case 0: return func.call(thisArg);
-    case 1: return func.call(thisArg, args[0]);
-    case 2: return func.call(thisArg, args[0], args[1]);
-    case 3: return func.call(thisArg, args[0], args[1], args[2]);
-  }
-  return func.apply(thisArg, args);
-}
-
-module.exports = apply;
-
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var apply = __webpack_require__(69);
-
-/* Built-in method references for those with the same name as other `lodash` methods. */
-var nativeMax = Math.max;
-
-/**
- * A specialized version of `baseRest` which transforms the rest array.
- *
- * @private
- * @param {Function} func The function to apply a rest parameter to.
- * @param {number} [start=func.length-1] The start position of the rest parameter.
- * @param {Function} transform The rest array transform.
- * @returns {Function} Returns the new function.
- */
-function overRest(func, start, transform) {
-  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
-  return function() {
-    var args = arguments,
-        index = -1,
-        length = nativeMax(args.length - start, 0),
-        array = Array(length);
-
-    while (++index < length) {
-      array[index] = args[start + index];
-    }
-    index = -1;
-    var otherArgs = Array(start + 1);
-    while (++index < start) {
-      otherArgs[index] = args[index];
-    }
-    otherArgs[start] = transform(array);
-    return apply(func, this, otherArgs);
-  };
-}
-
-module.exports = overRest;
-
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var identity = __webpack_require__(28),
-    overRest = __webpack_require__(70),
-    setToString = __webpack_require__(68);
-
-/**
- * The base implementation of `_.rest` which doesn't validate or coerce arguments.
- *
- * @private
- * @param {Function} func The function to apply a rest parameter to.
- * @param {number} [start=func.length-1] The start position of the rest parameter.
- * @returns {Function} Returns the new function.
- */
-function baseRest(func, start) {
-  return setToString(overRest(func, start, identity), func + '');
-}
-
-module.exports = baseRest;
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseRest = __webpack_require__(71),
-    isIterateeCall = __webpack_require__(64);
-
-/**
- * Creates a function like `_.assign`.
- *
- * @private
- * @param {Function} assigner The function to assign values.
- * @returns {Function} Returns the new assigner function.
- */
-function createAssigner(assigner) {
-  return baseRest(function(object, sources) {
-    var index = -1,
-        length = sources.length,
-        customizer = length > 1 ? sources[length - 1] : undefined,
-        guard = length > 2 ? sources[2] : undefined;
-
-    customizer = (assigner.length > 3 && typeof customizer == 'function')
-      ? (length--, customizer)
-      : undefined;
-
-    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-      customizer = length < 3 ? undefined : customizer;
-      length = 1;
-    }
-    object = Object(object);
-    while (++index < length) {
-      var source = sources[index];
-      if (source) {
-        assigner(object, source, index, customizer);
-      }
-    }
-    return object;
-  });
-}
-
-module.exports = createAssigner;
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports) {
-
-/**
- * Gets the value at `key` of `object`.
- *
- * @private
- * @param {Object} [object] The object to query.
- * @param {string} key The key of the property to get.
- * @returns {*} Returns the property value.
- */
-function getValue(object, key) {
-  return object == null ? undefined : object[key];
-}
-
-module.exports = getValue;
-
-
-/***/ }),
-/* 74 */
-/***/ (function(module, exports) {
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/**
- * Converts `func` to its source code.
- *
- * @private
- * @param {Function} func The function to convert.
- * @returns {string} Returns the source code.
- */
-function toSource(func) {
-  if (func != null) {
-    try {
-      return funcToString.call(func);
-    } catch (e) {}
-    try {
-      return (func + '');
-    } catch (e) {}
-  }
-  return '';
-}
-
-module.exports = toSource;
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var root = __webpack_require__(21);
-
-/** Used to detect overreaching core-js shims. */
-var coreJsData = root['__core-js_shared__'];
-
-module.exports = coreJsData;
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var coreJsData = __webpack_require__(75);
-
-/** Used to detect methods masquerading as native. */
-var maskSrcKey = (function() {
-  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
-  return uid ? ('Symbol(src)_1.' + uid) : '';
-}());
-
-/**
- * Checks if `func` has its source masked.
- *
- * @private
- * @param {Function} func The function to check.
- * @returns {boolean} Returns `true` if `func` is masked, else `false`.
- */
-function isMasked(func) {
-  return !!maskSrcKey && (maskSrcKey in func);
-}
-
-module.exports = isMasked;
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isFunction = __webpack_require__(30),
-    isMasked = __webpack_require__(76),
-    isObject = __webpack_require__(10),
-    toSource = __webpack_require__(74);
-
-/**
- * Used to match `RegExp`
- * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
- */
-var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-
-/** Used to detect host constructors (Safari). */
-var reIsHostCtor = /^\[object .+?Constructor\]$/;
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to detect if a method is native. */
-var reIsNative = RegExp('^' +
-  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
-  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-);
-
-/**
- * The base implementation of `_.isNative` without bad shim checks.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a native function,
- *  else `false`.
- */
-function baseIsNative(value) {
-  if (!isObject(value) || isMasked(value)) {
-    return false;
-  }
-  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
-  return pattern.test(toSource(value));
-}
-
-module.exports = baseIsNative;
-
-
-/***/ }),
-/* 78 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseIsNative = __webpack_require__(77),
-    getValue = __webpack_require__(73);
-
-/**
- * Gets the native function at `key` of `object`.
- *
- * @private
- * @param {Object} object The object to query.
- * @param {string} key The key of the method to get.
- * @returns {*} Returns the function if it's native, else `undefined`.
- */
-function getNative(object, key) {
-  var value = getValue(object, key);
-  return baseIsNative(value) ? value : undefined;
-}
-
-module.exports = getNative;
-
-
-/***/ }),
-/* 79 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseAssignValue = __webpack_require__(32),
-    eq = __webpack_require__(29);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Assigns `value` to `key` of `object` if the existing value is not equivalent
- * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
- * for equality comparisons.
- *
- * @private
- * @param {Object} object The object to modify.
- * @param {string} key The key of the property to assign.
- * @param {*} value The value to assign.
- */
-function assignValue(object, key, value) {
-  var objValue = object[key];
-  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
-      (value === undefined && !(key in object))) {
-    baseAssignValue(object, key, value);
-  }
-}
-
-module.exports = assignValue;
-
-
-/***/ }),
-/* 80 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var assignValue = __webpack_require__(79),
-    baseAssignValue = __webpack_require__(32);
-
-/**
- * Copies properties of `source` to `object`.
- *
- * @private
- * @param {Object} source The object to copy properties from.
- * @param {Array} props The property identifiers to copy.
- * @param {Object} [object={}] The object to copy properties to.
- * @param {Function} [customizer] The function to customize copied values.
- * @returns {Object} Returns `object`.
- */
-function copyObject(source, props, object, customizer) {
-  var isNew = !object;
-  object || (object = {});
-
-  var index = -1,
-      length = props.length;
-
-  while (++index < length) {
-    var key = props[index];
-
-    var newValue = customizer
-      ? customizer(object[key], source[key], key, object, source)
-      : undefined;
-
-    if (newValue === undefined) {
-      newValue = source[key];
-    }
-    if (isNew) {
-      baseAssignValue(object, key, newValue);
-    } else {
-      assignValue(object, key, newValue);
-    }
-  }
-  return object;
-}
-
-module.exports = copyObject;
-
-
-/***/ }),
-/* 81 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var copyObject = __webpack_require__(80),
-    createAssigner = __webpack_require__(72),
-    keysIn = __webpack_require__(63);
-
-/**
- * This method is like `_.assign` except that it iterates over own and
- * inherited source properties.
- *
- * **Note:** This method mutates `object`.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @alias extend
- * @category Object
- * @param {Object} object The destination object.
- * @param {...Object} [sources] The source objects.
- * @returns {Object} Returns `object`.
- * @see _.assign
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * function Bar() {
- *   this.c = 3;
- * }
- *
- * Foo.prototype.b = 2;
- * Bar.prototype.d = 4;
- *
- * _.assignIn({ 'a': 0 }, new Foo, new Bar);
- * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
- */
-var assignIn = createAssigner(function(object, source) {
-  copyObject(source, keysIn(source), object);
-});
-
-module.exports = assignIn;
-
-
-/***/ }),
-/* 82 */
-/***/ (function(module, exports) {
-
-/**
- * The code was extracted from:
- * https://github.com/davidchambers/Base64.js
- */
-
-var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-function InvalidCharacterError(message) {
-  this.message = message;
-}
-
-InvalidCharacterError.prototype = new Error();
-InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-function polyfill (input) {
-  var str = String(input).replace(/=+$/, '');
-  if (str.length % 4 == 1) {
-    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-  }
-  for (
-    // initialize result and counters
-    var bc = 0, bs, buffer, idx = 0, output = '';
-    // get next character
-    buffer = str.charAt(idx++);
-    // character found in table? initialize bit storage and add its ascii value;
-    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-      // and if not first of each 4 characters,
-      // convert the first 8 bits to one ascii character
-      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-  ) {
-    // try to find character in table (0-63, not found => -1)
-    buffer = chars.indexOf(buffer);
-  }
-  return output;
-}
-
-
-module.exports = typeof window !== 'undefined' && window.atob && window.atob.bind(window) || polyfill;
-
-
-/***/ }),
-/* 83 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var atob = __webpack_require__(82);
-
-function b64DecodeUnicode(str) {
-  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
-    var code = p.charCodeAt(0).toString(16).toUpperCase();
-    if (code.length < 2) {
-      code = '0' + code;
-    }
-    return '%' + code;
-  }));
-}
-
-module.exports = function(str) {
-  var output = str.replace(/-/g, "+").replace(/_/g, "/");
-  switch (output.length % 4) {
-    case 0:
-      break;
-    case 2:
-      output += "==";
-      break;
-    case 3:
-      output += "=";
-      break;
-    default:
-      throw "Illegal base64url string!";
-  }
-
-  try{
-    return b64DecodeUnicode(output);
-  } catch (err) {
-    return atob(output);
-  }
-};
-
-
-/***/ }),
-/* 84 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var base64_url_decode = __webpack_require__(83);
-
-function InvalidTokenError(message) {
-  this.message = message;
-}
-
-InvalidTokenError.prototype = new Error();
-InvalidTokenError.prototype.name = 'InvalidTokenError';
-
-module.exports = function (token,options) {
-  if (typeof token !== 'string') {
-    throw new InvalidTokenError('Invalid token specified');
-  }
-
-  options = options || {};
-  var pos = options.header === true ? 0 : 1;
-  try {
-    return JSON.parse(base64_url_decode(token.split('.')[pos]));
-  } catch (e) {
-    throw new InvalidTokenError('Invalid token specified: ' + e.message);
-  }
-};
-
-module.exports.InvalidTokenError = InvalidTokenError;
-
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _objectWithoutProperties = __webpack_require__(46);
-
-var errors = __webpack_require__(4);
-
-var StreamReaction = function StreamReaction() {
+var StreamUser = function StreamUser() {
   this.initialize.apply(this, arguments);
 };
 
-StreamReaction.prototype = {
-  initialize: function initialize(client, token) {
+StreamUser.prototype = {
+  initialize: function initialize(client, userId, userAuthToken) {
     /**
-     * Initialize a feed object
+     * Initialize a user session object
      * @method intialize
-     * @memberof StreamReaction.prototype
-     * @param {StreamClient} client Stream client this feed is constructed from
+     * @memberof StreamUser.prototype
+     * @param {StreamClient} client Stream client this collection is constructed from
+     * @param {string} userId The ID of the user
      * @param {string} token JWT token
-     * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
+     * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
-    this.token = token;
-    this.signature = token;
-  },
-  buildURL: function buildURL() {
-    var url = 'reaction/';
-
-    for (var i = 0; i < arguments.length; i++) {
-      url += arguments[i] + '/';
-    }
-
-    return url;
-  },
-  all: function all(options, callback) {
-    /**
-     * get all reactions
-     * @method all
-     * @memberof StreamReaction.prototype
-     * @param  {object}   options  {limit:}
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.all()
-     * @example reactions.all({limit:100})
-     */
-    return this.client.get({
-      url: this.buildURL(),
-      signature: this.signature
-    }, callback);
-  },
-  _convertTargetFeeds: function _convertTargetFeeds() {
-    var targetFeeds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    return targetFeeds.map(function (elem) {
-      return typeof elem === 'string' ? elem : elem.id;
-    });
-  },
-  add: function add(kind, activity) {
-    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        id = _ref.id,
-        _ref$targetFeeds = _ref.targetFeeds,
-        targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
-        userId = _ref.userId;
-
-    var callback = arguments.length > 4 ? arguments[4] : undefined;
-
-    /**
-     * add reaction
-     * @method add
-     * @memberof StreamReaction.prototype
-     * @param  {string}   kind  kind of reaction
-     * @param  {string}   activity Activity or an ActivityID
-     * @param  {object}   data  data related to reaction
-     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
-     */
-    if (activity instanceof Object) {
-      activity = activity.id;
-    }
-
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
-      id: id,
-      activity_id: activity,
-      kind: kind,
-      data: data,
-      target_feeds: targetFeeds,
-      user_id: userId
-    };
-    return this.client.post({
-      url: this.buildURL(),
-      body: body,
-      signature: this.signature
-    }, callback);
-  },
-  addChild: function addChild(kind, reaction) {
-    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        _ref2$targetFeeds = _ref2.targetFeeds,
-        targetFeeds = _ref2$targetFeeds === void 0 ? [] : _ref2$targetFeeds,
-        userId = _ref2.userId;
-
-    var callback = arguments.length > 4 ? arguments[4] : undefined;
-
-    /**
-     * add reaction
-     * @method add
-     * @memberof StreamReaction.prototype
-     * @param  {string}   kind  kind of reaction
-     * @param  {string}   reaction Reaction or a ReactionID
-     * @param  {object}   data  data related to reaction
-     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
-     */
-    if (reaction instanceof Object) {
-      reaction = reaction.id;
-    }
-
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
-      parent: reaction,
-      kind: kind,
-      data: data,
-      target_feeds: targetFeeds,
-      user_id: userId
-    };
-    return this.client.post({
-      url: this.buildURL(),
-      body: body,
-      signature: this.signature
-    }, callback);
-  },
-  get: function get(id, callback) {
-    /**
-     * get reaction
-     * @method add
-     * @memberof StreamReaction.prototype
-     * @param  {string}   id Reaction Id
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
-     */
-    return this.client.get({
-      url: this.buildURL(id),
-      signature: this.signature
-    }, callback);
-  },
-  filter: function filter(conditions, callback) {
-    /**
-     * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
-     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
-     * the reaction with ID equal to the value provided is included.
-     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
-     * the reaction with ID equal to the value provided is included.
-     * results are limited to 25 at most and are ordered newest to oldest by default.
-     * @method lookup
-     * @memberof StreamReaction.prototype
-     * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
-     * @example reactions.lookup({user_id: "john", kinds:"like"})
-     */
-    var user_id = conditions.user_id,
-        activity_id = conditions.activity_id,
-        reaction_id = conditions.reaction_id,
-        qs = _objectWithoutProperties(conditions, ["user_id", "activity_id", "reaction_id"]);
-
-    if (!qs.limit) {
-      qs.limit = 10;
-    }
-
-    if ((user_id ? 1 : 0 + activity_id ? 1 : 0 + reaction_id ? 1 : 0) != 1) {
-      throw new errors.SiteError('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
-    }
-
-    var lookupType = user_id && 'user_id' || activity_id && 'activity_id' || reaction_id && 'reaction_id';
-    var value = user_id || activity_id || reaction_id;
-    var url = this.buildURL(lookupType, value);
-
-    if (conditions.kind) {
-      url = this.buildURL(lookupType, value, conditions.kind);
-    }
-
-    return this.client.get({
-      url: url,
-      qs: qs,
-      signature: this.signature
-    }, callback);
-  },
-  update: function update(id, data) {
-    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref3$targetFeeds = _ref3.targetFeeds,
-        targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds;
-
-    var callback = arguments.length > 3 ? arguments[3] : undefined;
-
-    /**
-     * update reaction
-     * @method add
-     * @memberof StreamReaction.prototype
-     * @param  {string}   id Reaction Id
-     * @param  {object}   data  Data associated to reaction
-     * @param  {array}   targetFeeds  Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
-     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
-     */
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
-      data: data,
-      target_feeds: targetFeeds
-    };
-    return this.client.put({
-      url: this.buildURL(id),
-      body: body,
-      signature: this.signature
-    }, callback);
-  },
-  delete: function _delete(id, callback) {
-    /**
-     * delete reaction
-     * @method delete
-     * @memberof StreamReaction.prototype
-     * @param  {string}   id Reaction Id
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
-     */
-    return this.client.delete({
-      url: this.buildURL(id),
-      signature: this.signature
-    }, callback);
-  }
-};
-module.exports = StreamReaction;
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _extends = __webpack_require__(11);
-
-var fetch = __webpack_require__(12);
-
-var Headers = __webpack_require__(12).Headers;
-
-var FormData = __webpack_require__(33);
-
-var utils = __webpack_require__(15);
-
-var errors = __webpack_require__(4);
-
-var StreamImageStore = function StreamImageStore() {
-  this.initialize.apply(this, arguments);
-};
-
-StreamImageStore.prototype = {
-  initialize: function initialize(client, token) {
-    this.client = client;
-    this.token = token;
-  },
-  // React Native does not auto-detect MIME type, you need to pass that via contentType
-  // param. If you don't then Android will refuse to perform the upload
-  upload: function upload(uri, name, contentType) {
-    var data = new FormData();
-    var fileField;
-
-    if (utils.isReadableStream(uri)) {
-      fileField = uri;
-    } else {
-      fileField = {
-        uri: uri,
-        name: name || uri.split('/').reverse()[0]
-      };
-
-      if (contentType != null) {
-        fileField.type = contentType;
-      }
-    }
-
-    data.append('file', fileField);
-    return fetch("".concat(this.client.enrichUrl('images/'), "?api_key=").concat(this.client.apiKey), {
-      method: 'post',
-      body: data,
-      headers: new Headers({
-        Authorization: this.token
-      })
-    }).then(function (r) {
-      if (r.ok) {
-        return r.json();
-      } // error
-
-
-      return r.text().then(function (responseData) {
-        r.statusCode = r.status;
-
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {// ignore json parsing errors
-        }
-
-        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
-      });
-    });
-  },
-  delete: function _delete(uri) {
-    return this.client.delete({
-      url: "images/",
-      qs: {
-        url: uri
-      },
-      signature: this.token
-    });
-  },
-  process: function process(uri, options) {
-    var params = _extends(options, {
-      url: uri
-    });
-
-    if (Array.isArray(params.crop)) {
-      params.crop = params.crop.join(',');
-    }
-
-    return this.client.get({
-      url: "images/",
-      qs: params,
-      signature: this.token
-    });
-  },
-  thumbmail: function thumbmail(uri, w, h) {
-    var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
-      crop: 'center',
-      resize: 'clip'
-    },
-        crop = _ref.crop,
-        resize = _ref.resize;
-
-    return this.process(uri, {
-      w: w,
-      h: h,
-      crop: crop,
-      resize: resize
-    });
-  }
-};
-module.exports = StreamImageStore;
-
-/***/ }),
-/* 87 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var fetch = __webpack_require__(12);
-
-var Headers = __webpack_require__(12).Headers;
-
-var utils = __webpack_require__(15);
-
-var FormData = __webpack_require__(33);
-
-var errors = __webpack_require__(4);
-
-var StreamFileStore = function StreamFileStore() {
-  this.initialize.apply(this, arguments);
-};
-
-StreamFileStore.prototype = {
-  initialize: function initialize(client, token) {
-    this.client = client;
-    this.token = token;
-  },
-  // React Native does not auto-detect MIME type, you need to pass that via contentType
-  // param. If you don't then Android will refuse to perform the upload
-  upload: function upload(uri, name, contentType) {
-    var data = new FormData();
-    var fileField;
-
-    if (utils.isReadableStream(uri)) {
-      fileField = uri;
-    } else {
-      fileField = {
-        uri: uri,
-        name: name || uri.split('/').reverse()[0]
-      };
-
-      if (contentType != null) {
-        fileField.type = contentType;
-      }
-    }
-
-    data.append('file', fileField);
-    return fetch("".concat(this.client.enrichUrl('files/'), "?api_key=").concat(this.client.apiKey), {
-      method: 'post',
-      body: data,
-      headers: new Headers({
-        Authorization: this.token
-      })
-    }).then(function (r) {
-      if (r.ok) {
-        return r.json();
-      } // error
-
-
-      return r.text().then(function (responseData) {
-        r.statusCode = r.status;
-
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {// ignore json parsing errors
-        }
-
-        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
-      });
-    });
-  },
-  delete: function _delete(uri) {
-    return this.client.delete({
-      url: "files/",
-      qs: {
-        url: uri
-      },
-      signature: this.token
-    });
-  }
-};
-module.exports = StreamFileStore;
-
-/***/ }),
-/* 88 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var errors = __webpack_require__(4);
-
-var Collections = function Collections() {
-  this.initialize.apply(this, arguments);
-};
-
-Collections.prototype = {
-  initialize: function initialize(client, token) {
-    /**
-     * Initialize a feed object
-     * @method intialize
-     * @memberof Collections.prototype
-     * @param {StreamCloudClient} client Stream client this collection is constructed from
-     * @param {string} token JWT token
-     */
-    this.client = client;
-    this.token = token;
-  },
-  buildURL: function buildURL(collection, itemId) {
-    var url = 'collections/' + collection + '/';
-
-    if (itemId === undefined) {
-      return url;
-    }
-
-    return url + itemId + '/';
-  },
-  entry: function entry(collection, itemId, itemData) {
-    return new CollectionEntry(this, collection, itemId, itemData);
-  },
-  get: function get(collection, itemId, callback) {
-    /**
-     * get item from collection
-     * @method get
-     * @memberof Collections.prototype
-     * @param  {string}   collection  collection name
-     * @param  {object}   itemId  id for this entry
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     */
-    var self = this;
-    return this.client.get({
-      url: this.buildURL(collection, itemId),
-      signature: this.token
-    }).then(function (response) {
-      var entry = self.client.collections.entry(response.collection, response.id, response.data);
-      entry.full = response;
-
-      if (callback) {
-        callback(entry);
-      }
-
-      return entry;
-    });
-  },
-  add: function add(collection, itemId, itemData, callback) {
-    /**
-     * Add item to collection
-     * @method add
-     * @memberof Collections.prototype
-     * @param  {string}   collection  collection name
-     * @param  {string}   itemId  entry id
-     * @param  {object}   itemData  ObjectStore data
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    var self = this;
-
-    if (itemId === null) {
-      itemId = undefined;
-    }
-
-    var body = {
-      id: itemId,
-      data: itemData
-    };
-    return this.client.post({
-      url: this.buildURL(collection),
-      body: body,
-      signature: this.token
-    }).then(function (response) {
-      var entry = self.client.collections.entry(response.collection, response.id, response.data);
-      entry.full = response;
-
-      if (callback) {
-        callback(entry);
-      }
-
-      return entry;
-    });
-  },
-  update: function update(collection, entryId, data, callback) {
-    /**
-     * Update entry in the collection
-     * @method update
-     * @memberof Collections.prototype
-     * @param  {string}   collection  collection name
-     * @param  {object}   entryId  Collection object id
-     * @param  {object}   data  ObjectStore data
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
-     * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    var self = this;
-    var body = {
-      data: data
-    };
-    return this.client.put({
-      url: this.buildURL(collection, entryId),
-      body: body,
-      signature: this.token
-    }).then(function (response) {
-      var entry = self.client.collections.entry(response.collection, response.id, response.data);
-      entry.full = response;
-
-      if (callback) {
-        callback(entry);
-      }
-
-      return entry;
-    });
-  },
-  delete: function _delete(collection, entryId, callback) {
-    /**
-     * Delete entry from collection
-     * @method delete
-     * @memberof Collections.prototype
-     * @param  {object}   entryId  Collection entry id
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.delete("food", "cheese101")
-     */
-    return this.client['delete']({
-      url: this.buildURL(collection, entryId),
-      signature: this.token
-    }, callback);
-  },
-  upsert: function upsert(collection, data, callback) {
-    /**
-     * Upsert one or more items within a collection.
-     *
-     * @method upsert
-     * @memberof Collections.prototype
-     * @param {object|array} data - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object.
-     */
-    if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
-    }
-
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
-
-    var data_json = {
-      data: {}
-    };
-    data_json['data'][collection] = data;
-    return this.client.post({
-      url: 'collections/',
-      serviceName: 'api',
-      body: data_json,
-      signature: this.client.getCollectionsToken()
-    }, callback);
-  },
-  select: function select(collection, ids, callback) {
-    /**
-     * Select all objects with ids from the collection.
-     *
-     * @method select
-     * @memberof Collections.prototype
-     * @param {object|array} ids - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object.
-     */
-    if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
-    }
-
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!Array.isArray(ids)) {
-      ids = [ids];
-    }
-
-    var params = {
-      foreign_ids: ids.map(function (id) {
-        return collection + ':' + id;
-      }).join(',')
-    };
-    return this.client.get({
-      url: 'collections/',
-      serviceName: 'api',
-      qs: params,
-      signature: this.client.getCollectionsToken()
-    }, callback);
-  },
-  deleteMany: function deleteMany(collection, ids, callback) {
-    /**
-     * Remove all objects by id from the collection.
-     *
-     * @method delete
-     * @memberof Collections.prototype
-     * @param {object|array} ids - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object.
-     */
-    if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
-    }
-
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!Array.isArray(ids)) {
-      ids = [ids];
-    }
-
-    ids = ids.map(function (id) {
-      return id.toString();
-    }).join(',');
-    var params = {
-      collection_name: collection,
-      ids: ids
-    };
-    return this.client.delete({
-      url: 'collections/',
-      serviceName: 'api',
-      qs: params,
-      signature: this.client.getCollectionsToken()
-    }, callback);
-  }
-};
-
-var CollectionEntry = function CollectionEntry() {
-  this.initialize.apply(this, arguments);
-};
-
-CollectionEntry.prototype = {
-  initialize: function initialize(store, collection, id, data) {
-    this.collection = collection;
-    this.store = store;
-    this.id = id;
-    this.data = data;
+    this.id = userId;
+    this.data = undefined;
+    this.full = undefined;
+    this.token = userAuthToken;
+    this.url = 'user/' + this.id + '/';
   },
   _streamRef: function _streamRef() {
-    return "SO:".concat(this.collection, ":").concat(this.id);
+    return "SU:".concat(this.id);
   },
-  get: function get(callback) {
-    var _this = this;
-
-    /**
-     * get item from collection and sync data
-     * @method get
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     */
-    return this.store.get(this.collection, this.id).then(function (response) {
-      _this.data = response.data;
-      _this.full = response;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return response;
-    });
-  },
-  add: function add(callback) {
-    var _this2 = this;
-
-    /**
-     * Add item to collection
-     * @method add
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    return this.store.add(this.collection, this.id, this.data).then(function (response) {
-      _this2.data = response.data;
-      _this2.full = response;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return response;
-    });
-  },
-  update: function update(callback) {
-    var _this3 = this;
-
-    /**
-     * Update item in the object storage
-     * @method update
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
-     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    return this.store.update(this.collection, this.id, this.data).then(function (response) {
-      _this3.data = response.data;
-      _this3.full = response;
-
-      if (callback) {
-        callback(response);
-      }
-
-      return response;
-    });
+  ref: function ref() {
+    return this._streamRef();
   },
   delete: function _delete(callback) {
-    var _this4 = this;
-
-    /**
-     * Delete item from collection
-     * @method delete
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.delete("cheese101")
-     */
-    return this.store.delete(this.collection, this.id).then(function (response) {
-      _this4.data = null;
-      _this4.full = null;
-
+    return this.client.delete({
+      url: this.url,
+      signature: this.token
+    }).then(function (response) {
       if (callback) {
         callback(response);
       }
 
       return response;
     });
-  }
-};
-module.exports = Collections;
-
-/***/ }),
-/* 89 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Class      = __webpack_require__(1),
-    extend     = __webpack_require__(0),
-    Deferrable = __webpack_require__(6);
-
-var Subscription = Class({
-  initialize: function(client, channels, callback, context) {
-    this._client    = client;
-    this._channels  = channels;
-    this._callback  = callback;
-    this._context   = context;
-    this._cancelled = false;
   },
+  get: function get(options, callback) {
+    var _this = this;
 
-  withChannel: function(callback, context) {
-    this._withChannel = [callback, context];
-    return this;
+    return this.client.get({
+      url: this.url,
+      signature: this.token,
+      qs: options
+    }).then(function (response) {
+      _this.full = _extends({}, response);
+      delete _this.full.duration;
+      _this.data = _this.full.data;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return _this;
+    });
   },
-
-  apply: function(context, args) {
-    var message = args[0];
-
-    if (this._callback)
-      this._callback.call(this._context, message.data);
-
-    if (this._withChannel)
-      this._withChannel[0].call(this._withChannel[1], message.channel, message.data);
-  },
-
-  cancel: function() {
-    if (this._cancelled) return;
-    this._client.unsubscribe(this._channels, this);
-    this._cancelled = true;
-  },
-
-  unsubscribe: function() {
-    this.cancel();
-  }
-});
-
-extend(Subscription.prototype, Deferrable);
-
-module.exports = Subscription;
-
-
-/***/ }),
-/* 90 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Class      = __webpack_require__(1),
-    Deferrable = __webpack_require__(6);
-
-module.exports = Class(Deferrable);
-
-
-/***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var extend  = __webpack_require__(0),
-    Logging = __webpack_require__(8);
-
-var Extensible = {
-  addExtension: function(extension) {
-    this._extensions = this._extensions || [];
-    this._extensions.push(extension);
-    if (extension.added) extension.added(this);
-  },
-
-  removeExtension: function(extension) {
-    if (!this._extensions) return;
-    var i = this._extensions.length;
-    while (i--) {
-      if (this._extensions[i] !== extension) continue;
-      this._extensions.splice(i,1);
-      if (extension.removed) extension.removed(this);
+  _chooseData: function _chooseData(data) {
+    if (data !== undefined) {
+      return data;
     }
+
+    if (this.data !== undefined) {
+      return this.data;
+    }
+
+    return {};
   },
+  create: function create(data, options, callback) {
+    var _this2 = this;
 
-  pipeThroughExtensions: function(stage, message, request, callback, context) {
-    this.debug('Passing through ? extensions: ?', stage, message);
+    return this.client.post({
+      url: 'user/',
+      body: {
+        id: this.id,
+        data: this._chooseData(data)
+      },
+      qs: options,
+      signature: this.token
+    }).then(function (response) {
+      _this2.full = _extends({}, response);
+      delete _this2.full.duration;
+      _this2.data = _this2.full.data;
 
-    if (!this._extensions) return callback.call(context, message);
-    var extensions = this._extensions.slice();
+      if (callback) {
+        callback(response);
+      }
 
-    var pipe = function(message) {
-      if (!message) return callback.call(context, message);
+      return _this2;
+    });
+  },
+  update: function update(data, callback) {
+    var _this3 = this;
 
-      var extension = extensions.shift();
-      if (!extension) return callback.call(context, message);
+    return this.client.put({
+      url: this.url,
+      body: {
+        data: this._chooseData(data)
+      },
+      signature: this.token
+    }).then(function (response) {
+      _this3.full = _extends({}, response);
+      delete _this3.full.duration;
+      _this3.data = _this3.full.data;
 
-      var fn = extension[stage];
-      if (!fn) return pipe(message);
+      if (callback) {
+        callback(response);
+      }
 
-      if (fn.length >= 3) extension[stage](message, request, pipe);
-      else                extension[stage](message, pipe);
-    };
-    pipe(message);
+      return _this3;
+    });
+  },
+  getOrCreate: function getOrCreate(data, callback) {
+    return this.create(data, {
+      get_or_create: true
+    }, callback);
+  },
+  profile: function profile(callback) {
+    return this.get({
+      with_follow_counts: true
+    }, callback);
   }
 };
-
-extend(Extensible, Logging);
-
-module.exports = Extensible;
-
+module.exports = StreamUser;
 
 /***/ }),
-/* 92 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Class   = __webpack_require__(1),
-    Grammar = __webpack_require__(38);
+// rawAsap provides everything we need except exception management.
+var rawAsap = __webpack_require__(64);
+// RawTasks are recycled to reduce GC churn.
+var freeTasks = [];
+// We queue errors to ensure they are thrown in right order (FIFO).
+// Array-as-queue is good enough here, since we are just dealing with exceptions.
+var pendingErrors = [];
+var requestErrorThrow = rawAsap.makeRequestCallFromTimer(throwFirstError);
 
-var Error = Class({
-  initialize: function(code, params, message) {
-    this.code    = code;
-    this.params  = Array.prototype.slice.call(params);
-    this.message = message;
-  },
+function throwFirstError() {
+    if (pendingErrors.length) {
+        throw pendingErrors.shift();
+    }
+}
 
-  toString: function() {
-    return this.code + ':' +
-           this.params.join(',') + ':' +
-           this.message;
-  }
-});
+/**
+ * Calls a task as soon as possible after returning, in its own event, with priority
+ * over other events like animation, reflow, and repaint. An error thrown from an
+ * event will not interrupt, nor even substantially slow down the processing of
+ * other events, but will be rather postponed to a lower priority event.
+ * @param {{call}} task A callable object, typically a function that takes no
+ * arguments.
+ */
+module.exports = asap;
+function asap(task) {
+    var rawTask;
+    if (freeTasks.length) {
+        rawTask = freeTasks.pop();
+    } else {
+        rawTask = new RawTask();
+    }
+    rawTask.task = task;
+    rawAsap(rawTask);
+}
 
-Error.parse = function(message) {
-  message = message || '';
-  if (!Grammar.ERROR.test(message)) return new Error(null, [], message);
+// We wrap tasks with recyclable task objects.  A task object implements
+// `call`, just like a function.
+function RawTask() {
+    this.task = null;
+}
 
-  var parts   = message.split(':'),
-      code    = parseInt(parts[0]),
-      params  = parts[1].split(','),
-      message = parts[2];
-
-  return new Error(code, params, message);
+// The sole purpose of wrapping the task is to catch the exception and recycle
+// the task object after its single use.
+RawTask.prototype.call = function () {
+    try {
+        this.task.call();
+    } catch (error) {
+        if (asap.onerror) {
+            // This hook exists purely for testing purposes.
+            // Its name will be periodically randomized to break any code that
+            // depends on its existence.
+            asap.onerror(error);
+        } else {
+            // In a web browser, exceptions are not fatal. However, to avoid
+            // slowing down the queue of pending tasks, we rethrow the error in a
+            // lower priority turn.
+            pendingErrors.push(error);
+            requestErrorThrow();
+        }
+    } finally {
+        this.task = null;
+        freeTasks[freeTasks.length] = this;
+    }
 };
-
-// http://code.google.com/p/cometd/wiki/BayeuxCodes
-var errors = {
-  versionMismatch:  [300, 'Version mismatch'],
-  conntypeMismatch: [301, 'Connection types not supported'],
-  extMismatch:      [302, 'Extension mismatch'],
-  badRequest:       [400, 'Bad request'],
-  clientUnknown:    [401, 'Unknown client'],
-  parameterMissing: [402, 'Missing required parameter'],
-  channelForbidden: [403, 'Forbidden channel'],
-  channelUnknown:   [404, 'Unknown channel'],
-  channelInvalid:   [405, 'Invalid channel'],
-  extUnknown:       [406, 'Unknown extension'],
-  publishFailed:    [407, 'Failed to publish'],
-  serverError:      [500, 'Internal server error']
-};
-
-for (var name in errors)
-  (function(name) {
-    Error[name] = function() {
-      return new Error(errors[name][0], arguments, errors[name][1]).toString();
-    };
-  })(name);
-
-module.exports = Error;
 
 
 /***/ }),
-/* 93 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 30 */
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
+module.exports = {
+  VERSION:          '1.2.4',
 
-var Class      = __webpack_require__(1),
-    URI        = __webpack_require__(3),
-    copyObject = __webpack_require__(16),
-    extend     = __webpack_require__(0),
-    toJSON     = __webpack_require__(7),
-    Transport  = __webpack_require__(5);
+  BAYEUX_VERSION:   '1.0',
+  ID_LENGTH:        160,
+  JSONP_CALLBACK:   'jsonpcallback',
+  CONNECTION_TYPES: ['long-polling', 'cross-origin-long-polling', 'callback-polling', 'websocket', 'eventsource', 'in-process'],
 
-var JSONP = extend(Class(Transport, {
- encode: function(messages) {
-    var url = copyObject(this.endpoint);
-    url.query.message = toJSON(messages);
-    url.query.jsonp   = '__jsonp' + JSONP._cbCount + '__';
-    return URI.stringify(url);
-  },
+  MANDATORY_CONNECTION_TYPES: ['long-polling', 'callback-polling', 'in-process']
+};
 
-  request: function(messages) {
-    var head         = document.getElementsByTagName('head')[0],
-        script       = document.createElement('script'),
-        callbackName = JSONP.getCallbackName(),
-        endpoint     = copyObject(this.endpoint),
-        self         = this;
-
-    endpoint.query.message = toJSON(messages);
-    endpoint.query.jsonp   = callbackName;
-
-    var cleanup = function() {
-      if (!global[callbackName]) return false;
-      global[callbackName] = undefined;
-      try { delete global[callbackName] } catch (error) {}
-      script.parentNode.removeChild(script);
-    };
-
-    global[callbackName] = function(replies) {
-      cleanup();
-      self._receive(replies);
-    };
-
-    script.type = 'text/javascript';
-    script.src  = URI.stringify(endpoint);
-    head.appendChild(script);
-
-    script.onerror = function() {
-      cleanup();
-      self._handleError(messages);
-    };
-
-    return {abort: cleanup};
-  }
-}), {
-  _cbCount: 0,
-
-  getCallbackName: function() {
-    this._cbCount += 1;
-    return '__jsonp' + this._cbCount + '__';
-  },
-
-  isUsable: function(dispatcher, endpoint, callback, context) {
-    callback.call(context, true);
-  }
-});
-
-module.exports = JSONP;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
 
 /***/ }),
-/* 94 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
 
-var Class     = __webpack_require__(1),
-    Set       = __webpack_require__(36),
-    URI       = __webpack_require__(3),
+
+var Class     = __webpack_require__(2),
     extend    = __webpack_require__(0),
-    toJSON    = __webpack_require__(7),
-    Transport = __webpack_require__(5);
+    Publisher = __webpack_require__(22),
+    Grammar   = __webpack_require__(32);
 
-var CORS = extend(Class(Transport, {
-  encode: function(messages) {
-    return 'message=' + encodeURIComponent(toJSON(messages));
+var Channel = Class({
+  initialize: function(name) {
+    this.id = this.name = name;
   },
 
-  request: function(messages) {
-    var xhrClass = global.XDomainRequest ? XDomainRequest : XMLHttpRequest,
-        xhr      = new xhrClass(),
-        id       = ++CORS._id,
-        headers  = this._dispatcher.headers,
-        self     = this,
-        key;
+  push: function(message) {
+    this.trigger('message', message);
+  },
 
-    xhr.open('POST', URI.stringify(this.endpoint), true);
+  isUnused: function() {
+    return this.countListeners('message') === 0;
+  }
+});
 
-    if (xhr.setRequestHeader) {
-      xhr.setRequestHeader('Pragma', 'no-cache');
-      for (key in headers) {
-        if (!headers.hasOwnProperty(key)) continue;
-        xhr.setRequestHeader(key, headers[key]);
+extend(Channel.prototype, Publisher);
+
+extend(Channel, {
+  HANDSHAKE:    '/meta/handshake',
+  CONNECT:      '/meta/connect',
+  SUBSCRIBE:    '/meta/subscribe',
+  UNSUBSCRIBE:  '/meta/unsubscribe',
+  DISCONNECT:   '/meta/disconnect',
+
+  META:         'meta',
+  SERVICE:      'service',
+
+  expand: function(name) {
+    var segments = this.parse(name),
+        channels = ['/**', name];
+
+    var copy = segments.slice();
+    copy[copy.length - 1] = '*';
+    channels.push(this.unparse(copy));
+
+    for (var i = 1, n = segments.length; i < n; i++) {
+      copy = segments.slice(0, i);
+      copy.push('**');
+      channels.push(this.unparse(copy));
+    }
+
+    return channels;
+  },
+
+  isValid: function(name) {
+    return Grammar.CHANNEL_NAME.test(name) ||
+           Grammar.CHANNEL_PATTERN.test(name);
+  },
+
+  parse: function(name) {
+    if (!this.isValid(name)) return null;
+    return name.split('/').slice(1);
+  },
+
+  unparse: function(segments) {
+    return '/' + segments.join('/');
+  },
+
+  isMeta: function(name) {
+    var segments = this.parse(name);
+    return segments ? (segments[0] === this.META) : null;
+  },
+
+  isService: function(name) {
+    var segments = this.parse(name);
+    return segments ? (segments[0] === this.SERVICE) : null;
+  },
+
+  isSubscribable: function(name) {
+    if (!this.isValid(name)) return null;
+    return !this.isMeta(name) && !this.isService(name);
+  },
+
+  Set: Class({
+    initialize: function() {
+      this._channels = {};
+    },
+
+    getKeys: function() {
+      var keys = [];
+      for (var key in this._channels) keys.push(key);
+      return keys;
+    },
+
+    remove: function(name) {
+      delete this._channels[name];
+    },
+
+    hasSubscription: function(name) {
+      return this._channels.hasOwnProperty(name);
+    },
+
+    subscribe: function(names, subscription) {
+      var name;
+      for (var i = 0, n = names.length; i < n; i++) {
+        name = names[i];
+        var channel = this._channels[name] = this._channels[name] || new Channel(name);
+        channel.bind('message', subscription);
+      }
+    },
+
+    unsubscribe: function(name, subscription) {
+      var channel = this._channels[name];
+      if (!channel) return false;
+      channel.unbind('message', subscription);
+
+      if (channel.isUnused()) {
+        this.remove(name);
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    distributeMessage: function(message) {
+      var channels = Channel.expand(message.channel);
+
+      for (var i = 0, n = channels.length; i < n; i++) {
+        var channel = this._channels[channels[i]];
+        if (channel) channel.trigger('message', message);
       }
     }
+  })
+});
 
-    var cleanUp = function() {
-      if (!xhr) return false;
-      CORS._pending.remove(id);
-      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
+module.exports = Channel;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+  CHANNEL_NAME:     /^\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*$/,
+  CHANNEL_PATTERN:  /^(\/(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)))+)*\/\*{1,2}$/,
+  ERROR:            /^([0-9][0-9][0-9]:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*(,(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)*:(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*|[0-9][0-9][0-9]::(((([a-z]|[A-Z])|[0-9])|(\-|\_|\!|\~|\(|\)|\$|\@)| |\/|\*|\.))*)$/,
+  VERSION:          /^([0-9])+(\.(([a-z]|[A-Z])|[0-9])(((([a-z]|[A-Z])|[0-9])|\-|\_))*)*$/
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {};
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Class = __webpack_require__(2);
+
+module.exports = Class({
+  initialize: function() {
+    this._index = {};
+  },
+
+  add: function(item) {
+    var key = (item.id !== undefined) ? item.id : item;
+    if (this._index.hasOwnProperty(key)) return false;
+    this._index[key] = item;
+    return true;
+  },
+
+  forEach: function(block, context) {
+    for (var key in this._index) {
+      if (this._index.hasOwnProperty(key))
+        block.call(context, this._index[key]);
+    }
+  },
+
+  isEmpty: function() {
+    for (var key in this._index) {
+      if (this._index.hasOwnProperty(key)) return false;
+    }
+    return true;
+  },
+
+  member: function(item) {
+    for (var key in this._index) {
+      if (this._index[key] === item) return true;
+    }
+    return false;
+  },
+
+  remove: function(item) {
+    var key = (item.id !== undefined) ? item.id : item;
+    var removed = this._index[key];
+    delete this._index[key];
+    return removed;
+  },
+
+  toArray: function() {
+    var array = [];
+    this.forEach(function(item) { array.push(item) });
+    return array;
+  }
+});
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class     = __webpack_require__(2),
+    URI       = __webpack_require__(4),
+    browser   = __webpack_require__(21),
+    extend    = __webpack_require__(0),
+    toJSON    = __webpack_require__(10),
+    Transport = __webpack_require__(5);
+
+var XHR = extend(Class(Transport, {
+  encode: function(messages) {
+    return toJSON(messages);
+  },
+
+  request: function(messages) {
+    var href = this.endpoint.href,
+        self = this,
+        xhr;
+
+    // Prefer XMLHttpRequest over ActiveXObject if they both exist
+    if (global.XMLHttpRequest) {
+      xhr = new XMLHttpRequest();
+    } else if (global.ActiveXObject) {
+      xhr = new ActiveXObject('Microsoft.XMLHTTP');
+    } else {
+      return this._handleError(messages);
+    }
+
+    xhr.open('POST', href, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Pragma', 'no-cache');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    var headers = this._dispatcher.headers;
+    for (var key in headers) {
+      if (!headers.hasOwnProperty(key)) continue;
+      xhr.setRequestHeader(key, headers[key]);
+    }
+
+    var abort = function() { xhr.abort() };
+    if (global.onbeforeunload !== undefined)
+      browser.Event.on(global, 'beforeunload', abort);
+
+    xhr.onreadystatechange = function() {
+      if (!xhr || xhr.readyState !== 4) return;
+
+      var replies    = null,
+          status     = xhr.status,
+          text       = xhr.responseText,
+          successful = (status >= 200 && status < 300) || status === 304 || status === 1223;
+
+      if (global.onbeforeunload !== undefined)
+        browser.Event.detach(global, 'beforeunload', abort);
+
+      xhr.onreadystatechange = function() {};
       xhr = null;
-    };
 
-    xhr.onload = function() {
-      var replies;
-      try { replies = JSON.parse(xhr.responseText) } catch (error) {}
+      if (!successful) return self._handleError(messages);
 
-      cleanUp();
+      try {
+        replies = JSON.parse(text);
+      } catch (error) {}
 
       if (replies)
         self._receive(replies);
@@ -6031,2405 +3329,968 @@ var CORS = extend(Class(Transport, {
         self._handleError(messages);
     };
 
-    xhr.onerror = xhr.ontimeout = function() {
-      cleanUp();
-      self._handleError(messages);
-    };
-
-    xhr.onprogress = function() {};
-
-    if (xhrClass === global.XDomainRequest)
-      CORS._pending.add({id: id, xhr: xhr});
-
     xhr.send(this.encode(messages));
     return xhr;
   }
 }), {
-  _id:      0,
-  _pending: new Set(),
-
   isUsable: function(dispatcher, endpoint, callback, context) {
-    if (URI.isSameOrigin(endpoint))
-      return callback.call(context, false);
+    var usable = (navigator.product === 'ReactNative')
+              || URI.isSameOrigin(endpoint);
 
-    if (global.XDomainRequest)
-      return callback.call(context, endpoint.protocol === location.protocol);
-
-    if (global.XMLHttpRequest) {
-      var xhr = new XMLHttpRequest();
-      return callback.call(context, xhr.withCredentials !== undefined);
-    }
-    return callback.call(context, false);
+    callback.call(context, usable);
   }
 });
 
-module.exports = CORS;
+module.exports = XHR;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
 
 /***/ }),
-/* 95 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
 
-var Class      = __webpack_require__(1),
-    URI        = __webpack_require__(3),
-    copyObject = __webpack_require__(16),
-    extend     = __webpack_require__(0),
-    Deferrable = __webpack_require__(6),
-    Transport  = __webpack_require__(5),
-    XHR        = __webpack_require__(35);
 
-var EventSource = extend(Class(Transport, {
-  initialize: function(dispatcher, endpoint) {
-    Transport.prototype.initialize.call(this, dispatcher, endpoint);
-    if (!global.EventSource) return this.setDeferredStatus('failed');
+var extend = __webpack_require__(0);
 
-    this._xhr = new XHR(dispatcher, endpoint);
-
-    endpoint = copyObject(endpoint);
-    endpoint.pathname += '/' + dispatcher.clientId;
-
-    var socket = new global.EventSource(URI.stringify(endpoint)),
-        self   = this;
-
-    socket.onopen = function() {
-      self._everConnected = true;
-      self.setDeferredStatus('succeeded');
-    };
-
-    socket.onerror = function() {
-      if (self._everConnected) {
-        self._handleError([]);
-      } else {
-        self.setDeferredStatus('failed');
-        socket.close();
-      }
-    };
-
-    socket.onmessage = function(event) {
-      var replies;
-      try { replies = JSON.parse(event.data) } catch (error) {}
-
-      if (replies)
-        self._receive(replies);
-      else
-        self._handleError([]);
-    };
-
-    this._socket = socket;
-  },
-
-  close: function() {
-    if (!this._socket) return;
-    this._socket.onopen = this._socket.onerror = this._socket.onmessage = null;
-    this._socket.close();
-    delete this._socket;
-  },
-
-  isUsable: function(callback, context) {
-    this.callback(function() { callback.call(context, true) });
-    this.errback(function() { callback.call(context, false) });
-  },
-
-  encode: function(messages) {
-    return this._xhr.encode(messages);
-  },
-
-  request: function(messages) {
-    return this._xhr.request(messages);
-  }
-
-}), {
-  isUsable: function(dispatcher, endpoint, callback, context) {
-    var id = dispatcher.clientId;
-    if (!id) return callback.call(context, false);
-
-    XHR.isUsable(dispatcher, endpoint, function(usable) {
-      if (!usable) return callback.call(context, false);
-      this.create(dispatcher, endpoint).isUsable(callback, context);
-    }, this);
-  },
-
-  create: function(dispatcher, endpoint) {
-    var sockets = dispatcher.transports.eventsource = dispatcher.transports.eventsource || {},
-        id      = dispatcher.clientId;
-
-    var url = copyObject(endpoint);
-    url.pathname += '/' + (id || '');
-    url = URI.stringify(url);
-
-    sockets[url] = sockets[url] || new this(dispatcher, endpoint);
-    return sockets[url];
-  }
-});
-
-extend(EventSource.prototype, Deferrable);
-
-module.exports = EventSource;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var WS = global.MozWebSocket || global.WebSocket;
-
-module.exports = {
-  create: function(url, protocols, options) {
-    if (typeof WS !== 'function') return null;
-    return new WS(url);
-  }
+var Scheduler = function(message, options) {
+  this.message  = message;
+  this.options  = options;
+  this.attempts = 0;
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var Class      = __webpack_require__(1),
-    Promise    = __webpack_require__(9),
-    Set        = __webpack_require__(36),
-    URI        = __webpack_require__(3),
-    browser    = __webpack_require__(18),
-    copyObject = __webpack_require__(16),
-    extend     = __webpack_require__(0),
-    toJSON     = __webpack_require__(7),
-    ws         = __webpack_require__(96),
-    Deferrable = __webpack_require__(6),
-    Transport  = __webpack_require__(5);
-
-var WebSocket = extend(Class(Transport, {
-  UNCONNECTED:  1,
-  CONNECTING:   2,
-  CONNECTED:    3,
-
-  batching:     false,
-
-  isUsable: function(callback, context) {
-    this.callback(function() { callback.call(context, true) });
-    this.errback(function() { callback.call(context, false) });
-    this.connect();
+extend(Scheduler.prototype, {
+  getTimeout: function() {
+    return this.options.timeout;
   },
 
-  request: function(messages) {
-    this._pending = this._pending || new Set();
-    for (var i = 0, n = messages.length; i < n; i++) this._pending.add(messages[i]);
-
-    var self = this;
-
-    var promise = new Promise(function(resolve, reject) {
-      self.callback(function(socket) {
-        if (!socket || socket.readyState !== 1) return;
-        socket.send(toJSON(messages));
-        resolve(socket);
-      });
-
-      self.connect();
-    });
-
-    return {
-      abort: function() { promise.then(function(ws) { ws.close() }) }
-    };
+  getInterval: function() {
+    return this.options.interval;
   },
 
-  connect: function() {
-    if (WebSocket._unloaded) return;
-
-    this._state = this._state || this.UNCONNECTED;
-    if (this._state !== this.UNCONNECTED) return;
-    this._state = this.CONNECTING;
-
-    var socket = this._createSocket();
-    if (!socket) return this.setDeferredStatus('failed');
-
-    var self = this;
-
-    socket.onopen = function() {
-      if (socket.headers) self._storeCookies(socket.headers['set-cookie']);
-      self._socket = socket;
-      self._state = self.CONNECTED;
-      self._everConnected = true;
-      self._ping();
-      self.setDeferredStatus('succeeded', socket);
-    };
-
-    var closed = false;
-    socket.onclose = socket.onerror = function() {
-      if (closed) return;
-      closed = true;
-
-      var wasConnected = (self._state === self.CONNECTED);
-      socket.onopen = socket.onclose = socket.onerror = socket.onmessage = null;
-
-      delete self._socket;
-      self._state = self.UNCONNECTED;
-      self.removeTimeout('ping');
-
-      var pending = self._pending ? self._pending.toArray() : [];
-      delete self._pending;
-
-      if (wasConnected || self._everConnected) {
-        self.setDeferredStatus('unknown');
-        self._handleError(pending, wasConnected);
-      } else {
-        self.setDeferredStatus('failed');
-      }
-    };
-
-    socket.onmessage = function(event) {
-      var replies;
-      try { replies = JSON.parse(event.data) } catch (error) {}
-
-      if (!replies) return;
-
-      replies = [].concat(replies);
-
-      for (var i = 0, n = replies.length; i < n; i++) {
-        if (replies[i].successful === undefined) continue;
-        self._pending.remove(replies[i]);
-      }
-      self._receive(replies);
-    };
-  },
-
-  close: function() {
-    if (!this._socket) return;
-    this._socket.close();
-  },
-
-  _createSocket: function() {
-    var url        = WebSocket.getSocketUrl(this.endpoint),
-        headers    = this._dispatcher.headers,
-        extensions = this._dispatcher.wsExtensions,
-        cookie     = this._getCookies(),
-        tls        = this._dispatcher.tls,
-        options    = {extensions: extensions, headers: headers, proxy: this._proxy, tls: tls};
-
-    if (cookie !== '') options.headers['Cookie'] = cookie;
-
-    return ws.create(url, [], options);
-  },
-
-  _ping: function() {
-    if (!this._socket || this._socket.readyState !== 1) return;
-    this._socket.send('[]');
-    this.addTimeout('ping', this._dispatcher.timeout / 2, this._ping, this);
-  }
-
-}), {
-  PROTOCOLS: {
-    'http:':  'ws:',
-    'https:': 'wss:'
-  },
-
-  create: function(dispatcher, endpoint) {
-    var sockets = dispatcher.transports.websocket = dispatcher.transports.websocket || {};
-    sockets[endpoint.href] = sockets[endpoint.href] || new this(dispatcher, endpoint);
-    return sockets[endpoint.href];
-  },
-
-  getSocketUrl: function(endpoint) {
-    endpoint = copyObject(endpoint);
-    endpoint.protocol = this.PROTOCOLS[endpoint.protocol];
-    return URI.stringify(endpoint);
-  },
-
-  isUsable: function(dispatcher, endpoint, callback, context) {
-    this.create(dispatcher, endpoint).isUsable(callback, context);
-  }
-});
-
-extend(WebSocket.prototype, Deferrable);
-
-if (browser.Event && global.onbeforeunload !== undefined)
-  browser.Event.on(global, 'beforeunload', function() { WebSocket._unloaded = true });
-
-module.exports = WebSocket;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 98 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-module.exports = {
-  addTimeout: function(name, delay, callback, context) {
-    this._timeouts = this._timeouts || {};
-    if (this._timeouts.hasOwnProperty(name)) return;
-    var self = this;
-    this._timeouts[name] = global.setTimeout(function() {
-      delete self._timeouts[name];
-      callback.call(context);
-    }, 1000 * delay);
-  },
-
-  removeTimeout: function(name) {
-    this._timeouts = this._timeouts || {};
-    var timeout = this._timeouts[name];
-    if (!timeout) return;
-    global.clearTimeout(timeout);
-    delete this._timeouts[name];
-  },
-
-  removeAllTimeouts: function() {
-    this._timeouts = this._timeouts || {};
-    for (var name in this._timeouts) this.removeTimeout(name);
-  }
-};
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 99 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Transport = __webpack_require__(5);
-
-Transport.register('websocket', __webpack_require__(97));
-Transport.register('eventsource', __webpack_require__(95));
-Transport.register('long-polling', __webpack_require__(35));
-Transport.register('cross-origin-long-polling', __webpack_require__(94));
-Transport.register('callback-polling', __webpack_require__(93));
-
-module.exports = Transport;
-
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var Class     = __webpack_require__(1),
-    URI       = __webpack_require__(3),
-    cookies   = __webpack_require__(37),
-    extend    = __webpack_require__(0),
-    Logging   = __webpack_require__(8),
-    Publisher = __webpack_require__(17),
-    Transport = __webpack_require__(99),
-    Scheduler = __webpack_require__(34);
-
-var Dispatcher = Class({ className: 'Dispatcher',
-  MAX_REQUEST_SIZE: 2048,
-  DEFAULT_RETRY:    5,
-
-  UP:   1,
-  DOWN: 2,
-
-  initialize: function(client, endpoint, options) {
-    this._client     = client;
-    this.endpoint    = URI.parse(endpoint);
-    this._alternates = options.endpoints || {};
-
-    this.cookies      = cookies.CookieJar && new cookies.CookieJar();
-    this._disabled    = [];
-    this._envelopes   = {};
-    this.headers      = {};
-    this.retry        = options.retry || this.DEFAULT_RETRY;
-    this._scheduler   = options.scheduler || Scheduler;
-    this._state       = 0;
-    this.transports   = {};
-    this.wsExtensions = [];
-
-    this.proxy = options.proxy || {};
-    if (typeof this._proxy === 'string') this._proxy = {origin: this._proxy};
-
-    var exts = options.websocketExtensions;
-    if (exts) {
-      exts = [].concat(exts);
-      for (var i = 0, n = exts.length; i < n; i++)
-        this.addWebsocketExtension(exts[i]);
-    }
-
-    this.tls = options.tls || {};
-    this.tls.ca = this.tls.ca || options.ca;
-
-    for (var type in this._alternates)
-      this._alternates[type] = URI.parse(this._alternates[type]);
-
-    this.maxRequestSize = this.MAX_REQUEST_SIZE;
-  },
-
-  endpointFor: function(connectionType) {
-    return this._alternates[connectionType] || this.endpoint;
-  },
-
-  addWebsocketExtension: function(extension) {
-    this.wsExtensions.push(extension);
-  },
-
-  disable: function(feature) {
-    this._disabled.push(feature);
-  },
-
-  setHeader: function(name, value) {
-    this.headers[name] = value;
-  },
-
-  close: function() {
-    var transport = this._transport;
-    delete this._transport;
-    if (transport) transport.close();
-  },
-
-  getConnectionTypes: function() {
-    return Transport.getConnectionTypes();
-  },
-
-  selectTransport: function(transportTypes) {
-    Transport.get(this, transportTypes, this._disabled, function(transport) {
-      this.debug('Selected ? transport for ?', transport.connectionType, URI.stringify(transport.endpoint));
-
-      if (transport === this._transport) return;
-      if (this._transport) this._transport.close();
-
-      this._transport = transport;
-      this.connectionType = transport.connectionType;
-    }, this);
-  },
-
-  sendMessage: function(message, timeout, options) {
-    options = options || {};
-
-    var id       = message.id,
-        attempts = options.attempts,
-        deadline = options.deadline && new Date().getTime() + (options.deadline * 1000),
-        envelope = this._envelopes[id],
-        scheduler;
-
-    if (!envelope) {
-      scheduler = new this._scheduler(message, {timeout: timeout, interval: this.retry, attempts: attempts, deadline: deadline});
-      envelope  = this._envelopes[id] = {message: message, scheduler: scheduler};
-    }
-
-    this._sendEnvelope(envelope);
-  },
-
-  _sendEnvelope: function(envelope) {
-    if (!this._transport) return;
-    if (envelope.request || envelope.timer) return;
-
-    var message   = envelope.message,
-        scheduler = envelope.scheduler,
-        self      = this;
-
-    if (!scheduler.isDeliverable()) {
-      scheduler.abort();
-      delete this._envelopes[message.id];
-      return;
-    }
-
-    envelope.timer = global.setTimeout(function() {
-      self.handleError(message);
-    }, scheduler.getTimeout() * 1000);
-
-    scheduler.send();
-    envelope.request = this._transport.sendMessage(message);
-  },
-
-  handleResponse: function(reply) {
-    var envelope = this._envelopes[reply.id];
-
-    if (reply.successful !== undefined && envelope) {
-      envelope.scheduler.succeed();
-      delete this._envelopes[reply.id];
-      global.clearTimeout(envelope.timer);
-    }
-
-    this.trigger('message', reply);
-
-    if (this._state === this.UP) return;
-    this._state = this.UP;
-    this._client.trigger('transport:up');
-  },
-
-  handleError: function(message, immediate) {
-    var envelope = this._envelopes[message.id],
-        request  = envelope && envelope.request,
-        self     = this;
-
-    if (!request) return;
-
-    request.then(function(req) {
-      if (req && req.abort) req.abort();
-    });
-
-    var scheduler = envelope.scheduler;
-    scheduler.fail();
-
-    global.clearTimeout(envelope.timer);
-    envelope.request = envelope.timer = null;
-
-    if (immediate) {
-      this._sendEnvelope(envelope);
-    } else {
-      envelope.timer = global.setTimeout(function() {
-        envelope.timer = null;
-        self._sendEnvelope(envelope);
-      }, scheduler.getInterval() * 1000);
-    }
-
-    if (this._state === this.DOWN) return;
-    this._state = this.DOWN;
-    this._client.trigger('transport:down');
-  }
-});
-
-Dispatcher.create = function(client, endpoint, options) {
-  return new Dispatcher(client, endpoint, options);
-};
-
-extend(Dispatcher.prototype, Publisher);
-extend(Dispatcher.prototype, Logging);
-
-module.exports = Dispatcher;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports) {
-
-/*
-Copyright Joyent, Inc. and other Node contributors. All rights reserved.
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-var isArray = typeof Array.isArray === 'function'
-    ? Array.isArray
-    : function (xs) {
-        return Object.prototype.toString.call(xs) === '[object Array]'
-    }
-;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
-
-function EventEmitter() {}
-module.exports = EventEmitter;
-
-EventEmitter.prototype.emit = function(type) {
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events || !this._events.error ||
-        (isArray(this._events.error) && !this._events.error.length))
-    {
-      if (arguments[1] instanceof Error) {
-        throw arguments[1]; // Unhandled 'error' event
-      } else {
-        throw new Error("Uncaught, unspecified 'error' event.");
-      }
+  isDeliverable: function() {
+    var attempts = this.options.attempts,
+        made     = this.attempts,
+        deadline = this.options.deadline,
+        now      = new Date().getTime();
+
+    if (attempts !== undefined && made >= attempts)
       return false;
-    }
-  }
 
-  if (!this._events) return false;
-  var handler = this._events[type];
-  if (!handler) return false;
+    if (deadline !== undefined && now > deadline)
+      return false;
 
-  if (typeof handler == 'function') {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        var args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
     return true;
-
-  } else if (isArray(handler)) {
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    var listeners = handler.slice();
-    for (var i = 0, l = listeners.length; i < l; i++) {
-      listeners[i].apply(this, args);
-    }
-    return true;
-
-  } else {
-    return false;
-  }
-};
-
-// EventEmitter is defined in src/node_events.cc
-// EventEmitter.prototype.emit() is also defined there.
-EventEmitter.prototype.addListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('addListener only takes instances of Function');
-  }
-
-  if (!this._events) this._events = {};
-
-  // To avoid recursion in the case that type == "newListeners"! Before
-  // adding it to the listeners, first emit "newListeners".
-  this.emit('newListener', type, listener);
-
-  if (!this._events[type]) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  } else if (isArray(this._events[type])) {
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  } else {
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  var self = this;
-  self.on(type, function g() {
-    self.removeListener(type, g);
-    listener.apply(this, arguments);
-  });
-
-  return this;
-};
-
-EventEmitter.prototype.removeListener = function(type, listener) {
-  if ('function' !== typeof listener) {
-    throw new Error('removeListener only takes instances of Function');
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (!this._events || !this._events[type]) return this;
-
-  var list = this._events[type];
-
-  if (isArray(list)) {
-    var i = indexOf(list, listener);
-    if (i < 0) return this;
-    list.splice(i, 1);
-    if (list.length == 0)
-      delete this._events[type];
-  } else if (this._events[type] === listener) {
-    delete this._events[type];
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
-  // does not use listeners(), so no side effect of creating _events[type]
-  if (type && this._events && this._events[type]) this._events[type] = null;
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  if (!this._events) this._events = {};
-  if (!this._events[type]) this._events[type] = [];
-  if (!isArray(this._events[type])) {
-    this._events[type] = [this._events[type]];
-  }
-  return this._events[type];
-};
-
-
-/***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var array = __webpack_require__(19);
-
-module.exports = function(options, validKeys) {
-  for (var key in options) {
-    if (array.indexOf(validKeys, key) < 0)
-      throw new Error('Unrecognized option: ' + key);
-  }
-};
-
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var asap            = __webpack_require__(41),
-    Class           = __webpack_require__(1),
-    Promise         = __webpack_require__(9),
-    URI             = __webpack_require__(3),
-    array           = __webpack_require__(19),
-    browser         = __webpack_require__(18),
-    constants       = __webpack_require__(40),
-    extend          = __webpack_require__(0),
-    validateOptions = __webpack_require__(102),
-    Deferrable      = __webpack_require__(6),
-    Logging         = __webpack_require__(8),
-    Publisher       = __webpack_require__(17),
-    Channel         = __webpack_require__(39),
-    Dispatcher      = __webpack_require__(100),
-    Error           = __webpack_require__(92),
-    Extensible      = __webpack_require__(91),
-    Publication     = __webpack_require__(90),
-    Subscription    = __webpack_require__(89);
-
-var Client = Class({ className: 'Client',
-  UNCONNECTED:        1,
-  CONNECTING:         2,
-  CONNECTED:          3,
-  DISCONNECTED:       4,
-
-  HANDSHAKE:          'handshake',
-  RETRY:              'retry',
-  NONE:               'none',
-
-  CONNECTION_TIMEOUT: 60,
-
-  DEFAULT_ENDPOINT:   '/bayeux',
-  INTERVAL:           0,
-
-  initialize: function(endpoint, options) {
-    this.info('New client created for ?', endpoint);
-    options = options || {};
-
-    validateOptions(options, ['interval', 'timeout', 'endpoints', 'proxy', 'retry', 'scheduler', 'websocketExtensions', 'tls', 'ca']);
-
-    this._channels   = new Channel.Set();
-    this._dispatcher = Dispatcher.create(this, endpoint || this.DEFAULT_ENDPOINT, options);
-
-    this._messageId = 0;
-    this._state     = this.UNCONNECTED;
-
-    this._responseCallbacks = {};
-
-    this._advice = {
-      reconnect: this.RETRY,
-      interval:  1000 * (options.interval || this.INTERVAL),
-      timeout:   1000 * (options.timeout  || this.CONNECTION_TIMEOUT)
-    };
-    this._dispatcher.timeout = this._advice.timeout / 1000;
-
-    this._dispatcher.bind('message', this._receiveMessage, this);
-
-    if (browser.Event && global.onbeforeunload !== undefined)
-      browser.Event.on(global, 'beforeunload', function() {
-        if (array.indexOf(this._dispatcher._disabled, 'autodisconnect') < 0)
-          this.disconnect();
-      }, this);
   },
 
-  addWebsocketExtension: function(extension) {
-    return this._dispatcher.addWebsocketExtension(extension);
+  send: function() {
+    this.attempts += 1;
   },
 
-  disable: function(feature) {
-    return this._dispatcher.disable(feature);
-  },
+  succeed: function() {},
 
-  setHeader: function(name, value) {
-    return this._dispatcher.setHeader(name, value);
-  },
+  fail: function() {},
 
-  // Request
-  // MUST include:  * channel
-  //                * version
-  //                * supportedConnectionTypes
-  // MAY include:   * minimumVersion
-  //                * ext
-  //                * id
-  //
-  // Success Response                             Failed Response
-  // MUST include:  * channel                     MUST include:  * channel
-  //                * version                                    * successful
-  //                * supportedConnectionTypes                   * error
-  //                * clientId                    MAY include:   * supportedConnectionTypes
-  //                * successful                                 * advice
-  // MAY include:   * minimumVersion                             * version
-  //                * advice                                     * minimumVersion
-  //                * ext                                        * ext
-  //                * id                                         * id
-  //                * authSuccessful
-  handshake: function(callback, context) {
-    if (this._advice.reconnect === this.NONE) return;
-    if (this._state !== this.UNCONNECTED) return;
-
-    this._state = this.CONNECTING;
-    var self = this;
-
-    this.info('Initiating handshake with ?', URI.stringify(this._dispatcher.endpoint));
-    this._dispatcher.selectTransport(constants.MANDATORY_CONNECTION_TYPES);
-
-    this._sendMessage({
-      channel:                  Channel.HANDSHAKE,
-      version:                  constants.BAYEUX_VERSION,
-      supportedConnectionTypes: this._dispatcher.getConnectionTypes()
-
-    }, {}, function(response) {
-
-      if (response.successful) {
-        this._state = this.CONNECTED;
-        this._dispatcher.clientId  = response.clientId;
-
-        this._dispatcher.selectTransport(response.supportedConnectionTypes);
-
-        this.info('Handshake successful: ?', this._dispatcher.clientId);
-
-        this.subscribe(this._channels.getKeys(), true);
-        if (callback) asap(function() { callback.call(context) });
-
-      } else {
-        this.info('Handshake unsuccessful');
-        global.setTimeout(function() { self.handshake(callback, context) }, this._dispatcher.retry * 1000);
-        this._state = this.UNCONNECTED;
-      }
-    }, this);
-  },
-
-  // Request                              Response
-  // MUST include:  * channel             MUST include:  * channel
-  //                * clientId                           * successful
-  //                * connectionType                     * clientId
-  // MAY include:   * ext                 MAY include:   * error
-  //                * id                                 * advice
-  //                                                     * ext
-  //                                                     * id
-  //                                                     * timestamp
-  connect: function(callback, context) {
-    if (this._advice.reconnect === this.NONE) return;
-    if (this._state === this.DISCONNECTED) return;
-
-    if (this._state === this.UNCONNECTED)
-      return this.handshake(function() { this.connect(callback, context) }, this);
-
-    this.callback(callback, context);
-    if (this._state !== this.CONNECTED) return;
-
-    this.info('Calling deferred actions for ?', this._dispatcher.clientId);
-    this.setDeferredStatus('succeeded');
-    this.setDeferredStatus('unknown');
-
-    if (this._connectRequest) return;
-    this._connectRequest = true;
-
-    this.info('Initiating connection for ?', this._dispatcher.clientId);
-
-    this._sendMessage({
-      channel:        Channel.CONNECT,
-      clientId:       this._dispatcher.clientId,
-      connectionType: this._dispatcher.connectionType
-
-    }, {}, this._cycleConnection, this);
-  },
-
-  // Request                              Response
-  // MUST include:  * channel             MUST include:  * channel
-  //                * clientId                           * successful
-  // MAY include:   * ext                                * clientId
-  //                * id                  MAY include:   * error
-  //                                                     * ext
-  //                                                     * id
-  disconnect: function() {
-    if (this._state !== this.CONNECTED) return;
-    this._state = this.DISCONNECTED;
-
-    this.info('Disconnecting ?', this._dispatcher.clientId);
-    var promise = new Publication();
-
-    this._sendMessage({
-      channel:  Channel.DISCONNECT,
-      clientId: this._dispatcher.clientId
-
-    }, {}, function(response) {
-      if (response.successful) {
-        this._dispatcher.close();
-        promise.setDeferredStatus('succeeded');
-      } else {
-        promise.setDeferredStatus('failed', Error.parse(response.error));
-      }
-    }, this);
-
-    this.info('Clearing channel listeners for ?', this._dispatcher.clientId);
-    this._channels = new Channel.Set();
-
-    return promise;
-  },
-
-  // Request                              Response
-  // MUST include:  * channel             MUST include:  * channel
-  //                * clientId                           * successful
-  //                * subscription                       * clientId
-  // MAY include:   * ext                                * subscription
-  //                * id                  MAY include:   * error
-  //                                                     * advice
-  //                                                     * ext
-  //                                                     * id
-  //                                                     * timestamp
-  subscribe: function(channel, callback, context) {
-    if (channel instanceof Array)
-      return array.map(channel, function(c) {
-        return this.subscribe(c, callback, context);
-      }, this);
-
-    var subscription = new Subscription(this, channel, callback, context),
-        force        = (callback === true),
-        hasSubscribe = this._channels.hasSubscription(channel);
-
-    if (hasSubscribe && !force) {
-      this._channels.subscribe([channel], subscription);
-      subscription.setDeferredStatus('succeeded');
-      return subscription;
-    }
-
-    this.connect(function() {
-      this.info('Client ? attempting to subscribe to ?', this._dispatcher.clientId, channel);
-      if (!force) this._channels.subscribe([channel], subscription);
-
-      this._sendMessage({
-        channel:      Channel.SUBSCRIBE,
-        clientId:     this._dispatcher.clientId,
-        subscription: channel
-
-      }, {}, function(response) {
-        if (!response.successful) {
-          subscription.setDeferredStatus('failed', Error.parse(response.error));
-          return this._channels.unsubscribe(channel, subscription);
-        }
-
-        var channels = [].concat(response.subscription);
-        this.info('Subscription acknowledged for ? to ?', this._dispatcher.clientId, channels);
-        subscription.setDeferredStatus('succeeded');
-      }, this);
-    }, this);
-
-    return subscription;
-  },
-
-  // Request                              Response
-  // MUST include:  * channel             MUST include:  * channel
-  //                * clientId                           * successful
-  //                * subscription                       * clientId
-  // MAY include:   * ext                                * subscription
-  //                * id                  MAY include:   * error
-  //                                                     * advice
-  //                                                     * ext
-  //                                                     * id
-  //                                                     * timestamp
-  unsubscribe: function(channel, subscription) {
-    if (channel instanceof Array)
-      return array.map(channel, function(c) {
-        return this.unsubscribe(c, subscription);
-      }, this);
-
-    var dead = this._channels.unsubscribe(channel, subscription);
-    if (!dead) return;
-
-    this.connect(function() {
-      this.info('Client ? attempting to unsubscribe from ?', this._dispatcher.clientId, channel);
-
-      this._sendMessage({
-        channel:      Channel.UNSUBSCRIBE,
-        clientId:     this._dispatcher.clientId,
-        subscription: channel
-
-      }, {}, function(response) {
-        if (!response.successful) return;
-
-        var channels = [].concat(response.subscription);
-        this.info('Unsubscription acknowledged for ? from ?', this._dispatcher.clientId, channels);
-      }, this);
-    }, this);
-  },
-
-  // Request                              Response
-  // MUST include:  * channel             MUST include:  * channel
-  //                * data                               * successful
-  // MAY include:   * clientId            MAY include:   * id
-  //                * id                                 * error
-  //                * ext                                * ext
-  publish: function(channel, data, options) {
-    validateOptions(options || {}, ['attempts', 'deadline']);
-    var publication = new Publication();
-
-    this.connect(function() {
-      this.info('Client ? queueing published message to ?: ?', this._dispatcher.clientId, channel, data);
-
-      this._sendMessage({
-        channel:  channel,
-        data:     data,
-        clientId: this._dispatcher.clientId
-
-      }, options, function(response) {
-        if (response.successful)
-          publication.setDeferredStatus('succeeded');
-        else
-          publication.setDeferredStatus('failed', Error.parse(response.error));
-      }, this);
-    }, this);
-
-    return publication;
-  },
-
-  _sendMessage: function(message, options, callback, context) {
-    message.id = this._generateMessageId();
-
-    var timeout = this._advice.timeout
-                ? 1.2 * this._advice.timeout / 1000
-                : 1.2 * this._dispatcher.retry;
-
-    this.pipeThroughExtensions('outgoing', message, null, function(message) {
-      if (!message) return;
-      if (callback) this._responseCallbacks[message.id] = [callback, context];
-      this._dispatcher.sendMessage(message, timeout, options || {});
-    }, this);
-  },
-
-  _generateMessageId: function() {
-    this._messageId += 1;
-    if (this._messageId >= Math.pow(2,32)) this._messageId = 0;
-    return this._messageId.toString(36);
-  },
-
-  _receiveMessage: function(message) {
-    var id = message.id, callback;
-
-    if (message.successful !== undefined) {
-      callback = this._responseCallbacks[id];
-      delete this._responseCallbacks[id];
-    }
-
-    this.pipeThroughExtensions('incoming', message, null, function(message) {
-      if (!message) return;
-      if (message.advice) this._handleAdvice(message.advice);
-      this._deliverMessage(message);
-      if (callback) callback[0].call(callback[1], message);
-    }, this);
-  },
-
-  _handleAdvice: function(advice) {
-    extend(this._advice, advice);
-    this._dispatcher.timeout = this._advice.timeout / 1000;
-
-    if (this._advice.reconnect === this.HANDSHAKE && this._state !== this.DISCONNECTED) {
-      this._state = this.UNCONNECTED;
-      this._dispatcher.clientId = null;
-      this._cycleConnection();
-    }
-  },
-
-  _deliverMessage: function(message) {
-    if (!message.channel || message.data === undefined) return;
-    this.info('Client ? calling listeners for ? with ?', this._dispatcher.clientId, message.channel, message.data);
-    this._channels.distributeMessage(message);
-  },
-
-  _cycleConnection: function() {
-    if (this._connectRequest) {
-      this._connectRequest = null;
-      this.info('Closed connection for ?', this._dispatcher.clientId);
-    }
-    var self = this;
-    global.setTimeout(function() { self.connect() }, this._advice.interval);
-  }
+  abort: function() {}
 });
 
-extend(Client.prototype, Deferrable);
-extend(Client.prototype, Publisher);
-extend(Client.prototype, Logging);
-extend(Client.prototype, Extensible);
-
-module.exports = Client;
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 104 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var constants = __webpack_require__(40),
-    Logging   = __webpack_require__(8);
-
-var Faye = {
-  VERSION:    constants.VERSION,
-
-  Client:     __webpack_require__(103),
-  Scheduler:  __webpack_require__(34)
-};
-
-Logging.wrapper = Faye;
-
-module.exports = Faye;
+module.exports = Scheduler;
 
 
 /***/ }),
-/* 105 */
+/* 37 */
 /***/ (function(module, exports) {
 
-/* (ignored) */
+/* eslint-env browser */
+module.exports = typeof self == 'object' ? self.FormData : window.FormData;
+
 
 /***/ }),
-/* 106 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 107 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
+var defineProperty = __webpack_require__(39);
 
-// Use the fastest means possible to execute a task in its own turn, with
-// priority over other events including IO, animation, reflow, and redraw
-// events in browsers.
-//
-// An exception thrown by a task will permanently interrupt the processing of
-// subsequent tasks. The higher level `asap` function ensures that if an
-// exception is thrown by a task, that the task queue will continue flushing as
-// soon as possible, but if you use `rawAsap` directly, you are responsible to
-// either ensure that no exceptions are thrown from your task, or to manually
-// call `rawAsap.requestFlush` if an exception is thrown.
-module.exports = rawAsap;
-function rawAsap(task) {
-    if (!queue.length) {
-        requestFlush();
-        flushing = true;
-    }
-    // Equivalent to push, but avoids a function call.
-    queue[queue.length] = task;
-}
-
-var queue = [];
-// Once a flush has been requested, no further calls to `requestFlush` are
-// necessary until the next `flush` completes.
-var flushing = false;
-// `requestFlush` is an implementation-specific method that attempts to kick
-// off a `flush` event as quickly as possible. `flush` will attempt to exhaust
-// the event queue before yielding to the browser's own event loop.
-var requestFlush;
-// The position of the next task to execute in the task queue. This is
-// preserved between calls to `flush` so that it can be resumed if
-// a task throws an exception.
-var index = 0;
-// If a task schedules additional tasks recursively, the task queue can grow
-// unbounded. To prevent memory exhaustion, the task queue will periodically
-// truncate already-completed tasks.
-var capacity = 1024;
-
-// The flush function processes all tasks that have been scheduled with
-// `rawAsap` unless and until one of those tasks throws an exception.
-// If a task throws an exception, `flush` ensures that its state will remain
-// consistent and will resume where it left off when called again.
-// However, `flush` does not make any arrangements to be called again if an
-// exception is thrown.
-function flush() {
-    while (index < queue.length) {
-        var currentIndex = index;
-        // Advance the index before calling the task. This ensures that we will
-        // begin flushing on the next task the task throws an error.
-        index = index + 1;
-        queue[currentIndex].call();
-        // Prevent leaking memory for long chains of recursive calls to `asap`.
-        // If we call `asap` within tasks scheduled by `asap`, the queue will
-        // grow, but to avoid an O(n) walk for every task we execute, we don't
-        // shift tasks off the queue after they have been executed.
-        // Instead, we periodically shift 1024 tasks off the queue.
-        if (index > capacity) {
-            // Manually shift all values starting at the index back to the
-            // beginning of the queue.
-            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
-                queue[scan] = queue[scan + index];
-            }
-            queue.length -= index;
-            index = 0;
-        }
-    }
-    queue.length = 0;
-    index = 0;
-    flushing = false;
-}
-
-// `requestFlush` is implemented using a strategy based on data collected from
-// every available SauceLabs Selenium web driver worker at time of writing.
-// https://docs.google.com/spreadsheets/d/1mG-5UYGup5qxGdEMWkhP6BWCz053NUb2E1QoUTU16uA/edit#gid=783724593
-
-// Safari 6 and 6.1 for desktop, iPad, and iPhone are the only browsers that
-// have WebKitMutationObserver but not un-prefixed MutationObserver.
-// Must use `global` or `self` instead of `window` to work in both frames and web
-// workers. `global` is a provision of Browserify, Mr, Mrs, or Mop.
-
-/* globals self */
-var scope = typeof global !== "undefined" ? global : self;
-var BrowserMutationObserver = scope.MutationObserver || scope.WebKitMutationObserver;
-
-// MutationObservers are desirable because they have high priority and work
-// reliably everywhere they are implemented.
-// They are implemented in all modern browsers.
-//
-// - Android 4-4.3
-// - Chrome 26-34
-// - Firefox 14-29
-// - Internet Explorer 11
-// - iPad Safari 6-7.1
-// - iPhone Safari 7-7.1
-// - Safari 6-7
-if (typeof BrowserMutationObserver === "function") {
-    requestFlush = makeRequestCallFromMutationObserver(flush);
-
-// MessageChannels are desirable because they give direct access to the HTML
-// task queue, are implemented in Internet Explorer 10, Safari 5.0-1, and Opera
-// 11-12, and in web workers in many engines.
-// Although message channels yield to any queued rendering and IO tasks, they
-// would be better than imposing the 4ms delay of timers.
-// However, they do not work reliably in Internet Explorer or Safari.
-
-// Internet Explorer 10 is the only browser that has setImmediate but does
-// not have MutationObservers.
-// Although setImmediate yields to the browser's renderer, it would be
-// preferrable to falling back to setTimeout since it does not have
-// the minimum 4ms penalty.
-// Unfortunately there appears to be a bug in Internet Explorer 10 Mobile (and
-// Desktop to a lesser extent) that renders both setImmediate and
-// MessageChannel useless for the purposes of ASAP.
-// https://github.com/kriskowal/q/issues/396
-
-// Timers are implemented universally.
-// We fall back to timers in workers in most engines, and in foreground
-// contexts in the following browsers.
-// However, note that even this simple case requires nuances to operate in a
-// broad spectrum of browsers.
-//
-// - Firefox 3-13
-// - Internet Explorer 6-9
-// - iPad Safari 4.3
-// - Lynx 2.8.7
-} else {
-    requestFlush = makeRequestCallFromTimer(flush);
-}
-
-// `requestFlush` requests that the high priority event queue be flushed as
-// soon as possible.
-// This is useful to prevent an error thrown in a task from stalling the event
-// queue if the exception handled by Node.js’s
-// `process.on("uncaughtException")` or by a domain.
-rawAsap.requestFlush = requestFlush;
-
-// To request a high priority event, we induce a mutation observer by toggling
-// the text of a text node between "1" and "-1".
-function makeRequestCallFromMutationObserver(callback) {
-    var toggle = 1;
-    var observer = new BrowserMutationObserver(callback);
-    var node = document.createTextNode("");
-    observer.observe(node, {characterData: true});
-    return function requestCall() {
-        toggle = -toggle;
-        node.data = toggle;
-    };
-}
-
-// The message channel technique was discovered by Malte Ubl and was the
-// original foundation for this library.
-// http://www.nonblocking.io/2011/06/windownexttick.html
-
-// Safari 6.0.5 (at least) intermittently fails to create message ports on a
-// page's first load. Thankfully, this version of Safari supports
-// MutationObservers, so we don't need to fall back in that case.
-
-// function makeRequestCallFromMessageChannel(callback) {
-//     var channel = new MessageChannel();
-//     channel.port1.onmessage = callback;
-//     return function requestCall() {
-//         channel.port2.postMessage(0);
-//     };
-// }
-
-// For reasons explained above, we are also unable to use `setImmediate`
-// under any circumstances.
-// Even if we were, there is another bug in Internet Explorer 10.
-// It is not sufficient to assign `setImmediate` to `requestFlush` because
-// `setImmediate` must be called *by name* and therefore must be wrapped in a
-// closure.
-// Never forget.
-
-// function makeRequestCallFromSetImmediate(callback) {
-//     return function requestCall() {
-//         setImmediate(callback);
-//     };
-// }
-
-// Safari 6.0 has a problem where timers will get lost while the user is
-// scrolling. This problem does not impact ASAP because Safari 6.0 supports
-// mutation observers, so that implementation is used instead.
-// However, if we ever elect to use timers in Safari, the prevalent work-around
-// is to add a scroll event listener that calls for a flush.
-
-// `setTimeout` does not call the passed callback if the delay is less than
-// approximately 7 in web workers in Firefox 8 through 18, and sometimes not
-// even then.
-
-function makeRequestCallFromTimer(callback) {
-    return function requestCall() {
-        // We dispatch a timeout with a specified delay of 0 for engines that
-        // can reliably accommodate that request. This will usually be snapped
-        // to a 4 milisecond delay, but once we're flushing, there's no delay
-        // between events.
-        var timeoutHandle = setTimeout(handleTimer, 0);
-        // However, since this timer gets frequently dropped in Firefox
-        // workers, we enlist an interval handle that will try to fire
-        // an event 20 times per second until it succeeds.
-        var intervalHandle = setInterval(handleTimer, 50);
-
-        function handleTimer() {
-            // Whichever timer succeeds will cancel both timers and
-            // execute the callback.
-            clearTimeout(timeoutHandle);
-            clearInterval(intervalHandle);
-            callback();
-        }
-    };
-}
-
-// This is for `asap.js` only.
-// Its name will be periodically randomized to break any code that depends on
-// its existence.
-rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
-
-// ASAP was originally a nextTick shim included in Q. This was factored out
-// into this ASAP package. It was later adapted to RSVP which made further
-// amendments. These decisions, particularly to marginalize MessageChannel and
-// to capture the MutationObserver implementation in a closure, were integrated
-// back into ASAP proper.
-// https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(2)))
-
-/***/ }),
-/* 108 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Promise = __webpack_require__(9);
-
-module.exports = Promise;
-
-/***/ }),
-/* 109 */
-/***/ (function(module, exports) {
-
-// empty (null-loader)
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-;(function () {
-
-  var object =
-     true ? exports :
-    undefined; // #31: ExtendScript
-
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-  function InvalidCharacterError(message) {
-    this.message = message;
+/**
+ * The base implementation of `assignValue` and `assignMergeValue` without
+ * value checks.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function baseAssignValue(object, key, value) {
+  if (key == '__proto__' && defineProperty) {
+    defineProperty(object, key, {
+      'configurable': true,
+      'enumerable': true,
+      'value': value,
+      'writable': true
+    });
+  } else {
+    object[key] = value;
   }
-  InvalidCharacterError.prototype = new Error;
-  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+}
 
-  // encoder
-  // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (
-  object.btoa = function (input) {
-    var str = String(input);
-    for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars, output = '';
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt(idx | 0) || (map = '=', idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-    ) {
-      charCode = str.charCodeAt(idx += 3/4);
-      if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-      }
-      block = block << 8 | charCode;
-    }
-    return output;
-  });
+module.exports = baseAssignValue;
 
-  // decoder
-  // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (
-  object.atob = function (input) {
-    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
-    if (str.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-    }
-    for (
-      // initialize result and counters
-      var bc = 0, bs, buffer, idx = 0, output = '';
-      // get next character
-      buffer = str.charAt(idx++);
-      // character found in table? initialize bit storage and add its ascii value;
-      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-        // and if not first of each 4 characters,
-        // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-    ) {
-      // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf(buffer);
-    }
-    return output;
-  });
 
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var getNative = __webpack_require__(93);
+
+var defineProperty = (function() {
+  try {
+    var func = getNative(Object, 'defineProperty');
+    func({}, '', {});
+    return func;
+  } catch (e) {}
 }());
 
+module.exports = defineProperty;
+
 
 /***/ }),
-/* 111 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 112 */
-/***/ (function(module, exports) {
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
-
-/***/ }),
-/* 113 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var defineProperty = __webpack_require__(112);
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
-
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
-    }
-
-    ownKeys.forEach(function (key) {
-      defineProperty(target, key, source[key]);
-    });
-  }
-
-  return target;
-}
-
-module.exports = _objectSpread;
-
-/***/ }),
-/* 114 */
-/***/ (function(module, exports) {
-
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-
-module.exports = overArg;
-
-
-/***/ }),
-/* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var overArg = __webpack_require__(114);
-
-/** Built-in value references. */
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-
-module.exports = getPrototype;
-
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports) {
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/**
- * Converts `value` to a string using `Object.prototype.toString`.
- *
- * @private
- * @param {*} value The value to convert.
- * @returns {string} Returns the converted string.
- */
-function objectToString(value) {
-  return nativeObjectToString.call(value);
-}
-
-module.exports = objectToString;
-
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Symbol = __webpack_require__(44);
-
-/** Used for built-in method references. */
-var objectProto = Object.prototype;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var nativeObjectToString = objectProto.toString;
-
-/** Built-in value references. */
-var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-
-/**
- * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
- *
- * @private
- * @param {*} value The value to query.
- * @returns {string} Returns the raw `toStringTag`.
- */
-function getRawTag(value) {
-  var isOwn = hasOwnProperty.call(value, symToStringTag),
-      tag = value[symToStringTag];
-
-  try {
-    value[symToStringTag] = undefined;
-    var unmasked = true;
-  } catch (e) {}
-
-  var result = nativeObjectToString.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag] = tag;
-    } else {
-      delete value[symToStringTag];
-    }
-  }
-  return result;
-}
-
-module.exports = getRawTag;
-
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(14),
-    getPrototype = __webpack_require__(115),
-    isObjectLike = __webpack_require__(13);
+var baseGetTag = __webpack_require__(13),
+    isObject = __webpack_require__(7);
 
 /** `Object#toString` result references. */
-var objectTag = '[object Object]';
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to infer the `Object` constructor. */
-var objectCtorString = funcToString.call(Object);
+var asyncTag = '[object AsyncFunction]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    proxyTag = '[object Proxy]';
 
 /**
- * Checks if `value` is a plain object, that is, an object created by the
- * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ * Checks if `value` is classified as a `Function` object.
  *
  * @static
  * @memberOf _
- * @since 0.8.0
+ * @since 0.1.0
  * @category Lang
  * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @returns {boolean} Returns `true` if `value` is a function, else `false`.
  * @example
  *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * _.isPlainObject(new Foo);
- * // => false
- *
- * _.isPlainObject([1, 2, 3]);
- * // => false
- *
- * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * _.isFunction(_);
  * // => true
  *
- * _.isPlainObject(Object.create(null));
- * // => true
+ * _.isFunction(/abc/);
+ * // => false
  */
-function isPlainObject(value) {
-  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+function isFunction(value) {
+  if (!isObject(value)) {
     return false;
   }
-  var proto = getPrototype(value);
-  if (proto === null) {
-    return true;
-  }
-  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-    funcToString.call(Ctor) == objectCtorString;
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 9 which returns 'object' for typed arrays and other constructors.
+  var tag = baseGetTag(value);
+  return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
 }
 
-module.exports = isPlainObject;
+module.exports = isFunction;
 
 
 /***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 41 */
+/***/ (function(module, exports) {
 
-var _extends = __webpack_require__(11);
-
-var _typeof = __webpack_require__(22);
-
-var errors = __webpack_require__(4);
-
-var utils = __webpack_require__(15);
-
-var isObject = __webpack_require__(10);
-
-var isPlainObject = __webpack_require__(118);
-
-var StreamUser = __webpack_require__(42);
-
-var signing = __webpack_require__(20);
-
-var StreamFeed = function StreamFeed() {
-  /**
-   * Manage api calls for specific feeds
-   * The feed object contains convenience functions such add activity, remove activity etc
-   * @class StreamFeed
-   */
-  this.initialize.apply(this, arguments);
-};
-
-function replaceStreamObjects(obj) {
-  var cloned = obj;
-
-  if (Array.isArray(obj)) {
-    cloned = obj.map(function (v) {
-      return replaceStreamObjects(v);
-    });
-  } else if (isPlainObject(obj)) {
-    cloned = {};
-
-    for (var k in obj) {
-      cloned[k] = replaceStreamObjects(obj[k]);
-    }
-  } else if (isObject(obj) && obj._streamRef !== undefined) {
-    cloned = obj._streamRef();
-  }
-
-  return cloned;
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
 }
 
-StreamFeed.prototype = {
-  initialize: function initialize(client, feedSlug, userId, token) {
-    /**
-     * Initialize a feed object
-     * @method intialize
-     * @memberof StreamFeed.prototype
-     * @param {StreamClient} client - The stream client this feed is constructed from
-     * @param {string} feedSlug - The feed slug
-     * @param {string} userId - The user id
-     * @param {string} [token] - The authentication token
-     */
-    if (!feedSlug || !userId) {
-      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+module.exports = eq;
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+/**
+ * This method returns the first argument it receives.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Util
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ *
+ * console.log(_.identity(object) === object);
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+module.exports = identity;
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isFunction = __webpack_require__(40),
+    isLength = __webpack_require__(44);
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(value.length) && !isFunction(value);
+}
+
+module.exports = isArrayLike;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports) {
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+module.exports = isLength;
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports) {
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  var type = typeof value;
+  length = length == null ? MAX_SAFE_INTEGER : length;
+
+  return !!length &&
+    (type == 'number' ||
+      (type != 'symbol' && reIsUint.test(value))) &&
+        (value > -1 && value % 1 == 0 && value < length);
+}
+
+module.exports = isIndex;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(48);
+module.exports = __webpack_require__(49);
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports) {
+
+(function(self) {
+  'use strict';
+
+  if (self.fetch) {
+    return
+  }
+
+  var support = {
+    searchParams: 'URLSearchParams' in self,
+    iterable: 'Symbol' in self && 'iterator' in Symbol,
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob()
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
+  }
+
+  if (support.arrayBuffer) {
+    var viewClasses = [
+      '[object Int8Array]',
+      '[object Uint8Array]',
+      '[object Uint8ClampedArray]',
+      '[object Int16Array]',
+      '[object Uint16Array]',
+      '[object Int32Array]',
+      '[object Uint32Array]',
+      '[object Float32Array]',
+      '[object Float64Array]'
+    ]
+
+    var isDataView = function(obj) {
+      return obj && DataView.prototype.isPrototypeOf(obj)
     }
 
-    if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
+      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
     }
+  }
 
-    utils.validateFeedSlug(feedSlug);
-    utils.validateUserId(userId); // raise an error if there is no token
-
-    if (!this.apiSecret && !token) {
-      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+  function normalizeName(name) {
+    if (typeof name !== 'string') {
+      name = String(name)
     }
-
-    this.client = client;
-    this.slug = feedSlug;
-    this.userId = userId;
-    this.id = this.slug + ':' + this.userId;
-    this.token = token;
-    this.feedUrl = this.id.replace(':', '/');
-    this.feedTogether = this.id.replace(':', '');
-    this.signature = this.feedTogether + ' ' + this.token; // faye setup
-
-    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
-    this.enrichByDefault = false;
-  },
-  addActivity: function addActivity(activity, callback) {
-    /**
-     * Adds the given activity to the feed and
-     * calls the specified callback
-     * @method addActivity
-     * @memberof StreamFeed.prototype
-     * @param {object} activity - The activity to add
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object
-     */
-    activity = replaceStreamObjects(activity);
-
-    if (!activity.actor && this.client.currentUser) {
-      activity.actor = this.client.currentUser._streamRef();
+    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+      throw new TypeError('Invalid character in header field name')
     }
+    return name.toLowerCase()
+  }
 
-    return this.client.post({
-      url: 'feed/' + this.feedUrl + '/',
-      body: activity,
-      signature: this.signature
-    }, callback);
-  },
-  removeActivity: function removeActivity(activityId, callback) {
-    /**
-     * Removes the activity by activityId
-     * @method removeActivity
-     * @memberof StreamFeed.prototype
-     * @param  {string}   activityId Identifier of activity to remove
-     * @param  {requestCallback} callback   Callback to call on completion
-     * @return {Promise} Promise object
-     * @example
-     * feed.removeActivity(activityId);
-     * @example
-     * feed.removeActivity({'foreignId': foreignId});
-     */
-    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
-    var params = {};
-
-    if (activityId.foreignId) {
-      params['foreign_id'] = '1';
+  function normalizeValue(value) {
+    if (typeof value !== 'string') {
+      value = String(value)
     }
+    return value
+  }
 
-    return this.client['delete']({
-      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
-      qs: params,
-      signature: this.signature
-    }, callback);
-  },
-  addActivities: function addActivities(activities, callback) {
-    /**
-     * Adds the given activities to the feed and calls the specified callback
-     * @method addActivities
-     * @memberof StreamFeed.prototype
-     * @param  {Array}   activities Array of activities to add
-     * @param  {requestCallback} callback   Callback to call on completion
-     * @return {Promise}               XHR request object
-     */
-    activities = replaceStreamObjects(activities);
-    var data = {
-      activities: activities
-    };
-    var xhr = this.client.post({
-      url: 'feed/' + this.feedUrl + '/',
-      body: data,
-      signature: this.signature
-    }, callback);
-    return xhr;
-  },
-  follow: function follow(targetSlug, targetUserId, options, callback) {
-    /**
-     * Follows the given target feed
-     * @method follow
-     * @memberof StreamFeed.prototype
-     * @param  {string}   targetSlug   Slug of the target feed
-     * @param  {string}   targetUserId User identifier of the target feed
-     * @param  {object}   options      Additional options
-     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
-     * @param  {requestCallback} callback     Callback to call on completion
-     * @return {Promise}  Promise object
-     * @example feed.follow('user', '1');
-     * @example feed.follow('user', '1', callback);
-     * @example feed.follow('user', '1', options, callback);
-     */
-    if (targetUserId instanceof StreamUser) {
-      targetUserId = targetUserId.id;
-    }
-
-    utils.validateFeedSlug(targetSlug);
-    utils.validateUserId(targetUserId);
-    var activityCopyLimit;
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-    var target = targetSlug + ':' + targetUserId; // check for additional options
-
-    if (options && !options.call) {
-      if (typeof options.limit !== 'undefined' && options.limit !== null) {
-        activityCopyLimit = options.limit;
+  // Build a destructive iterator for the value list
+  function iteratorFor(items) {
+    var iterator = {
+      next: function() {
+        var value = items.shift()
+        return {done: value === undefined, value: value}
       }
     }
 
-    var body = {
-      target: target
-    };
-
-    if (typeof activityCopyLimit !== 'undefined' && activityCopyLimit !== null) {
-      body['activity_copy_limit'] = activityCopyLimit;
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
     }
 
-    return this.client.post({
-      url: 'feed/' + this.feedUrl + '/following/',
-      body: body,
-      signature: this.signature
-    }, callback);
-  },
-  unfollow: function unfollow(targetSlug, targetUserId, optionsOrCallback, callback) {
-    /**
-     * Unfollow the given feed
-     * @method unfollow
-     * @memberof StreamFeed.prototype
-     * @param  {string}   targetSlug   Slug of the target feed
-     * @param  {string}   targetUserId [description]
-     * @param  {requestCallback|object} optionsOrCallback
-     * @param  {boolean}  optionOrCallback.keepHistory when provided the activities from target
-     *                                                 feed will not be kept in the feed
-     * @param  {requestCallback} callback     Callback to call on completion
-     * @return {object}                XHR request object
-     * @example feed.unfollow('user', '2', callback);
-     */
-    var options = {},
-        qs = {};
-    if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
-    if (_typeof(optionsOrCallback) === 'object') options = optionsOrCallback;
-    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
-    utils.validateFeedSlug(targetSlug);
-    utils.validateUserId(targetUserId);
-    var targetFeedId = targetSlug + ':' + targetUserId;
-    var xhr = this.client['delete']({
-      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-      qs: qs,
-      signature: this.signature
-    }, callback);
-    return xhr;
-  },
-  following: function following(options, callback) {
-    /**
-     * List which feeds this feed is following
-     * @method following
-     * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @param  {string}   options.filter Filter to apply on search operation
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
-     */
-    if (options !== undefined && options.filter) {
-      options.filter = options.filter.join(',');
+    return iterator
+  }
+
+  function Headers(headers) {
+    this.map = {}
+
+    if (headers instanceof Headers) {
+      headers.forEach(function(value, name) {
+        this.append(name, value)
+      }, this)
+    } else if (Array.isArray(headers)) {
+      headers.forEach(function(header) {
+        this.append(header[0], header[1])
+      }, this)
+    } else if (headers) {
+      Object.getOwnPropertyNames(headers).forEach(function(name) {
+        this.append(name, headers[name])
+      }, this)
     }
+  }
 
-    return this.client.get({
-      url: 'feed/' + this.feedUrl + '/following/',
-      qs: options,
-      signature: this.signature
-    }, callback);
-  },
-  followers: function followers(options, callback) {
-    /**
-     * List the followers of this feed
-     * @method followers
-     * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @param  {string}   options.filter Filter to apply on search operation
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example
-     * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
-     */
-    if (options !== undefined && options.filter) {
-      options.filter = options.filter.join(',');
+  Headers.prototype.append = function(name, value) {
+    name = normalizeName(name)
+    value = normalizeValue(value)
+    var oldValue = this.map[name]
+    this.map[name] = oldValue ? oldValue+','+value : value
+  }
+
+  Headers.prototype['delete'] = function(name) {
+    delete this.map[normalizeName(name)]
+  }
+
+  Headers.prototype.get = function(name) {
+    name = normalizeName(name)
+    return this.has(name) ? this.map[name] : null
+  }
+
+  Headers.prototype.has = function(name) {
+    return this.map.hasOwnProperty(normalizeName(name))
+  }
+
+  Headers.prototype.set = function(name, value) {
+    this.map[normalizeName(name)] = normalizeValue(value)
+  }
+
+  Headers.prototype.forEach = function(callback, thisArg) {
+    for (var name in this.map) {
+      if (this.map.hasOwnProperty(name)) {
+        callback.call(thisArg, this.map[name], name, this)
+      }
     }
+  }
 
-    return this.client.get({
-      url: 'feed/' + this.feedUrl + '/followers/',
-      qs: options,
-      signature: this.signature
-    }, callback);
-  },
-  get: function get(options, callback) {
-    /**
-     * Reads the feed
-     * @method get
-     * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example feed.get({limit: 10, id_lte: 'activity-id'})
-     * @example feed.get({limit: 10, mark_seen: true})
-     */
-    var path;
+  Headers.prototype.keys = function() {
+    var items = []
+    this.forEach(function(value, name) { items.push(name) })
+    return iteratorFor(items)
+  }
 
-    if (options && options['mark_read'] && options['mark_read'].join) {
-      options['mark_read'] = options['mark_read'].join(',');
+  Headers.prototype.values = function() {
+    var items = []
+    this.forEach(function(value) { items.push(value) })
+    return iteratorFor(items)
+  }
+
+  Headers.prototype.entries = function() {
+    var items = []
+    this.forEach(function(value, name) { items.push([name, value]) })
+    return iteratorFor(items)
+  }
+
+  if (support.iterable) {
+    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
+  }
+
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return Promise.reject(new TypeError('Already read'))
     }
+    body.bodyUsed = true
+  }
 
-    if (options && options['mark_seen'] && options['mark_seen'].join) {
-      options['mark_seen'] = options['mark_seen'].join(',');
+  function fileReaderReady(reader) {
+    return new Promise(function(resolve, reject) {
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+    })
+  }
+
+  function readBlobAsArrayBuffer(blob) {
+    var reader = new FileReader()
+    var promise = fileReaderReady(reader)
+    reader.readAsArrayBuffer(blob)
+    return promise
+  }
+
+  function readBlobAsText(blob) {
+    var reader = new FileReader()
+    var promise = fileReaderReady(reader)
+    reader.readAsText(blob)
+    return promise
+  }
+
+  function readArrayBufferAsText(buf) {
+    var view = new Uint8Array(buf)
+    var chars = new Array(view.length)
+
+    for (var i = 0; i < view.length; i++) {
+      chars[i] = String.fromCharCode(view[i])
     }
+    return chars.join('')
+  }
 
-    this.client.replaceReactionOptions(options);
-
-    if (this.client.shouldUseEnrichEndpoint(options)) {
-      path = 'enrich/feed/';
+  function bufferClone(buf) {
+    if (buf.slice) {
+      return buf.slice(0)
     } else {
-      path = 'feed/';
+      var view = new Uint8Array(buf.byteLength)
+      view.set(new Uint8Array(buf))
+      return view.buffer
     }
+  }
 
-    return this.client.get({
-      url: path + this.feedUrl + '/',
-      qs: options,
-      signature: this.signature
-    }, callback);
-  },
-  getReadOnlyToken: function getReadOnlyToken() {
-    /**
-     * Returns a token that allows only read operations
-     *
-     * @deprecated since version 4.0
-     * @method getReadOnlyToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadOnlyToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: feedId,
-      expireTokens: this.client.expireTokens
-    });
-  },
-  getReadWriteToken: function getReadWriteToken() {
-    /**
-     * Returns a token that allows read and write operations
-     * @deprecated since version 4.0
-     * @method getReadWriteToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadWriteToken('user', '1');
-     */
-    var feedId = '' + this.slug + this.userId;
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: feedId,
-      expireTokens: this.client.expireTokens
-    });
-  },
-  getActivityDetail: function getActivityDetail(activityId, options, callback) {
-    /**
-     * Retrieves one activity from a feed and adds enrichment
-     * @method getActivityDetail
-     * @memberof StreamFeed.prototype
-     * @param  {string}   activityId Identifier of activity to retrieve
-     * @param  {object}   options  Additional options
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example feed.getActivityDetail(activityId)
-     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
-     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
-     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
-     */
-    return this.get(_extends({
-      id_lte: activityId,
-      id_gte: activityId,
-      limit: 1
-    }, options || {}), callback);
-  },
-  getFayeClient: function getFayeClient() {
-    /**
-     * Returns the current faye client object
-     * @method getFayeClient
-     * @memberof StreamFeed.prototype
-     * @access private
-     * @return {object} Faye client
-     */
-    return this.client.getFayeClient();
-  },
-  subscribe: function subscribe(callback) {
-    /**
-     * Subscribes to any changes in the feed, return a promise
-     * @method subscribe
-     * @memberof StreamFeed.prototype
-     * @param  {function} callback Callback to call on completion
-     * @return {Promise}           Promise object
-     * @example
-     * feed.subscribe(callback).then(function(){
-     * 		console.log('we are now listening to changes');
-     * });
-     */
-    if (!this.client.appId) {
-      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
-    }
+  function Body() {
+    this.bodyUsed = false
 
-    var subscription = this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
-    this.client.subscriptions['/' + this.notificationChannel] = {
-      token: this.token,
-      userId: this.notificationChannel,
-      fayeSubscription: subscription
-    };
-    return subscription;
-  },
-  unsubscribe: function unsubscribe() {
-    /**
-     * Cancel updates created via feed.subscribe()
-     * @return void
-     */
-    var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
-
-    if (streamSubscription) {
-      delete this.client.subscriptions['/' + this.notificationChannel];
-      streamSubscription.fayeSubscription.cancel();
-    }
-  },
-  updateActivityToTargets: function updateActivityToTargets(foreign_id, time, new_targets, added_targets, removed_targets) {
-    /**
-     * Updates an activity's "to" fields
-     * @since 3.10.0
-     * @param {string} foreign_id The foreign_id of the activity to update
-     * @param {string} time The time of the activity to update
-     * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
-     * @param {array} added_targets Add these new targets to the activity
-     * @param {array} removed_targets Remove these targets from the activity
-     */
-    if (!foreign_id) {
-      throw new Error('Missing `foreign_id` parameter!');
-    } else if (!time) {
-      throw new Error('Missing `time` parameter!');
-    }
-
-    if (!new_targets && !added_targets && !removed_targets) {
-      throw new Error('Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`');
-    }
-
-    if (new_targets) {
-      if (added_targets || removed_targets) {
-        throw new Error("Can't include add_targets or removed_targets if you're also including new_targets");
+    this._initBody = function(body) {
+      this._bodyInit = body
+      if (!body) {
+        this._bodyText = ''
+      } else if (typeof body === 'string') {
+        this._bodyText = body
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+        this._bodyBlob = body
+      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+        this._bodyFormData = body
+      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        this._bodyText = body.toString()
+      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+        this._bodyArrayBuffer = bufferClone(body.buffer)
+        // IE 10-11 can't handle a DataView body.
+        this._bodyInit = new Blob([this._bodyArrayBuffer])
+      } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+        this._bodyArrayBuffer = bufferClone(body)
+      } else {
+        throw new Error('unsupported BodyInit type')
       }
-    }
 
-    if (added_targets && removed_targets) {
-      // brute force - iterate through added, check to see if removed contains that element
-      for (var i = 0; i < added_targets.length; i++) {
-        // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
-        for (var j = 0; j < removed_targets.length; j++) {
-          if (removed_targets[j] == added_targets[i]) {
-            throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
-          }
+      if (!this.headers.get('content-type')) {
+        if (typeof body === 'string') {
+          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+        } else if (this._bodyBlob && this._bodyBlob.type) {
+          this.headers.set('content-type', this._bodyBlob.type)
+        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
         }
       }
     }
 
-    var body = {
-      foreign_id: foreign_id,
-      time: time
-    };
+    if (support.blob) {
+      this.blob = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
 
-    if (new_targets) {
-      body['new_targets'] = new_targets;
+        if (this._bodyBlob) {
+          return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyArrayBuffer) {
+          return Promise.resolve(new Blob([this._bodyArrayBuffer]))
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as blob')
+        } else {
+          return Promise.resolve(new Blob([this._bodyText]))
+        }
+      }
+
+      this.arrayBuffer = function() {
+        if (this._bodyArrayBuffer) {
+          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+        } else {
+          return this.blob().then(readBlobAsArrayBuffer)
+        }
+      }
     }
 
-    if (added_targets) {
-      body['added_targets'] = added_targets;
+    this.text = function() {
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
+      }
+
+      if (this._bodyBlob) {
+        return readBlobAsText(this._bodyBlob)
+      } else if (this._bodyArrayBuffer) {
+        return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
+      } else if (this._bodyFormData) {
+        throw new Error('could not read FormData body as text')
+      } else {
+        return Promise.resolve(this._bodyText)
+      }
     }
 
-    if (removed_targets) {
-      body['removed_targets'] = removed_targets;
+    if (support.formData) {
+      this.formData = function() {
+        return this.text().then(decode)
+      }
     }
 
-    return this.client.post({
-      url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
-      signature: this.signature,
-      body: body
-    });
-  }
-};
-module.exports = StreamFeed;
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports) {
-
-var Personalization = function Personalization() {
-  /**
-   * Manage api calls for personalization
-   * The collection object contains convenience functions such as  get, post, delete
-   * @class Personalization
-   */
-  this.initialize.apply(this, arguments);
-};
-
-Personalization.prototype = {
-  /**
-   * Initialize the Personalization object
-   *
-   * @method intialize
-   * @memberof Personalization.prototype
-   * @param {StreamClient} client - The stream client
-   */
-  initialize: function initialize(client) {
-    this.client = client;
-  },
-  get: function get(resource, options, callback) {
-    /**
-     * Get personalized activities for this feed
-     *
-     * @method get
-     * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options  Additional options
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object. Personalized feed
-     * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-     */
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!options || options.call) {
-      options = {};
+    this.json = function() {
+      return this.text().then(JSON.parse)
     }
 
-    return this.client.get({
-      url: resource + '/',
-      serviceName: 'personalization',
-      qs: options,
-      signature: this.client.getPersonalizationToken()
-    }, callback);
-  },
-  post: function post(resource, options, data, callback) {
-    /**
-     * Post data to personalization endpoint
-     *
-     * @method post
-     * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options - Additional options
-     * @param {object} data - Data to send in the payload
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object. Data that was posted if successful, or an error.
-     * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-     */
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!options || options.call) {
-      options = {};
-    }
-
-    if (!data || data.call) {
-      data = {};
-    }
-
-    return this.client.post({
-      url: resource + '/',
-      serviceName: 'personalization',
-      qs: options,
-      body: data,
-      signature: this.client.getPersonalizationToken()
-    }, callback);
-  },
-  delete: function _delete(resource, options, callback) {
-    /**
-     * Delete metadata or activites
-     *
-     * @method delete
-     * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options - Additional options
-     * @param {requestCallback} callback - Callback to call on completion
-     * @return {Promise} Promise object. Data that was deleted if successful, or an error.
-     * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
-     */
-    var last = arguments[arguments.length - 1]; // callback is always the last argument
-
-    callback = last.call ? last : undefined;
-
-    if (!options || options.call) {
-      options = {};
-    }
-
-    return this.client.delete({
-      url: resource + '/',
-      serviceName: 'personalization',
-      qs: options,
-      signature: this.client.getPersonalizationToken()
-    }, callback);
-  }
-};
-module.exports = Personalization;
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports) {
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
+    return this
   }
 
-  return target;
-}
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
 
-module.exports = _objectWithoutPropertiesLoose;
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
+  function Request(input, options) {
+    options = options || {}
+    var body = options.body
+
+    if (input instanceof Request) {
+      if (input.bodyUsed) {
+        throw new TypeError('Already read')
+      }
+      this.url = input.url
+      this.credentials = input.credentials
+      if (!options.headers) {
+        this.headers = new Headers(input.headers)
+      }
+      this.method = input.method
+      this.mode = input.mode
+      if (!body && input._bodyInit != null) {
+        body = input._bodyInit
+        input.bodyUsed = true
+      }
+    } else {
+      this.url = String(input)
+    }
+
+    this.credentials = options.credentials || this.credentials || 'omit'
+    if (options.headers || !this.headers) {
+      this.headers = new Headers(options.headers)
+    }
+    this.method = normalizeMethod(options.method || this.method || 'GET')
+    this.mode = options.mode || this.mode || null
+    this.referrer = null
+
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+      throw new TypeError('Body not allowed for GET or HEAD requests')
+    }
+    this._initBody(body)
+  }
+
+  Request.prototype.clone = function() {
+    return new Request(this, { body: this._bodyInit })
+  }
+
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
+  }
+
+  function parseHeaders(rawHeaders) {
+    var headers = new Headers()
+    // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
+    // https://tools.ietf.org/html/rfc7230#section-3.2
+    var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
+    preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
+      var parts = line.split(':')
+      var key = parts.shift().trim()
+      if (key) {
+        var value = parts.join(':').trim()
+        headers.append(key, value)
+      }
+    })
+    return headers
+  }
+
+  Body.call(Request.prototype)
+
+  function Response(bodyInit, options) {
+    if (!options) {
+      options = {}
+    }
+
+    this.type = 'default'
+    this.status = options.status === undefined ? 200 : options.status
+    this.ok = this.status >= 200 && this.status < 300
+    this.statusText = 'statusText' in options ? options.statusText : 'OK'
+    this.headers = new Headers(options.headers)
+    this.url = options.url || ''
+    this._initBody(bodyInit)
+  }
+
+  Body.call(Response.prototype)
+
+  Response.prototype.clone = function() {
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
+
+  Response.error = function() {
+    var response = new Response(null, {status: 0, statusText: ''})
+    response.type = 'error'
+    return response
+  }
+
+  var redirectStatuses = [301, 302, 303, 307, 308]
+
+  Response.redirect = function(url, status) {
+    if (redirectStatuses.indexOf(status) === -1) {
+      throw new RangeError('Invalid status code')
+    }
+
+    return new Response(null, {status: status, headers: {location: url}})
+  }
+
+  self.Headers = Headers
+  self.Request = Request
+  self.Response = Response
+
+  self.fetch = function(input, init) {
+    return new Promise(function(resolve, reject) {
+      var request = new Request(input, init)
+      var xhr = new XMLHttpRequest()
+
+      xhr.onload = function() {
+        var options = {
+          status: xhr.status,
+          statusText: xhr.statusText,
+          headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+        }
+        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+        var body = 'response' in xhr ? xhr.response : xhr.responseText
+        resolve(new Response(body, options))
+      }
+
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
+      xhr.ontimeout = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
+      xhr.open(request.method, request.url, true)
+
+      if (request.credentials === 'include') {
+        xhr.withCredentials = true
+      } else if (request.credentials === 'omit') {
+        xhr.withCredentials = false
+      }
+
+      if ('responseType' in xhr && support.blob) {
+        xhr.responseType = 'blob'
+      }
+
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+
+      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+    })
+  }
+  self.fetch.polyfill = true
+})(typeof self !== 'undefined' ? self : this);
+
 
 /***/ }),
-/* 122 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process) {var _extends = __webpack_require__(11);
+/* WEBPACK VAR INJECTION */(function(process) {/**
+ * @module stream
+ * @author Thierry Schellenbach
+ * BSD License
+ */
+var StreamClient = __webpack_require__(50);
 
-var _objectWithoutProperties = __webpack_require__(46);
+var errors = __webpack_require__(3);
 
-var Personalization = __webpack_require__(120);
+var signing = __webpack_require__(19);
 
-var request = __webpack_require__(45);
+var request = __webpack_require__(25);
 
-var StreamFeed = __webpack_require__(119);
+function connect(apiKey, apiSecret, appId, options) {
+  /**
+   * Create StreamClient
+   * @method connect
+   * @param  {string} apiKey    API key
+   * @param  {string} [apiSecret] API secret (only use this on the server)
+   * @param  {string} [appId]     Application identifier
+   * @param  {object} [options]   Additional options
+   * @param  {string} [options.location] Datacenter location
+   * @return {StreamClient}     StreamClient
+   * @example <caption>Basic usage</caption>
+   * stream.connect(apiKey, apiSecret);
+   * @example <caption>or if you want to be able to subscribe and listen</caption>
+   * stream.connect(apiKey, apiSecret, appId);
+   * @example <caption>or on Heroku</caption>
+   * stream.connect(streamURL);
+   * @example <caption>where streamURL looks like</caption>
+   * "https://thierry:pass@gestream.io/?app=1"
+   */
+  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
+    apiKey = parts[1];
+    apiSecret = parts[2];
+    var location = parts[3];
+    appId = parts[4];
 
-var signing = __webpack_require__(20);
+    if (options === undefined) {
+      options = {};
+    }
 
-var errors = __webpack_require__(4);
+    if (location !== 'getstream' && location !== 'stream-io-api') {
+      options.location = location;
+    }
+  }
 
-var utils = __webpack_require__(15);
+  return new StreamClient(apiKey, apiSecret, appId, options);
+}
 
-var BatchOperations = __webpack_require__(109);
+module.exports.connect = connect;
+module.exports.errors = errors;
+module.exports.request = request;
+module.exports.signing = signing;
+module.exports.Client = StreamClient;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(16)))
 
-var Promise = __webpack_require__(108);
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var qs = __webpack_require__(106);
+/* WEBPACK VAR INJECTION */(function(process) {var _extends = __webpack_require__(6);
 
-var url = __webpack_require__(105);
+var _objectWithoutProperties = __webpack_require__(24);
 
-var Faye = __webpack_require__(104);
+var Personalization = __webpack_require__(52);
 
-var Collections = __webpack_require__(88);
+var request = __webpack_require__(25);
 
-var StreamFileStore = __webpack_require__(87);
+var StreamFeed = __webpack_require__(53);
 
-var StreamImageStore = __webpack_require__(86);
+var signing = __webpack_require__(19);
 
-var StreamReaction = __webpack_require__(85);
+var errors = __webpack_require__(3);
 
-var StreamUser = __webpack_require__(42);
+var utils = __webpack_require__(12);
 
-var jwtDecode = __webpack_require__(84);
+var BatchOperations = __webpack_require__(62);
 
-var assignIn = __webpack_require__(81);
+var Promise = __webpack_require__(63);
+
+var qs = __webpack_require__(65);
+
+var url = __webpack_require__(66);
+
+var Faye = __webpack_require__(67);
+
+var Collections = __webpack_require__(83);
+
+var StreamFileStore = __webpack_require__(84);
+
+var StreamImageStore = __webpack_require__(85);
+
+var StreamReaction = __webpack_require__(86);
+
+var StreamUser = __webpack_require__(28);
+
+var jwtDecode = __webpack_require__(87);
+
+var assignIn = __webpack_require__(90);
 /**
  * @callback requestCallback
  * @param {object} [errors]
@@ -8519,9 +4380,9 @@ StreamClient.prototype = {
         keepAlive = true;
       }
 
-      var http = __webpack_require__(48);
+      var http = __webpack_require__(123);
 
-      var https = __webpack_require__(47);
+      var https = __webpack_require__(124);
 
       var httpsAgent = new https.Agent({
         keepAlive: keepAlive,
@@ -9377,549 +5238,4706 @@ if (BatchOperations) {
 }
 
 module.exports = StreamClient;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(16)))
 
 /***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 51 */
+/***/ (function(module, exports) {
 
-/* WEBPACK VAR INJECTION */(function(process) {/**
- * @module stream
- * @author Thierry Schellenbach
- * BSD License
- */
-var StreamClient = __webpack_require__(122);
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
 
-var errors = __webpack_require__(4);
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
 
-var signing = __webpack_require__(20);
+  return target;
+}
 
-var request = __webpack_require__(45);
+module.exports = _objectWithoutPropertiesLoose;
 
-function connect(apiKey, apiSecret, appId, options) {
+/***/ }),
+/* 52 */
+/***/ (function(module, exports) {
+
+var Personalization = function Personalization() {
   /**
-   * Create StreamClient
-   * @method connect
-   * @param  {string} apiKey    API key
-   * @param  {string} [apiSecret] API secret (only use this on the server)
-   * @param  {string} [appId]     Application identifier
-   * @param  {object} [options]   Additional options
-   * @param  {string} [options.location] Datacenter location
-   * @return {StreamClient}     StreamClient
-   * @example <caption>Basic usage</caption>
-   * stream.connect(apiKey, apiSecret);
-   * @example <caption>or if you want to be able to subscribe and listen</caption>
-   * stream.connect(apiKey, apiSecret, appId);
-   * @example <caption>or on Heroku</caption>
-   * stream.connect(streamURL);
-   * @example <caption>where streamURL looks like</caption>
-   * "https://thierry:pass@gestream.io/?app=1"
+   * Manage api calls for personalization
+   * The collection object contains convenience functions such as  get, post, delete
+   * @class Personalization
    */
-  if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
-    apiKey = parts[1];
-    apiSecret = parts[2];
-    var location = parts[3];
-    appId = parts[4];
+  this.initialize.apply(this, arguments);
+};
 
-    if (options === undefined) {
+Personalization.prototype = {
+  /**
+   * Initialize the Personalization object
+   *
+   * @method intialize
+   * @memberof Personalization.prototype
+   * @param {StreamClient} client - The stream client
+   */
+  initialize: function initialize(client) {
+    this.client = client;
+  },
+  get: function get(resource, options, callback) {
+    /**
+     * Get personalized activities for this feed
+     *
+     * @method get
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options  Additional options
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Personalized feed
+     * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!options || options.call) {
       options = {};
     }
 
-    if (location !== 'getstream' && location !== 'stream-io-api') {
-      options.location = location;
+    return this.client.get({
+      url: resource + '/',
+      serviceName: 'personalization',
+      qs: options,
+      signature: this.client.getPersonalizationToken()
+    }, callback);
+  },
+  post: function post(resource, options, data, callback) {
+    /**
+     * Post data to personalization endpoint
+     *
+     * @method post
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @param {object} data - Data to send in the payload
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Data that was posted if successful, or an error.
+     * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!options || options.call) {
+      options = {};
+    }
+
+    if (!data || data.call) {
+      data = {};
+    }
+
+    return this.client.post({
+      url: resource + '/',
+      serviceName: 'personalization',
+      qs: options,
+      body: data,
+      signature: this.client.getPersonalizationToken()
+    }, callback);
+  },
+  delete: function _delete(resource, options, callback) {
+    /**
+     * Delete metadata or activites
+     *
+     * @method delete
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object. Data that was deleted if successful, or an error.
+     * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
+     */
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!options || options.call) {
+      options = {};
+    }
+
+    return this.client.delete({
+      url: resource + '/',
+      serviceName: 'personalization',
+      qs: options,
+      signature: this.client.getPersonalizationToken()
+    }, callback);
+  }
+};
+module.exports = Personalization;
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _extends = __webpack_require__(6);
+
+var _typeof = __webpack_require__(17);
+
+var errors = __webpack_require__(3);
+
+var utils = __webpack_require__(12);
+
+var isObject = __webpack_require__(7);
+
+var isPlainObject = __webpack_require__(54);
+
+var StreamUser = __webpack_require__(28);
+
+var signing = __webpack_require__(19);
+
+var StreamFeed = function StreamFeed() {
+  /**
+   * Manage api calls for specific feeds
+   * The feed object contains convenience functions such add activity, remove activity etc
+   * @class StreamFeed
+   */
+  this.initialize.apply(this, arguments);
+};
+
+function replaceStreamObjects(obj) {
+  var cloned = obj;
+
+  if (Array.isArray(obj)) {
+    cloned = obj.map(function (v) {
+      return replaceStreamObjects(v);
+    });
+  } else if (isPlainObject(obj)) {
+    cloned = {};
+
+    for (var k in obj) {
+      cloned[k] = replaceStreamObjects(obj[k]);
+    }
+  } else if (isObject(obj) && obj._streamRef !== undefined) {
+    cloned = obj._streamRef();
+  }
+
+  return cloned;
+}
+
+StreamFeed.prototype = {
+  initialize: function initialize(client, feedSlug, userId, token) {
+    /**
+     * Initialize a feed object
+     * @method intialize
+     * @memberof StreamFeed.prototype
+     * @param {StreamClient} client - The stream client this feed is constructed from
+     * @param {string} feedSlug - The feed slug
+     * @param {string} userId - The user id
+     * @param {string} [token] - The authentication token
+     */
+    if (!feedSlug || !userId) {
+      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+    }
+
+    if (feedSlug.indexOf(':') !== -1) {
+      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+    }
+
+    utils.validateFeedSlug(feedSlug);
+    utils.validateUserId(userId); // raise an error if there is no token
+
+    if (!this.apiSecret && !token) {
+      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+    }
+
+    this.client = client;
+    this.slug = feedSlug;
+    this.userId = userId;
+    this.id = this.slug + ':' + this.userId;
+    this.token = token;
+    this.feedUrl = this.id.replace(':', '/');
+    this.feedTogether = this.id.replace(':', '');
+    this.signature = this.feedTogether + ' ' + this.token; // faye setup
+
+    this.notificationChannel = 'site-' + this.client.appId + '-feed-' + this.feedTogether;
+    this.enrichByDefault = false;
+  },
+  addActivity: function addActivity(activity, callback) {
+    /**
+     * Adds the given activity to the feed and
+     * calls the specified callback
+     * @method addActivity
+     * @memberof StreamFeed.prototype
+     * @param {object} activity - The activity to add
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object
+     */
+    activity = replaceStreamObjects(activity);
+
+    if (!activity.actor && this.client.currentUser) {
+      activity.actor = this.client.currentUser._streamRef();
+    }
+
+    return this.client.post({
+      url: 'feed/' + this.feedUrl + '/',
+      body: activity,
+      signature: this.signature
+    }, callback);
+  },
+  removeActivity: function removeActivity(activityId, callback) {
+    /**
+     * Removes the activity by activityId
+     * @method removeActivity
+     * @memberof StreamFeed.prototype
+     * @param  {string}   activityId Identifier of activity to remove
+     * @param  {requestCallback} callback   Callback to call on completion
+     * @return {Promise} Promise object
+     * @example
+     * feed.removeActivity(activityId);
+     * @example
+     * feed.removeActivity({'foreignId': foreignId});
+     */
+    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
+    var params = {};
+
+    if (activityId.foreignId) {
+      params['foreign_id'] = '1';
+    }
+
+    return this.client['delete']({
+      url: 'feed/' + this.feedUrl + '/' + identifier + '/',
+      qs: params,
+      signature: this.signature
+    }, callback);
+  },
+  addActivities: function addActivities(activities, callback) {
+    /**
+     * Adds the given activities to the feed and calls the specified callback
+     * @method addActivities
+     * @memberof StreamFeed.prototype
+     * @param  {Array}   activities Array of activities to add
+     * @param  {requestCallback} callback   Callback to call on completion
+     * @return {Promise}               XHR request object
+     */
+    activities = replaceStreamObjects(activities);
+    var data = {
+      activities: activities
+    };
+    var xhr = this.client.post({
+      url: 'feed/' + this.feedUrl + '/',
+      body: data,
+      signature: this.signature
+    }, callback);
+    return xhr;
+  },
+  follow: function follow(targetSlug, targetUserId, options, callback) {
+    /**
+     * Follows the given target feed
+     * @method follow
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId User identifier of the target feed
+     * @param  {object}   options      Additional options
+     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
+     * @param  {requestCallback} callback     Callback to call on completion
+     * @return {Promise}  Promise object
+     * @example feed.follow('user', '1');
+     * @example feed.follow('user', '1', callback);
+     * @example feed.follow('user', '1', options, callback);
+     */
+    if (targetUserId instanceof StreamUser) {
+      targetUserId = targetUserId.id;
+    }
+
+    utils.validateFeedSlug(targetSlug);
+    utils.validateUserId(targetUserId);
+    var activityCopyLimit;
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+    var target = targetSlug + ':' + targetUserId; // check for additional options
+
+    if (options && !options.call) {
+      if (typeof options.limit !== 'undefined' && options.limit !== null) {
+        activityCopyLimit = options.limit;
+      }
+    }
+
+    var body = {
+      target: target
+    };
+
+    if (typeof activityCopyLimit !== 'undefined' && activityCopyLimit !== null) {
+      body['activity_copy_limit'] = activityCopyLimit;
+    }
+
+    return this.client.post({
+      url: 'feed/' + this.feedUrl + '/following/',
+      body: body,
+      signature: this.signature
+    }, callback);
+  },
+  unfollow: function unfollow(targetSlug, targetUserId, optionsOrCallback, callback) {
+    /**
+     * Unfollow the given feed
+     * @method unfollow
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId [description]
+     * @param  {requestCallback|object} optionsOrCallback
+     * @param  {boolean}  optionOrCallback.keepHistory when provided the activities from target
+     *                                                 feed will not be kept in the feed
+     * @param  {requestCallback} callback     Callback to call on completion
+     * @return {object}                XHR request object
+     * @example feed.unfollow('user', '2', callback);
+     */
+    var options = {},
+        qs = {};
+    if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
+    if (_typeof(optionsOrCallback) === 'object') options = optionsOrCallback;
+    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs['keep_history'] = '1';
+    utils.validateFeedSlug(targetSlug);
+    utils.validateUserId(targetUserId);
+    var targetFeedId = targetSlug + ':' + targetUserId;
+    var xhr = this.client['delete']({
+      url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+      qs: qs,
+      signature: this.signature
+    }, callback);
+    return xhr;
+  },
+  following: function following(options, callback) {
+    /**
+     * List which feeds this feed is following
+     * @method following
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {string}   options.filter Filter to apply on search operation
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example feed.following({limit:10, filter: ['user:1', 'user:2']}, callback);
+     */
+    if (options !== undefined && options.filter) {
+      options.filter = options.filter.join(',');
+    }
+
+    return this.client.get({
+      url: 'feed/' + this.feedUrl + '/following/',
+      qs: options,
+      signature: this.signature
+    }, callback);
+  },
+  followers: function followers(options, callback) {
+    /**
+     * List the followers of this feed
+     * @method followers
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {string}   options.filter Filter to apply on search operation
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example
+     * feed.followers({limit:10, filter: ['user:1', 'user:2']}, callback);
+     */
+    if (options !== undefined && options.filter) {
+      options.filter = options.filter.join(',');
+    }
+
+    return this.client.get({
+      url: 'feed/' + this.feedUrl + '/followers/',
+      qs: options,
+      signature: this.signature
+    }, callback);
+  },
+  get: function get(options, callback) {
+    /**
+     * Reads the feed
+     * @method get
+     * @memberof StreamFeed.prototype
+     * @param  {object}   options  Additional options
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example feed.get({limit: 10, id_lte: 'activity-id'})
+     * @example feed.get({limit: 10, mark_seen: true})
+     */
+    var path;
+
+    if (options && options['mark_read'] && options['mark_read'].join) {
+      options['mark_read'] = options['mark_read'].join(',');
+    }
+
+    if (options && options['mark_seen'] && options['mark_seen'].join) {
+      options['mark_seen'] = options['mark_seen'].join(',');
+    }
+
+    this.client.replaceReactionOptions(options);
+
+    if (this.client.shouldUseEnrichEndpoint(options)) {
+      path = 'enrich/feed/';
+    } else {
+      path = 'feed/';
+    }
+
+    return this.client.get({
+      url: path + this.feedUrl + '/',
+      qs: options,
+      signature: this.signature
+    }, callback);
+  },
+  getReadOnlyToken: function getReadOnlyToken() {
+    /**
+     * Returns a token that allows only read operations
+     *
+     * @deprecated since version 4.0
+     * @method getReadOnlyToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadOnlyToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens
+    });
+  },
+  getReadWriteToken: function getReadWriteToken() {
+    /**
+     * Returns a token that allows read and write operations
+     * @deprecated since version 4.0
+     * @method getReadWriteToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example
+     * client.getReadWriteToken('user', '1');
+     */
+    var feedId = '' + this.slug + this.userId;
+    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId: feedId,
+      expireTokens: this.client.expireTokens
+    });
+  },
+  getActivityDetail: function getActivityDetail(activityId, options, callback) {
+    /**
+     * Retrieves one activity from a feed and adds enrichment
+     * @method getActivityDetail
+     * @memberof StreamFeed.prototype
+     * @param  {string}   activityId Identifier of activity to retrieve
+     * @param  {object}   options  Additional options
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example feed.getActivityDetail(activityId)
+     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
+     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
+     */
+    return this.get(_extends({
+      id_lte: activityId,
+      id_gte: activityId,
+      limit: 1
+    }, options || {}), callback);
+  },
+  getFayeClient: function getFayeClient() {
+    /**
+     * Returns the current faye client object
+     * @method getFayeClient
+     * @memberof StreamFeed.prototype
+     * @access private
+     * @return {object} Faye client
+     */
+    return this.client.getFayeClient();
+  },
+  subscribe: function subscribe(callback) {
+    /**
+     * Subscribes to any changes in the feed, return a promise
+     * @method subscribe
+     * @memberof StreamFeed.prototype
+     * @param  {function} callback Callback to call on completion
+     * @return {Promise}           Promise object
+     * @example
+     * feed.subscribe(callback).then(function(){
+     * 		console.log('we are now listening to changes');
+     * });
+     */
+    if (!this.client.appId) {
+      throw new errors.SiteError('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
+    }
+
+    var subscription = this.getFayeClient().subscribe('/' + this.notificationChannel, callback);
+    this.client.subscriptions['/' + this.notificationChannel] = {
+      token: this.token,
+      userId: this.notificationChannel,
+      fayeSubscription: subscription
+    };
+    return subscription;
+  },
+  unsubscribe: function unsubscribe() {
+    /**
+     * Cancel updates created via feed.subscribe()
+     * @return void
+     */
+    var streamSubscription = this.client.subscriptions['/' + this.notificationChannel];
+
+    if (streamSubscription) {
+      delete this.client.subscriptions['/' + this.notificationChannel];
+      streamSubscription.fayeSubscription.cancel();
+    }
+  },
+  updateActivityToTargets: function updateActivityToTargets(foreign_id, time, new_targets, added_targets, removed_targets) {
+    /**
+     * Updates an activity's "to" fields
+     * @since 3.10.0
+     * @param {string} foreign_id The foreign_id of the activity to update
+     * @param {string} time The time of the activity to update
+     * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
+     * @param {array} added_targets Add these new targets to the activity
+     * @param {array} removed_targets Remove these targets from the activity
+     */
+    if (!foreign_id) {
+      throw new Error('Missing `foreign_id` parameter!');
+    } else if (!time) {
+      throw new Error('Missing `time` parameter!');
+    }
+
+    if (!new_targets && !added_targets && !removed_targets) {
+      throw new Error('Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`');
+    }
+
+    if (new_targets) {
+      if (added_targets || removed_targets) {
+        throw new Error("Can't include add_targets or removed_targets if you're also including new_targets");
+      }
+    }
+
+    if (added_targets && removed_targets) {
+      // brute force - iterate through added, check to see if removed contains that element
+      for (var i = 0; i < added_targets.length; i++) {
+        // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
+        for (var j = 0; j < removed_targets.length; j++) {
+          if (removed_targets[j] == added_targets[i]) {
+            throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
+          }
+        }
+      }
+    }
+
+    var body = {
+      foreign_id: foreign_id,
+      time: time
+    };
+
+    if (new_targets) {
+      body['new_targets'] = new_targets;
+    }
+
+    if (added_targets) {
+      body['added_targets'] = added_targets;
+    }
+
+    if (removed_targets) {
+      body['removed_targets'] = removed_targets;
+    }
+
+    return this.client.post({
+      url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
+      signature: this.signature,
+      body: body
+    });
+  }
+};
+module.exports = StreamFeed;
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(13),
+    getPrototype = __webpack_require__(57),
+    isObjectLike = __webpack_require__(14);
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
+}
+
+module.exports = isPlainObject;
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Symbol = __webpack_require__(26);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
+ */
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
+  }
+  return result;
+}
+
+module.exports = getRawTag;
+
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var overArg = __webpack_require__(58);
+
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+
+module.exports = getPrototype;
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports) {
+
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function () {
+
+  var object = (
+    // #34: CommonJS
+     true && exports !== null &&
+    typeof exports.nodeType !== 'number' ?
+      exports :
+    // #8: web workers
+    typeof self != 'undefined' ?
+      self :
+    // #31: ExtendScript
+      $.global
+  );
+
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+  function InvalidCharacterError(message) {
+    this.message = message;
+  }
+  InvalidCharacterError.prototype = new Error;
+  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+  // encoder
+  // [https://gist.github.com/999166] by [https://github.com/nignag]
+  object.btoa || (
+  object.btoa = function (input) {
+    var str = String(input);
+    for (
+      // initialize result and counter
+      var block, charCode, idx = 0, map = chars, output = '';
+      // if the next str index does not exist:
+      //   change the mapping table to "="
+      //   check if d has no fractional digits
+      str.charAt(idx | 0) || (map = '=', idx % 1);
+      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+    ) {
+      charCode = str.charCodeAt(idx += 3/4);
+      if (charCode > 0xFF) {
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      }
+      block = block << 8 | charCode;
+    }
+    return output;
+  });
+
+  // decoder
+  // [https://gist.github.com/1020396] by [https://github.com/atk]
+  object.atob || (
+  object.atob = function (input) {
+    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    if (str.length % 4 == 1) {
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+    }
+    for (
+      // initialize result and counters
+      var bc = 0, bs, buffer, idx = 0, output = '';
+      // get next character
+      buffer = str.charAt(idx++);
+      // character found in table? initialize bit storage and add its ascii value;
+      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+        // and if not first of each 4 characters,
+        // convert the first 8 bits to one ascii character
+        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+    ) {
+      // try to find character in table (0-63, not found => -1)
+      buffer = chars.indexOf(buffer);
+    }
+    return output;
+  });
+
+}());
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports) {
+
+// empty (null-loader)
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Promise = __webpack_require__(8);
+
+module.exports = Promise;
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+// Use the fastest means possible to execute a task in its own turn, with
+// priority over other events including IO, animation, reflow, and redraw
+// events in browsers.
+//
+// An exception thrown by a task will permanently interrupt the processing of
+// subsequent tasks. The higher level `asap` function ensures that if an
+// exception is thrown by a task, that the task queue will continue flushing as
+// soon as possible, but if you use `rawAsap` directly, you are responsible to
+// either ensure that no exceptions are thrown from your task, or to manually
+// call `rawAsap.requestFlush` if an exception is thrown.
+module.exports = rawAsap;
+function rawAsap(task) {
+    if (!queue.length) {
+        requestFlush();
+        flushing = true;
+    }
+    // Equivalent to push, but avoids a function call.
+    queue[queue.length] = task;
+}
+
+var queue = [];
+// Once a flush has been requested, no further calls to `requestFlush` are
+// necessary until the next `flush` completes.
+var flushing = false;
+// `requestFlush` is an implementation-specific method that attempts to kick
+// off a `flush` event as quickly as possible. `flush` will attempt to exhaust
+// the event queue before yielding to the browser's own event loop.
+var requestFlush;
+// The position of the next task to execute in the task queue. This is
+// preserved between calls to `flush` so that it can be resumed if
+// a task throws an exception.
+var index = 0;
+// If a task schedules additional tasks recursively, the task queue can grow
+// unbounded. To prevent memory exhaustion, the task queue will periodically
+// truncate already-completed tasks.
+var capacity = 1024;
+
+// The flush function processes all tasks that have been scheduled with
+// `rawAsap` unless and until one of those tasks throws an exception.
+// If a task throws an exception, `flush` ensures that its state will remain
+// consistent and will resume where it left off when called again.
+// However, `flush` does not make any arrangements to be called again if an
+// exception is thrown.
+function flush() {
+    while (index < queue.length) {
+        var currentIndex = index;
+        // Advance the index before calling the task. This ensures that we will
+        // begin flushing on the next task the task throws an error.
+        index = index + 1;
+        queue[currentIndex].call();
+        // Prevent leaking memory for long chains of recursive calls to `asap`.
+        // If we call `asap` within tasks scheduled by `asap`, the queue will
+        // grow, but to avoid an O(n) walk for every task we execute, we don't
+        // shift tasks off the queue after they have been executed.
+        // Instead, we periodically shift 1024 tasks off the queue.
+        if (index > capacity) {
+            // Manually shift all values starting at the index back to the
+            // beginning of the queue.
+            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
+                queue[scan] = queue[scan + index];
+            }
+            queue.length -= index;
+            index = 0;
+        }
+    }
+    queue.length = 0;
+    index = 0;
+    flushing = false;
+}
+
+// `requestFlush` is implemented using a strategy based on data collected from
+// every available SauceLabs Selenium web driver worker at time of writing.
+// https://docs.google.com/spreadsheets/d/1mG-5UYGup5qxGdEMWkhP6BWCz053NUb2E1QoUTU16uA/edit#gid=783724593
+
+// Safari 6 and 6.1 for desktop, iPad, and iPhone are the only browsers that
+// have WebKitMutationObserver but not un-prefixed MutationObserver.
+// Must use `global` or `self` instead of `window` to work in both frames and web
+// workers. `global` is a provision of Browserify, Mr, Mrs, or Mop.
+
+/* globals self */
+var scope = typeof global !== "undefined" ? global : self;
+var BrowserMutationObserver = scope.MutationObserver || scope.WebKitMutationObserver;
+
+// MutationObservers are desirable because they have high priority and work
+// reliably everywhere they are implemented.
+// They are implemented in all modern browsers.
+//
+// - Android 4-4.3
+// - Chrome 26-34
+// - Firefox 14-29
+// - Internet Explorer 11
+// - iPad Safari 6-7.1
+// - iPhone Safari 7-7.1
+// - Safari 6-7
+if (typeof BrowserMutationObserver === "function") {
+    requestFlush = makeRequestCallFromMutationObserver(flush);
+
+// MessageChannels are desirable because they give direct access to the HTML
+// task queue, are implemented in Internet Explorer 10, Safari 5.0-1, and Opera
+// 11-12, and in web workers in many engines.
+// Although message channels yield to any queued rendering and IO tasks, they
+// would be better than imposing the 4ms delay of timers.
+// However, they do not work reliably in Internet Explorer or Safari.
+
+// Internet Explorer 10 is the only browser that has setImmediate but does
+// not have MutationObservers.
+// Although setImmediate yields to the browser's renderer, it would be
+// preferrable to falling back to setTimeout since it does not have
+// the minimum 4ms penalty.
+// Unfortunately there appears to be a bug in Internet Explorer 10 Mobile (and
+// Desktop to a lesser extent) that renders both setImmediate and
+// MessageChannel useless for the purposes of ASAP.
+// https://github.com/kriskowal/q/issues/396
+
+// Timers are implemented universally.
+// We fall back to timers in workers in most engines, and in foreground
+// contexts in the following browsers.
+// However, note that even this simple case requires nuances to operate in a
+// broad spectrum of browsers.
+//
+// - Firefox 3-13
+// - Internet Explorer 6-9
+// - iPad Safari 4.3
+// - Lynx 2.8.7
+} else {
+    requestFlush = makeRequestCallFromTimer(flush);
+}
+
+// `requestFlush` requests that the high priority event queue be flushed as
+// soon as possible.
+// This is useful to prevent an error thrown in a task from stalling the event
+// queue if the exception handled by Node.js’s
+// `process.on("uncaughtException")` or by a domain.
+rawAsap.requestFlush = requestFlush;
+
+// To request a high priority event, we induce a mutation observer by toggling
+// the text of a text node between "1" and "-1".
+function makeRequestCallFromMutationObserver(callback) {
+    var toggle = 1;
+    var observer = new BrowserMutationObserver(callback);
+    var node = document.createTextNode("");
+    observer.observe(node, {characterData: true});
+    return function requestCall() {
+        toggle = -toggle;
+        node.data = toggle;
+    };
+}
+
+// The message channel technique was discovered by Malte Ubl and was the
+// original foundation for this library.
+// http://www.nonblocking.io/2011/06/windownexttick.html
+
+// Safari 6.0.5 (at least) intermittently fails to create message ports on a
+// page's first load. Thankfully, this version of Safari supports
+// MutationObservers, so we don't need to fall back in that case.
+
+// function makeRequestCallFromMessageChannel(callback) {
+//     var channel = new MessageChannel();
+//     channel.port1.onmessage = callback;
+//     return function requestCall() {
+//         channel.port2.postMessage(0);
+//     };
+// }
+
+// For reasons explained above, we are also unable to use `setImmediate`
+// under any circumstances.
+// Even if we were, there is another bug in Internet Explorer 10.
+// It is not sufficient to assign `setImmediate` to `requestFlush` because
+// `setImmediate` must be called *by name* and therefore must be wrapped in a
+// closure.
+// Never forget.
+
+// function makeRequestCallFromSetImmediate(callback) {
+//     return function requestCall() {
+//         setImmediate(callback);
+//     };
+// }
+
+// Safari 6.0 has a problem where timers will get lost while the user is
+// scrolling. This problem does not impact ASAP because Safari 6.0 supports
+// mutation observers, so that implementation is used instead.
+// However, if we ever elect to use timers in Safari, the prevalent work-around
+// is to add a scroll event listener that calls for a flush.
+
+// `setTimeout` does not call the passed callback if the delay is less than
+// approximately 7 in web workers in Firefox 8 through 18, and sometimes not
+// even then.
+
+function makeRequestCallFromTimer(callback) {
+    return function requestCall() {
+        // We dispatch a timeout with a specified delay of 0 for engines that
+        // can reliably accommodate that request. This will usually be snapped
+        // to a 4 milisecond delay, but once we're flushing, there's no delay
+        // between events.
+        var timeoutHandle = setTimeout(handleTimer, 0);
+        // However, since this timer gets frequently dropped in Firefox
+        // workers, we enlist an interval handle that will try to fire
+        // an event 20 times per second until it succeeds.
+        var intervalHandle = setInterval(handleTimer, 50);
+
+        function handleTimer() {
+            // Whichever timer succeeds will cancel both timers and
+            // execute the callback.
+            clearTimeout(timeoutHandle);
+            clearInterval(intervalHandle);
+            callback();
+        }
+    };
+}
+
+// This is for `asap.js` only.
+// Its name will be periodically randomized to break any code that depends on
+// its existence.
+rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
+
+// ASAP was originally a nextTick shim included in Q. This was factored out
+// into this ASAP package. It was later adapted to RSVP which made further
+// amendments. These decisions, particularly to marginalize MessageChannel and
+// to capture the MutationObserver implementation in a closure, were integrated
+// back into ASAP proper.
+// https://github.com/tildeio/rsvp.js/blob/cddf7232546a9cf858524b75cde6f9edf72620a7/lib/rsvp/asap.js
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var constants = __webpack_require__(30),
+    Logging   = __webpack_require__(9);
+
+var Faye = {
+  VERSION:    constants.VERSION,
+
+  Client:     __webpack_require__(68),
+  Scheduler:  __webpack_require__(36)
+};
+
+Logging.wrapper = Faye;
+
+module.exports = Faye;
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var asap            = __webpack_require__(29),
+    Class           = __webpack_require__(2),
+    Promise         = __webpack_require__(8),
+    URI             = __webpack_require__(4),
+    array           = __webpack_require__(20),
+    browser         = __webpack_require__(21),
+    constants       = __webpack_require__(30),
+    extend          = __webpack_require__(0),
+    validateOptions = __webpack_require__(69),
+    Deferrable      = __webpack_require__(11),
+    Logging         = __webpack_require__(9),
+    Publisher       = __webpack_require__(22),
+    Channel         = __webpack_require__(31),
+    Dispatcher      = __webpack_require__(71),
+    Error           = __webpack_require__(79),
+    Extensible      = __webpack_require__(80),
+    Publication     = __webpack_require__(81),
+    Subscription    = __webpack_require__(82);
+
+var Client = Class({ className: 'Client',
+  UNCONNECTED:        1,
+  CONNECTING:         2,
+  CONNECTED:          3,
+  DISCONNECTED:       4,
+
+  HANDSHAKE:          'handshake',
+  RETRY:              'retry',
+  NONE:               'none',
+
+  CONNECTION_TIMEOUT: 60,
+
+  DEFAULT_ENDPOINT:   '/bayeux',
+  INTERVAL:           0,
+
+  initialize: function(endpoint, options) {
+    this.info('New client created for ?', endpoint);
+    options = options || {};
+
+    validateOptions(options, ['interval', 'timeout', 'endpoints', 'proxy', 'retry', 'scheduler', 'websocketExtensions', 'tls', 'ca']);
+
+    this._channels   = new Channel.Set();
+    this._dispatcher = Dispatcher.create(this, endpoint || this.DEFAULT_ENDPOINT, options);
+
+    this._messageId = 0;
+    this._state     = this.UNCONNECTED;
+
+    this._responseCallbacks = {};
+
+    this._advice = {
+      reconnect: this.RETRY,
+      interval:  1000 * (options.interval || this.INTERVAL),
+      timeout:   1000 * (options.timeout  || this.CONNECTION_TIMEOUT)
+    };
+    this._dispatcher.timeout = this._advice.timeout / 1000;
+
+    this._dispatcher.bind('message', this._receiveMessage, this);
+
+    if (browser.Event && global.onbeforeunload !== undefined)
+      browser.Event.on(global, 'beforeunload', function() {
+        if (array.indexOf(this._dispatcher._disabled, 'autodisconnect') < 0)
+          this.disconnect();
+      }, this);
+  },
+
+  addWebsocketExtension: function(extension) {
+    return this._dispatcher.addWebsocketExtension(extension);
+  },
+
+  disable: function(feature) {
+    return this._dispatcher.disable(feature);
+  },
+
+  setHeader: function(name, value) {
+    return this._dispatcher.setHeader(name, value);
+  },
+
+  // Request
+  // MUST include:  * channel
+  //                * version
+  //                * supportedConnectionTypes
+  // MAY include:   * minimumVersion
+  //                * ext
+  //                * id
+  //
+  // Success Response                             Failed Response
+  // MUST include:  * channel                     MUST include:  * channel
+  //                * version                                    * successful
+  //                * supportedConnectionTypes                   * error
+  //                * clientId                    MAY include:   * supportedConnectionTypes
+  //                * successful                                 * advice
+  // MAY include:   * minimumVersion                             * version
+  //                * advice                                     * minimumVersion
+  //                * ext                                        * ext
+  //                * id                                         * id
+  //                * authSuccessful
+  handshake: function(callback, context) {
+    if (this._advice.reconnect === this.NONE) return;
+    if (this._state !== this.UNCONNECTED) return;
+
+    this._state = this.CONNECTING;
+    var self = this;
+
+    this.info('Initiating handshake with ?', URI.stringify(this._dispatcher.endpoint));
+    this._dispatcher.selectTransport(constants.MANDATORY_CONNECTION_TYPES);
+
+    this._sendMessage({
+      channel:                  Channel.HANDSHAKE,
+      version:                  constants.BAYEUX_VERSION,
+      supportedConnectionTypes: this._dispatcher.getConnectionTypes()
+
+    }, {}, function(response) {
+
+      if (response.successful) {
+        this._state = this.CONNECTED;
+        this._dispatcher.clientId  = response.clientId;
+
+        this._dispatcher.selectTransport(response.supportedConnectionTypes);
+
+        this.info('Handshake successful: ?', this._dispatcher.clientId);
+
+        this.subscribe(this._channels.getKeys(), true);
+        if (callback) asap(function() { callback.call(context) });
+
+      } else {
+        this.info('Handshake unsuccessful');
+        global.setTimeout(function() { self.handshake(callback, context) }, this._dispatcher.retry * 1000);
+        this._state = this.UNCONNECTED;
+      }
+    }, this);
+  },
+
+  // Request                              Response
+  // MUST include:  * channel             MUST include:  * channel
+  //                * clientId                           * successful
+  //                * connectionType                     * clientId
+  // MAY include:   * ext                 MAY include:   * error
+  //                * id                                 * advice
+  //                                                     * ext
+  //                                                     * id
+  //                                                     * timestamp
+  connect: function(callback, context) {
+    if (this._advice.reconnect === this.NONE) return;
+    if (this._state === this.DISCONNECTED) return;
+
+    if (this._state === this.UNCONNECTED)
+      return this.handshake(function() { this.connect(callback, context) }, this);
+
+    this.callback(callback, context);
+    if (this._state !== this.CONNECTED) return;
+
+    this.info('Calling deferred actions for ?', this._dispatcher.clientId);
+    this.setDeferredStatus('succeeded');
+    this.setDeferredStatus('unknown');
+
+    if (this._connectRequest) return;
+    this._connectRequest = true;
+
+    this.info('Initiating connection for ?', this._dispatcher.clientId);
+
+    this._sendMessage({
+      channel:        Channel.CONNECT,
+      clientId:       this._dispatcher.clientId,
+      connectionType: this._dispatcher.connectionType
+
+    }, {}, this._cycleConnection, this);
+  },
+
+  // Request                              Response
+  // MUST include:  * channel             MUST include:  * channel
+  //                * clientId                           * successful
+  // MAY include:   * ext                                * clientId
+  //                * id                  MAY include:   * error
+  //                                                     * ext
+  //                                                     * id
+  disconnect: function() {
+    if (this._state !== this.CONNECTED) return;
+    this._state = this.DISCONNECTED;
+
+    this.info('Disconnecting ?', this._dispatcher.clientId);
+    var promise = new Publication();
+
+    this._sendMessage({
+      channel:  Channel.DISCONNECT,
+      clientId: this._dispatcher.clientId
+
+    }, {}, function(response) {
+      if (response.successful) {
+        this._dispatcher.close();
+        promise.setDeferredStatus('succeeded');
+      } else {
+        promise.setDeferredStatus('failed', Error.parse(response.error));
+      }
+    }, this);
+
+    this.info('Clearing channel listeners for ?', this._dispatcher.clientId);
+    this._channels = new Channel.Set();
+
+    return promise;
+  },
+
+  // Request                              Response
+  // MUST include:  * channel             MUST include:  * channel
+  //                * clientId                           * successful
+  //                * subscription                       * clientId
+  // MAY include:   * ext                                * subscription
+  //                * id                  MAY include:   * error
+  //                                                     * advice
+  //                                                     * ext
+  //                                                     * id
+  //                                                     * timestamp
+  subscribe: function(channel, callback, context) {
+    if (channel instanceof Array)
+      return array.map(channel, function(c) {
+        return this.subscribe(c, callback, context);
+      }, this);
+
+    var subscription = new Subscription(this, channel, callback, context),
+        force        = (callback === true),
+        hasSubscribe = this._channels.hasSubscription(channel);
+
+    if (hasSubscribe && !force) {
+      this._channels.subscribe([channel], subscription);
+      subscription.setDeferredStatus('succeeded');
+      return subscription;
+    }
+
+    this.connect(function() {
+      this.info('Client ? attempting to subscribe to ?', this._dispatcher.clientId, channel);
+      if (!force) this._channels.subscribe([channel], subscription);
+
+      this._sendMessage({
+        channel:      Channel.SUBSCRIBE,
+        clientId:     this._dispatcher.clientId,
+        subscription: channel
+
+      }, {}, function(response) {
+        if (!response.successful) {
+          subscription.setDeferredStatus('failed', Error.parse(response.error));
+          return this._channels.unsubscribe(channel, subscription);
+        }
+
+        var channels = [].concat(response.subscription);
+        this.info('Subscription acknowledged for ? to ?', this._dispatcher.clientId, channels);
+        subscription.setDeferredStatus('succeeded');
+      }, this);
+    }, this);
+
+    return subscription;
+  },
+
+  // Request                              Response
+  // MUST include:  * channel             MUST include:  * channel
+  //                * clientId                           * successful
+  //                * subscription                       * clientId
+  // MAY include:   * ext                                * subscription
+  //                * id                  MAY include:   * error
+  //                                                     * advice
+  //                                                     * ext
+  //                                                     * id
+  //                                                     * timestamp
+  unsubscribe: function(channel, subscription) {
+    if (channel instanceof Array)
+      return array.map(channel, function(c) {
+        return this.unsubscribe(c, subscription);
+      }, this);
+
+    var dead = this._channels.unsubscribe(channel, subscription);
+    if (!dead) return;
+
+    this.connect(function() {
+      this.info('Client ? attempting to unsubscribe from ?', this._dispatcher.clientId, channel);
+
+      this._sendMessage({
+        channel:      Channel.UNSUBSCRIBE,
+        clientId:     this._dispatcher.clientId,
+        subscription: channel
+
+      }, {}, function(response) {
+        if (!response.successful) return;
+
+        var channels = [].concat(response.subscription);
+        this.info('Unsubscription acknowledged for ? from ?', this._dispatcher.clientId, channels);
+      }, this);
+    }, this);
+  },
+
+  // Request                              Response
+  // MUST include:  * channel             MUST include:  * channel
+  //                * data                               * successful
+  // MAY include:   * clientId            MAY include:   * id
+  //                * id                                 * error
+  //                * ext                                * ext
+  publish: function(channel, data, options) {
+    validateOptions(options || {}, ['attempts', 'deadline']);
+    var publication = new Publication();
+
+    this.connect(function() {
+      this.info('Client ? queueing published message to ?: ?', this._dispatcher.clientId, channel, data);
+
+      this._sendMessage({
+        channel:  channel,
+        data:     data,
+        clientId: this._dispatcher.clientId
+
+      }, options, function(response) {
+        if (response.successful)
+          publication.setDeferredStatus('succeeded');
+        else
+          publication.setDeferredStatus('failed', Error.parse(response.error));
+      }, this);
+    }, this);
+
+    return publication;
+  },
+
+  _sendMessage: function(message, options, callback, context) {
+    message.id = this._generateMessageId();
+
+    var timeout = this._advice.timeout
+                ? 1.2 * this._advice.timeout / 1000
+                : 1.2 * this._dispatcher.retry;
+
+    this.pipeThroughExtensions('outgoing', message, null, function(message) {
+      if (!message) return;
+      if (callback) this._responseCallbacks[message.id] = [callback, context];
+      this._dispatcher.sendMessage(message, timeout, options || {});
+    }, this);
+  },
+
+  _generateMessageId: function() {
+    this._messageId += 1;
+    if (this._messageId >= Math.pow(2,32)) this._messageId = 0;
+    return this._messageId.toString(36);
+  },
+
+  _receiveMessage: function(message) {
+    var id = message.id, callback;
+
+    if (message.successful !== undefined) {
+      callback = this._responseCallbacks[id];
+      delete this._responseCallbacks[id];
+    }
+
+    this.pipeThroughExtensions('incoming', message, null, function(message) {
+      if (!message) return;
+      if (message.advice) this._handleAdvice(message.advice);
+      this._deliverMessage(message);
+      if (callback) callback[0].call(callback[1], message);
+    }, this);
+  },
+
+  _handleAdvice: function(advice) {
+    extend(this._advice, advice);
+    this._dispatcher.timeout = this._advice.timeout / 1000;
+
+    if (this._advice.reconnect === this.HANDSHAKE && this._state !== this.DISCONNECTED) {
+      this._state = this.UNCONNECTED;
+      this._dispatcher.clientId = null;
+      this._cycleConnection();
+    }
+  },
+
+  _deliverMessage: function(message) {
+    if (!message.channel || message.data === undefined) return;
+    this.info('Client ? calling listeners for ? with ?', this._dispatcher.clientId, message.channel, message.data);
+    this._channels.distributeMessage(message);
+  },
+
+  _cycleConnection: function() {
+    if (this._connectRequest) {
+      this._connectRequest = null;
+      this.info('Closed connection for ?', this._dispatcher.clientId);
+    }
+    var self = this;
+    global.setTimeout(function() { self.connect() }, this._advice.interval);
+  }
+});
+
+extend(Client.prototype, Deferrable);
+extend(Client.prototype, Publisher);
+extend(Client.prototype, Logging);
+extend(Client.prototype, Extensible);
+
+module.exports = Client;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var array = __webpack_require__(20);
+
+module.exports = function(options, validKeys) {
+  for (var key in options) {
+    if (array.indexOf(validKeys, key) < 0)
+      throw new Error('Unrecognized option: ' + key);
+  }
+};
+
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports) {
+
+/*
+Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+var isArray = typeof Array.isArray === 'function'
+    ? Array.isArray
+    : function (xs) {
+        return Object.prototype.toString.call(xs) === '[object Array]'
+    }
+;
+function indexOf (xs, x) {
+    if (xs.indexOf) return xs.indexOf(x);
+    for (var i = 0; i < xs.length; i++) {
+        if (x === xs[i]) return i;
+    }
+    return -1;
+}
+
+function EventEmitter() {}
+module.exports = EventEmitter;
+
+EventEmitter.prototype.emit = function(type) {
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events || !this._events.error ||
+        (isArray(this._events.error) && !this._events.error.length))
+    {
+      if (arguments[1] instanceof Error) {
+        throw arguments[1]; // Unhandled 'error' event
+      } else {
+        throw new Error("Uncaught, unspecified 'error' event.");
+      }
+      return false;
     }
   }
 
-  return new StreamClient(apiKey, apiSecret, appId, options);
+  if (!this._events) return false;
+  var handler = this._events[type];
+  if (!handler) return false;
+
+  if (typeof handler == 'function') {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        var args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+    return true;
+
+  } else if (isArray(handler)) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    var listeners = handler.slice();
+    for (var i = 0, l = listeners.length; i < l; i++) {
+      listeners[i].apply(this, args);
+    }
+    return true;
+
+  } else {
+    return false;
+  }
+};
+
+// EventEmitter is defined in src/node_events.cc
+// EventEmitter.prototype.emit() is also defined there.
+EventEmitter.prototype.addListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('addListener only takes instances of Function');
+  }
+
+  if (!this._events) this._events = {};
+
+  // To avoid recursion in the case that type == "newListeners"! Before
+  // adding it to the listeners, first emit "newListeners".
+  this.emit('newListener', type, listener);
+
+  if (!this._events[type]) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  } else if (isArray(this._events[type])) {
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  } else {
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  var self = this;
+  self.on(type, function g() {
+    self.removeListener(type, g);
+    listener.apply(this, arguments);
+  });
+
+  return this;
+};
+
+EventEmitter.prototype.removeListener = function(type, listener) {
+  if ('function' !== typeof listener) {
+    throw new Error('removeListener only takes instances of Function');
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (!this._events || !this._events[type]) return this;
+
+  var list = this._events[type];
+
+  if (isArray(list)) {
+    var i = indexOf(list, listener);
+    if (i < 0) return this;
+    list.splice(i, 1);
+    if (list.length == 0)
+      delete this._events[type];
+  } else if (this._events[type] === listener) {
+    delete this._events[type];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  if (arguments.length === 0) {
+    this._events = {};
+    return this;
+  }
+
+  // does not use listeners(), so no side effect of creating _events[type]
+  if (type && this._events && this._events[type]) this._events[type] = null;
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  if (!this._events) this._events = {};
+  if (!this._events[type]) this._events[type] = [];
+  if (!isArray(this._events[type])) {
+    this._events[type] = [this._events[type]];
+  }
+  return this._events[type];
+};
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class     = __webpack_require__(2),
+    URI       = __webpack_require__(4),
+    cookies   = __webpack_require__(33),
+    extend    = __webpack_require__(0),
+    Logging   = __webpack_require__(9),
+    Publisher = __webpack_require__(22),
+    Transport = __webpack_require__(72),
+    Scheduler = __webpack_require__(36);
+
+var Dispatcher = Class({ className: 'Dispatcher',
+  MAX_REQUEST_SIZE: 2048,
+  DEFAULT_RETRY:    5,
+
+  UP:   1,
+  DOWN: 2,
+
+  initialize: function(client, endpoint, options) {
+    this._client     = client;
+    this.endpoint    = URI.parse(endpoint);
+    this._alternates = options.endpoints || {};
+
+    this.cookies      = cookies.CookieJar && new cookies.CookieJar();
+    this._disabled    = [];
+    this._envelopes   = {};
+    this.headers      = {};
+    this.retry        = options.retry || this.DEFAULT_RETRY;
+    this._scheduler   = options.scheduler || Scheduler;
+    this._state       = 0;
+    this.transports   = {};
+    this.wsExtensions = [];
+
+    this.proxy = options.proxy || {};
+    if (typeof this._proxy === 'string') this._proxy = {origin: this._proxy};
+
+    var exts = options.websocketExtensions;
+    if (exts) {
+      exts = [].concat(exts);
+      for (var i = 0, n = exts.length; i < n; i++)
+        this.addWebsocketExtension(exts[i]);
+    }
+
+    this.tls = options.tls || {};
+    this.tls.ca = this.tls.ca || options.ca;
+
+    for (var type in this._alternates)
+      this._alternates[type] = URI.parse(this._alternates[type]);
+
+    this.maxRequestSize = this.MAX_REQUEST_SIZE;
+  },
+
+  endpointFor: function(connectionType) {
+    return this._alternates[connectionType] || this.endpoint;
+  },
+
+  addWebsocketExtension: function(extension) {
+    this.wsExtensions.push(extension);
+  },
+
+  disable: function(feature) {
+    this._disabled.push(feature);
+  },
+
+  setHeader: function(name, value) {
+    this.headers[name] = value;
+  },
+
+  close: function() {
+    var transport = this._transport;
+    delete this._transport;
+    if (transport) transport.close();
+  },
+
+  getConnectionTypes: function() {
+    return Transport.getConnectionTypes();
+  },
+
+  selectTransport: function(transportTypes) {
+    Transport.get(this, transportTypes, this._disabled, function(transport) {
+      this.debug('Selected ? transport for ?', transport.connectionType, URI.stringify(transport.endpoint));
+
+      if (transport === this._transport) return;
+      if (this._transport) this._transport.close();
+
+      this._transport = transport;
+      this.connectionType = transport.connectionType;
+    }, this);
+  },
+
+  sendMessage: function(message, timeout, options) {
+    options = options || {};
+
+    var id       = message.id,
+        attempts = options.attempts,
+        deadline = options.deadline && new Date().getTime() + (options.deadline * 1000),
+        envelope = this._envelopes[id],
+        scheduler;
+
+    if (!envelope) {
+      scheduler = new this._scheduler(message, {timeout: timeout, interval: this.retry, attempts: attempts, deadline: deadline});
+      envelope  = this._envelopes[id] = {message: message, scheduler: scheduler};
+    }
+
+    this._sendEnvelope(envelope);
+  },
+
+  _sendEnvelope: function(envelope) {
+    if (!this._transport) return;
+    if (envelope.request || envelope.timer) return;
+
+    var message   = envelope.message,
+        scheduler = envelope.scheduler,
+        self      = this;
+
+    if (!scheduler.isDeliverable()) {
+      scheduler.abort();
+      delete this._envelopes[message.id];
+      return;
+    }
+
+    envelope.timer = global.setTimeout(function() {
+      self.handleError(message);
+    }, scheduler.getTimeout() * 1000);
+
+    scheduler.send();
+    envelope.request = this._transport.sendMessage(message);
+  },
+
+  handleResponse: function(reply) {
+    var envelope = this._envelopes[reply.id];
+
+    if (reply.successful !== undefined && envelope) {
+      envelope.scheduler.succeed();
+      delete this._envelopes[reply.id];
+      global.clearTimeout(envelope.timer);
+    }
+
+    this.trigger('message', reply);
+
+    if (this._state === this.UP) return;
+    this._state = this.UP;
+    this._client.trigger('transport:up');
+  },
+
+  handleError: function(message, immediate) {
+    var envelope = this._envelopes[message.id],
+        request  = envelope && envelope.request,
+        self     = this;
+
+    if (!request) return;
+
+    request.then(function(req) {
+      if (req && req.abort) req.abort();
+    });
+
+    var scheduler = envelope.scheduler;
+    scheduler.fail();
+
+    global.clearTimeout(envelope.timer);
+    envelope.request = envelope.timer = null;
+
+    if (immediate) {
+      this._sendEnvelope(envelope);
+    } else {
+      envelope.timer = global.setTimeout(function() {
+        envelope.timer = null;
+        self._sendEnvelope(envelope);
+      }, scheduler.getInterval() * 1000);
+    }
+
+    if (this._state === this.DOWN) return;
+    this._state = this.DOWN;
+    this._client.trigger('transport:down');
+  }
+});
+
+Dispatcher.create = function(client, endpoint, options) {
+  return new Dispatcher(client, endpoint, options);
+};
+
+extend(Dispatcher.prototype, Publisher);
+extend(Dispatcher.prototype, Logging);
+
+module.exports = Dispatcher;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Transport = __webpack_require__(5);
+
+Transport.register('websocket', __webpack_require__(74));
+Transport.register('eventsource', __webpack_require__(76));
+Transport.register('long-polling', __webpack_require__(35));
+Transport.register('cross-origin-long-polling', __webpack_require__(77));
+Transport.register('callback-polling', __webpack_require__(78));
+
+module.exports = Transport;
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+module.exports = {
+  addTimeout: function(name, delay, callback, context) {
+    this._timeouts = this._timeouts || {};
+    if (this._timeouts.hasOwnProperty(name)) return;
+    var self = this;
+    this._timeouts[name] = global.setTimeout(function() {
+      delete self._timeouts[name];
+      callback.call(context);
+    }, 1000 * delay);
+  },
+
+  removeTimeout: function(name) {
+    this._timeouts = this._timeouts || {};
+    var timeout = this._timeouts[name];
+    if (!timeout) return;
+    global.clearTimeout(timeout);
+    delete this._timeouts[name];
+  },
+
+  removeAllTimeouts: function() {
+    this._timeouts = this._timeouts || {};
+    for (var name in this._timeouts) this.removeTimeout(name);
+  }
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class      = __webpack_require__(2),
+    Promise    = __webpack_require__(8),
+    Set        = __webpack_require__(34),
+    URI        = __webpack_require__(4),
+    browser    = __webpack_require__(21),
+    copyObject = __webpack_require__(23),
+    extend     = __webpack_require__(0),
+    toJSON     = __webpack_require__(10),
+    ws         = __webpack_require__(75),
+    Deferrable = __webpack_require__(11),
+    Transport  = __webpack_require__(5);
+
+var WebSocket = extend(Class(Transport, {
+  UNCONNECTED:  1,
+  CONNECTING:   2,
+  CONNECTED:    3,
+
+  batching:     false,
+
+  isUsable: function(callback, context) {
+    this.callback(function() { callback.call(context, true) });
+    this.errback(function() { callback.call(context, false) });
+    this.connect();
+  },
+
+  request: function(messages) {
+    this._pending = this._pending || new Set();
+    for (var i = 0, n = messages.length; i < n; i++) this._pending.add(messages[i]);
+
+    var self = this;
+
+    var promise = new Promise(function(resolve, reject) {
+      self.callback(function(socket) {
+        if (!socket || socket.readyState !== 1) return;
+        socket.send(toJSON(messages));
+        resolve(socket);
+      });
+
+      self.connect();
+    });
+
+    return {
+      abort: function() { promise.then(function(ws) { ws.close() }) }
+    };
+  },
+
+  connect: function() {
+    if (WebSocket._unloaded) return;
+
+    this._state = this._state || this.UNCONNECTED;
+    if (this._state !== this.UNCONNECTED) return;
+    this._state = this.CONNECTING;
+
+    var socket = this._createSocket();
+    if (!socket) return this.setDeferredStatus('failed');
+
+    var self = this;
+
+    socket.onopen = function() {
+      if (socket.headers) self._storeCookies(socket.headers['set-cookie']);
+      self._socket = socket;
+      self._state = self.CONNECTED;
+      self._everConnected = true;
+      self._ping();
+      self.setDeferredStatus('succeeded', socket);
+    };
+
+    var closed = false;
+    socket.onclose = socket.onerror = function() {
+      if (closed) return;
+      closed = true;
+
+      var wasConnected = (self._state === self.CONNECTED);
+      socket.onopen = socket.onclose = socket.onerror = socket.onmessage = null;
+
+      delete self._socket;
+      self._state = self.UNCONNECTED;
+      self.removeTimeout('ping');
+
+      var pending = self._pending ? self._pending.toArray() : [];
+      delete self._pending;
+
+      if (wasConnected || self._everConnected) {
+        self.setDeferredStatus('unknown');
+        self._handleError(pending, wasConnected);
+      } else {
+        self.setDeferredStatus('failed');
+      }
+    };
+
+    socket.onmessage = function(event) {
+      var replies;
+      try { replies = JSON.parse(event.data) } catch (error) {}
+
+      if (!replies) return;
+
+      replies = [].concat(replies);
+
+      for (var i = 0, n = replies.length; i < n; i++) {
+        if (replies[i].successful === undefined) continue;
+        self._pending.remove(replies[i]);
+      }
+      self._receive(replies);
+    };
+  },
+
+  close: function() {
+    if (!this._socket) return;
+    this._socket.close();
+  },
+
+  _createSocket: function() {
+    var url        = WebSocket.getSocketUrl(this.endpoint),
+        headers    = this._dispatcher.headers,
+        extensions = this._dispatcher.wsExtensions,
+        cookie     = this._getCookies(),
+        tls        = this._dispatcher.tls,
+        options    = {extensions: extensions, headers: headers, proxy: this._proxy, tls: tls};
+
+    if (cookie !== '') options.headers['Cookie'] = cookie;
+
+    return ws.create(url, [], options);
+  },
+
+  _ping: function() {
+    if (!this._socket || this._socket.readyState !== 1) return;
+    this._socket.send('[]');
+    this.addTimeout('ping', this._dispatcher.timeout / 2, this._ping, this);
+  }
+
+}), {
+  PROTOCOLS: {
+    'http:':  'ws:',
+    'https:': 'wss:'
+  },
+
+  create: function(dispatcher, endpoint) {
+    var sockets = dispatcher.transports.websocket = dispatcher.transports.websocket || {};
+    sockets[endpoint.href] = sockets[endpoint.href] || new this(dispatcher, endpoint);
+    return sockets[endpoint.href];
+  },
+
+  getSocketUrl: function(endpoint) {
+    endpoint = copyObject(endpoint);
+    endpoint.protocol = this.PROTOCOLS[endpoint.protocol];
+    return URI.stringify(endpoint);
+  },
+
+  isUsable: function(dispatcher, endpoint, callback, context) {
+    this.create(dispatcher, endpoint).isUsable(callback, context);
+  }
+});
+
+extend(WebSocket.prototype, Deferrable);
+
+if (browser.Event && global.onbeforeunload !== undefined)
+  browser.Event.on(global, 'beforeunload', function() { WebSocket._unloaded = true });
+
+module.exports = WebSocket;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var WS = global.MozWebSocket || global.WebSocket;
+
+module.exports = {
+  create: function(url, protocols, options) {
+    if (typeof WS !== 'function') return null;
+    return new WS(url);
+  }
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class      = __webpack_require__(2),
+    URI        = __webpack_require__(4),
+    copyObject = __webpack_require__(23),
+    extend     = __webpack_require__(0),
+    Deferrable = __webpack_require__(11),
+    Transport  = __webpack_require__(5),
+    XHR        = __webpack_require__(35);
+
+var EventSource = extend(Class(Transport, {
+  initialize: function(dispatcher, endpoint) {
+    Transport.prototype.initialize.call(this, dispatcher, endpoint);
+    if (!global.EventSource) return this.setDeferredStatus('failed');
+
+    this._xhr = new XHR(dispatcher, endpoint);
+
+    endpoint = copyObject(endpoint);
+    endpoint.pathname += '/' + dispatcher.clientId;
+
+    var socket = new global.EventSource(URI.stringify(endpoint)),
+        self   = this;
+
+    socket.onopen = function() {
+      self._everConnected = true;
+      self.setDeferredStatus('succeeded');
+    };
+
+    socket.onerror = function() {
+      if (self._everConnected) {
+        self._handleError([]);
+      } else {
+        self.setDeferredStatus('failed');
+        socket.close();
+      }
+    };
+
+    socket.onmessage = function(event) {
+      var replies;
+      try { replies = JSON.parse(event.data) } catch (error) {}
+
+      if (replies)
+        self._receive(replies);
+      else
+        self._handleError([]);
+    };
+
+    this._socket = socket;
+  },
+
+  close: function() {
+    if (!this._socket) return;
+    this._socket.onopen = this._socket.onerror = this._socket.onmessage = null;
+    this._socket.close();
+    delete this._socket;
+  },
+
+  isUsable: function(callback, context) {
+    this.callback(function() { callback.call(context, true) });
+    this.errback(function() { callback.call(context, false) });
+  },
+
+  encode: function(messages) {
+    return this._xhr.encode(messages);
+  },
+
+  request: function(messages) {
+    return this._xhr.request(messages);
+  }
+
+}), {
+  isUsable: function(dispatcher, endpoint, callback, context) {
+    var id = dispatcher.clientId;
+    if (!id) return callback.call(context, false);
+
+    XHR.isUsable(dispatcher, endpoint, function(usable) {
+      if (!usable) return callback.call(context, false);
+      this.create(dispatcher, endpoint).isUsable(callback, context);
+    }, this);
+  },
+
+  create: function(dispatcher, endpoint) {
+    var sockets = dispatcher.transports.eventsource = dispatcher.transports.eventsource || {},
+        id      = dispatcher.clientId;
+
+    var url = copyObject(endpoint);
+    url.pathname += '/' + (id || '');
+    url = URI.stringify(url);
+
+    sockets[url] = sockets[url] || new this(dispatcher, endpoint);
+    return sockets[url];
+  }
+});
+
+extend(EventSource.prototype, Deferrable);
+
+module.exports = EventSource;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class     = __webpack_require__(2),
+    Set       = __webpack_require__(34),
+    URI       = __webpack_require__(4),
+    extend    = __webpack_require__(0),
+    toJSON    = __webpack_require__(10),
+    Transport = __webpack_require__(5);
+
+var CORS = extend(Class(Transport, {
+  encode: function(messages) {
+    return 'message=' + encodeURIComponent(toJSON(messages));
+  },
+
+  request: function(messages) {
+    var xhrClass = global.XDomainRequest ? XDomainRequest : XMLHttpRequest,
+        xhr      = new xhrClass(),
+        id       = ++CORS._id,
+        headers  = this._dispatcher.headers,
+        self     = this,
+        key;
+
+    xhr.open('POST', URI.stringify(this.endpoint), true);
+
+    if (xhr.setRequestHeader) {
+      xhr.setRequestHeader('Pragma', 'no-cache');
+      for (key in headers) {
+        if (!headers.hasOwnProperty(key)) continue;
+        xhr.setRequestHeader(key, headers[key]);
+      }
+    }
+
+    var cleanUp = function() {
+      if (!xhr) return false;
+      CORS._pending.remove(id);
+      xhr.onload = xhr.onerror = xhr.ontimeout = xhr.onprogress = null;
+      xhr = null;
+    };
+
+    xhr.onload = function() {
+      var replies;
+      try { replies = JSON.parse(xhr.responseText) } catch (error) {}
+
+      cleanUp();
+
+      if (replies)
+        self._receive(replies);
+      else
+        self._handleError(messages);
+    };
+
+    xhr.onerror = xhr.ontimeout = function() {
+      cleanUp();
+      self._handleError(messages);
+    };
+
+    xhr.onprogress = function() {};
+
+    if (xhrClass === global.XDomainRequest)
+      CORS._pending.add({id: id, xhr: xhr});
+
+    xhr.send(this.encode(messages));
+    return xhr;
+  }
+}), {
+  _id:      0,
+  _pending: new Set(),
+
+  isUsable: function(dispatcher, endpoint, callback, context) {
+    if (URI.isSameOrigin(endpoint))
+      return callback.call(context, false);
+
+    if (global.XDomainRequest)
+      return callback.call(context, endpoint.protocol === location.protocol);
+
+    if (global.XMLHttpRequest) {
+      var xhr = new XMLHttpRequest();
+      return callback.call(context, xhr.withCredentials !== undefined);
+    }
+    return callback.call(context, false);
+  }
+});
+
+module.exports = CORS;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+var Class      = __webpack_require__(2),
+    URI        = __webpack_require__(4),
+    copyObject = __webpack_require__(23),
+    extend     = __webpack_require__(0),
+    toJSON     = __webpack_require__(10),
+    Transport  = __webpack_require__(5);
+
+var JSONP = extend(Class(Transport, {
+ encode: function(messages) {
+    var url = copyObject(this.endpoint);
+    url.query.message = toJSON(messages);
+    url.query.jsonp   = '__jsonp' + JSONP._cbCount + '__';
+    return URI.stringify(url);
+  },
+
+  request: function(messages) {
+    var head         = document.getElementsByTagName('head')[0],
+        script       = document.createElement('script'),
+        callbackName = JSONP.getCallbackName(),
+        endpoint     = copyObject(this.endpoint),
+        self         = this;
+
+    endpoint.query.message = toJSON(messages);
+    endpoint.query.jsonp   = callbackName;
+
+    var cleanup = function() {
+      if (!global[callbackName]) return false;
+      global[callbackName] = undefined;
+      try { delete global[callbackName] } catch (error) {}
+      script.parentNode.removeChild(script);
+    };
+
+    global[callbackName] = function(replies) {
+      cleanup();
+      self._receive(replies);
+    };
+
+    script.type = 'text/javascript';
+    script.src  = URI.stringify(endpoint);
+    head.appendChild(script);
+
+    script.onerror = function() {
+      cleanup();
+      self._handleError(messages);
+    };
+
+    return {abort: cleanup};
+  }
+}), {
+  _cbCount: 0,
+
+  getCallbackName: function() {
+    this._cbCount += 1;
+    return '__jsonp' + this._cbCount + '__';
+  },
+
+  isUsable: function(dispatcher, endpoint, callback, context) {
+    callback.call(context, true);
+  }
+});
+
+module.exports = JSONP;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(1)))
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Class   = __webpack_require__(2),
+    Grammar = __webpack_require__(32);
+
+var Error = Class({
+  initialize: function(code, params, message) {
+    this.code    = code;
+    this.params  = Array.prototype.slice.call(params);
+    this.message = message;
+  },
+
+  toString: function() {
+    return this.code + ':' +
+           this.params.join(',') + ':' +
+           this.message;
+  }
+});
+
+Error.parse = function(message) {
+  message = message || '';
+  if (!Grammar.ERROR.test(message)) return new Error(null, [], message);
+
+  var parts   = message.split(':'),
+      code    = parseInt(parts[0]),
+      params  = parts[1].split(','),
+      message = parts[2];
+
+  return new Error(code, params, message);
+};
+
+// http://code.google.com/p/cometd/wiki/BayeuxCodes
+var errors = {
+  versionMismatch:  [300, 'Version mismatch'],
+  conntypeMismatch: [301, 'Connection types not supported'],
+  extMismatch:      [302, 'Extension mismatch'],
+  badRequest:       [400, 'Bad request'],
+  clientUnknown:    [401, 'Unknown client'],
+  parameterMissing: [402, 'Missing required parameter'],
+  channelForbidden: [403, 'Forbidden channel'],
+  channelUnknown:   [404, 'Unknown channel'],
+  channelInvalid:   [405, 'Invalid channel'],
+  extUnknown:       [406, 'Unknown extension'],
+  publishFailed:    [407, 'Failed to publish'],
+  serverError:      [500, 'Internal server error']
+};
+
+for (var name in errors)
+  (function(name) {
+    Error[name] = function() {
+      return new Error(errors[name][0], arguments, errors[name][1]).toString();
+    };
+  })(name);
+
+module.exports = Error;
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var extend  = __webpack_require__(0),
+    Logging = __webpack_require__(9);
+
+var Extensible = {
+  addExtension: function(extension) {
+    this._extensions = this._extensions || [];
+    this._extensions.push(extension);
+    if (extension.added) extension.added(this);
+  },
+
+  removeExtension: function(extension) {
+    if (!this._extensions) return;
+    var i = this._extensions.length;
+    while (i--) {
+      if (this._extensions[i] !== extension) continue;
+      this._extensions.splice(i,1);
+      if (extension.removed) extension.removed(this);
+    }
+  },
+
+  pipeThroughExtensions: function(stage, message, request, callback, context) {
+    this.debug('Passing through ? extensions: ?', stage, message);
+
+    if (!this._extensions) return callback.call(context, message);
+    var extensions = this._extensions.slice();
+
+    var pipe = function(message) {
+      if (!message) return callback.call(context, message);
+
+      var extension = extensions.shift();
+      if (!extension) return callback.call(context, message);
+
+      var fn = extension[stage];
+      if (!fn) return pipe(message);
+
+      if (fn.length >= 3) extension[stage](message, request, pipe);
+      else                extension[stage](message, pipe);
+    };
+    pipe(message);
+  }
+};
+
+extend(Extensible, Logging);
+
+module.exports = Extensible;
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Class      = __webpack_require__(2),
+    Deferrable = __webpack_require__(11);
+
+module.exports = Class(Deferrable);
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Class      = __webpack_require__(2),
+    extend     = __webpack_require__(0),
+    Deferrable = __webpack_require__(11);
+
+var Subscription = Class({
+  initialize: function(client, channels, callback, context) {
+    this._client    = client;
+    this._channels  = channels;
+    this._callback  = callback;
+    this._context   = context;
+    this._cancelled = false;
+  },
+
+  withChannel: function(callback, context) {
+    this._withChannel = [callback, context];
+    return this;
+  },
+
+  apply: function(context, args) {
+    var message = args[0];
+
+    if (this._callback)
+      this._callback.call(this._context, message.data);
+
+    if (this._withChannel)
+      this._withChannel[0].call(this._withChannel[1], message.channel, message.data);
+  },
+
+  cancel: function() {
+    if (this._cancelled) return;
+    this._client.unsubscribe(this._channels, this);
+    this._cancelled = true;
+  },
+
+  unsubscribe: function() {
+    this.cancel();
+  }
+});
+
+extend(Subscription.prototype, Deferrable);
+
+module.exports = Subscription;
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var errors = __webpack_require__(3);
+
+var Collections = function Collections() {
+  this.initialize.apply(this, arguments);
+};
+
+Collections.prototype = {
+  initialize: function initialize(client, token) {
+    /**
+     * Initialize a feed object
+     * @method intialize
+     * @memberof Collections.prototype
+     * @param {StreamCloudClient} client Stream client this collection is constructed from
+     * @param {string} token JWT token
+     */
+    this.client = client;
+    this.token = token;
+  },
+  buildURL: function buildURL(collection, itemId) {
+    var url = 'collections/' + collection + '/';
+
+    if (itemId === undefined) {
+      return url;
+    }
+
+    return url + itemId + '/';
+  },
+  entry: function entry(collection, itemId, itemData) {
+    return new CollectionEntry(this, collection, itemId, itemData);
+  },
+  get: function get(collection, itemId, callback) {
+    /**
+     * get item from collection
+     * @method get
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {object}   itemId  id for this entry
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+    var self = this;
+    return this.client.get({
+      url: this.buildURL(collection, itemId),
+      signature: this.token
+    }).then(function (response) {
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
+      entry.full = response;
+
+      if (callback) {
+        callback(entry);
+      }
+
+      return entry;
+    });
+  },
+  add: function add(collection, itemId, itemData, callback) {
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {string}   itemId  entry id
+     * @param  {object}   itemData  ObjectStore data
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    var self = this;
+
+    if (itemId === null) {
+      itemId = undefined;
+    }
+
+    var body = {
+      id: itemId,
+      data: itemData
+    };
+    return this.client.post({
+      url: this.buildURL(collection),
+      body: body,
+      signature: this.token
+    }).then(function (response) {
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
+      entry.full = response;
+
+      if (callback) {
+        callback(entry);
+      }
+
+      return entry;
+    });
+  },
+  update: function update(collection, entryId, data, callback) {
+    /**
+     * Update entry in the collection
+     * @method update
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {object}   entryId  Collection object id
+     * @param  {object}   data  ObjectStore data
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    var self = this;
+    var body = {
+      data: data
+    };
+    return this.client.put({
+      url: this.buildURL(collection, entryId),
+      body: body,
+      signature: this.token
+    }).then(function (response) {
+      var entry = self.client.collections.entry(response.collection, response.id, response.data);
+      entry.full = response;
+
+      if (callback) {
+        callback(entry);
+      }
+
+      return entry;
+    });
+  },
+  delete: function _delete(collection, entryId, callback) {
+    /**
+     * Delete entry from collection
+     * @method delete
+     * @memberof Collections.prototype
+     * @param  {object}   entryId  Collection entry id
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.delete("food", "cheese101")
+     */
+    return this.client['delete']({
+      url: this.buildURL(collection, entryId),
+      signature: this.token
+    }, callback);
+  },
+  upsert: function upsert(collection, data, callback) {
+    /**
+     * Upsert one or more items within a collection.
+     *
+     * @method upsert
+     * @memberof Collections.prototype
+     * @param {object|array} data - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
+    if (!this.client.usingApiSecret) {
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+    }
+
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+
+    var data_json = {
+      data: {}
+    };
+    data_json['data'][collection] = data;
+    return this.client.post({
+      url: 'collections/',
+      serviceName: 'api',
+      body: data_json,
+      signature: this.client.getCollectionsToken()
+    }, callback);
+  },
+  select: function select(collection, ids, callback) {
+    /**
+     * Select all objects with ids from the collection.
+     *
+     * @method select
+     * @memberof Collections.prototype
+     * @param {object|array} ids - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
+    if (!this.client.usingApiSecret) {
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+    }
+
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!Array.isArray(ids)) {
+      ids = [ids];
+    }
+
+    var params = {
+      foreign_ids: ids.map(function (id) {
+        return collection + ':' + id;
+      }).join(',')
+    };
+    return this.client.get({
+      url: 'collections/',
+      serviceName: 'api',
+      qs: params,
+      signature: this.client.getCollectionsToken()
+    }, callback);
+  },
+  deleteMany: function deleteMany(collection, ids, callback) {
+    /**
+     * Remove all objects by id from the collection.
+     *
+     * @method delete
+     * @memberof Collections.prototype
+     * @param {object|array} ids - A single json object or an array of objects
+     * @param {requestCallback} callback - Callback to call on completion
+     * @return {Promise} Promise object.
+     */
+    if (!this.client.usingApiSecret) {
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+    }
+
+    var last = arguments[arguments.length - 1]; // callback is always the last argument
+
+    callback = last.call ? last : undefined;
+
+    if (!Array.isArray(ids)) {
+      ids = [ids];
+    }
+
+    ids = ids.map(function (id) {
+      return id.toString();
+    }).join(',');
+    var params = {
+      collection_name: collection,
+      ids: ids
+    };
+    return this.client.delete({
+      url: 'collections/',
+      serviceName: 'api',
+      qs: params,
+      signature: this.client.getCollectionsToken()
+    }, callback);
+  }
+};
+
+var CollectionEntry = function CollectionEntry() {
+  this.initialize.apply(this, arguments);
+};
+
+CollectionEntry.prototype = {
+  initialize: function initialize(store, collection, id, data) {
+    this.collection = collection;
+    this.store = store;
+    this.id = id;
+    this.data = data;
+  },
+  _streamRef: function _streamRef() {
+    return "SO:".concat(this.collection, ":").concat(this.id);
+  },
+  get: function get(callback) {
+    var _this = this;
+
+    /**
+     * get item from collection and sync data
+     * @method get
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+    return this.store.get(this.collection, this.id).then(function (response) {
+      _this.data = response.data;
+      _this.full = response;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  },
+  add: function add(callback) {
+    var _this2 = this;
+
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    return this.store.add(this.collection, this.id, this.data).then(function (response) {
+      _this2.data = response.data;
+      _this2.full = response;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  },
+  update: function update(callback) {
+    var _this3 = this;
+
+    /**
+     * Update item in the object storage
+     * @method update
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    return this.store.update(this.collection, this.id, this.data).then(function (response) {
+      _this3.data = response.data;
+      _this3.full = response;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  },
+  delete: function _delete(callback) {
+    var _this4 = this;
+
+    /**
+     * Delete item from collection
+     * @method delete
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.delete("cheese101")
+     */
+    return this.store.delete(this.collection, this.id).then(function (response) {
+      _this4.data = null;
+      _this4.full = null;
+
+      if (callback) {
+        callback(response);
+      }
+
+      return response;
+    });
+  }
+};
+module.exports = Collections;
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fetch = __webpack_require__(15);
+
+var Headers = __webpack_require__(15).Headers;
+
+var utils = __webpack_require__(12);
+
+var FormData = __webpack_require__(37);
+
+var errors = __webpack_require__(3);
+
+var StreamFileStore = function StreamFileStore() {
+  this.initialize.apply(this, arguments);
+};
+
+StreamFileStore.prototype = {
+  initialize: function initialize(client, token) {
+    this.client = client;
+    this.token = token;
+  },
+  // React Native does not auto-detect MIME type, you need to pass that via contentType
+  // param. If you don't then Android will refuse to perform the upload
+  upload: function upload(uri, name, contentType) {
+    var data = new FormData();
+    var fileField;
+
+    if (utils.isReadableStream(uri)) {
+      fileField = uri;
+    } else {
+      fileField = {
+        uri: uri,
+        name: name || uri.split('/').reverse()[0]
+      };
+
+      if (contentType != null) {
+        fileField.type = contentType;
+      }
+    }
+
+    data.append('file', fileField);
+    return fetch("".concat(this.client.enrichUrl('files/'), "?api_key=").concat(this.client.apiKey), {
+      method: 'post',
+      body: data,
+      headers: new Headers({
+        Authorization: this.token
+      })
+    }).then(function (r) {
+      if (r.ok) {
+        return r.json();
+      } // error
+
+
+      return r.text().then(function (responseData) {
+        r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {// ignore json parsing errors
+        }
+
+        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
+      });
+    });
+  },
+  delete: function _delete(uri) {
+    return this.client.delete({
+      url: "files/",
+      qs: {
+        url: uri
+      },
+      signature: this.token
+    });
+  }
+};
+module.exports = StreamFileStore;
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _extends = __webpack_require__(6);
+
+var fetch = __webpack_require__(15);
+
+var Headers = __webpack_require__(15).Headers;
+
+var FormData = __webpack_require__(37);
+
+var utils = __webpack_require__(12);
+
+var errors = __webpack_require__(3);
+
+var StreamImageStore = function StreamImageStore() {
+  this.initialize.apply(this, arguments);
+};
+
+StreamImageStore.prototype = {
+  initialize: function initialize(client, token) {
+    this.client = client;
+    this.token = token;
+  },
+  // React Native does not auto-detect MIME type, you need to pass that via contentType
+  // param. If you don't then Android will refuse to perform the upload
+  upload: function upload(uri, name, contentType) {
+    var data = new FormData();
+    var fileField;
+
+    if (utils.isReadableStream(uri)) {
+      fileField = uri;
+    } else {
+      fileField = {
+        uri: uri,
+        name: name || uri.split('/').reverse()[0]
+      };
+
+      if (contentType != null) {
+        fileField.type = contentType;
+      }
+    }
+
+    data.append('file', fileField);
+    return fetch("".concat(this.client.enrichUrl('images/'), "?api_key=").concat(this.client.apiKey), {
+      method: 'post',
+      body: data,
+      headers: new Headers({
+        Authorization: this.token
+      })
+    }).then(function (r) {
+      if (r.ok) {
+        return r.json();
+      } // error
+
+
+      return r.text().then(function (responseData) {
+        r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {// ignore json parsing errors
+        }
+
+        throw new errors.StreamApiError(JSON.stringify(responseData) + ' with HTTP status code ' + r.status, responseData, r);
+      });
+    });
+  },
+  delete: function _delete(uri) {
+    return this.client.delete({
+      url: "images/",
+      qs: {
+        url: uri
+      },
+      signature: this.token
+    });
+  },
+  process: function process(uri, options) {
+    var params = _extends(options, {
+      url: uri
+    });
+
+    if (Array.isArray(params.crop)) {
+      params.crop = params.crop.join(',');
+    }
+
+    return this.client.get({
+      url: "images/",
+      qs: params,
+      signature: this.token
+    });
+  },
+  thumbmail: function thumbmail(uri, w, h) {
+    var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
+      crop: 'center',
+      resize: 'clip'
+    },
+        crop = _ref.crop,
+        resize = _ref.resize;
+
+    return this.process(uri, {
+      w: w,
+      h: h,
+      crop: crop,
+      resize: resize
+    });
+  }
+};
+module.exports = StreamImageStore;
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _objectWithoutProperties = __webpack_require__(24);
+
+var errors = __webpack_require__(3);
+
+var StreamReaction = function StreamReaction() {
+  this.initialize.apply(this, arguments);
+};
+
+StreamReaction.prototype = {
+  initialize: function initialize(client, token) {
+    /**
+     * Initialize a feed object
+     * @method intialize
+     * @memberof StreamReaction.prototype
+     * @param {StreamClient} client Stream client this feed is constructed from
+     * @param {string} token JWT token
+     * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
+     */
+    this.client = client;
+    this.token = token;
+    this.signature = token;
+  },
+  buildURL: function buildURL() {
+    var url = 'reaction/';
+
+    for (var i = 0; i < arguments.length; i++) {
+      url += arguments[i] + '/';
+    }
+
+    return url;
+  },
+  all: function all(options, callback) {
+    /**
+     * get all reactions
+     * @method all
+     * @memberof StreamReaction.prototype
+     * @param  {object}   options  {limit:}
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.all()
+     * @example reactions.all({limit:100})
+     */
+    return this.client.get({
+      url: this.buildURL(),
+      signature: this.signature
+    }, callback);
+  },
+  _convertTargetFeeds: function _convertTargetFeeds() {
+    var targetFeeds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    return targetFeeds.map(function (elem) {
+      return typeof elem === 'string' ? elem : elem.id;
+    });
+  },
+  add: function add(kind, activity) {
+    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        id = _ref.id,
+        _ref$targetFeeds = _ref.targetFeeds,
+        targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
+        userId = _ref.userId,
+        targetFeedsExtraData = _ref.targetFeedsExtraData;
+
+    var callback = arguments.length > 4 ? arguments[4] : undefined;
+
+    /**
+     * add reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   kind  kind of reaction
+     * @param  {string}   activity Activity or an ActivityID
+     * @param  {object}   data  data related to reaction
+     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
+     */
+    if (activity instanceof Object) {
+      activity = activity.id;
+    }
+
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
+    var body = {
+      id: id,
+      activity_id: activity,
+      kind: kind,
+      data: data,
+      target_feeds: targetFeeds,
+      user_id: userId
+    };
+
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
+
+    return this.client.post({
+      url: this.buildURL(),
+      body: body,
+      signature: this.signature
+    }, callback);
+  },
+  addChild: function addChild(kind, reaction) {
+    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
+        _ref2$targetFeeds = _ref2.targetFeeds,
+        targetFeeds = _ref2$targetFeeds === void 0 ? [] : _ref2$targetFeeds,
+        userId = _ref2.userId,
+        targetFeedsExtraData = _ref2.targetFeedsExtraData;
+
+    var callback = arguments.length > 4 ? arguments[4] : undefined;
+
+    /**
+     * add reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   kind  kind of reaction
+     * @param  {string}   reaction Reaction or a ReactionID
+     * @param  {object}   data  data related to reaction
+     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
+     */
+    if (reaction instanceof Object) {
+      reaction = reaction.id;
+    }
+
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
+    var body = {
+      parent: reaction,
+      kind: kind,
+      data: data,
+      target_feeds: targetFeeds,
+      user_id: userId
+    };
+
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
+
+    return this.client.post({
+      url: this.buildURL(),
+      body: body,
+      signature: this.signature
+    }, callback);
+  },
+  get: function get(id, callback) {
+    /**
+     * get reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+    return this.client.get({
+      url: this.buildURL(id),
+      signature: this.signature
+    }, callback);
+  },
+  filter: function filter(conditions, callback) {
+    /**
+     * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
+     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
+     * the reaction with ID equal to the value provided is included.
+     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
+     * the reaction with ID equal to the value provided is included.
+     * results are limited to 25 at most and are ordered newest to oldest by default.
+     * @method lookup
+     * @memberof StreamReaction.prototype
+     * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.lookup({user_id: "john", kinds:"like"})
+     */
+    var user_id = conditions.user_id,
+        activity_id = conditions.activity_id,
+        reaction_id = conditions.reaction_id,
+        qs = _objectWithoutProperties(conditions, ["user_id", "activity_id", "reaction_id"]);
+
+    if (!qs.limit) {
+      qs.limit = 10;
+    }
+
+    if ((user_id ? 1 : 0 + activity_id ? 1 : 0 + reaction_id ? 1 : 0) != 1) {
+      throw new errors.SiteError('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
+    }
+
+    var lookupType = user_id && 'user_id' || activity_id && 'activity_id' || reaction_id && 'reaction_id';
+    var value = user_id || activity_id || reaction_id;
+    var url = this.buildURL(lookupType, value);
+
+    if (conditions.kind) {
+      url = this.buildURL(lookupType, value, conditions.kind);
+    }
+
+    return this.client.get({
+      url: url,
+      qs: qs,
+      signature: this.signature
+    }, callback);
+  },
+  update: function update(id, data) {
+    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref3$targetFeeds = _ref3.targetFeeds,
+        targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds,
+        targetFeedsExtraData = _ref3.targetFeedsExtraData;
+
+    var callback = arguments.length > 3 ? arguments[3] : undefined;
+
+    /**
+     * update reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {object}   data  Data associated to reaction
+     * @param  {array}   targetFeeds  Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
+     */
+    targetFeeds = this._convertTargetFeeds(targetFeeds);
+    var body = {
+      data: data,
+      target_feeds: targetFeeds
+    };
+
+    if (targetFeedsExtraData != null) {
+      body.target_feeds_extra_data = targetFeedsExtraData;
+    }
+
+    return this.client.put({
+      url: this.buildURL(id),
+      body: body,
+      signature: this.signature
+    }, callback);
+  },
+  delete: function _delete(id, callback) {
+    /**
+     * delete reaction
+     * @method delete
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+    return this.client.delete({
+      url: this.buildURL(id),
+      signature: this.signature
+    }, callback);
+  }
+};
+module.exports = StreamReaction;
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var base64_url_decode = __webpack_require__(88);
+
+function InvalidTokenError(message) {
+  this.message = message;
 }
 
-module.exports.connect = connect;
-module.exports.errors = errors;
-module.exports.request = request;
-module.exports.signing = signing;
-module.exports.Client = StreamClient;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
+InvalidTokenError.prototype = new Error();
+InvalidTokenError.prototype.name = 'InvalidTokenError';
+
+module.exports = function (token,options) {
+  if (typeof token !== 'string') {
+    throw new InvalidTokenError('Invalid token specified');
+  }
+
+  options = options || {};
+  var pos = options.header === true ? 0 : 1;
+  try {
+    return JSON.parse(base64_url_decode(token.split('.')[pos]));
+  } catch (e) {
+    throw new InvalidTokenError('Invalid token specified: ' + e.message);
+  }
+};
+
+module.exports.InvalidTokenError = InvalidTokenError;
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var atob = __webpack_require__(89);
+
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
+    var code = p.charCodeAt(0).toString(16).toUpperCase();
+    if (code.length < 2) {
+      code = '0' + code;
+    }
+    return '%' + code;
+  }));
+}
+
+module.exports = function(str) {
+  var output = str.replace(/-/g, "+").replace(/_/g, "/");
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += "==";
+      break;
+    case 3:
+      output += "=";
+      break;
+    default:
+      throw "Illegal base64url string!";
+  }
+
+  try{
+    return b64DecodeUnicode(output);
+  } catch (err) {
+    return atob(output);
+  }
+};
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports) {
+
+/**
+ * The code was extracted from:
+ * https://github.com/davidchambers/Base64.js
+ */
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function InvalidCharacterError(message) {
+  this.message = message;
+}
+
+InvalidCharacterError.prototype = new Error();
+InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+function polyfill (input) {
+  var str = String(input).replace(/=+$/, '');
+  if (str.length % 4 == 1) {
+    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+  }
+  for (
+    // initialize result and counters
+    var bc = 0, bs, buffer, idx = 0, output = '';
+    // get next character
+    buffer = str.charAt(idx++);
+    // character found in table? initialize bit storage and add its ascii value;
+    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+      // and if not first of each 4 characters,
+      // convert the first 8 bits to one ascii character
+      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+  ) {
+    // try to find character in table (0-63, not found => -1)
+    buffer = chars.indexOf(buffer);
+  }
+  return output;
+}
+
+
+module.exports = typeof window !== 'undefined' && window.atob && window.atob.bind(window) || polyfill;
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var copyObject = __webpack_require__(91),
+    createAssigner = __webpack_require__(99),
+    keysIn = __webpack_require__(108);
+
+/**
+ * This method is like `_.assign` except that it iterates over own and
+ * inherited source properties.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias extend
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see _.assign
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * function Bar() {
+ *   this.c = 3;
+ * }
+ *
+ * Foo.prototype.b = 2;
+ * Bar.prototype.d = 4;
+ *
+ * _.assignIn({ 'a': 0 }, new Foo, new Bar);
+ * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
+ */
+var assignIn = createAssigner(function(object, source) {
+  copyObject(source, keysIn(source), object);
+});
+
+module.exports = assignIn;
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var assignValue = __webpack_require__(92),
+    baseAssignValue = __webpack_require__(38);
+
+/**
+ * Copies properties of `source` to `object`.
+ *
+ * @private
+ * @param {Object} source The object to copy properties from.
+ * @param {Array} props The property identifiers to copy.
+ * @param {Object} [object={}] The object to copy properties to.
+ * @param {Function} [customizer] The function to customize copied values.
+ * @returns {Object} Returns `object`.
+ */
+function copyObject(source, props, object, customizer) {
+  var isNew = !object;
+  object || (object = {});
+
+  var index = -1,
+      length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : undefined;
+
+    if (newValue === undefined) {
+      newValue = source[key];
+    }
+    if (isNew) {
+      baseAssignValue(object, key, newValue);
+    } else {
+      assignValue(object, key, newValue);
+    }
+  }
+  return object;
+}
+
+module.exports = copyObject;
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseAssignValue = __webpack_require__(38),
+    eq = __webpack_require__(41);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function assignValue(object, key, value) {
+  var objValue = object[key];
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+      (value === undefined && !(key in object))) {
+    baseAssignValue(object, key, value);
+  }
+}
+
+module.exports = assignValue;
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseIsNative = __webpack_require__(94),
+    getValue = __webpack_require__(98);
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = getValue(object, key);
+  return baseIsNative(value) ? value : undefined;
+}
+
+module.exports = getNative;
+
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isFunction = __webpack_require__(40),
+    isMasked = __webpack_require__(95),
+    isObject = __webpack_require__(7),
+    toSource = __webpack_require__(97);
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/**
+ * The base implementation of `_.isNative` without bad shim checks.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ */
+function baseIsNative(value) {
+  if (!isObject(value) || isMasked(value)) {
+    return false;
+  }
+  var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+module.exports = baseIsNative;
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var coreJsData = __webpack_require__(96);
+
+/** Used to detect methods masquerading as native. */
+var maskSrcKey = (function() {
+  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || '');
+  return uid ? ('Symbol(src)_1.' + uid) : '';
+}());
+
+/**
+ * Checks if `func` has its source masked.
+ *
+ * @private
+ * @param {Function} func The function to check.
+ * @returns {boolean} Returns `true` if `func` is masked, else `false`.
+ */
+function isMasked(func) {
+  return !!maskSrcKey && (maskSrcKey in func);
+}
+
+module.exports = isMasked;
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var root = __webpack_require__(18);
+
+/** Used to detect overreaching core-js shims. */
+var coreJsData = root['__core-js_shared__'];
+
+module.exports = coreJsData;
+
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to convert.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+module.exports = toSource;
+
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports) {
+
+/**
+ * Gets the value at `key` of `object`.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {string} key The key of the property to get.
+ * @returns {*} Returns the property value.
+ */
+function getValue(object, key) {
+  return object == null ? undefined : object[key];
+}
+
+module.exports = getValue;
+
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseRest = __webpack_require__(100),
+    isIterateeCall = __webpack_require__(107);
+
+/**
+ * Creates a function like `_.assign`.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @returns {Function} Returns the new assigner function.
+ */
+function createAssigner(assigner) {
+  return baseRest(function(object, sources) {
+    var index = -1,
+        length = sources.length,
+        customizer = length > 1 ? sources[length - 1] : undefined,
+        guard = length > 2 ? sources[2] : undefined;
+
+    customizer = (assigner.length > 3 && typeof customizer == 'function')
+      ? (length--, customizer)
+      : undefined;
+
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? undefined : customizer;
+      length = 1;
+    }
+    object = Object(object);
+    while (++index < length) {
+      var source = sources[index];
+      if (source) {
+        assigner(object, source, index, customizer);
+      }
+    }
+    return object;
+  });
+}
+
+module.exports = createAssigner;
+
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var identity = __webpack_require__(42),
+    overRest = __webpack_require__(101),
+    setToString = __webpack_require__(103);
+
+/**
+ * The base implementation of `_.rest` which doesn't validate or coerce arguments.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ */
+function baseRest(func, start) {
+  return setToString(overRest(func, start, identity), func + '');
+}
+
+module.exports = baseRest;
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var apply = __webpack_require__(102);
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * A specialized version of `baseRest` which transforms the rest array.
+ *
+ * @private
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @param {Function} transform The rest array transform.
+ * @returns {Function} Returns the new function.
+ */
+function overRest(func, start, transform) {
+  start = nativeMax(start === undefined ? (func.length - 1) : start, 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = transform(array);
+    return apply(func, this, otherArgs);
+  };
+}
+
+module.exports = overRest;
+
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports) {
+
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
+module.exports = apply;
+
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseSetToString = __webpack_require__(104),
+    shortOut = __webpack_require__(106);
+
+/**
+ * Sets the `toString` method of `func` to return `string`.
+ *
+ * @private
+ * @param {Function} func The function to modify.
+ * @param {Function} string The `toString` result.
+ * @returns {Function} Returns `func`.
+ */
+var setToString = shortOut(baseSetToString);
+
+module.exports = setToString;
+
+
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var constant = __webpack_require__(105),
+    defineProperty = __webpack_require__(39),
+    identity = __webpack_require__(42);
+
+/**
+ * The base implementation of `setToString` without support for hot loop shorting.
+ *
+ * @private
+ * @param {Function} func The function to modify.
+ * @param {Function} string The `toString` result.
+ * @returns {Function} Returns `func`.
+ */
+var baseSetToString = !defineProperty ? identity : function(func, string) {
+  return defineProperty(func, 'toString', {
+    'configurable': true,
+    'enumerable': false,
+    'value': constant(string),
+    'writable': true
+  });
+};
+
+module.exports = baseSetToString;
+
+
+/***/ }),
+/* 105 */
+/***/ (function(module, exports) {
+
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Util
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new constant function.
+ * @example
+ *
+ * var objects = _.times(2, _.constant({ 'a': 1 }));
+ *
+ * console.log(objects);
+ * // => [{ 'a': 1 }, { 'a': 1 }]
+ *
+ * console.log(objects[0] === objects[1]);
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+
+module.exports = constant;
+
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports) {
+
+/** Used to detect hot functions by number of calls within a span of milliseconds. */
+var HOT_COUNT = 800,
+    HOT_SPAN = 16;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeNow = Date.now;
+
+/**
+ * Creates a function that'll short out and invoke `identity` instead
+ * of `func` when it's called `HOT_COUNT` or more times in `HOT_SPAN`
+ * milliseconds.
+ *
+ * @private
+ * @param {Function} func The function to restrict.
+ * @returns {Function} Returns the new shortable function.
+ */
+function shortOut(func) {
+  var count = 0,
+      lastCalled = 0;
+
+  return function() {
+    var stamp = nativeNow(),
+        remaining = HOT_SPAN - (stamp - lastCalled);
+
+    lastCalled = stamp;
+    if (remaining > 0) {
+      if (++count >= HOT_COUNT) {
+        return arguments[0];
+      }
+    } else {
+      count = 0;
+    }
+    return func.apply(undefined, arguments);
+  };
+}
+
+module.exports = shortOut;
+
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var eq = __webpack_require__(41),
+    isArrayLike = __webpack_require__(43),
+    isIndex = __webpack_require__(45),
+    isObject = __webpack_require__(7);
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+module.exports = isIterateeCall;
+
+
+/***/ }),
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayLikeKeys = __webpack_require__(109),
+    baseKeysIn = __webpack_require__(120),
+    isArrayLike = __webpack_require__(43);
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keysIn(new Foo);
+ * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+ */
+function keysIn(object) {
+  return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
+}
+
+module.exports = keysIn;
+
+
+/***/ }),
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseTimes = __webpack_require__(110),
+    isArguments = __webpack_require__(111),
+    isArray = __webpack_require__(113),
+    isBuffer = __webpack_require__(114),
+    isIndex = __webpack_require__(45),
+    isTypedArray = __webpack_require__(116);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Creates an array of the enumerable property names of the array-like `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @param {boolean} inherited Specify returning inherited property names.
+ * @returns {Array} Returns the array of property names.
+ */
+function arrayLikeKeys(value, inherited) {
+  var isArr = isArray(value),
+      isArg = !isArr && isArguments(value),
+      isBuff = !isArr && !isArg && isBuffer(value),
+      isType = !isArr && !isArg && !isBuff && isTypedArray(value),
+      skipIndexes = isArr || isArg || isBuff || isType,
+      result = skipIndexes ? baseTimes(value.length, String) : [],
+      length = result.length;
+
+  for (var key in value) {
+    if ((inherited || hasOwnProperty.call(value, key)) &&
+        !(skipIndexes && (
+           // Safari 9 has enumerable `arguments.length` in strict mode.
+           key == 'length' ||
+           // Node.js 0.10 has enumerable non-index properties on buffers.
+           (isBuff && (key == 'offset' || key == 'parent')) ||
+           // PhantomJS 2 has enumerable non-index properties on typed arrays.
+           (isType && (key == 'buffer' || key == 'byteLength' || key == 'byteOffset')) ||
+           // Skip index properties.
+           isIndex(key, length)
+        ))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = arrayLikeKeys;
+
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports) {
+
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+function baseTimes(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+module.exports = baseTimes;
+
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseIsArguments = __webpack_require__(112),
+    isObjectLike = __webpack_require__(14);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
+  return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
+    !propertyIsEnumerable.call(value, 'callee');
+};
+
+module.exports = isArguments;
+
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(13),
+    isObjectLike = __webpack_require__(14);
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]';
+
+/**
+ * The base implementation of `_.isArguments`.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an `arguments` object,
+ */
+function baseIsArguments(value) {
+  return isObjectLike(value) && baseGetTag(value) == argsTag;
+}
+
+module.exports = baseIsArguments;
+
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module) {var root = __webpack_require__(18),
+    stubFalse = __webpack_require__(115);
+
+/** Detect free variable `exports`. */
+var freeExports =  true && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Built-in value references. */
+var Buffer = moduleExports ? root.Buffer : undefined;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeIsBuffer = Buffer ? Buffer.isBuffer : undefined;
+
+/**
+ * Checks if `value` is a buffer.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.3.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
+ * @example
+ *
+ * _.isBuffer(new Buffer(2));
+ * // => true
+ *
+ * _.isBuffer(new Uint8Array(2));
+ * // => false
+ */
+var isBuffer = nativeIsBuffer || stubFalse;
+
+module.exports = isBuffer;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(46)(module)))
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports) {
+
+/**
+ * This method returns `false`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.13.0
+ * @category Util
+ * @returns {boolean} Returns `false`.
+ * @example
+ *
+ * _.times(2, _.stubFalse);
+ * // => [false, false]
+ */
+function stubFalse() {
+  return false;
+}
+
+module.exports = stubFalse;
+
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseIsTypedArray = __webpack_require__(117),
+    baseUnary = __webpack_require__(118),
+    nodeUtil = __webpack_require__(119);
+
+/* Node.js helper references. */
+var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+
+/**
+ * Checks if `value` is classified as a typed array.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+ * @example
+ *
+ * _.isTypedArray(new Uint8Array);
+ * // => true
+ *
+ * _.isTypedArray([]);
+ * // => false
+ */
+var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+
+module.exports = isTypedArray;
+
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(13),
+    isLength = __webpack_require__(44),
+    isObjectLike = __webpack_require__(14);
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    funcTag = '[object Function]',
+    mapTag = '[object Map]',
+    numberTag = '[object Number]',
+    objectTag = '[object Object]',
+    regexpTag = '[object RegExp]',
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    weakMapTag = '[object WeakMap]';
+
+var arrayBufferTag = '[object ArrayBuffer]',
+    dataViewTag = '[object DataView]',
+    float32Tag = '[object Float32Array]',
+    float64Tag = '[object Float64Array]',
+    int8Tag = '[object Int8Array]',
+    int16Tag = '[object Int16Array]',
+    int32Tag = '[object Int32Array]',
+    uint8Tag = '[object Uint8Array]',
+    uint8ClampedTag = '[object Uint8ClampedArray]',
+    uint16Tag = '[object Uint16Array]',
+    uint32Tag = '[object Uint32Array]';
+
+/** Used to identify `toStringTag` values of typed arrays. */
+var typedArrayTags = {};
+typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+typedArrayTags[uint32Tag] = true;
+typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+typedArrayTags[errorTag] = typedArrayTags[funcTag] =
+typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+typedArrayTags[setTag] = typedArrayTags[stringTag] =
+typedArrayTags[weakMapTag] = false;
+
+/**
+ * The base implementation of `_.isTypedArray` without Node.js optimizations.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
+ */
+function baseIsTypedArray(value) {
+  return isObjectLike(value) &&
+    isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+}
+
+module.exports = baseIsTypedArray;
+
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports) {
+
+/**
+ * The base implementation of `_.unary` without support for storing metadata.
+ *
+ * @private
+ * @param {Function} func The function to cap arguments for.
+ * @returns {Function} Returns the new capped function.
+ */
+function baseUnary(func) {
+  return function(value) {
+    return func(value);
+  };
+}
+
+module.exports = baseUnary;
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(module) {var freeGlobal = __webpack_require__(27);
+
+/** Detect free variable `exports`. */
+var freeExports =  true && exports && !exports.nodeType && exports;
+
+/** Detect free variable `module`. */
+var freeModule = freeExports && typeof module == 'object' && module && !module.nodeType && module;
+
+/** Detect the popular CommonJS extension `module.exports`. */
+var moduleExports = freeModule && freeModule.exports === freeExports;
+
+/** Detect free variable `process` from Node.js. */
+var freeProcess = moduleExports && freeGlobal.process;
+
+/** Used to access faster Node.js helpers. */
+var nodeUtil = (function() {
+  try {
+    // Use `util.types` for Node.js 10+.
+    var types = freeModule && freeModule.require && freeModule.require('util').types;
+
+    if (types) {
+      return types;
+    }
+
+    // Legacy `process.binding('util')` for Node.js < 10.
+    return freeProcess && freeProcess.binding && freeProcess.binding('util');
+  } catch (e) {}
+}());
+
+module.exports = nodeUtil;
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(46)(module)))
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(7),
+    isPrototype = __webpack_require__(121),
+    nativeKeysIn = __webpack_require__(122);
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeysIn(object) {
+  if (!isObject(object)) {
+    return nativeKeysIn(object);
+  }
+  var isProto = isPrototype(object),
+      result = [];
+
+  for (var key in object) {
+    if (!(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = baseKeysIn;
+
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports) {
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+module.exports = isPrototype;
+
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports) {
+
+/**
+ * This function is like
+ * [`Object.keys`](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
+ * except that it includes inherited enumerable properties.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function nativeKeysIn(object) {
+  var result = [];
+  if (object != null) {
+    for (var key in Object(object)) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = nativeKeysIn;
+
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
 
 /***/ }),
 /* 124 */
 /***/ (function(module, exports) {
 
-(function(self) {
-  'use strict';
-
-  if (self.fetch) {
-    return
-  }
-
-  var support = {
-    searchParams: 'URLSearchParams' in self,
-    iterable: 'Symbol' in self && 'iterator' in Symbol,
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
-      try {
-        new Blob()
-        return true
-      } catch(e) {
-        return false
-      }
-    })(),
-    formData: 'FormData' in self,
-    arrayBuffer: 'ArrayBuffer' in self
-  }
-
-  if (support.arrayBuffer) {
-    var viewClasses = [
-      '[object Int8Array]',
-      '[object Uint8Array]',
-      '[object Uint8ClampedArray]',
-      '[object Int16Array]',
-      '[object Uint16Array]',
-      '[object Int32Array]',
-      '[object Uint32Array]',
-      '[object Float32Array]',
-      '[object Float64Array]'
-    ]
-
-    var isDataView = function(obj) {
-      return obj && DataView.prototype.isPrototypeOf(obj)
-    }
-
-    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
-      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
-    }
-  }
-
-  function normalizeName(name) {
-    if (typeof name !== 'string') {
-      name = String(name)
-    }
-    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
-      throw new TypeError('Invalid character in header field name')
-    }
-    return name.toLowerCase()
-  }
-
-  function normalizeValue(value) {
-    if (typeof value !== 'string') {
-      value = String(value)
-    }
-    return value
-  }
-
-  // Build a destructive iterator for the value list
-  function iteratorFor(items) {
-    var iterator = {
-      next: function() {
-        var value = items.shift()
-        return {done: value === undefined, value: value}
-      }
-    }
-
-    if (support.iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator
-      }
-    }
-
-    return iterator
-  }
-
-  function Headers(headers) {
-    this.map = {}
-
-    if (headers instanceof Headers) {
-      headers.forEach(function(value, name) {
-        this.append(name, value)
-      }, this)
-    } else if (Array.isArray(headers)) {
-      headers.forEach(function(header) {
-        this.append(header[0], header[1])
-      }, this)
-    } else if (headers) {
-      Object.getOwnPropertyNames(headers).forEach(function(name) {
-        this.append(name, headers[name])
-      }, this)
-    }
-  }
-
-  Headers.prototype.append = function(name, value) {
-    name = normalizeName(name)
-    value = normalizeValue(value)
-    var oldValue = this.map[name]
-    this.map[name] = oldValue ? oldValue+','+value : value
-  }
-
-  Headers.prototype['delete'] = function(name) {
-    delete this.map[normalizeName(name)]
-  }
-
-  Headers.prototype.get = function(name) {
-    name = normalizeName(name)
-    return this.has(name) ? this.map[name] : null
-  }
-
-  Headers.prototype.has = function(name) {
-    return this.map.hasOwnProperty(normalizeName(name))
-  }
-
-  Headers.prototype.set = function(name, value) {
-    this.map[normalizeName(name)] = normalizeValue(value)
-  }
-
-  Headers.prototype.forEach = function(callback, thisArg) {
-    for (var name in this.map) {
-      if (this.map.hasOwnProperty(name)) {
-        callback.call(thisArg, this.map[name], name, this)
-      }
-    }
-  }
-
-  Headers.prototype.keys = function() {
-    var items = []
-    this.forEach(function(value, name) { items.push(name) })
-    return iteratorFor(items)
-  }
-
-  Headers.prototype.values = function() {
-    var items = []
-    this.forEach(function(value) { items.push(value) })
-    return iteratorFor(items)
-  }
-
-  Headers.prototype.entries = function() {
-    var items = []
-    this.forEach(function(value, name) { items.push([name, value]) })
-    return iteratorFor(items)
-  }
-
-  if (support.iterable) {
-    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
-  }
-
-  function consumed(body) {
-    if (body.bodyUsed) {
-      return Promise.reject(new TypeError('Already read'))
-    }
-    body.bodyUsed = true
-  }
-
-  function fileReaderReady(reader) {
-    return new Promise(function(resolve, reject) {
-      reader.onload = function() {
-        resolve(reader.result)
-      }
-      reader.onerror = function() {
-        reject(reader.error)
-      }
-    })
-  }
-
-  function readBlobAsArrayBuffer(blob) {
-    var reader = new FileReader()
-    var promise = fileReaderReady(reader)
-    reader.readAsArrayBuffer(blob)
-    return promise
-  }
-
-  function readBlobAsText(blob) {
-    var reader = new FileReader()
-    var promise = fileReaderReady(reader)
-    reader.readAsText(blob)
-    return promise
-  }
-
-  function readArrayBufferAsText(buf) {
-    var view = new Uint8Array(buf)
-    var chars = new Array(view.length)
-
-    for (var i = 0; i < view.length; i++) {
-      chars[i] = String.fromCharCode(view[i])
-    }
-    return chars.join('')
-  }
-
-  function bufferClone(buf) {
-    if (buf.slice) {
-      return buf.slice(0)
-    } else {
-      var view = new Uint8Array(buf.byteLength)
-      view.set(new Uint8Array(buf))
-      return view.buffer
-    }
-  }
-
-  function Body() {
-    this.bodyUsed = false
-
-    this._initBody = function(body) {
-      this._bodyInit = body
-      if (!body) {
-        this._bodyText = ''
-      } else if (typeof body === 'string') {
-        this._bodyText = body
-      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-        this._bodyBlob = body
-      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-        this._bodyFormData = body
-      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-        this._bodyText = body.toString()
-      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
-        this._bodyArrayBuffer = bufferClone(body.buffer)
-        // IE 10-11 can't handle a DataView body.
-        this._bodyInit = new Blob([this._bodyArrayBuffer])
-      } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
-        this._bodyArrayBuffer = bufferClone(body)
-      } else {
-        throw new Error('unsupported BodyInit type')
-      }
-
-      if (!this.headers.get('content-type')) {
-        if (typeof body === 'string') {
-          this.headers.set('content-type', 'text/plain;charset=UTF-8')
-        } else if (this._bodyBlob && this._bodyBlob.type) {
-          this.headers.set('content-type', this._bodyBlob.type)
-        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
-        }
-      }
-    }
-
-    if (support.blob) {
-      this.blob = function() {
-        var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
-
-        if (this._bodyBlob) {
-          return Promise.resolve(this._bodyBlob)
-        } else if (this._bodyArrayBuffer) {
-          return Promise.resolve(new Blob([this._bodyArrayBuffer]))
-        } else if (this._bodyFormData) {
-          throw new Error('could not read FormData body as blob')
-        } else {
-          return Promise.resolve(new Blob([this._bodyText]))
-        }
-      }
-
-      this.arrayBuffer = function() {
-        if (this._bodyArrayBuffer) {
-          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
-        } else {
-          return this.blob().then(readBlobAsArrayBuffer)
-        }
-      }
-    }
-
-    this.text = function() {
-      var rejected = consumed(this)
-      if (rejected) {
-        return rejected
-      }
-
-      if (this._bodyBlob) {
-        return readBlobAsText(this._bodyBlob)
-      } else if (this._bodyArrayBuffer) {
-        return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer))
-      } else if (this._bodyFormData) {
-        throw new Error('could not read FormData body as text')
-      } else {
-        return Promise.resolve(this._bodyText)
-      }
-    }
-
-    if (support.formData) {
-      this.formData = function() {
-        return this.text().then(decode)
-      }
-    }
-
-    this.json = function() {
-      return this.text().then(JSON.parse)
-    }
-
-    return this
-  }
-
-  // HTTP methods whose capitalization should be normalized
-  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
-
-  function normalizeMethod(method) {
-    var upcased = method.toUpperCase()
-    return (methods.indexOf(upcased) > -1) ? upcased : method
-  }
-
-  function Request(input, options) {
-    options = options || {}
-    var body = options.body
-
-    if (input instanceof Request) {
-      if (input.bodyUsed) {
-        throw new TypeError('Already read')
-      }
-      this.url = input.url
-      this.credentials = input.credentials
-      if (!options.headers) {
-        this.headers = new Headers(input.headers)
-      }
-      this.method = input.method
-      this.mode = input.mode
-      if (!body && input._bodyInit != null) {
-        body = input._bodyInit
-        input.bodyUsed = true
-      }
-    } else {
-      this.url = String(input)
-    }
-
-    this.credentials = options.credentials || this.credentials || 'omit'
-    if (options.headers || !this.headers) {
-      this.headers = new Headers(options.headers)
-    }
-    this.method = normalizeMethod(options.method || this.method || 'GET')
-    this.mode = options.mode || this.mode || null
-    this.referrer = null
-
-    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
-      throw new TypeError('Body not allowed for GET or HEAD requests')
-    }
-    this._initBody(body)
-  }
-
-  Request.prototype.clone = function() {
-    return new Request(this, { body: this._bodyInit })
-  }
-
-  function decode(body) {
-    var form = new FormData()
-    body.trim().split('&').forEach(function(bytes) {
-      if (bytes) {
-        var split = bytes.split('=')
-        var name = split.shift().replace(/\+/g, ' ')
-        var value = split.join('=').replace(/\+/g, ' ')
-        form.append(decodeURIComponent(name), decodeURIComponent(value))
-      }
-    })
-    return form
-  }
-
-  function parseHeaders(rawHeaders) {
-    var headers = new Headers()
-    // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
-    // https://tools.ietf.org/html/rfc7230#section-3.2
-    var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
-    preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
-      var parts = line.split(':')
-      var key = parts.shift().trim()
-      if (key) {
-        var value = parts.join(':').trim()
-        headers.append(key, value)
-      }
-    })
-    return headers
-  }
-
-  Body.call(Request.prototype)
-
-  function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
-    }
-
-    this.type = 'default'
-    this.status = options.status === undefined ? 200 : options.status
-    this.ok = this.status >= 200 && this.status < 300
-    this.statusText = 'statusText' in options ? options.statusText : 'OK'
-    this.headers = new Headers(options.headers)
-    this.url = options.url || ''
-    this._initBody(bodyInit)
-  }
-
-  Body.call(Response.prototype)
-
-  Response.prototype.clone = function() {
-    return new Response(this._bodyInit, {
-      status: this.status,
-      statusText: this.statusText,
-      headers: new Headers(this.headers),
-      url: this.url
-    })
-  }
-
-  Response.error = function() {
-    var response = new Response(null, {status: 0, statusText: ''})
-    response.type = 'error'
-    return response
-  }
-
-  var redirectStatuses = [301, 302, 303, 307, 308]
-
-  Response.redirect = function(url, status) {
-    if (redirectStatuses.indexOf(status) === -1) {
-      throw new RangeError('Invalid status code')
-    }
-
-    return new Response(null, {status: status, headers: {location: url}})
-  }
-
-  self.Headers = Headers
-  self.Request = Request
-  self.Response = Response
-
-  self.fetch = function(input, init) {
-    return new Promise(function(resolve, reject) {
-      var request = new Request(input, init)
-      var xhr = new XMLHttpRequest()
-
-      xhr.onload = function() {
-        var options = {
-          status: xhr.status,
-          statusText: xhr.statusText,
-          headers: parseHeaders(xhr.getAllResponseHeaders() || '')
-        }
-        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
-        var body = 'response' in xhr ? xhr.response : xhr.responseText
-        resolve(new Response(body, options))
-      }
-
-      xhr.onerror = function() {
-        reject(new TypeError('Network request failed'))
-      }
-
-      xhr.ontimeout = function() {
-        reject(new TypeError('Network request failed'))
-      }
-
-      xhr.open(request.method, request.url, true)
-
-      if (request.credentials === 'include') {
-        xhr.withCredentials = true
-      } else if (request.credentials === 'omit') {
-        xhr.withCredentials = false
-      }
-
-      if ('responseType' in xhr && support.blob) {
-        xhr.responseType = 'blob'
-      }
-
-      request.headers.forEach(function(value, name) {
-        xhr.setRequestHeader(name, value)
-      })
-
-      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
-    })
-  }
-  self.fetch.polyfill = true
-})(typeof self !== 'undefined' ? self : this);
-
-
-/***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(124);
-module.exports = __webpack_require__(123);
-
+/* (ignored) */
 
 /***/ })
 /******/ ]);
