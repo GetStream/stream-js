@@ -36,7 +36,7 @@ module.exports = (env, argv = []) => ({
       argv.minify !== undefined
         ? [
             new UglifyJsPlugin({
-              uglifyOptions: { compress: { warnings: false } },
+              uglifyOptions: { warnings: false },
             }),
           ]
         : [],
