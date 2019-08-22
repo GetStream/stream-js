@@ -12,10 +12,7 @@ describe('[UNIT] Stream Client (browser)', function() {
   it("shouldn't allow secret keys", function() {
     // apiKey, apiSecret, appId, options
     function createFn() {
-      stream.connect(
-        'abcdefgh',
-        '123456789',
-      );
+      stream.connect('abcdefgh', '123456789');
     }
 
     expect(createFn).to.throwException(function(e) {
@@ -24,29 +21,19 @@ describe('[UNIT] Stream Client (browser)', function() {
   });
 
   it('should store config on the client', function() {
-    var client = stream.connect(
-      'abcdefgh',
-      null,
-      1000,
-      { option: true },
-    );
+    var client = stream.connect('abcdefgh', null, 1000, { option: true });
 
     expect(client.apiSecret).to.be(null);
     expect(client.browser).to.be(true);
   });
 
   it('should store config on the client', function() {
-    var client = stream.connect(
-      'abcdefgh',
-      null,
-      1000,
-      {
-        version: 'v2.0',
-        fayeUrl: 'https://hello.world',
-        expireTokens: true,
-        location: 'nederland',
-      },
-    );
+    var client = stream.connect('abcdefgh', null, 1000, {
+      version: 'v2.0',
+      fayeUrl: 'https://hello.world',
+      expireTokens: true,
+      location: 'nederland',
+    });
 
     expect(client.version).to.be('v2.0');
     expect(client.expireTokens).to.be(true);

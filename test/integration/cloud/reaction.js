@@ -792,8 +792,12 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
             ctx.bob.feed('notification', ctx.alice.userId).id,
             ctx.bob.feed('notification', ctx.carl.userId).id,
           ],
+          targetFeedsExtraData: {
+            custom: 'yay',
+          },
         },
       );
+      delete ctx.response.target_feeds_extra_data;
       comment = ctx.response;
     });
 
@@ -833,7 +837,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user', ctx.bob.userId).get();
       });
-      ctx.responseShouldHaveActivityWithFields('reaction');
+      ctx.responseShouldHaveActivityWithFields('reaction', 'custom');
       ctx.activityShould('contain the expected data', () => {
         expectedCommentData = {
           verb: 'comment',
@@ -841,8 +845,8 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           time: comment.created_at.slice(0, -1), // chop off the Z suffix
           target: '',
           origin: null,
+          custom: 'yay',
         };
-
         ctx.activity.should.include(expectedCommentData);
         ctx.activity.actor.should.eql(ctx.bob.currentUser.full);
         ctx.shouldEqualBesideDuration(ctx.activity.object, eatActivity);
@@ -857,7 +861,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           .feed('notification', ctx.alice.userId)
           .get();
       });
-      ctx.responseShouldHaveActivityInGroupWithFields('reaction');
+      ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
         ctx.activity.should.eql(commentActivity);
       });
@@ -869,7 +873,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           .feed('notification', ctx.carl.userId)
           .get();
       });
-      ctx.responseShouldHaveActivityInGroupWithFields('reaction');
+      ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
         ctx.activity.should.eql(commentActivity);
       });
@@ -921,7 +925,11 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           ctx.bob.feed('notification', ctx.alice.userId).id,
           ctx.bob.feed('notification', ctx.dave.userId).id,
         ],
+        targetFeedsExtraData: {
+          custom: 'yay',
+        },
       });
+      delete ctx.response.target_feeds_extra_data;
     });
 
     ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
@@ -942,7 +950,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.alice.feed('user', ctx.bob.userId).get();
       });
-      ctx.responseShouldHaveActivityWithFields('reaction');
+      ctx.responseShouldHaveActivityWithFields('reaction', 'custom');
       ctx.activityShould('contain the expected data', () => {
         ctx.activity.should.include(expectedCommentData);
         commentActivity = ctx.activity;
@@ -955,7 +963,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           .feed('notification', ctx.alice.userId)
           .get();
       });
-      ctx.responseShouldHaveActivityInGroupWithFields('reaction');
+      ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
         ctx.activity.should.eql(commentActivity);
       });
@@ -976,7 +984,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
           .feed('notification', ctx.dave.userId)
           .get();
       });
-      ctx.responseShouldHaveActivityInGroupWithFields('reaction');
+      ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
         ctx.activity.should.eql(commentActivity);
       });
