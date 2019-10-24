@@ -312,6 +312,9 @@ export class StreamClient {
   getReadOnlyToken(feedSlug: string, userId: string): string;
   getReadWriteToken(feedSlug: string, userId: string): string;
 
+  // Create user token
+  createUserToken(userId: string, extraData?: object): string;
+
   // Create feed
   feed(
     feedSlug: string,
