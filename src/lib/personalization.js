@@ -43,7 +43,7 @@ Personalization.prototype = {
         url: resource + '/',
         serviceName: 'personalization',
         qs: options,
-        signature: this.client.getPersonalizationToken(),
+        signature: options.token || this.client.getPersonalizationToken(),
       },
       callback,
     );
