@@ -2,22 +2,23 @@ language: node_js
 
 node_js:
   - 10
-  - 8
+  - 12
+  - 13
 
 env:
-- BROWSER_TESTS="no"
+  - BROWSER_TESTS="no"
 
 matrix:
- include:
- - node_js: node
-   env: BROWSER_TESTS="no" CLOUD_TESTS="yes"
- - node_js: node
-   env: BROWSER_TESTS="no" RUN_LINTERS="yes"
- - node_js: node
-   env: BROWSER_TESTS="yes"
+  include:
+    - node_js: node
+      env: BROWSER_TESTS="no" CLOUD_TESTS="yes"
+    - node_js: node
+      env: BROWSER_TESTS="no" RUN_LINTERS="yes"
+    - node_js: node
+      env: BROWSER_TESTS="yes"
 
 script:
-- if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
-- if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi
+  - if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+  - if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi
 
 sudo: false
