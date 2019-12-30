@@ -1,5 +1,19 @@
 # Changelog
 
+
+## 4.4.0 - 2019-12-30
+
+:by: Tommaso Barbugli
+
+- Update package.json engine to support Node 13
+
+## 4.3.0 - 2019-10-29
+
+:by: Thierry Schellenbach
+
+- Make personalization token an option
+- Improve Typescript types manifest
+
 ## 4.2.1 - 2019-02-18
 
 :by: Jelte Fennema
