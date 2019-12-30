@@ -997,27 +997,34 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
-  describe("and then alice likes Bob's comment", () => {
+  describe('and then Bob likes his own comment', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.reactions.addChild('like', comment);
     });
   });
 
-  describe('and then alice reads her feed again', () => {
+  describe('and then bob reads his feed again', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .get({ reactions: { recent: true } });
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: {
+          recent: true,
+          own: true,
+          counts: true,
+          own_children: true,
+        },
+      });
     });
     ctx.responseShouldHaveActivityWithFields(
       'latest_reactions',
       'latest_reactions_extra',
+      'own_reactions',
+      'reaction_counts',
     );
     ctx.activityShould('contain the activity with the nested like', () => {
       ctx.activity.latest_reactions.should.have.all.keys('comment');
       ctx.activity.latest_reactions['comment'].should.have.length(1);
       let comment = ctx.activity.latest_reactions['comment'][0];
-      comment.should.have.all.keys(...ctx.fields.reaction);
+      comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
       comment.latest_children.should.have.all.keys('like');
       comment.latest_children.like.should.have.length(1);
       comment.latest_children.like[0].parent.should.eql(comment.id);
