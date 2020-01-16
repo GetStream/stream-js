@@ -337,8 +337,10 @@ export class StreamClient {
   activityPartialUpdate(data: object): Promise<object>;
 
   // Partially update multiple activities
-  activitiesPartialUpdate(changes: object, callback: RestCallback): void;
-  activitiesPartialUpdate(changes: object): Promise<object>;
+  activitiesPartialUpdate(changes: (Updateable & object)[], callback: RestCallback): void;
+  activitiesPartialUpdate(changes: (Updateable & object)[]): Promise<object>;
+  activityPartialUpdate(data: Updateable & object, callback: RestCallback): void
+  activityPartialUpdate(data: Updateable & object): Promise<object>
 
   // Update activities
   updateActivities(
@@ -394,12 +396,53 @@ export class StreamClient {
    */
   unfollowMany(
     unfollows: object[],
-    callback?: (err: object, httpResponse: object, body: object) => void,
+    callback?: (err: string, httpResponse: object, body: object) => void,
   ): void;
+
+  // OpenGraph query a url
+  og(url: string): Promise<OpenGraphResponseObject>;
+
+  images: StreamImageStore;
+
+  files: StreamFileStore;
 }
 
 // Export the Stream Client
 export { StreamClient as Client };
+
+export type Updateable = { id: string } | {foreign_id: string, time: number | Date }
+
+// StreamFileStore
+export class StreamFileStore {
+  upload(uri: Uploadable, name?: string, contentType?: string): Promise<UploadResponse>;
+  delete(uri: string): Promise<void>;
+}
+
+// StreamImageStore
+export class StreamImageStore extends StreamFileStore {
+  process(url: string, options: StreamImageProcessingOptions): Promise<UploadResponse>;
+  thumbmail(url: string, w: number, h: number,
+    options?: StreamImageProcessingCropResize): Promise<UploadResponse>
+}
+
+export type Uploadable = string | {
+  _read?: Function
+  _readableState: object
+}
+
+export type StreamImageProcessingCropResize = {
+  resize?: 'clip' | 'crop' | 'scale' | 'fill',
+  crop?: 'top' | 'bottom' | 'left' | 'right' | 'center',
+}
+
+export type StreamImageProcessingOptions = StreamImageProcessingCropResize & {
+  w?: number,
+  h?: number,
+}
+
+export type UploadResponse = {
+  file: string,
+}
 
 // Export the Stream errors
 export namespace errors {
@@ -444,6 +487,47 @@ export interface Activity {
   origin?: never;
   score?: never;
   site_id?: never;
+}
+
+export type OpenGraphResponseObject = {
+  title?: string,
+  type?: string,
+  url?: string,
+  site?: string,
+  site_name?: string,
+  description?: string,
+  determiner?: string,
+  locale?: string,
+  images?: OpenGraphImage[],
+  videos?: OpenGraphVideo[],
+  audios?: OpenGraphAudio[],
+}
+
+export type OpenGraphImage = {
+  image?: string,
+  url?: string,
+  secure_url?: string,
+  width?: string,
+  height?: string,
+  type?: string,
+  alt?: string,
+}
+
+export type OpenGraphVideo = {
+  image?: string,
+  url?: string,
+  secure_url?: string,
+  width?: string,
+  height?: string,
+  type?: string,
+  alt?: string,
+}
+
+export type OpenGraphAudio = {
+  audio?: string,
+  url?: string,
+  secure_url?: string,
+  type?: string,
 }
 
 export type RestCallback = (
