@@ -29,7 +29,6 @@ var StreamClient = function() {
    * Client to connect to Stream api
    * @class StreamClient
    */
-  console.log('test')
   this.initialize.apply(this, arguments);
 };
 
