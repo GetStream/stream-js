@@ -1,7 +1,5 @@
 var errors = require('./errors');
 var utils = require('./utils');
-var isObject = require('lodash/isObject');
-var isPlainObject = require('lodash/isPlainObject');
 var StreamUser = require('./user');
 var signing = require('./signing');
 
@@ -13,21 +11,6 @@ var StreamFeed = function() {
    */
   this.initialize.apply(this, arguments);
 };
-
-function replaceStreamObjects(obj) {
-  let cloned = obj;
-  if (Array.isArray(obj)) {
-    cloned = obj.map((v) => replaceStreamObjects(v));
-  } else if (isPlainObject(obj)) {
-    cloned = {};
-    for (let k in obj) {
-      cloned[k] = replaceStreamObjects(obj[k]);
-    }
-  } else if (isObject(obj) && obj._streamRef !== undefined) {
-    cloned = obj._streamRef();
-  }
-  return cloned;
-}
 
 StreamFeed.prototype = {
   initialize: function(client, feedSlug, userId, token) {
@@ -91,7 +74,7 @@ StreamFeed.prototype = {
      * @return {Promise} Promise object
      */
 
-    activity = replaceStreamObjects(activity);
+    activity = utils.replaceStreamObjects(activity);
     if (!activity.actor && this.client.currentUser) {
       activity.actor = this.client.currentUser._streamRef();
     }
@@ -144,7 +127,7 @@ StreamFeed.prototype = {
      * @param  {requestCallback} callback   Callback to call on completion
      * @return {Promise}               XHR request object
      */
-    activities = replaceStreamObjects(activities);
+    activities = utils.replaceStreamObjects(activities);
     var data = {
       activities: activities,
     };

@@ -29,6 +29,7 @@ var StreamClient = function() {
    * Client to connect to Stream api
    * @class StreamClient
    */
+  console.log('test')
   this.initialize.apply(this, arguments);
 };
 
@@ -37,6 +38,7 @@ StreamClient.prototype = {
   baseAnalyticsUrl: 'https://analytics.stream-io-api.com/analytics/',
 
   initialize: function(apiKey, apiSecretOrToken, appId, options = {}) {
+
     /**
      * Initialize a client
      * @method intialize

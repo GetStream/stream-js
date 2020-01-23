@@ -2,6 +2,7 @@ var httpSignature = require('http-signature');
 var request = require('request');
 var errors = require('./errors');
 var Promise = require('./promise');
+var utils = require('./utils');
 
 module.exports = {
   addToMany: function(activity, feeds, callback) {
@@ -26,7 +27,7 @@ module.exports = {
       {
         url: 'feed/add_to_many/',
         body: {
-          activity: activity,
+          activity: utils.replaceStreamObjects(activity),
           feeds: feeds,
         },
       },

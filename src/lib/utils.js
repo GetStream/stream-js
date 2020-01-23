@@ -1,6 +1,8 @@
 var errors = require('./errors');
 var validFeedSlugRe = /^[\w]+$/;
 var validUserIdRe = /^[\w-]+$/;
+var isPlainObject = require('lodash/isPlainObject');
+var isObject = require('lodash/isObject');
 
 function validateFeedId(feedId) {
   /*
@@ -77,3 +79,20 @@ function isReadableStream(obj) {
 }
 
 exports.isReadableStream = isReadableStream;
+
+function replaceStreamObjects(obj) {
+  let cloned = obj;
+  if (Array.isArray(obj)) {
+    cloned = obj.map((v) => replaceStreamObjects(v));
+  } else if (isPlainObject(obj)) {
+    cloned = {};
+    for (let k in obj) {
+      cloned[k] = replaceStreamObjects(obj[k]);
+    }
+  } else if (isObject(obj) && obj._streamRef !== undefined) {
+    cloned = obj._streamRef();
+  }
+  return cloned;
+}
+
+exports.replaceStreamObjects = replaceStreamObjects;
