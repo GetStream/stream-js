@@ -20,5 +20,3 @@ matrix:
 script:
   - if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
   - if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser-ci; fi
-
-sudo: false
