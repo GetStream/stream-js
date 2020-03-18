@@ -40,7 +40,9 @@ describe('Personalized enrichment story', () => {
     ctx.responseShould('be permission error', () => {
       ctx.response.code.should.eql(17);
       ctx.response.exception.should.eql('NotAllowedException');
-      ctx.response.detail.should.eql("You don't have permission to do this");
+      ctx.response.detail.should.eql(
+        'You do not have permission to do this, you got this error because there are no policies allowing this request on this application. Please consult the documentation https://getstream.io/docs/',
+      );
     });
   });
 

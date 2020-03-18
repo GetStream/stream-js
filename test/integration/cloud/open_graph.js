@@ -12,23 +12,17 @@ describe('OpenGraph story', () => {
 
     ctx.responseShould('have the expected content', () => {
       ctx.shouldEqualBesideDuration(ctx.response, {
-        locale: 'en_US',
-        type: 'article',
+        type: 'website',
         title: 'Try out the Stream API with Postman - The Stream Blog',
-        description:
-          "Many of us at Stream use Postman regularly as we build and test our services. We're also always looking for ways to make it quick and easy for other developers to try the service. One of our goals is to help people see first hand how simple it is to build powerful social apps with Stream.",
+        description: 'Many of us at Stream use Postman regularly as w…',
         url: 'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
-        site_name: 'The Stream Blog',
         favicon:
-          'https://getstream-blog.imgix.net/blog/wp-content/uploads/2016/08/8597527.png?w=32&h=32',
+          '/blog/icons/icon-48x48.png?v=428e1cda5f1a9b09c558311127be2859',
         images: [
           {
-            image:
-              'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
-            secure_url:
-              'https://getstream-blog.imgix.net/blog/wp-content/uploads/2018/04/stream_postman.png',
-            width: 1600,
-            height: 835,
+            height: 600,
+            image: 'https://i.imgur.com/cQTq2QA.jpg',
+            width: 1200,
           },
         ],
       });
