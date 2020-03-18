@@ -183,7 +183,10 @@ StreamReaction.prototype = {
       qs.limit = 10;
     }
 
-    if ((user_id ? 1 : 0 + activity_id ? 1 : 0 + reaction_id ? 1 : 0) != 1) {
+    if (
+      (user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) !=
+      1
+    ) {
       throw new errors.SiteError(
         'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );

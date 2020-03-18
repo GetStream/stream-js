@@ -126,6 +126,16 @@ describe('Reaction pagination', () => {
   describe('Paginate the whole thing', () => {
     let resp;
 
+    ctx.test('errors with multiple lookup types', async () => {
+      let conditions = {
+        activity_id: eatActivity.id,
+        user_id: ctx.alice.userId,
+      };
+      expect(ctx.alice.reactions.filter)
+        .withArgs(conditions)
+        .to.throwError();
+    });
+
     ctx.test('reactions should be enriched when filtering', async () => {
       let conditions = {
         activity_id: eatActivity.id,
