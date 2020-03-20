@@ -30,6 +30,7 @@ bower_components
 # IDE directory
 .idea
 .tern-port
+.vscode/
 
 secrets.*sh
 
@@ -38,3 +39,5 @@ secrets.*sh
 
 # Ignore lib directory (this is not in npmignore because it should be piublished)
 /lib/
+
+docs/
