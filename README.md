@@ -1,7 +1,6 @@
 # Stream-JS
 
 [![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
-[![Sauce Test Status](https://saucelabs.com/buildstatus/tthisk)](https://saucelabs.com/u/tthisk)
 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
@@ -307,7 +306,7 @@ This API Client project requires Node.js v10 at a minimum.
 
 The project is supported in line with the Node.js Foundation Release Working Group.
 
-See the [Travis configuration](.travis.yml) and [Sauce Test Status](https://saucelabs.com/u/tthisk) for details of how it is built, tested and packaged.
+See the [Travis configuration](.travis.yml) for details of how it is built, tested and packaged.
 
 ## Contributing
 
