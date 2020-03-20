@@ -871,7 +871,7 @@ StreamClient.prototype = {
   activitiesPartialUpdate: function(changes, callback) {
     /**
      * Update multiple activities with partial operations.
-     * @since
+     * @since v3.20.0
      * @param {array} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
      * @return {Promise}
      * @xample
