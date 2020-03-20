@@ -86,7 +86,7 @@ Personalization.prototype = {
 
   delete: function(resource, options, callback) {
     /**
-     * Delete metadata or activites
+     * Delete metadata or activities
      *
      * @method delete
      * @memberof Personalization.prototype
