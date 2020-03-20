@@ -1,37 +1,33 @@
 {
-    "plugins": [
-    ],
-    "extends": [
-        "eslint:recommended"
-    ],
-    "rules": {
-        "no-console": 0,
-        "no-mixed-spaces-and-tabs": 1,
-        "comma-dangle": 0,
-        "no-unused-vars": 1,
-        "linebreak-style": [
-            2,
-            "unix"
-        ],
-        "semi": [
-            1,
-            "always"
-        ]
-    },
-    "env": {
-        "es6": true,
-        "browser": true,
-        "commonjs": true,
-        "mocha": true
-    },
-    "globals": {
-        "process": true
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module",
-        "ecmaFeatures" : {
-            "modules": true
-        }
+  "plugins": [],
+  "extends": ["eslint:recommended", "plugin:sonarjs/recommended"],
+  "rules": {
+    "no-console": 0,
+    "no-mixed-spaces-and-tabs": 1,
+    "comma-dangle": 0,
+    "no-unused-vars": 1,
+    "linebreak-style": [2, "unix"],
+    "semi": [1, "always"],
+    "sonarjs/cognitive-complexity": 0,
+    "sonarjs/no-collapsible-if": 0,
+    "sonarjs/no-duplicate-string": 0,
+    "sonarjs/no-identical-functions": 0,
+    "sonarjs/prefer-immediate-return": 0
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "commonjs": true,
+    "mocha": true
+  },
+  "globals": {
+    "process": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
     }
+  }
 }
