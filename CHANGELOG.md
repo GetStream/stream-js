@@ -1,5 +1,8 @@
 # Changelog
 
+## 4.5.0 - 2020-03-30
+
+- Use faye-us-east.stream-io-api.com for realtime updates
 
 ## 4.4.0 - 2019-12-30
 
