@@ -1811,16 +1811,16 @@ process.umask = function() { return 0; };
 /* 17 */
 /***/ (function(module, exports) {
 
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
 function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
+      return typeof obj;
     };
   } else {
     module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
@@ -1850,15 +1850,19 @@ module.exports = root;
 
 var _extends = __webpack_require__(6);
 
-var _objectSpread = __webpack_require__(59);
+var _defineProperty = __webpack_require__(59);
 
 var _typeof = __webpack_require__(17);
 
-var jwt = __webpack_require__(61);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+var jwt = __webpack_require__(60);
 
 var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
-var Base64 = __webpack_require__(62);
+var Base64 = __webpack_require__(61);
 
 function decodeBase64Url(base64UrlString) {
   try {
@@ -4252,6 +4256,12 @@ module.exports.Client = StreamClient;
 
 var _objectWithoutProperties = __webpack_require__(24);
 
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var Personalization = __webpack_require__(52);
 
 var request = __webpack_require__(25);
@@ -4345,7 +4355,7 @@ StreamClient.prototype = {
     this.appId = appId;
     this.options = options;
     this.version = this.options.version || 'v1.0';
-    this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+    this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
     this.fayeClient = null;
     this.request = request; // track a source name for the api calls, ie get started or databrowser
 
@@ -4943,12 +4953,12 @@ StreamClient.prototype = {
 
       var foreignIDs = [];
       var timestamps = [];
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+
+      var _iterator = _createForOfIteratorHelper(foreignIDTimes),
+          _step;
 
       try {
-        for (var _iterator = foreignIDTimes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var fidTime = _step.value;
 
           if (!(fidTime instanceof Object)) {
@@ -4959,18 +4969,9 @@ StreamClient.prototype = {
           timestamps.push(fidTime.time);
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _iterator.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
+        _iterator.f();
       }
 
       qs['foreign_ids'] = foreignIDs.join(',');
@@ -5089,7 +5090,7 @@ StreamClient.prototype = {
   activitiesPartialUpdate: function activitiesPartialUpdate(changes, callback) {
     /**
      * Update multiple activities with partial operations.
-     * @since
+     * @since v3.20.0
      * @param {array} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
      * @return {Promise}
      * @xample
@@ -5343,7 +5344,7 @@ Personalization.prototype = {
   },
   delete: function _delete(resource, options, callback) {
     /**
-     * Delete metadata or activites
+     * Delete metadata or activities
      *
      * @method delete
      * @memberof Personalization.prototype
@@ -6030,33 +6031,6 @@ module.exports = overArg;
 
 /***/ }),
 /* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var defineProperty = __webpack_require__(60);
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
-
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
-    }
-
-    ownKeys.forEach(function (key) {
-      defineProperty(target, key, source[key]);
-    });
-  }
-
-  return target;
-}
-
-module.exports = _objectSpread;
-
-/***/ }),
-/* 60 */
 /***/ (function(module, exports) {
 
 function _defineProperty(obj, key, value) {
@@ -6077,80 +6051,107 @@ function _defineProperty(obj, key, value) {
 module.exports = _defineProperty;
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
-;(function () {
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function(f) {
 
-  var object =
-     true ? exports :
-    undefined; // #31: ExtendScript
+  'use strict';
+
+  /* istanbul ignore else */
+  if ( true && exports != null &&
+      typeof exports.nodeType !== 'number') {
+    module.exports = f ();
+  } else if ( true && __webpack_require__(62) != null) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (f),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else {
+    var base64 = f ();
+    var global = typeof self !== 'undefined' ? self : $.global;
+    if (typeof global.btoa !== 'function') global.btoa = base64.btoa;
+    if (typeof global.atob !== 'function') global.atob = base64.atob;
+  }
+
+} (function() {
+
+  'use strict';
 
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
   function InvalidCharacterError(message) {
     this.message = message;
   }
-  InvalidCharacterError.prototype = new Error;
+  InvalidCharacterError.prototype = new Error ();
   InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
   // encoder
   // [https://gist.github.com/999166] by [https://github.com/nignag]
-  object.btoa || (
-  object.btoa = function (input) {
-    var str = String(input);
+  function btoa(input) {
+    var str = String (input);
     for (
       // initialize result and counter
       var block, charCode, idx = 0, map = chars, output = '';
       // if the next str index does not exist:
       //   change the mapping table to "="
       //   check if d has no fractional digits
-      str.charAt(idx | 0) || (map = '=', idx % 1);
+      str.charAt (idx | 0) || (map = '=', idx % 1);
       // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+      output += map.charAt (63 & block >> 8 - idx % 1 * 8)
     ) {
-      charCode = str.charCodeAt(idx += 3/4);
+      charCode = str.charCodeAt (idx += 3 / 4);
       if (charCode > 0xFF) {
-        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+        throw new InvalidCharacterError ("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
       }
       block = block << 8 | charCode;
     }
     return output;
-  });
+  }
 
   // decoder
   // [https://gist.github.com/1020396] by [https://github.com/atk]
-  object.atob || (
-  object.atob = function (input) {
-    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
-    if (str.length % 4 == 1) {
-      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+  function atob(input) {
+    var str = (String (input)).replace (/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    if (str.length % 4 === 1) {
+      throw new InvalidCharacterError ("'atob' failed: The string to be decoded is not correctly encoded.");
     }
     for (
       // initialize result and counters
       var bc = 0, bs, buffer, idx = 0, output = '';
       // get next character
-      buffer = str.charAt(idx++);
+      buffer = str.charAt (idx++); // eslint-disable-line no-cond-assign
       // character found in table? initialize bit storage and add its ascii value;
       ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
         // and if not first of each 4 characters,
         // convert the first 8 bits to one ascii character
-        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+        bc++ % 4) ? output += String.fromCharCode (255 & bs >> (-2 * bc & 6)) : 0
     ) {
       // try to find character in table (0-63, not found => -1)
-      buffer = chars.indexOf(buffer);
+      buffer = chars.indexOf (buffer);
     }
     return output;
-  });
+  }
 
-}());
+  return {btoa: btoa, atob: atob};
 
+}));
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports) {
+
+/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
+module.exports = __webpack_amd_options__;
+
+/* WEBPACK VAR INJECTION */}.call(this, {}))
 
 /***/ }),
 /* 63 */
@@ -8638,7 +8639,7 @@ StreamReaction.prototype = {
       qs.limit = 10;
     }
 
-    if ((user_id ? 1 : 0 + activity_id ? 1 : 0 + reaction_id ? 1 : 0) != 1) {
+    if ((user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) != 1) {
       throw new errors.SiteError('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
     }
 
