@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.1 - 2020-03-30
+
+- Move babel-runtime to dependencies
+
 ## 4.5.0 - 2020-03-30
 
 - Use faye-us-east.stream-io-api.com for realtime updates
