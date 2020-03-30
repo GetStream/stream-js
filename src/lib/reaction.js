@@ -48,8 +48,8 @@ StreamReaction.prototype = {
   },
 
   _convertTargetFeeds: function(targetFeeds = []) {
-    return targetFeeds.map(
-      (elem) => (typeof elem === 'string' ? elem : elem.id),
+    return targetFeeds.map((elem) =>
+      typeof elem === 'string' ? elem : elem.id,
     );
   },
 

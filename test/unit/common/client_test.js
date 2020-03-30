@@ -20,7 +20,9 @@ describe('[UNIT] Stream Client (Common)', function() {
   it('#connect', function() {
     expect(this.client.apiKey).to.be(config.API_KEY);
     expect(this.client.version).to.be('v1.0');
-    expect(this.client.fayeUrl).to.be('https://faye.getstream.io/faye');
+    expect(this.client.fayeUrl).to.be(
+      'https://faye-us-east.stream-io-api.com/faye',
+    );
     expect(this.client.group).to.be('unspecified');
     expect(this.client.location).to.be(undefined);
     expect(this.client.expireTokens).to.be(false);
