@@ -72,7 +72,7 @@ StreamClient.prototype = {
     this.appId = appId;
     this.options = options;
     this.version = this.options.version || 'v1.0';
-    this.fayeUrl = this.options.fayeUrl || 'https://faye.getstream.io/faye';
+    this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
     this.fayeClient = null;
     this.request = request;
     // track a source name for the api calls, ie get started or databrowser
