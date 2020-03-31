@@ -325,6 +325,6 @@ mocha test/cov.js -R html-cov > cov.html
 
 ### Copyright and License Information
 
-Copyright (c) 2015-2019 Stream.io Inc, and individual contributors. All rights reserved.
+Copyright (c) 2015-2020 Stream.io Inc, and individual contributors. All rights reserved.
 
 See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
