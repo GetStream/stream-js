@@ -301,6 +301,13 @@ export class StreamClient {
     options?: object,
   );
 
+  apiKey: string;
+  appId?: string;
+  apiSecret?: string;
+  userToken?: string;
+  userId?: string;
+  currentUser?: User;
+
   // Event subscriptions
   on(event: string, callback: (args: any[]) => void): void;
   off(key: string): void;
