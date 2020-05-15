@@ -132,7 +132,7 @@ export class Personalization {
   delete(resource: string, options?: object): Promise<object>;
 }
 
-export interface FileUploadAPIResponse {
+export interface FileUploadAPIResponse extends APIResponse {
   file: string;
 }
 
