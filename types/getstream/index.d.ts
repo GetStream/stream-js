@@ -1,5 +1,11 @@
+/// <reference types="node" />
 // TypeScript Version: 3.5
 export as namespace stream;
+
+export interface APIResponse {
+  duration: string;
+  [customFieldKey: string]: any;
+}
 
 /**
  * Create StreamClient
@@ -124,6 +130,53 @@ export class Personalization {
   delete(resource: string, callback: RestCallback): void;
   delete(resource: string, options: object, callback: RestCallback): void;
   delete(resource: string, options?: object): Promise<object>;
+}
+
+export interface FileUploadAPIResponse {
+  file: string;
+}
+
+export interface ImageProcessOptions {
+  w?: number | string;
+  h?: number | string;
+  resize?: string | 'clip' | 'crop' | 'scale' | 'fill';
+  crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
+}
+
+export class StreamImageStore {
+  constructor(client: StreamClient, token: string);
+
+  upload(
+    uri: string | Buffer,
+    name?: string,
+    contentType?: string,
+  ): Promise<FileUploadAPIResponse>;
+
+  process(
+    uri: string,
+    options: ImageProcessOptions,
+  ): Promise<FileUploadAPIResponse>;
+
+  thumbmail(
+    uri: string,
+    w: number | string,
+    h: number | string,
+    options?: ImageProcessOptions,
+  ): Promise<FileUploadAPIResponse>;
+
+  delete(uri: string): Promise<{}>;
+}
+
+export class StreamFileStore {
+  constructor(client: StreamClient, token: string);
+
+  upload(
+    uri: string | Buffer,
+    name?: string,
+    contentType?: string,
+  ): Promise<FileUploadAPIResponse>;
+
+  delete(uri: string): Promise<{}>;
 }
 
 export class Feed {
@@ -361,6 +414,8 @@ export class StreamClient {
   // Collections sub-component
   collections: Collections;
   personalization: Personalization;
+  images: StreamImageStore;
+  files: StreamFileStore;
   reactions: Reaction;
 
   // Instantiate a StreamUser class for the given user ID
