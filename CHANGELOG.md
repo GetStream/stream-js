@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.2 - 2020-05-27
+
+- Extend types for client variables, files and images
+
 ## 4.5.1 - 2020-03-30
 
 - Move babel-runtime to dependencies
