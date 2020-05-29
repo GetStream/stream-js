@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.3 - 2020-05-28
+
+- Add open graph scrape (og) types
+
 ## 4.5.2 - 2020-05-27
 
 - Extend types for client variables, files and images
