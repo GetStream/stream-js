@@ -6,6 +6,15 @@ stream.connect('abc', 'def', 'ghi'); // $ExpectType StreamClient
 // prettier-ignore
 const client = stream.connect('abc', 'def', 'ghi');
 client.feed('feedSlug', 'user'); // $ExpectType Feed
+client.og('https://getstream.io'); // $ExpectType Promise<OGResponse>
+client.images.upload('http://foo.bar/img.jpg', 'img.jpg', 'image/jpeg'); // $ExpectType Promise<FileUploadAPIResponse>
+// prettier-ignore
+client.images.process('http://foo.bar/img.jpg', { crop: 'bottom', resize: 'clip', h: 50, w: 50 }); // $ExpectType Promise<FileUploadAPIResponse>
+// prettier-ignore
+client.images.thumbmail('http://foo.bar/img.jpg', 50, 50, { crop: 'bottom', resize: 'fill' }); // $ExpectType Promise<FileUploadAPIResponse>
+client.images.delete('http://foo.bar/img.jpg'); // $ExpectType Promise<void>
+client.files.upload('http://foo.bar/txt.txt', 'txt.txt', 'text/plain'); // $ExpectType Promise<FileUploadAPIResponse>
+client.files.delete('http://foo.bar/txt.txt'); // $ExpectType Promise<void>
 
 let callback = (err: object, httpResponse: object, body: object) => {};
 
