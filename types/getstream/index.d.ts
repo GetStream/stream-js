@@ -460,7 +460,6 @@ export class StreamClient {
   ): void;
 
   /**
-   *
    * og.
    * Retrieve open graph information of urls
    */
