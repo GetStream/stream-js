@@ -126,7 +126,7 @@ export class Personalization {
   ): void;
   post(resource: string, options?: object, data?: object): Promise<object>;
 
-  // Delete metadata or activites
+  // Delete metadata or activities
   delete(resource: string, callback: RestCallback): void;
   delete(resource: string, options: object, callback: RestCallback): void;
   delete(resource: string, options?: object): Promise<object>;
@@ -458,6 +458,56 @@ export class StreamClient {
     unfollows: object[],
     callback?: (err: object, httpResponse: object, body: object) => void,
   ): void;
+
+  /**
+   *
+   * og.
+   * Retrieve open graph information of urls
+   */
+  og(url: string): Promise<OGResponse>;
+}
+
+// Export the OGResource
+export interface OGResource {
+  url?: string;
+  secure_url?: string;
+  type?: string;
+}
+
+// Export the OGAudio
+export interface OGAudio extends OGResource {
+  audio?: string;
+}
+
+// Export the OGImage
+export interface OGImage extends OGResource {
+  image?: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+}
+
+// Export the OGVideo
+export interface OGVideo extends OGResource {
+  video?: string;
+  width?: number;
+  height?: number;
+}
+
+// Export the OGResponse
+export interface OGResponse extends APIResponse {
+  title?: string;
+  type?: string;
+  url?: string;
+  site?: string;
+  site_name?: string;
+  description?: string;
+  favicon?: string;
+  determiner?: string;
+  locale?: string;
+  audios?: OGAudio[];
+  images?: OGImage[];
+  videos?: OGVideo[];
 }
 
 // Export the Stream Client
