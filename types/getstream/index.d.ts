@@ -282,12 +282,14 @@ export class Reaction {
   add(
     kind: string,
     activity: string | Activity,
+    user_id: string,
     data?: object,
     targetFeeds?: string[],
   ): Promise<object>;
   add(
     kind: string,
     activity: string | Activity,
+    user_id: string,
     data: object,
     targetFeeds: string[],
     callback: RestCallback,

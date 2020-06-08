@@ -56,6 +56,7 @@ StreamReaction.prototype = {
   add: function(
     kind,
     activity,
+    user_id,
     data = {},
     { id, targetFeeds = [], userId, targetFeedsExtraData } = {},
     callback,
@@ -66,6 +67,7 @@ StreamReaction.prototype = {
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
      * @param  {string}   activity Activity or an ActivityID
+     * @param  {string}   userId user id
      * @param  {object}   data  data related to reaction
      * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
      * @param  {requestCallback} callback Callback to call on completion
@@ -83,8 +85,9 @@ StreamReaction.prototype = {
       kind: kind,
       data: data,
       target_feeds: targetFeeds,
-      user_id: userId,
+      user_id: user_id || userId,
     };
+
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
@@ -101,6 +104,7 @@ StreamReaction.prototype = {
   addChild: function(
     kind,
     reaction,
+    user_id,
     data = {},
     { targetFeeds = [], userId, targetFeedsExtraData } = {},
     callback,
@@ -111,6 +115,7 @@ StreamReaction.prototype = {
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
      * @param  {string}   reaction Reaction or a ReactionID
+     * @param  {string}   userId user id
      * @param  {object}   data  data related to reaction
      * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
      * @param  {requestCallback} callback Callback to call on completion
@@ -127,7 +132,7 @@ StreamReaction.prototype = {
       kind: kind,
       data: data,
       target_feeds: targetFeeds,
-      user_id: userId,
+      user_id: user_id || userId,
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
