@@ -26,7 +26,7 @@
     "test-cloud-local": "LOCAL=true mocha --require @babel/register test/integration/cloud --timeout 40000 -i --grep 'Files|Images'",
     "test-browser": "karma start karma.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
-    "coverage": "nyc  --reporter=lcov mocha --require @babel/register bin/run-node-unit-tests.js",
+    "coverage": "nyc --reporter=lcov mocha --require @babel/register bin/run-node-unit-tests.js",
     "preversion": "npm run test-unit-node",
     "version": "./bin/version.sh && git add dist",
     "postversion": "./bin/postversion.sh"
