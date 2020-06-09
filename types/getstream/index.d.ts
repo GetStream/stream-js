@@ -289,7 +289,7 @@ export class Reaction {
     kind: string,
     activity: string | Activity,
     data: object,
-    targetFeeds: string[],
+    targetFeeds: string[] | object,
     callback: RestCallback,
   ): void;
 
@@ -303,7 +303,7 @@ export class Reaction {
     kind: string,
     reaction: string | Reaction,
     data: object,
-    targetFeeds: string[],
+    targetFeeds: string[] | object,
     callback: RestCallback,
   ): void;
 
