@@ -2,6 +2,9 @@
 
 [![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions)
 
+[![codecov](https://codecov.io/gh/GetStream/stream-js/branch/master/graph/
+badge.svg)](https://codecov.io/gh/GetStream/stream-js)
+
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
 [stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.

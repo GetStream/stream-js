@@ -33,6 +33,7 @@ jobs:
 
       - name: Lint and Test with ${{ matrix.node }}
         env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           BROWSER_TESTS: ${{ matrix.browser_tests }}
           CLOUD_TESTS: ${{ matrix.cloud_tests }}
           RUN_LINTERS: ${{ matrix.run_linters }}
