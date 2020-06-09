@@ -1,0 +1,41 @@
+name: build
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [10, 11, 12, 13, 14]
+        browser_tests: ['no']
+        cloud_tests: ['no']
+        run_linters: ['no']
+        include:
+          - browser_tests: 'no'
+            cloud_tests: 'yes'
+          - browser_tests: 'no'
+            run_linters: 'yes'
+          - browser_tests: 'yes'
+    env:
+      BROWSER_TESTS: 'no'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install deps
+        run: npm i
+
+      - name: Lint and Test with ${{ matrix.node }}
+        env:
+          BROWSER_TESTS: ${{ matrix.browser_tests }}
+          CLOUD_TESTS: ${{ matrix.cloud_tests }}
+          RUN_LINTERS: ${{ matrix.run_linters }}
+        run: |
+          if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+          if [ "$BROWSER_TESTS" == "yes" ]; then npm run test-browser; fi
