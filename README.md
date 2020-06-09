@@ -1,9 +1,6 @@
 # Stream-JS
 
-[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions)
-
-[![codecov](https://codecov.io/gh/GetStream/stream-js/branch/master/graph/
-badge.svg)](https://codecov.io/gh/GetStream/stream-js)
+[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions) [![codecov](https://codecov.io/gh/GetStream/stream-js/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-js)
 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
