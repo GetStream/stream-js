@@ -33,6 +33,9 @@ jobs:
 
       - name: Lint and Test with ${{ matrix.node }}
         env:
+          STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
+          STREAM_APP_KEY: ${{ secrets.STREAM_APP_KEY }}
+          STREAM_APP_SECRET: ${{ secrets.STREAM_APP_SECRET }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           BROWSER_TESTS: ${{ matrix.browser_tests }}
           CLOUD_TESTS: ${{ matrix.cloud_tests }}
