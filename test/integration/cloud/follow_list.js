@@ -28,7 +28,7 @@ describe('Read followers', () => {
 
     ctx.responseShould(
       'should include a user key with bob and carl',
-      async function() {
+      async function () {
         this.skip();
         ctx.response.should.have.property('users');
         ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);
@@ -43,7 +43,7 @@ describe('Read followings', () => {
 
   ctx.createUsers();
 
-  describe('When initializing follow relationships', async function() {
+  describe('When initializing follow relationships', async function () {
     ctx.noRequestsShouldError(async () => {
       await Promise.all([
         ctx.alice.feed('timeline').follow('user', ctx.bob.currentUser),
@@ -63,7 +63,7 @@ describe('Read followings', () => {
 
     ctx.responseShould(
       'should include a user key with bob and carl',
-      async function() {
+      async function () {
         this.skip();
         ctx.response.should.have.property('users');
         ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);

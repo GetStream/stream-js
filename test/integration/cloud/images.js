@@ -56,8 +56,8 @@ describe('Images', () => {
   });
 
   describe('When the image ${imageUrl} is requested', () => {
-    ctx.test('should return 200', function(done) {
-      request.get(imageUrl, function(err, res) {
+    ctx.test('should return 200', function (done) {
+      request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });
@@ -75,10 +75,10 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
+    ctx.test('When the image is requested it should return 200', function (
       done,
     ) {
-      request.get(imageUrl, function(err, res) {
+      request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });
@@ -98,10 +98,10 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
+    ctx.test('When the image is requested it should return 200', function (
       done,
     ) {
-      request.get(imageUrl, function(err, res) {
+      request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });
@@ -131,10 +131,10 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
+    ctx.test('When the image is requested it should return 200', function (
       done,
     ) {
-      request.get(imageUrl, function(err, res) {
+      request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });

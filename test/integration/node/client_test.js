@@ -6,16 +6,16 @@ import errors from '../../../src/lib/errors';
 import { wrapCB } from '../utils';
 import { init, beforeEachFn } from '../utils/hooks';
 
-describe('[INTEGRATION] Stream client (Node)', function() {
+describe('[INTEGRATION] Stream client (Node)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  it('get feed', function(done) {
+  it('get feed', function (done) {
     this.user1.get(
       {
         limit: 1,
       },
-      function(error, response) {
+      function (error, response) {
         if (error) done(error);
         expect(response.statusCode).to.eql(200);
 
@@ -27,7 +27,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     );
   });
 
-  it('update activities', function() {
+  it('update activities', function () {
     var self = this;
     var activities = [
       {
@@ -46,7 +46,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivities(activities)
-      .then(function(body) {
+      .then(function (body) {
         var activity = body['activities'][0];
 
         activity['answer'] = 10;
@@ -58,16 +58,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivities(activities);
       })
-      .then(function() {
+      .then(function () {
         return self.user1.get({ limit: 2 });
       })
-      .then(function(body) {
+      .then(function (body) {
         var activity = body['results'][1];
         expect(activity.answer).to.be(10);
       });
   });
 
-  it('update activity illegal foreign id', function() {
+  it('update activity illegal foreign id', function () {
     var self = this;
 
     var activity = {
@@ -78,7 +78,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         var activity = body;
 
         delete activity.id;
@@ -90,16 +90,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivity(activity);
       })
-      .then(function() {
+      .then(function () {
         throw new Error('Expected InputException');
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         expect(reason.error.code).to.be(4);
         expect(reason.error.exception).to.be('InputException');
       });
   });
 
-  it('update activity illegal time', function() {
+  it('update activity illegal time', function () {
     var self = this;
 
     var activity = {
@@ -110,7 +110,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         var activity = body;
 
         delete activity.duration;
@@ -120,16 +120,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivity(activity);
       })
-      .then(function() {
+      .then(function () {
         throw new Error('Expected InputException');
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         expect(reason.error.code).to.be(4);
         expect(reason.error.exception).to.be('InputException');
       });
   });
 
-  it('update activity illegal to field', function() {
+  it('update activity illegal to field', function () {
     var self = this;
 
     var activity = {
@@ -140,7 +140,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         var activity = body;
 
         delete activity.duration;
@@ -150,16 +150,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivity(activity);
       })
-      .then(function() {
+      .then(function () {
         throw new Error('Expected InputException');
       })
-      .catch(function(reason) {
+      .catch(function (reason) {
         expect(reason.error.code).to.be(4);
         expect(reason.error.exception).to.be('InputException');
       });
   });
 
-  it('updating many activities', function() {
+  it('updating many activities', function () {
     var self = this;
     var activities = [];
     for (var i = 0; i < 10; i++) {
@@ -173,7 +173,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivities(activities)
-      .then(function(body) {
+      .then(function (body) {
         var activitiesCreated = body['activities'];
 
         for (var j = 0; j < activitiesCreated.length; j++) {
@@ -182,12 +182,12 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
         return self.client.updateActivities(activitiesCreated);
       })
-      .then(function() {
+      .then(function () {
         return self.user1.get({
           limit: 10,
         });
       })
-      .then(function(body) {
+      .then(function (body) {
         var activitiesUpdated = body['results'];
 
         for (var n = 0; n < activitiesUpdated.length; n++) {
@@ -196,7 +196,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       });
   });
 
-  it('#updateActivity', function() {
+  it('#updateActivity', function () {
     var activity = {
       verb: 'do',
       actor: 'user:1',
@@ -208,7 +208,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     return this.client.updateActivity(activity);
   });
 
-  it('supports adding activity to multiple feeds', function(done) {
+  it('supports adding activity to multiple feeds', function (done) {
     var activity = {
       actor: 'user:11',
       verb: 'like',
@@ -219,7 +219,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     this.client.addToMany(activity, feeds, wrapCB(201, done));
   });
 
-  it('supports batch following', function(done) {
+  it('supports batch following', function (done) {
     var follows = [
       {
         source: 'flat:1',
@@ -238,7 +238,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     this.client.followMany(follows, null, wrapCB(201, done));
   });
 
-  it('supports batch following with activity_copy_limit', function(done) {
+  it('supports batch following with activity_copy_limit', function (done) {
     var follows = [
       {
         source: 'flat:1',
@@ -257,7 +257,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     this.client.followMany(
       follows,
       20,
-      wrapCB(201, done, function(error, response) {
+      wrapCB(201, done, function (error, response) {
         expect(response.req.path.indexOf('activity_copy_limit=20')).to.not.be(
           0,
         );
@@ -266,7 +266,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     );
   });
 
-  it('supports batch unfollowing', function(done) {
+  it('supports batch unfollowing', function (done) {
     var unfollows = [
       {
         source: 'flat:1',
@@ -286,17 +286,17 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     this.client.unfollowMany(unfollows, wrapCB(201, done));
   });
 
-  it('no secret application auth', function() {
+  it('no secret application auth', function () {
     var client = stream.connect('ahj2ndz7gsan');
 
-    expect(function() {
+    expect(function () {
       client.addToMany({}, []);
-    }).to.throwError(function(e) {
+    }).to.throwError(function (e) {
       expect(e).to.be.a(errors.SiteError);
     });
   });
 
-  it('batch promises', function() {
+  it('batch promises', function () {
     var activity = {
       actor: 'user:11',
       verb: 'like',
@@ -307,7 +307,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     return this.client.addToMany(activity, feeds);
   });
 
-  it('add activity using to', function() {
+  it('add activity using to', function () {
     var self = this;
     var activityId = null;
     var activity = {
@@ -324,16 +324,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         activityId = body['id'];
         return self.flat3.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['id']).to.eql(activityId);
       });
   });
-  describe("updating activity's 'to' targets", function() {
-    it("replaces an activity's 'to' targets with `new_targets` (activity has existing targets)", function(done) {
+  describe("updating activity's 'to' targets", function () {
+    it("replaces an activity's 'to' targets with `new_targets` (activity has existing targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -346,21 +346,21 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(1234, timestamp, [
             'user:5678',
           ]);
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(1);
           expect(response.results[0].to).to.contain('user:5678');
           return done();
         });
     });
-    it("replaces an activity's 'to' targets with `new_targets` (activity has no existing targets)", function(done) {
+    it("replaces an activity's 'to' targets with `new_targets` (activity has no existing targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -374,22 +374,22 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(1234, timestamp, [
             'user:5678',
           ]);
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(1);
           expect(response.results[0].to).to.contain('user:5678');
           return done();
         });
     });
 
-    it("add new targets to an activity's 'to' targets with `add_targets` (activity has existing targets)", function(done) {
+    it("add new targets to an activity's 'to' targets with `add_targets` (activity has existing targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -403,22 +403,22 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(1234, timestamp, null, [
             'user:5678',
           ]);
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(2);
           expect(response.results[0].to).to.contain('user:1234');
           expect(response.results[0].to).to.contain('user:5678');
           done();
         });
     });
-    it("add new targets to an activity's 'to' targets with `add_targets` (activity has no existing targets)", function(done) {
+    it("add new targets to an activity's 'to' targets with `add_targets` (activity has no existing targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -431,22 +431,22 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(1234, timestamp, null, [
             'user:5678',
           ]);
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(1);
           expect(response.results[0].to).to.contain('user:5678');
           done();
         });
     });
 
-    it("remove targets from an activity's 'to' targets with `remove_targets` (end result still has targets)", function(done) {
+    it("remove targets from an activity's 'to' targets with `remove_targets` (end result still has targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -460,7 +460,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(
             1234,
             timestamp,
@@ -469,16 +469,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             ['user:5678'],
           );
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(1);
           expect(response.results[0].to).to.contain('user:1234');
           done();
         });
     });
-    it("remove targets from an activity's 'to' targets with `remove_targets` (end result has no targets)", function(done) {
+    it("remove targets from an activity's 'to' targets with `remove_targets` (end result has no targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -492,7 +492,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(
             1234,
             timestamp,
@@ -501,16 +501,16 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             ['user:1234'],
           );
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(0);
           done();
         });
     });
 
-    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has no other existing targets)", function(done) {
+    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has no other existing targets)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -524,7 +524,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(
             1234,
             timestamp,
@@ -533,17 +533,17 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             ['user:1234'],
           );
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(1);
           expect(response.results[0].to).to.have.contain('user:5678');
           done();
         });
     });
 
-    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has other existing targets too, that don't get modified)", function(done) {
+    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has other existing targets too, that don't get modified)", function (done) {
       var self = this;
       var timestamp = new Date();
 
@@ -557,7 +557,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       };
       this.user1
         .addActivity(activity)
-        .then(function() {
+        .then(function () {
           return self.user1.updateActivityToTargets(
             1234,
             timestamp,
@@ -566,10 +566,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             ['user:1234'],
           );
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(response) {
+        .then(function (response) {
           expect(response.results[0].to).to.have.length(2);
           expect(response.results[0].to).to.have.contain('user:0000');
           expect(response.results[0].to).to.have.contain('user:5678');
@@ -578,10 +578,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
   });
 
-  describe('get activities', function() {
+  describe('get activities', function () {
     var activity;
 
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       var self = this;
       this.user1
         .addActivity({
@@ -591,28 +591,28 @@ describe('[INTEGRATION] Stream client (Node)', function() {
           foreign_id: 1234,
           time: new Date(),
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(resp) {
+        .then(function (resp) {
           activity = resp.results[0];
           done();
         });
     });
 
-    describe('by ID', function() {
-      it('allows to retrieve activities directly by their ID', function(done) {
+    describe('by ID', function () {
+      it('allows to retrieve activities directly by their ID', function (done) {
         this.client
           .getActivities({ ids: [activity['id']] })
-          .then(function(resp) {
+          .then(function (resp) {
             expect(resp.results[0]).to.eql(activity);
             done();
           });
       });
     });
 
-    describe('by foreign ID and time', function() {
-      it('allows to retrieve activities directly by their ID', function(done) {
+    describe('by foreign ID and time', function () {
+      it('allows to retrieve activities directly by their ID', function (done) {
         this.client
           .getActivities({
             foreignIDTimes: [
@@ -622,7 +622,7 @@ describe('[INTEGRATION] Stream client (Node)', function() {
               },
             ],
           })
-          .then(function(resp) {
+          .then(function (resp) {
             expect(resp.results[0]).to.eql(activity);
             done();
           });
@@ -630,10 +630,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
     });
   });
 
-  describe('update activity partial', function() {
+  describe('update activity partial', function () {
     var activity, expected;
 
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       var self = this;
       this.user1
         .addActivity({
@@ -649,10 +649,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
           popularity: 50,
           color: 'blue',
         })
-        .then(function() {
+        .then(function () {
           return self.user1.get();
         })
-        .then(function(resp) {
+        .then(function (resp) {
           activity = resp.results[0];
 
           expected = activity;
@@ -673,8 +673,8 @@ describe('[INTEGRATION] Stream client (Node)', function() {
         });
     });
 
-    describe('by ID', function() {
-      it('allows to update the activity', function(done) {
+    describe('by ID', function () {
+      it('allows to update the activity', function (done) {
         var self = this;
 
         this.client
@@ -692,10 +692,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             },
             unset: ['color'],
           })
-          .then(function() {
+          .then(function () {
             self.client
               .getActivities({ ids: [activity['id']] })
-              .then(function(resp) {
+              .then(function (resp) {
                 expect(resp.results[0]).to.eql(expected);
                 done();
               });
@@ -703,8 +703,8 @@ describe('[INTEGRATION] Stream client (Node)', function() {
       });
     });
 
-    describe('by foreign ID and time', function() {
-      it('allows to update the activity', function(done) {
+    describe('by foreign ID and time', function () {
+      it('allows to update the activity', function (done) {
         var self = this;
 
         this.client
@@ -723,10 +723,10 @@ describe('[INTEGRATION] Stream client (Node)', function() {
             },
             unset: ['color'],
           })
-          .then(function() {
+          .then(function () {
             self.client
               .getActivities({ ids: [activity['id']] })
-              .then(function(resp) {
+              .then(function (resp) {
                 expect(resp.results[0]).to.eql(expected);
                 done();
               });

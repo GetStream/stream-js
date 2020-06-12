@@ -49,14 +49,8 @@ function validateUserId(userId) {
 }
 
 function rfc3986(str) {
-  return str.replace(/[!'()*]/g, function(c) {
-    return (
-      '%' +
-      c
-        .charCodeAt(0)
-        .toString(16)
-        .toUpperCase()
-    );
+  return str.replace(/[!'()*]/g, function (c) {
+    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
   });
 }
 
