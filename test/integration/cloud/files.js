@@ -27,8 +27,8 @@ describe('Files', () => {
   });
 
   describe('When the file is requested', () => {
-    ctx.test('should return 200', function(done) {
-      request.get(fileURL, function(err, res) {
+    ctx.test('should return 200', function (done) {
+      request.get(fileURL, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });
