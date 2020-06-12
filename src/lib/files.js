@@ -1,21 +1,19 @@
-var fetch = require('@stream-io/cross-fetch');
-var Headers = require('@stream-io/cross-fetch').Headers;
-var utils = require('./utils');
-var FormData = require('form-data');
-var errors = require('./errors');
+import fetch from '@stream-io/cross-fetch';
+import FormData from 'form-data';
+import { Headers } from '@stream-io/cross-fetch';
 
-var StreamFileStore = function() {
-  this.initialize.apply(this, arguments);
-};
+import utils from './utils';
+import errors from './errors';
 
-StreamFileStore.prototype = {
-  initialize: function(client, token) {
+export default class StreamFileStore {
+  constructor(client, token) {
     this.client = client;
     this.token = token;
-  },
+  }
+
   // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
-  upload: function(uri, name, contentType) {
+  upload(uri, name, contentType) {
     const data = new FormData();
     let fileField;
 
@@ -62,14 +60,13 @@ StreamFileStore.prototype = {
         );
       });
     });
-  },
-  delete: function(uri) {
+  }
+
+  delete(uri) {
     return this.client.delete({
       url: `files/`,
       qs: { url: uri },
       signature: this.token,
     });
-  },
-};
-
-module.exports = StreamFileStore;
+  }
+}

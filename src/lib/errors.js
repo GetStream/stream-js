@@ -1,7 +1,7 @@
-var errors = module.exports;
+const canCapture = typeof Error.captureStackTrace === 'function';
+const canStack = !!new Error().stack;
 
-var canCapture = typeof Error.captureStackTrace === 'function';
-var canStack = !!new Error().stack;
+const errors = {};
 
 /**
  * Abstract error object
@@ -88,3 +88,5 @@ errors.StreamApiError = function StreamApiError(msg, data, response) {
 };
 
 errors.StreamApiError.prototype = new ErrorAbstract();
+
+export default errors;

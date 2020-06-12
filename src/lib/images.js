@@ -1,24 +1,22 @@
-var fetch = require('@stream-io/cross-fetch');
-var Headers = require('@stream-io/cross-fetch').Headers;
-var FormData = require('form-data');
-var utils = require('./utils');
-var errors = require('./errors');
+import fetch from '@stream-io/cross-fetch';
+import FormData from 'form-data';
+import { Headers } from '@stream-io/cross-fetch';
 
-var StreamImageStore = function() {
-  this.initialize.apply(this, arguments);
-};
+import utils from './utils';
+import errors from './errors';
 
-StreamImageStore.prototype = {
-  initialize: function(client, token) {
+export default class StreamImageStore {
+  constructor(client, token) {
     this.client = client;
     this.token = token;
-  },
+  }
+
   // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
-  upload: function(uri, name, contentType) {
+  upload(uri, name, contentType) {
     const data = new FormData();
-    let fileField;
 
+    let fileField;
     if (utils.isReadableStream(uri)) {
       fileField = uri;
     } else {
@@ -60,16 +58,18 @@ StreamImageStore.prototype = {
         );
       });
     });
-  },
-  delete: function(uri) {
+  }
+
+  delete(uri) {
     return this.client.delete({
       url: `images/`,
       qs: { url: uri },
       signature: this.token,
     });
-  },
-  process: function(uri, options) {
-    let params = Object.assign(options, { url: uri });
+  }
+
+  process(uri, options) {
+    const params = Object.assign(options, { url: uri });
     if (Array.isArray(params.crop)) {
       params.crop = params.crop.join(',');
     }
@@ -79,15 +79,9 @@ StreamImageStore.prototype = {
       qs: params,
       signature: this.token,
     });
-  },
-  thumbmail: function(
-    uri,
-    w,
-    h,
-    { crop, resize } = { crop: 'center', resize: 'clip' },
-  ) {
-    return this.process(uri, { w, h, crop, resize });
-  },
-};
+  }
 
-module.exports = StreamImageStore;
+  thumbmail(uri, w, h, { crop, resize } = { crop: 'center', resize: 'clip' }) {
+    return this.process(uri, { w, h, crop, resize });
+  }
+}

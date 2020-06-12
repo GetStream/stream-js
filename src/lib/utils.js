@@ -1,32 +1,30 @@
-var errors = require('./errors');
-var validFeedSlugRe = /^[\w]+$/;
-var validUserIdRe = /^[\w-]+$/;
+import errors from './errors';
+
+const validFeedSlugRe = /^[\w]+$/;
+const validUserIdRe = /^[\w-]+$/;
 
 function validateFeedId(feedId) {
   /*
    * Validate that the feedId matches the spec user:1
    */
-  var parts = feedId.split(':');
+  const parts = feedId.split(':');
   if (parts.length !== 2) {
     throw new errors.FeedError(
       'Invalid feedId, expected something like user:1 got ' + feedId,
     );
   }
 
-  var feedSlug = parts[0];
-  var userId = parts[1];
+  const [feedSlug, userId] = parts;
   validateFeedSlug(feedSlug);
   validateUserId(userId);
   return feedId;
 }
 
-exports.validateFeedId = validateFeedId;
-
 function validateFeedSlug(feedSlug) {
   /*
    * Validate that the feedSlug matches \w
    */
-  var valid = validFeedSlugRe.test(feedSlug);
+  const valid = validFeedSlugRe.test(feedSlug);
   if (!valid) {
     throw new errors.FeedError(
       'Invalid feedSlug, please use letters, numbers or _: ' + feedSlug,
@@ -36,13 +34,11 @@ function validateFeedSlug(feedSlug) {
   return feedSlug;
 }
 
-exports.validateFeedSlug = validateFeedSlug;
-
 function validateUserId(userId) {
   /*
    * Validate the userId matches \w
    */
-  var valid = validUserIdRe.test(userId);
+  const valid = validUserIdRe.test(userId);
   if (!valid) {
     throw new errors.FeedError(
       'Invalid userId, please use letters, numbers, - or _: ' + userId,
@@ -51,8 +47,6 @@ function validateUserId(userId) {
 
   return userId;
 }
-
-exports.validateUserId = validateUserId;
 
 function rfc3986(str) {
   return str.replace(/[!'()*]/g, function(c) {
@@ -66,8 +60,6 @@ function rfc3986(str) {
   });
 }
 
-exports.rfc3986 = rfc3986;
-
 function isReadableStream(obj) {
   return (
     typeof obj === 'object' &&
@@ -76,4 +68,10 @@ function isReadableStream(obj) {
   );
 }
 
-exports.isReadableStream = isReadableStream;
+export default {
+  validateFeedId,
+  validateFeedSlug,
+  validateUserId,
+  rfc3986,
+  isReadableStream,
+};
