@@ -1,7 +1,8 @@
-var utils = require('../../../src/lib/utils'),
-  init = require('../utils/hooks').init,
-  expect = require('expect.js'),
-  errors = require('../../../src/lib/errors');
+import expect from 'expect.js';
+
+import errors from '../../../src/lib/errors';
+import utils from '../../../src/lib/utils';
+import { init } from '../utils/hooks';
 
 describe('[UNIT] Utility functions', function() {
   init.call(this);

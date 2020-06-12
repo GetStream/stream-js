@@ -1,7 +1,7 @@
-var beforeEachFn = require('../utils/hooks').beforeEach,
-  expect = require('expect.js'),
-  signing = require('../../../src/lib/signing'),
-  init = require('../utils/hooks').init;
+import expect from 'expect.js';
+
+import signing from '../../../src/lib/signin';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Browser)', function() {
   init.call(this);

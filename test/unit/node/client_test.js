@@ -1,10 +1,11 @@
-var StreamFeed = require('../../../src/lib/feed'),
-  expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  td = require('testdouble'),
-  stream = require('../../../src/getstream'),
-  StreamClient = require('../../../src/lib/client');
-var jwtDecode = require('jwt-decode');
+import expect from 'expect.js';
+import td from 'testdouble';
+import jwtDecode from 'jwt-decode';
+
+import stream from '../../../src/getstream';
+import StreamClient from '../../../src/lib/client';
+import StreamFeed from '../../../src/lib/feed';
+import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client instantiation (Node)', function() {
   it('with secret', function() {
@@ -629,10 +630,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
   describe('getAnalyticsToken', function() {
     it('generate correct token', function() {
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       var token = client.getAnalyticsToken();
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc',
@@ -642,10 +640,7 @@ describe('[UNIT] Stream Client (Node)', function() {
 
   describe('createUserSessionToken', function() {
     it('with userId only', function() {
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       var token = client.createUserSessionToken('42');
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
@@ -653,10 +648,7 @@ describe('[UNIT] Stream Client (Node)', function() {
     });
 
     it('with extra data', function() {
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       var token = client.createUserSessionToken('42', { a: 'b' });
       const jwtBody = jwtDecode(token);
       expect(jwtBody).to.eql({
@@ -668,14 +660,9 @@ describe('[UNIT] Stream Client (Node)', function() {
       );
     });
     it('with expireTokens', function() {
-      const client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-        1234,
-        {
-          expireTokens: true,
-        },
-      );
+      const client = stream.connect('12345', 'abcdefghijklmnop', 1234, {
+        expireTokens: true,
+      });
       const token = client.createUserSessionToken('42');
       const timestamp = Date.now() / 1000;
       const jwtBody = jwtDecode(token);
@@ -688,34 +675,23 @@ describe('[UNIT] Stream Client (Node)', function() {
     it('#LOCAL', function() {
       process.env['LOCAL'] = 1;
 
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('http://localhost:8000/api/');
 
       delete process.env['LOCAL'];
     });
 
     it('#LOCAL', function() {
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-        null,
-        {
-          location: 'nl-NL',
-        },
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop', null, {
+        location: 'nl-NL',
+      });
       expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
     });
 
     it('#LOCAL_FAYE', function() {
       process.env['LOCAL_FAYE'] = 1;
 
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
 
       delete process.env['LOCAL_FAYE'];
@@ -724,10 +700,7 @@ describe('[UNIT] Stream Client (Node)', function() {
     it('#STREAM_BASE_URL', function() {
       process.env['STREAM_BASE_URL'] = 'https://local.stream-io-api.com/api/';
 
-      var client = stream.connect(
-        '12345',
-        'abcdefghijklmnop',
-      );
+      var client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
 
       delete process.env['STREAM_BASE_URL'];

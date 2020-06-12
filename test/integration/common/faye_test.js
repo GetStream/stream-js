@@ -1,9 +1,9 @@
-var stream = require('../../../src/getstream'),
-  errors = require('../../../src/getstream').errors,
-  expect = require('expect.js'),
-  init = require('../utils/hooks').init,
-  Promise = require('../../../src/lib/promise'),
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import expect from 'expect.js';
+
+import stream from '../../../src/getstream';
+import errors from '../../../src/lib/errors';
+import Promise from '../../../src/lib/promise';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Faye)', function() {
   init.call(this);

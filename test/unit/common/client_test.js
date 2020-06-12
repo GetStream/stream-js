@@ -1,10 +1,9 @@
-var expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  init = require('../utils/hooks').init,
-  config = require('../utils/config'),
-  td = require('testdouble'),
-  stream = require('../../../src/getstream'),
-  errors = stream.errors;
+import expect from 'expect.js';
+import td from 'testdouble';
+
+import errors from '../../../src/lib/errors';
+import config from '../utils/config';
+import { init, beforeEachFn } from '../utils/hooks';
 
 function enrichKwargs(kwargs) {
   return kwargs;

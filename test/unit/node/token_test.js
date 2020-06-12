@@ -1,6 +1,7 @@
-var signing = require('../../../src/lib/signing'),
-  expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import expect from 'expect.js';
+
+import signing from '../../../src/lib/signing';
+import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Creating tokens', function() {
   beforeEach(beforeEachFn);

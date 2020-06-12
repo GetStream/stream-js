@@ -1,5 +1,6 @@
-var expect = require('expect.js'),
-  signing = signing || require('../../../src/lib/signing');
+import expect from 'expect.js';
+
+import signing from '../../../src/lib/signing';
 
 describe('[UNIT] Json web token validation', function() {
   var validSignature =

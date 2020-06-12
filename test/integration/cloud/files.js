@@ -1,6 +1,7 @@
-var { CloudContext } = require('./utils');
-var fs = require('fs');
-var request = require('request');
+import fs from 'fs';
+import request from 'request';
+
+import { CloudContext } from './utils';
 
 describe('Files', () => {
   let ctx = new CloudContext();

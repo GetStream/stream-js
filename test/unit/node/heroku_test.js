@@ -1,7 +1,7 @@
-var beforeEachFn = require('../utils/hooks').beforeEach,
-  init = require('../utils/hooks').init,
-  stream = require('../../../src/getstream'),
-  expect = require('expect.js');
+import expect from 'expect.js';
+
+import stream from '../../../src/getstream';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream client (Heroku)', function() {
   init.call(this);
@@ -105,11 +105,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
     it('heroku_overwrite (stream-io-api.com)', function(done) {
       var url = 'https://thierry:pass@stream-io-api.com/?app_id=1';
       process.env.STREAM_URL = url;
-      this.client = stream.connect(
-        'a',
-        'b',
-        'c',
-      );
+      this.client = stream.connect('a', 'b', 'c');
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');
       expect(this.client.appId).to.eql('c');
@@ -120,11 +116,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
     it('heroku_overwrite (getstream.io)', function(done) {
       var url = 'https://thierry:pass@getstream.io/?app_id=1';
       process.env.STREAM_URL = url;
-      this.client = stream.connect(
-        'a',
-        'b',
-        'c',
-      );
+      this.client = stream.connect('a', 'b', 'c');
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');
       expect(this.client.appId).to.eql('c');

@@ -1,5 +1,4 @@
-var init = require('../utils/hooks').init,
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Promises)', function() {
   init.call(this);

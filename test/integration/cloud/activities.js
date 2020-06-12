@@ -1,4 +1,4 @@
-var { CloudContext } = require('./utils');
+import { CloudContext } from './utils';
 
 describe('Get activities', () => {
   let ctx = new CloudContext();

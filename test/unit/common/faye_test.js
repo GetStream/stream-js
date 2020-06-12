@@ -1,7 +1,7 @@
-var expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  init = require('../utils/hooks').init,
-  Faye = require('faye');
+import expect from 'expect.js';
+import Faye from 'faye';
+
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Faye (browser)', function() {
   init.call(this);
@@ -17,7 +17,6 @@ describe('[UNIT] Faye (browser)', function() {
     auth.incoming('matthisk', function(message) {
       expect(message).to.be('matthisk');
     });
-
     this.client.subscriptions['test'] = {
       userId: 'matthisk',
       token: 'token',

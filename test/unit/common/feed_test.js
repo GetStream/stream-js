@@ -1,9 +1,9 @@
-var expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  init = require('../utils/hooks').init,
-  td = require('testdouble'),
-  errors = require('../../../src/getstream').errors,
-  StreamFeed = require('../../../src/lib/feed');
+import expect from 'expect.js';
+import td from 'testdouble';
+
+import StreamFeed from '../../../src/lib/feed';
+import errors from '../../../src/lib/errors';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Feed (Common)', function() {
   var get, post, del, feed;

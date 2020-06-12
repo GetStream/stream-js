@@ -1,11 +1,12 @@
-var config = require('../utils/config'),
-  StreamClient = require('../../../src/lib/client'),
-  jwt = require('jsonwebtoken'),
-  url = require('url'),
-  request = require('request'),
-  expect = require('expect.js'),
-  errors = require('../../../src/lib/errors'),
-  qs = require('qs');
+import expect from 'expect.js';
+import jwt from 'jsonwebtoken';
+import url from 'url';
+import qs from 'qs';
+import request from 'request';
+
+import StreamClient from '../../../src/lib/client';
+import errors from '../../../src/lib/errors';
+import config from '../utils/config';
 
 describe("[UNIT] Redirect URL's", function() {
   // beforeEach(beforeEachFn);

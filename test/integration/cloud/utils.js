@@ -1,10 +1,13 @@
-var stream = require('../../../src/getstream');
-var config = require('../utils/config');
-var randUserId = require('../utils/hooks').randUserId;
-var expect = require('chai').expect;
-var should = require('chai').should();
+// import chai from 'chai';
+import chai, { expect } from 'chai';
 
-class CloudContext {
+import stream from '../../../src/getstream';
+import config from '../utils/config';
+import { randUserId } from '../utils/hooks';
+
+const should = chai.should();
+
+export class CloudContext {
   constructor() {
     this.response = null;
     this.prevResponse = null;
@@ -330,7 +333,3 @@ class CloudContext {
     return reaction;
   }
 }
-
-module.exports = {
-  CloudContext: CloudContext,
-};

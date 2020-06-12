@@ -1,9 +1,10 @@
-var stream = require('../../../src/getstream'),
-  errors = require('../../../src/getstream').errors,
-  init = require('../utils/hooks').init,
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  expect = require('expect.js'),
-  wrapCB = require('../utils').wrapCB;
+import expect from 'expect.js';
+
+import stream from '../../../src/getstream';
+import errors from '../../../src/lib/errors';
+
+import { wrapCB } from '../utils';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Node)', function() {
   init.call(this);

@@ -1,5 +1,5 @@
-var stream = require('../../../src/getstream'),
-  config = require('./config');
+const stream = require('../../../src/getstream').default;
+const config = require('./config');
 
 function jwt(resource, action, options) {
   var KJUR = require('exports?KJUR!./kjur');
@@ -57,10 +57,6 @@ function beforeEachNode() {
   this.client = stream.connect(
     config.API_KEY,
     config.API_SECRET,
-  );
-  this.client = stream.connect(
-    config.API_KEY,
-    config.API_SECRET,
     config.APP_ID,
     {
       group: 'testCycle',
@@ -77,26 +73,27 @@ function beforeEachNode() {
   this.flat3 = this.client.feed('flat', randUserId('33'));
   this.secret3 = this.client.feed('secret', randUserId('33'));
   this.notification3 = this.client.feed('notification', randUserId('33'));
-  this.user1ReadOnly = this.client.feed('user', randUserId('11'), null, null, {
-    readOnly: true,
-  });
-  this.user2ReadOnly = this.client.feed('user', randUserId('22'), null, null, {
-    readOnly: true,
-  });
+  const user1ReadOnlyId = randUserId('11');
+  const user2ReadOnlyId = randUserId('22');
+  this.user1ReadOnly = this.client.feed(
+    'user',
+    user1ReadOnlyId,
+    this.client.feed('user', user1ReadOnlyId).getReadOnlyToken(),
+  );
+  this.user2ReadOnly = this.client.feed(
+    'user',
+    user2ReadOnlyId,
+    this.client.feed('user', user2ReadOnlyId).getReadOnlyToken(),
+  );
 }
 
 function beforeEachBrowser() {
   this.client = stream.connect(config.API_KEY);
-  this.client = stream.connect(
-    config.API_KEY,
-    null,
-    config.APP_ID,
-    {
-      group: 'browserTestCycle',
-      location: 'qa',
-      protocol: 'https',
-    },
-  );
+  this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+    group: 'browserTestCycle',
+    location: 'qa',
+    protocol: 'https',
+  });
 
   if (this.localRun) {
     this.client.baseUrl = 'http://localhost:8000/api/';
@@ -116,12 +113,12 @@ function beforeEachBrowser() {
 }
 
 module.exports = {
-  jwt: jwt,
-  randUserId: randUserId,
-  initNode: initNode,
-  initBrowser: initBrowser,
-  beforeEachNode: beforeEachNode,
-  beforeEachBrowser: beforeEachBrowser,
-  beforeEach: config.IS_NODE_ENV ? beforeEachNode : beforeEachBrowser,
+  jwt,
+  randUserId,
+  initNode,
+  initBrowser,
+  beforeEachNode,
+  beforeEachBrowser,
+  beforeEachFn: config.IS_NODE_ENV ? beforeEachNode : beforeEachBrowser,
   init: config.IS_NODE_ENV ? initNode : initBrowser,
 };

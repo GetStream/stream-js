@@ -1,9 +1,9 @@
-var errors = require('../../../src/getstream').errors,
-  expect = require('expect.js'),
-  Promise = require('../../../src/lib/promise'),
-  td = require('testdouble'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  signing = signing || require('../../../src/lib/signing');
+import expect from 'expect.js';
+import td from 'testdouble';
+
+import Promise from '../../../src/lib/promise';
+import errors from '../../../src/lib/errors';
+import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client Batch (Node)', function() {
   beforeEach(beforeEachFn);

@@ -1,7 +1,9 @@
-var expect = require('expect.js'),
-  signing = require('../../../src/lib/signing'),
-  Promise = require('../../../src/lib/promise'),
-  config = require('./config');
+import expect from 'expect.js';
+
+import signing from '../../../src/lib/signing';
+import Promise from '../../../src/lib/promise';
+
+import config from './config';
 
 module.exports.wrapCB = function(expectedStatusCode, done, cb) {
   return function(error, response) {

@@ -1,8 +1,9 @@
-var expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  errors = require('../../../src/getstream').errors,
-  td = require('testdouble'),
-  StreamClient = require('../../../src/lib/client');
+import expect from 'expect.js';
+import td from 'testdouble';
+
+import StreamClient from '../../../src/lib/client';
+import errors from '../../../src/lib/errors';
+import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Personalization (node)', function() {
   let get;

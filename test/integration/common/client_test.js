@@ -1,9 +1,9 @@
-var init = require('../utils/hooks').init,
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  expect = require('expect.js'),
-  errors = require('../../../src/getstream').errors,
-  utils = require('../utils'),
-  config = require('../utils/config');
+import expect from 'expect.js';
+
+import errors from '../../../src/lib/errors';
+import utils from '../utils';
+import config from '../utils/config';
+import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Common)', function() {
   init.call(this);

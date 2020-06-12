@@ -1,5 +1,6 @@
-var { CloudContext } = require('./utils');
-var expect = require('chai').expect;
+import { expect } from 'chai';
+
+import { CloudContext } from './utils';
 
 describe('Read followers', () => {
   let ctx = new CloudContext();

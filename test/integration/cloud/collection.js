@@ -1,5 +1,5 @@
-var { CloudContext } = require('./utils');
-var randUserId = require('../utils/hooks').randUserId;
+import { CloudContext } from './utils';
+import { randUserId } from '../utils/hooks';
 
 describe('Collection CRUD behaviours', () => {
   let ctx = new CloudContext();

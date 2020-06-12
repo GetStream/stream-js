@@ -1,6 +1,7 @@
-var { CloudContext } = require('./utils');
-var url = require('url');
-var expect = require('expect.js');
+import url from 'url';
+import expect from 'expect.js';
+
+import { CloudContext } from './utils';
 
 describe('Reaction pagination', () => {
   let ctx = new CloudContext();
