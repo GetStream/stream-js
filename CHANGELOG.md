@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.5.4 - 2020-06-12
+
+- Github Action
+- More tests for types
+- Format change in changelog
+- Enable node 11
+
 ## 4.5.3 - 2020-05-28
 
 - Add open graph scrape (og) types
