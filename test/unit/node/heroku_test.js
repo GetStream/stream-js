@@ -1,14 +1,14 @@
-var beforeEachFn = require('../utils/hooks').beforeEach,
-  init = require('../utils/hooks').init,
-  stream = require('../../../src/getstream'),
-  expect = require('expect.js');
+import expect from 'expect.js';
 
-describe('[UNIT] Stream client (Heroku)', function() {
+import stream from '../../../src/getstream';
+import { init, beforeEachFn } from '../utils/hooks';
+
+describe('[UNIT] Stream client (Heroku)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  describe('#Heroku', function() {
-    it('heroku (stream-io-api.com)', function(done) {
+  describe('#Heroku', function () {
+    it('heroku (stream-io-api.com)', function (done) {
       var url = 'https://thierry:pass@stream-io-api.com/?app_id=1';
       process.env.STREAM_URL = url;
       this.client = stream.connect();
@@ -20,7 +20,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku (getstream.io)', function(done) {
+    it('heroku (getstream.io)', function (done) {
       var url = 'https://thierry:pass@getstream.io/?app_id=1';
       process.env.STREAM_URL = url;
       process.env.STREAM_BASE_URL = 'https://api.getstream.io/api/';
@@ -34,7 +34,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku legacy (stream-io-api.com)', function(done) {
+    it('heroku legacy (stream-io-api.com)', function (done) {
       var url =
         'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@stream-io-api.com/?app_id=669';
       process.env.STREAM_URL = url;
@@ -49,7 +49,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku legacy (getstream.io)', function(done) {
+    it('heroku legacy (getstream.io)', function (done) {
       var url =
         'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669';
       process.env.STREAM_URL = url;
@@ -66,7 +66,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku with location (stream-io-api.com)', function(done) {
+    it('heroku with location (stream-io-api.com)', function (done) {
       var url =
         'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.stream-io-api.com/?app_id=1';
       process.env.STREAM_URL = url;
@@ -83,7 +83,7 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku with location (getstream.io)', function(done) {
+    it('heroku with location (getstream.io)', function (done) {
       var url =
         'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1';
       process.env.STREAM_URL = url;
@@ -102,14 +102,10 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku_overwrite (stream-io-api.com)', function(done) {
+    it('heroku_overwrite (stream-io-api.com)', function (done) {
       var url = 'https://thierry:pass@stream-io-api.com/?app_id=1';
       process.env.STREAM_URL = url;
-      this.client = stream.connect(
-        'a',
-        'b',
-        'c',
-      );
+      this.client = stream.connect('a', 'b', 'c');
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');
       expect(this.client.appId).to.eql('c');
@@ -117,14 +113,10 @@ describe('[UNIT] Stream client (Heroku)', function() {
       done();
     });
 
-    it('heroku_overwrite (getstream.io)', function(done) {
+    it('heroku_overwrite (getstream.io)', function (done) {
       var url = 'https://thierry:pass@getstream.io/?app_id=1';
       process.env.STREAM_URL = url;
-      this.client = stream.connect(
-        'a',
-        'b',
-        'c',
-      );
+      this.client = stream.connect('a', 'b', 'c');
       expect(this.client.apiKey).to.eql('a');
       expect(this.client.apiSecret).to.eql('b');
       expect(this.client.appId).to.eql('c');

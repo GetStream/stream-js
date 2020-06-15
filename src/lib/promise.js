@@ -1,3 +1,3 @@
-var Promise = require('faye/src/util/promise');
+import Promise from 'faye/src/util/promise';
 
-module.exports = Promise;
+export default Promise;

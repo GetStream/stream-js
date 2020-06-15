@@ -1,17 +1,16 @@
-var init = require('../utils/hooks').init,
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import { init, beforeEachFn } from '../utils/hooks';
 
-describe('[INTEGRATION] Stream client (Promises)', function() {
+describe('[INTEGRATION] Stream client (Promises)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  it('get promises', function() {
+  it('get promises', function () {
     return this.user1.get({
       limit: 1,
     });
   });
 
-  it('post promises', function() {
+  it('post promises', function () {
     var activity = {
       actor: 'test-various:characters',
       verb: 'add',
@@ -21,7 +20,7 @@ describe('[INTEGRATION] Stream client (Promises)', function() {
     return this.user1.addActivity(activity);
   });
 
-  it('post promises fail', function(done) {
+  it('post promises fail', function (done) {
     var activity = {
       actor: 'test-various:characters',
       verb: 'add',
@@ -30,10 +29,10 @@ describe('[INTEGRATION] Stream client (Promises)', function() {
     };
 
     this.user1.addActivity(activity).then(
-      function() {
+      function () {
         done('expected failure');
       },
-      function() {
+      function () {
         done();
       },
     );

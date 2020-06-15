@@ -1,16 +1,17 @@
-var config = require('../utils/config'),
-  StreamClient = require('../../../src/lib/client'),
-  jwt = require('jsonwebtoken'),
-  url = require('url'),
-  request = require('request'),
-  expect = require('expect.js'),
-  errors = require('../../../src/lib/errors'),
-  qs = require('qs');
+import expect from 'expect.js';
+import jwt from 'jsonwebtoken';
+import url from 'url';
+import qs from 'qs';
+import request from 'request';
 
-describe("[UNIT] Redirect URL's", function() {
+import StreamClient from '../../../src/lib/client';
+import errors from '../../../src/lib/errors';
+import config from '../utils/config';
+
+describe("[UNIT] Redirect URL's", function () {
   // beforeEach(beforeEachFn);
 
-  it('should create email redirects (analytics.stream-io-api.com)', function() {
+  it('should create email redirects (analytics.stream-io-api.com)', function () {
     var expectedParts = [
       'https://analytics.stream-io-api.com/analytics/redirect/',
       'auth_type=jwt',
@@ -53,7 +54,7 @@ describe("[UNIT] Redirect URL's", function() {
     }
   });
 
-  it('should create email redirects (analytics.getstream.io)', function() {
+  it('should create email redirects (analytics.getstream.io)', function () {
     var expectedParts = [
       'https://analytics.getstream.io/analytics/redirect/',
       'auth_type=jwt',
@@ -98,7 +99,7 @@ describe("[UNIT] Redirect URL's", function() {
     delete process.env['STREAM_ANALYTICS_BASE_URL'];
   });
 
-  it('should follow redirect urls', function(done) {
+  it('should follow redirect urls', function (done) {
     var events = [
         {
           content_list: ['tweet:1', 'tweet:2', 'tweet:3'],
@@ -120,7 +121,7 @@ describe("[UNIT] Redirect URL's", function() {
 
     var redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    request(redirectUrl, function(err, response) {
+    request(redirectUrl, function (err, response) {
       if (err) {
         done(err);
       } else if (response.statusCode !== 200) {
@@ -133,9 +134,9 @@ describe("[UNIT] Redirect URL's", function() {
     });
   });
 
-  it('should fail creating email redirects on invalid targets', function() {
+  it('should fail creating email redirects on invalid targets', function () {
     var self = this;
-    expect(function() {
+    expect(function () {
       self.client.createRedirectUrl('google.com', 'tommaso', []);
     }).to.throwException(new errors.MissingSchemaError());
   });

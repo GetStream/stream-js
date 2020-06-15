@@ -1,35 +1,28 @@
-var errors = require('./errors');
+import errors from './errors';
 
-var Collections = function() {
-  this.initialize.apply(this, arguments);
-};
-
-Collections.prototype = {
-  initialize: function(client, token) {
-    /**
-     * Initialize a feed object
-     * @method intialize
-     * @memberof Collections.prototype
-     * @param {StreamCloudClient} client Stream client this collection is constructed from
-     * @param {string} token JWT token
-     */
+export default class Collections {
+  /**
+   * Initialize a feed object
+   * @method constructor
+   * @memberof Collections.prototype
+   * @param {StreamCloudClient} client Stream client this collection is constructed from
+   * @param {string} token JWT token
+   */
+  constructor(client, token) {
     this.client = client;
     this.token = token;
-  },
+  }
 
-  buildURL: function(collection, itemId) {
-    var url = 'collections/' + collection + '/';
-    if (itemId === undefined) {
-      return url;
-    }
-    return url + itemId + '/';
-  },
+  buildURL(collection, itemId) {
+    const url = 'collections/' + collection + '/';
+    return itemId === undefined ? url : url + itemId + '/';
+  }
 
-  entry: function(collection, itemId, itemData) {
+  entry(collection, itemId, itemData) {
     return new CollectionEntry(this, collection, itemId, itemData);
-  },
+  }
 
-  get: function(collection, itemId, callback) {
+  get(collection, itemId, callback) {
     /**
      * get item from collection
      * @method get
@@ -40,14 +33,14 @@ Collections.prototype = {
      * @return {Promise} Promise object
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
-    var self = this;
+
     return this.client
       .get({
         url: this.buildURL(collection, itemId),
         signature: this.token,
       })
       .then((response) => {
-        let entry = self.client.collections.entry(
+        const entry = this.client.collections.entry(
           response.collection,
           response.id,
           response.data,
@@ -58,9 +51,9 @@ Collections.prototype = {
         }
         return entry;
       });
-  },
+  }
 
-  add: function(collection, itemId, itemData, callback) {
+  add(collection, itemId, itemData, callback) {
     /**
      * Add item to collection
      * @method add
@@ -72,23 +65,19 @@ Collections.prototype = {
      * @return {Promise} Promise object
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    var self = this;
 
-    if (itemId === null) {
-      itemId = undefined;
-    }
-    var body = {
-      id: itemId,
+    const body = {
+      id: itemId === null ? undefined : itemId,
       data: itemData,
     };
     return this.client
       .post({
         url: this.buildURL(collection),
-        body: body,
+        body,
         signature: this.token,
       })
       .then((response) => {
-        let entry = self.client.collections.entry(
+        const entry = this.client.collections.entry(
           response.collection,
           response.id,
           response.data,
@@ -99,9 +88,9 @@ Collections.prototype = {
         }
         return entry;
       });
-  },
+  }
 
-  update: function(collection, entryId, data, callback) {
+  update(collection, entryId, data, callback) {
     /**
      * Update entry in the collection
      * @method update
@@ -114,18 +103,15 @@ Collections.prototype = {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    var self = this;
-    var body = {
-      data,
-    };
+
     return this.client
       .put({
         url: this.buildURL(collection, entryId),
-        body: body,
+        body: { data },
         signature: this.token,
       })
       .then((response) => {
-        let entry = self.client.collections.entry(
+        const entry = this.client.collections.entry(
           response.collection,
           response.id,
           response.data,
@@ -136,9 +122,9 @@ Collections.prototype = {
         }
         return entry;
       });
-  },
+  }
 
-  delete: function(collection, entryId, callback) {
+  delete(collection, entryId, callback) {
     /**
      * Delete entry from collection
      * @method delete
@@ -148,16 +134,16 @@ Collections.prototype = {
      * @return {Promise} Promise object
      * @example collection.delete("food", "cheese101")
      */
-    return this.client['delete'](
+    return this.client.delete(
       {
         url: this.buildURL(collection, entryId),
         signature: this.token,
       },
       callback,
     );
-  },
+  }
 
-  upsert: function(collection, data, callback) {
+  upsert(collection, data, callback) {
     /**
      * Upsert one or more items within a collection.
      *
@@ -174,28 +160,28 @@ Collections.prototype = {
       );
     }
 
-    var last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = last.call ? last : undefined;
 
     if (!Array.isArray(data)) {
       data = [data];
     }
-    var data_json = { data: {} };
-    data_json['data'][collection] = data;
+
+    const body = { data: { [collection]: data } };
 
     return this.client.post(
       {
         url: 'collections/',
         serviceName: 'api',
-        body: data_json,
+        body,
         signature: this.client.getCollectionsToken(),
       },
       callback,
     );
-  },
+  }
 
-  select: function(collection, ids, callback) {
+  select(collection, ids, callback) {
     /**
      * Select all objects with ids from the collection.
      *
@@ -212,7 +198,7 @@ Collections.prototype = {
       );
     }
 
-    var last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = last.call ? last : undefined;
 
@@ -220,12 +206,8 @@ Collections.prototype = {
       ids = [ids];
     }
 
-    var params = {
-      foreign_ids: ids
-        .map((id) => {
-          return collection + ':' + id;
-        })
-        .join(','),
+    const params = {
+      foreign_ids: ids.map((id) => `${collection}:${id}`).join(','),
     };
 
     return this.client.get(
@@ -237,9 +219,9 @@ Collections.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  deleteMany: function(collection, ids, callback) {
+  deleteMany(collection, ids, callback) {
     /**
      * Remove all objects by id from the collection.
      *
@@ -256,22 +238,17 @@ Collections.prototype = {
       );
     }
 
-    var last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = last.call ? last : undefined;
 
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
-    ids = ids
-      .map(function(id) {
-        return id.toString();
-      })
-      .join(',');
 
-    var params = {
+    const params = {
       collection_name: collection,
-      ids: ids,
+      ids: ids.map((id) => id.toString()).join(','),
     };
 
     return this.client.delete(
@@ -283,26 +260,22 @@ Collections.prototype = {
       },
       callback,
     );
-  },
-};
+  }
+}
 
-var CollectionEntry = function() {
-  this.initialize.apply(this, arguments);
-};
-
-CollectionEntry.prototype = {
-  initialize: function(store, collection, id, data) {
+class CollectionEntry {
+  constructor(store, collection, id, data) {
     this.collection = collection;
     this.store = store;
     this.id = id;
     this.data = data;
-  },
+  }
 
-  _streamRef: function() {
+  _streamRef() {
     return `SO:${this.collection}:${this.id}`;
-  },
+  }
 
-  get: function(callback) {
+  get(callback) {
     /**
      * get item from collection and sync data
      * @method get
@@ -319,9 +292,9 @@ CollectionEntry.prototype = {
       }
       return response;
     });
-  },
+  }
 
-  add: function(callback) {
+  add(callback) {
     /**
      * Add item to collection
      * @method add
@@ -340,9 +313,9 @@ CollectionEntry.prototype = {
         }
         return response;
       });
-  },
+  }
 
-  update: function(callback) {
+  update(callback) {
     /**
      * Update item in the object storage
      * @method update
@@ -362,9 +335,9 @@ CollectionEntry.prototype = {
         }
         return response;
       });
-  },
+  }
 
-  delete: function(callback) {
+  delete(callback) {
     /**
      * Delete item from collection
      * @method delete
@@ -381,7 +354,5 @@ CollectionEntry.prototype = {
       }
       return response;
     });
-  },
-};
-
-module.exports = Collections;
+  }
+}

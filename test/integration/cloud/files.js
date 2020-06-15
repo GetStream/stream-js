@@ -1,6 +1,7 @@
-var { CloudContext } = require('./utils');
-var fs = require('fs');
-var request = require('request');
+import fs from 'fs';
+import request from 'request';
+
+import { CloudContext } from './utils';
 
 describe('Files', () => {
   let ctx = new CloudContext();
@@ -26,8 +27,8 @@ describe('Files', () => {
   });
 
   describe('When the file is requested', () => {
-    ctx.test('should return 200', function(done) {
-      request.get(fileURL, function(err, res) {
+    ctx.test('should return 200', function (done) {
+      request.get(fileURL, function (err, res) {
         res.statusCode.should.eql(200);
         done();
       });

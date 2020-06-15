@@ -1,23 +1,23 @@
-var stream = require('../../../src/getstream'),
-  errors = require('../../../src/getstream').errors,
-  expect = require('expect.js'),
-  init = require('../utils/hooks').init,
-  Promise = require('../../../src/lib/promise'),
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import expect from 'expect.js';
 
-describe('[INTEGRATION] Stream client (Faye)', function() {
+import stream from '../../../src/getstream';
+import errors from '../../../src/lib/errors';
+import Promise from '../../../src/lib/promise';
+import { init, beforeEachFn } from '../utils/hooks';
+
+describe('[INTEGRATION] Stream client (Faye)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  it('fayeGetClient', function() {
+  it('fayeGetClient', function () {
     this.user1.getFayeClient();
   });
 
-  it('fayeSubscribe', function() {
+  it('fayeSubscribe', function () {
     return this.user1.subscribe(function callback() {});
   });
 
-  it('fayeSubscribeListening', function(done) {
+  it('fayeSubscribeListening', function (done) {
     this.timeout(60000);
 
     var testUser1 = this.user1,
@@ -32,7 +32,7 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
         object: 1,
       };
 
-    var msgCallback = function(message) {
+    var msgCallback = function (message) {
       if (message && message['new'] && message['new'].length > 0) {
         messages += 1;
       }
@@ -42,7 +42,7 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
       }
     };
 
-    var httpCallback = function(error, response, body) {
+    var httpCallback = function (error, response, body) {
       if (error) done(error);
       if (response.statusCode !== 201) done(body);
     };
@@ -51,14 +51,14 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
       testUser1.subscribe(msgCallback),
       testUser2.subscribe(msgCallback),
       testUser3.subscribe(msgCallback),
-    ]).then(function() {
+    ]).then(function () {
       testUser1.addActivity(activity, httpCallback);
       testUser2.addActivity(activity, httpCallback);
       testUser3.addActivity(activity, httpCallback);
     }, done);
   });
 
-  it('fayeSubscribeListeningWrongToken', function(done) {
+  it('fayeSubscribeListeningWrongToken', function (done) {
     // Invalid token:
     var testUser1 = this.client.feed(
       'user',
@@ -75,35 +75,35 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
         object: 1,
       };
 
-    var httpCallback = function(error, response, body) {
+    var httpCallback = function (error, response, body) {
       if (error) done(error);
       if (response.statusCode !== 201) done(body);
     };
 
-    var doneYet = function() {
+    var doneYet = function () {
       messages++;
 
       if (messages === 2) done();
     };
 
     testUser1
-      .subscribe(function() {
+      .subscribe(function () {
         done('testUser1 should not receive any messages');
       })
-      .then(function() {
+      .then(function () {
         done('testUser1 should not authenticate succefully');
       }, doneYet);
 
-    testUser2.subscribe(doneYet).then(function() {
+    testUser2.subscribe(doneYet).then(function () {
       testUser2.addActivity(activity, httpCallback);
     }, done);
   });
 
-  it('fayeSubscribeScope', function(done) {
+  it('fayeSubscribeScope', function (done) {
     this.user1ReadOnly.getFayeClient();
     var isDone = false;
 
-    var doneYet = function() {
+    var doneYet = function () {
       if (!isDone) {
         done();
         isDone = true;
@@ -114,11 +114,11 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     subscription.then(doneYet);
   });
 
-  it('fayeSubscribeScopeTampered', function(done) {
+  it('fayeSubscribeScopeTampered', function (done) {
     this.user1ReadOnly.getFayeClient();
     var isDone = false;
 
-    var doneYet = function() {
+    var doneYet = function () {
       if (!isDone) {
         done();
         isDone = true;
@@ -128,14 +128,14 @@ describe('[INTEGRATION] Stream client (Faye)', function() {
     subscription.then(doneYet);
   });
 
-  it('fayeSubscribeError', function(done) {
+  it('fayeSubscribeError', function (done) {
     var client = stream.connect('5crf3bhfzesn');
 
     function sub() {
       var user1 = client.feed('user', '11', 'secret');
       user1.subscribe();
     }
-    expect(sub).to.throwException(function(e) {
+    expect(sub).to.throwException(function (e) {
       expect(e).to.be.a(errors.SiteError);
     });
     done();

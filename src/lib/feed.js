@@ -1,18 +1,10 @@
-var errors = require('./errors');
-var utils = require('./utils');
-var isObject = require('lodash/isObject');
-var isPlainObject = require('lodash/isPlainObject');
-var StreamUser = require('./user');
-var signing = require('./signing');
+import isPlainObject from 'lodash/isPlainObject';
+import isObject from 'lodash/isObject';
 
-var StreamFeed = function() {
-  /**
-   * Manage api calls for specific feeds
-   * The feed object contains convenience functions such add activity, remove activity etc
-   * @class StreamFeed
-   */
-  this.initialize.apply(this, arguments);
-};
+import StreamUser from './user';
+import errors from './errors';
+import utils from './utils';
+import signing from './signing';
 
 function replaceStreamObjects(obj) {
   let cloned = obj;
@@ -29,11 +21,16 @@ function replaceStreamObjects(obj) {
   return cloned;
 }
 
-StreamFeed.prototype = {
-  initialize: function(client, feedSlug, userId, token) {
+/**
+ * Manage api calls for specific feeds
+ * The feed object contains convenience functions such add activity, remove activity etc
+ * @class StreamFeed
+ */
+export default class StreamFeed {
+  constructor(client, feedSlug, userId, token) {
     /**
      * Initialize a feed object
-     * @method intialize
+     * @method constructor
      * @memberof StreamFeed.prototype
      * @param {StreamClient} client - The stream client this feed is constructed from
      * @param {string} feedSlug - The feed slug
@@ -78,9 +75,9 @@ StreamFeed.prototype = {
       'site-' + this.client.appId + '-feed-' + this.feedTogether;
 
     this.enrichByDefault = false;
-  },
+  }
 
-  addActivity: function(activity, callback) {
+  addActivity(activity, callback) {
     /**
      * Adds the given activity to the feed and
      * calls the specified callback
@@ -104,9 +101,9 @@ StreamFeed.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  removeActivity: function(activityId, callback) {
+  removeActivity(activityId, callback) {
     /**
      * Removes the activity by activityId
      * @method removeActivity
@@ -119,13 +116,13 @@ StreamFeed.prototype = {
      * @example
      * feed.removeActivity({'foreignId': foreignId});
      */
-    var identifier = activityId.foreignId ? activityId.foreignId : activityId;
-    var params = {};
+    const identifier = activityId.foreignId || activityId;
+    const params = {};
     if (activityId.foreignId) {
       params['foreign_id'] = '1';
     }
 
-    return this.client['delete'](
+    return this.client.delete(
       {
         url: 'feed/' + this.feedUrl + '/' + identifier + '/',
         qs: params,
@@ -133,9 +130,9 @@ StreamFeed.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  addActivities: function(activities, callback) {
+  addActivities(activities, callback) {
     /**
      * Adds the given activities to the feed and calls the specified callback
      * @method addActivities
@@ -144,22 +141,18 @@ StreamFeed.prototype = {
      * @param  {requestCallback} callback   Callback to call on completion
      * @return {Promise}               XHR request object
      */
-    activities = replaceStreamObjects(activities);
-    var data = {
-      activities: activities,
-    };
-    var xhr = this.client.post(
+    const body = { activities: replaceStreamObjects(activities) };
+    return this.client.post(
       {
         url: 'feed/' + this.feedUrl + '/',
-        body: data,
+        body,
         signature: this.signature,
       },
       callback,
     );
-    return xhr;
-  },
+  }
 
-  follow: function(targetSlug, targetUserId, options, callback) {
+  follow(targetSlug, targetUserId, options, callback) {
     /**
      * Follows the given target feed
      * @method follow
@@ -180,11 +173,10 @@ StreamFeed.prototype = {
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
 
-    var activityCopyLimit;
-    var last = arguments[arguments.length - 1];
+    let activityCopyLimit;
+    const last = arguments[arguments.length - 1];
     // callback is always the last argument
     callback = last.call ? last : undefined;
-    var target = targetSlug + ':' + targetUserId;
 
     // check for additional options
     if (options && !options.call) {
@@ -193,8 +185,8 @@ StreamFeed.prototype = {
       }
     }
 
-    var body = {
-      target: target,
+    const body = {
+      target: targetSlug + ':' + targetUserId,
     };
 
     if (
@@ -207,14 +199,14 @@ StreamFeed.prototype = {
     return this.client.post(
       {
         url: 'feed/' + this.feedUrl + '/following/',
-        body: body,
+        body,
         signature: this.signature,
       },
       callback,
     );
-  },
+  }
 
-  unfollow: function(targetSlug, targetUserId, optionsOrCallback, callback) {
+  unfollow(targetSlug, targetUserId, optionsOrCallback, callback) {
     /**
      * Unfollow the given feed
      * @method unfollow
@@ -228,8 +220,8 @@ StreamFeed.prototype = {
      * @return {object}                XHR request object
      * @example feed.unfollow('user', '2', callback);
      */
-    var options = {},
-      qs = {};
+    let options = {};
+    const qs = {};
     if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
     if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
     if (typeof options.keepHistory === 'boolean' && options.keepHistory)
@@ -237,19 +229,18 @@ StreamFeed.prototype = {
 
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
-    var targetFeedId = targetSlug + ':' + targetUserId;
-    var xhr = this.client['delete'](
+    const targetFeedId = targetSlug + ':' + targetUserId;
+    return this.client.delete(
       {
         url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
-        qs: qs,
+        qs,
         signature: this.signature,
       },
       callback,
     );
-    return xhr;
-  },
+  }
 
-  following: function(options, callback) {
+  following(options, callback) {
     /**
      * List which feeds this feed is following
      * @method following
@@ -272,9 +263,9 @@ StreamFeed.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  followers: function(options, callback) {
+  followers(options, callback) {
     /**
      * List the followers of this feed
      * @method followers
@@ -298,9 +289,9 @@ StreamFeed.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  get: function(options, callback) {
+  get(options, callback) {
     /**
      * Reads the feed
      * @method get
@@ -311,7 +302,6 @@ StreamFeed.prototype = {
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
-    var path;
 
     if (options && options['mark_read'] && options['mark_read'].join) {
       options['mark_read'] = options['mark_read'].join(',');
@@ -322,11 +312,10 @@ StreamFeed.prototype = {
     }
 
     this.client.replaceReactionOptions(options);
-    if (this.client.shouldUseEnrichEndpoint(options)) {
-      path = 'enrich/feed/';
-    } else {
-      path = 'feed/';
-    }
+
+    const path = this.client.shouldUseEnrichEndpoint(options)
+      ? 'enrich/feed/'
+      : 'feed/';
 
     return this.client.get(
       {
@@ -336,9 +325,9 @@ StreamFeed.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  getReadOnlyToken: function() {
+  getReadOnlyToken() {
     /**
      * Returns a token that allows only read operations
      *
@@ -351,14 +340,14 @@ StreamFeed.prototype = {
      * @example
      * client.getReadOnlyToken('user', '1');
      */
-    var feedId = '' + this.slug + this.userId;
+
     return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: feedId,
+      feedId: `${this.slug}${this.userId}`,
       expireTokens: this.client.expireTokens,
     });
-  },
+  }
 
-  getReadWriteToken: function() {
+  getReadWriteToken() {
     /**
      * Returns a token that allows read and write operations
      * @deprecated since version 4.0
@@ -370,14 +359,13 @@ StreamFeed.prototype = {
      * @example
      * client.getReadWriteToken('user', '1');
      */
-    var feedId = '' + this.slug + this.userId;
     return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: feedId,
+      feedId: `${this.slug}${this.userId}`,
       expireTokens: this.client.expireTokens,
     });
-  },
+  }
 
-  getActivityDetail: function(activityId, options, callback) {
+  getActivityDetail(activityId, options, callback) {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
@@ -398,9 +386,9 @@ StreamFeed.prototype = {
       ),
       callback,
     );
-  },
+  }
 
-  getFayeClient: function() {
+  getFayeClient() {
     /**
      * Returns the current faye client object
      * @method getFayeClient
@@ -409,9 +397,9 @@ StreamFeed.prototype = {
      * @return {object} Faye client
      */
     return this.client.getFayeClient();
-  },
+  }
 
-  subscribe: function(callback) {
+  subscribe(callback) {
     /**
      * Subscribes to any changes in the feed, return a promise
      * @method subscribe
@@ -429,7 +417,7 @@ StreamFeed.prototype = {
       );
     }
 
-    var subscription = this.getFayeClient().subscribe(
+    const subscription = this.getFayeClient().subscribe(
       '/' + this.notificationChannel,
       callback,
     );
@@ -440,23 +428,23 @@ StreamFeed.prototype = {
     };
 
     return subscription;
-  },
+  }
 
-  unsubscribe: function() {
+  unsubscribe() {
     /**
      * Cancel updates created via feed.subscribe()
      * @return void
      */
-    var streamSubscription = this.client.subscriptions[
+    const streamSubscription = this.client.subscriptions[
       '/' + this.notificationChannel
     ];
     if (streamSubscription) {
       delete this.client.subscriptions['/' + this.notificationChannel];
       streamSubscription.fayeSubscription.cancel();
     }
-  },
+  }
 
-  updateActivityToTargets: function(
+  updateActivityToTargets(
     foreign_id,
     time,
     new_targets,
@@ -495,9 +483,9 @@ StreamFeed.prototype = {
 
     if (added_targets && removed_targets) {
       // brute force - iterate through added, check to see if removed contains that element
-      for (var i = 0; i < added_targets.length; i++) {
+      for (let i = 0; i < added_targets.length; i++) {
         // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
-        for (var j = 0; j < removed_targets.length; j++) {
+        for (let j = 0; j < removed_targets.length; j++) {
           if (removed_targets[j] == added_targets[i]) {
             throw new Error(
               "Can't have the same feed ID in added_targets and removed_targets.",
@@ -507,7 +495,7 @@ StreamFeed.prototype = {
       }
     }
 
-    var body = {
+    const body = {
       foreign_id: foreign_id,
       time: time,
     };
@@ -524,9 +512,7 @@ StreamFeed.prototype = {
     return this.client.post({
       url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
       signature: this.signature,
-      body: body,
+      body,
     });
-  },
-};
-
-module.exports = StreamFeed;
+  }
+}

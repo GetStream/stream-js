@@ -1,15 +1,15 @@
-var init = require('../utils/hooks').init,
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  expect = require('expect.js'),
-  errors = require('../../../src/getstream').errors,
-  utils = require('../utils'),
-  config = require('../utils/config');
+import expect from 'expect.js';
 
-describe('[INTEGRATION] Stream client (Common)', function() {
+import errors from '../../../src/lib/errors';
+import utils from '../utils';
+import config from '../utils/config';
+import { init, beforeEachFn } from '../utils/hooks';
+
+describe('[INTEGRATION] Stream client (Common)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  it.skip('handlers', function() {
+  it.skip('handlers', function () {
     var called = {};
     var self = this;
     called.request = 0;
@@ -30,79 +30,79 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       .get({
         limit: 1,
       })
-      .then(function() {
+      .then(function () {
         self.client.off();
         return self.user1.get({ limit: 1 });
       })
-      .then(function() {
+      .then(function () {
         expect(called.request).to.eql(1);
         expect(called.response).to.eql(1);
       });
   });
 
-  it.skip('err not null', function(done) {
+  it.skip('err not null', function (done) {
     this.user1.addActivity(
       {
         actor: 'actorname',
         actorName: 'abc',
         verb: 'follow',
       },
-      function(error) {
+      function (error) {
         expect(error).to.be.an(Object);
         done();
       },
     );
   });
 
-  it('signing', function(done) {
+  it('signing', function (done) {
     expect(this.user1.token).to.be.an('string');
     done();
   });
 
-  it('get wrong feed', function(done) {
+  it('get wrong feed', function (done) {
     var self = this;
 
-    var getFeed = function() {
+    var getFeed = function () {
       self.client.feed('flat1');
     };
-    expect(getFeed).to.throwException(function(e) {
+    expect(getFeed).to.throwException(function (e) {
       expect(e).to.be.a(errors.FeedError);
     });
     done();
   });
 
-  it('get wrong format', function(done) {
+  it('get wrong format', function (done) {
     var self = this;
 
-    var getFeed = function() {
+    var getFeed = function () {
       self.client.feed('flat:1', '2');
     };
-    expect(getFeed).to.throwException(function(e) {
+    expect(getFeed).to.throwException(function (e) {
       expect(e).to.be.a(errors.FeedError);
     });
     done();
   });
 
-  it('get invalid format', function() {
+  it('get invalid format', function () {
     var self = this;
 
     var invalidFormats = [];
-    invalidFormats.push(function() {
+    invalidFormats.push(function () {
       self.client.feed('flat 1', '2');
     });
-    invalidFormats.push(function() {
+    invalidFormats.push(function () {
       self.client.feed('flat1', '2:3');
     });
-    invalidFormats.push(function() {
+    invalidFormats.push(function () {
       self.user1.follow('flat 1', '3');
     });
-    invalidFormats.push(function() {
+    invalidFormats.push(function () {
       self.user1.follow('flat', '3 3');
     });
     // verify all of the above throw an error
     for (var i = 0; i < invalidFormats.length; i++) {
       var callable = invalidFormats[i];
-      expect(callable).to.throwException(function(e) {
+      expect(callable).to.throwException(function (e) {
         expect(e).to.be.a(errors.FeedError);
       });
     }
@@ -110,7 +110,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
     this.client.feed('flat1', '2-3', 'token');
   });
 
-  it('add activity', function() {
+  it('add activity', function () {
     var self = this;
     var activityId = null;
     var activity = {
@@ -122,16 +122,16 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         activityId = body['id'];
         return self.user1.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['id']).to.eql(activityId);
       });
   });
 
-  it('add complex activity', function() {
+  it('add complex activity', function () {
     var self = this;
     var activityId = null;
     var activity = {
@@ -150,11 +150,11 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return this.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         activityId = body['id'];
         return self.user1.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['id']).to.eql(activityId);
         expect(body['results'][0]['participants']).to.eql([
           'Thierry',
@@ -168,7 +168,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       });
   });
 
-  it('add activity no callback', function() {
+  it('add activity no callback', function () {
     var activity = {
       actor: 1,
       verb: 'add',
@@ -178,7 +178,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
     return this.user1.addActivity(activity);
   });
 
-  it('remove activity', function() {
+  it('remove activity', function () {
     var self = this;
     var activity = {
       actor: 1,
@@ -186,13 +186,13 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       object: 1,
     };
 
-    return this.user1.addActivity(activity).then(function(body) {
+    return this.user1.addActivity(activity).then(function (body) {
       var activityId = body['id'];
       return self.user1.removeActivity(activityId);
     });
   });
 
-  it('remove activity foreign id', function() {
+  it('remove activity foreign id', function () {
     var self = this;
     var activity = {
       actor: 1,
@@ -205,20 +205,20 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return self.user4
       .addActivity(activity)
-      .then(function() {
+      .then(function () {
         return self.user4.removeActivity({
           foreignId: 'add:2',
         });
       })
-      .then(function() {
+      .then(function () {
         return self.user4.get({ limit: 10 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'].length).to.be(0);
       });
   });
 
-  it('add activities', function() {
+  it('add activities', function () {
     var self = this;
     var activityIdFirst, activityIdLast;
     var activities = [
@@ -236,18 +236,18 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return this.user1
       .addActivities(activities)
-      .then(function(body) {
+      .then(function (body) {
         activityIdFirst = body['activities'][0]['id'];
         activityIdLast = body['activities'][1]['id'];
         return self.user1.get({ limit: 2 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['id']).to.eql(activityIdLast);
         expect(body['results'][1]['id']).to.eql(activityIdFirst);
       });
   });
 
-  it('follow', function() {
+  it('follow', function () {
     var self = this;
     var activityId = null;
 
@@ -259,32 +259,32 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return self.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         activityId = body['id'];
         return self.aggregated2.follow('user', self.user1.userId);
       })
-      .then(function() {
+      .then(function () {
         return utils.delay(config.READ_TIMEOUT);
       })
       .then(function check() {
         return self.aggregated2.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['activities'][0]['id']).to.eql(activityId);
       });
   });
 
-  it('follow without callback', function() {
+  it('follow without callback', function () {
     return this.aggregated2.follow('user', '111');
   });
 
-  it('follow with copy limit', function() {
+  it('follow with copy limit', function () {
     return this.aggregated2.follow('user', '999', {
       limit: 500,
     });
   });
 
-  it('unfollow', function() {
+  it('unfollow', function () {
     var self = this;
     var activityId = null;
 
@@ -300,16 +300,16 @@ describe('[INTEGRATION] Stream client (Common)', function() {
         activityId = body['id'];
         return self.aggregated2.follow('user', self.user1.userId);
       })
-      .then(function() {
+      .then(function () {
         return self.aggregated2.unfollow('user', self.user1.userId);
       })
-      .then(function() {
+      .then(function () {
         return utils.delay(config.READ_TIMEOUT);
       })
-      .then(function() {
+      .then(function () {
         return self.aggregated2.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         var firstResult = body['results'][0];
         var activityFound = firstResult
           ? firstResult['activities'][0]['id']
@@ -318,7 +318,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       });
   });
 
-  it('unfollow keep_history', function() {
+  it('unfollow keep_history', function () {
     var self = this;
 
     var activityId = null;
@@ -330,43 +330,43 @@ describe('[INTEGRATION] Stream client (Common)', function() {
     };
     return self.user1
       .addActivity(activity)
-      .then(function(body) {
+      .then(function (body) {
         activityId = body['id'];
         return self.flat3.follow('user', self.user1.userId);
       })
-      .then(function() {
+      .then(function () {
         return self.flat3.unfollow('user', self.user1.userId, {
           keepHistory: true,
         });
       })
-      .then(function() {
+      .then(function () {
         return utils.delay(config.READ_TIMEOUT);
       })
-      .then(function() {
+      .then(function () {
         return self.flat3.get({ limit: 1 });
       })
-      .then(function(body) {
+      .then(function (body) {
         var firstResult = body['results'][0];
         var activityFound = firstResult ? firstResult['id'] : null;
         expect(activityFound).to.eql(activityId);
       });
   });
 
-  it('list followers', function() {
+  it('list followers', function () {
     return this.user1.followers({
       limit: '10',
       offset: '10',
     });
   });
 
-  it('list following', function() {
+  it('list following', function () {
     return this.user1.following({
       limit: '10',
       offset: '10',
     });
   });
 
-  it('do i follow', function() {
+  it('do i follow', function () {
     var self = this;
 
     return this.user1
@@ -383,13 +383,13 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       });
   });
 
-  it('get read-only feed', function() {
+  it('get read-only feed', function () {
     return this.user1ReadOnly.get({
       limit: 2,
     });
   });
 
-  it('get filtering', function() {
+  it('get filtering', function () {
     // first add three activities
     //TODO find a library to make async testing easier on the eye
     var self = this;
@@ -423,7 +423,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
         };
         return self.user1.addActivity(activity);
       })
-      .then(function(body) {
+      .then(function (body) {
         return utils.delay(200, body);
       })
       .then(function get(body) {
@@ -458,7 +458,7 @@ describe('[INTEGRATION] Stream client (Common)', function() {
       });
   });
 
-  it('mark read and seen', function() {
+  it('mark read and seen', function () {
     // add 2 activities to ensure we have new data
     var self = this;
     var params = {
@@ -479,10 +479,10 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
     return this.notification3
       .addActivities(activities)
-      .then(function() {
+      .then(function () {
         return self.notification3.get(params);
       })
-      .then(function(body) {
+      .then(function (body) {
         var notificationId = body['results'][0]['id'];
         var params = {
           limit: 2,
@@ -492,10 +492,10 @@ describe('[INTEGRATION] Stream client (Common)', function() {
 
         return self.notification3.get(params);
       })
-      .then(function() {
+      .then(function () {
         return self.notification3.get(params);
       })
-      .then(function(body) {
+      .then(function (body) {
         expect(body['results'][0]['is_seen']).to.eql(true);
         expect(body['results'][1]['is_seen']).to.eql(true);
         expect(body['results'][0]['is_read']).to.eql(true);

@@ -1,14 +1,15 @@
 {
-  presets: [
-    ['@babel/preset-env', {
-      targets: {
-        browsers: ['last 2 versions', 'ie >= 10']
-      },
-    }]
+  "presets": [
+    [
+      "@babel/preset-env",
+      { "targets": { "browsers": ["last 2 versions", "ie >= 10"] } }
+    ]
   ],
-  sourceType: 'unambiguous',
-  plugins: [
-    '@babel/plugin-transform-object-assign',
-    '@babel/plugin-transform-runtime'
+  "sourceType": "unambiguous",
+  "plugins": [
+    "@babel/plugin-transform-object-assign",
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties"
   ],
+  "ignore": ["node_modules", "dist", "lib"]
 }

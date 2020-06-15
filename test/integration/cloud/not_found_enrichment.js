@@ -1,5 +1,5 @@
-var { CloudContext } = require('./utils');
-var randUserId = require('../utils/hooks').randUserId;
+import { CloudContext } from './utils';
+import { randUserId } from '../utils/hooks';
 
 describe('Enriching not existing references', () => {
   let ctx = new CloudContext();

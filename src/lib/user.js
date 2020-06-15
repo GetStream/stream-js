@@ -1,12 +1,8 @@
-var StreamUser = function() {
-  this.initialize.apply(this, arguments);
-};
-
-StreamUser.prototype = {
-  initialize: function(client, userId, userAuthToken) {
+export default class StreamUser {
+  constructor(client, userId, userAuthToken) {
     /**
      * Initialize a user session object
-     * @method intialize
+     * @method constructor
      * @memberof StreamUser.prototype
      * @param {StreamClient} client Stream client this collection is constructed from
      * @param {string} userId The ID of the user
@@ -19,17 +15,17 @@ StreamUser.prototype = {
     this.full = undefined;
     this.token = userAuthToken;
     this.url = 'user/' + this.id + '/';
-  },
+  }
 
-  _streamRef: function() {
+  _streamRef() {
     return `SU:${this.id}`;
-  },
+  }
 
-  ref: function() {
+  ref() {
     return this._streamRef();
-  },
+  }
 
-  delete: function(callback) {
+  delete(callback) {
     return this.client
       .delete({
         url: this.url,
@@ -41,9 +37,9 @@ StreamUser.prototype = {
         }
         return response;
       });
-  },
+  }
 
-  get: function(options, callback) {
+  get(options, callback) {
     return this.client
       .get({
         url: this.url,
@@ -59,9 +55,9 @@ StreamUser.prototype = {
         }
         return this;
       });
-  },
+  }
 
-  _chooseData: function(data) {
+  _chooseData(data) {
     if (data !== undefined) {
       return data;
     }
@@ -69,9 +65,9 @@ StreamUser.prototype = {
       return this.data;
     }
     return {};
-  },
+  }
 
-  create: function(data, options, callback) {
+  create(data, options, callback) {
     return this.client
       .post({
         url: 'user/',
@@ -91,9 +87,9 @@ StreamUser.prototype = {
         }
         return this;
       });
-  },
+  }
 
-  update: function(data, callback) {
+  update(data, callback) {
     return this.client
       .put({
         url: this.url,
@@ -111,13 +107,13 @@ StreamUser.prototype = {
         }
         return this;
       });
-  },
-  getOrCreate: function(data, callback) {
-    return this.create(data, { get_or_create: true }, callback);
-  },
-  profile: function(callback) {
-    return this.get({ with_follow_counts: true }, callback);
-  },
-};
+  }
 
-module.exports = StreamUser;
+  getOrCreate(data, callback) {
+    return this.create(data, { get_or_create: true }, callback);
+  }
+
+  profile(callback) {
+    return this.get({ with_follow_counts: true }, callback);
+  }
+}
