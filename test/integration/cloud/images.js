@@ -1,11 +1,9 @@
-var { CloudContext } = require('./utils');
-var fs = require('fs');
-var request = require('request');
-
+import { CloudContext } from './utils';
+import fs from 'fs';
+import axios from 'axios';
 describe('Images', () => {
   let ctx = new CloudContext();
   let imageUrl;
-
   describe('When alice adds a txt file as image', () => {
     ctx.requestShouldError(400, async () => {
       let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
@@ -55,11 +53,9 @@ describe('Images', () => {
   });
 
   describe('When the image ${imageUrl} is requested', () => {
-    ctx.test('should return 200', function(done) {
-      request.get(imageUrl, function(err, res) {
-        res.statusCode.should.eql(200);
-        done();
-      });
+    ctx.test('should return 200', async () => {
+      const { status } = await axios.get(imageUrl);
+      status.should.eql(200);
     });
   });
 
@@ -74,13 +70,9 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
-      done,
-    ) {
-      request.get(imageUrl, function(err, res) {
-        res.statusCode.should.eql(200);
-        done();
-      });
+    ctx.test('When the image is requested it should return 200', async () => {
+      const { status } = await axios.get(imageUrl);
+      status.should.eql(200);
     });
   });
 
@@ -97,13 +89,9 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
-      done,
-    ) {
-      request.get(imageUrl, function(err, res) {
-        res.statusCode.should.eql(200);
-        done();
-      });
+    ctx.test('When the image is requested it should return 200', async()=>{
+      const { status } = await axios.get(imageUrl);
+      status.should.eql(200);
     });
   });
 
@@ -130,13 +118,9 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function(
-      done,
-    ) {
-      request.get(imageUrl, function(err, res) {
-        res.statusCode.should.eql(200);
-        done();
-      });
+    ctx.test('When the image is requested it should return 200', async()=>{
+      const { status } = await axios.get(imageUrl);
+      status.should.eql(200);
     });
   });
 
