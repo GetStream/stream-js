@@ -1,4 +1,4 @@
-var { CloudContext } = require('./utils');
+import { CloudContext } from './utils';
 
 describe('User profile story', () => {
   let ctx = new CloudContext();

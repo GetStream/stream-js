@@ -1,11 +1,12 @@
-var signing = require('../../../src/lib/signing'),
-  expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach;
+import expect from 'expect.js';
 
-describe('[UNIT] Creating tokens', function() {
+import signing from '../../../src/lib/signing';
+import { beforeEachFn } from '../utils/hooks';
+
+describe('[UNIT] Creating tokens', function () {
   beforeEach(beforeEachFn);
 
-  it('#getReadOnlyToken', function() {
+  it('#getReadOnlyToken', function () {
     var token = this.client.getReadOnlyToken('user', 'test');
 
     expect(token).not.to.be(undefined);
@@ -19,7 +20,7 @@ describe('[UNIT] Creating tokens', function() {
     expect(token).to.be(expected);
   });
 
-  it('#getReadWriteToken', function() {
+  it('#getReadWriteToken', function () {
     var token = this.client.getReadWriteToken('user', 'test');
 
     expect(token).not.to.be(undefined);
@@ -33,7 +34,7 @@ describe('[UNIT] Creating tokens', function() {
     expect(token).to.be(expected);
   });
 
-  it('feed #getReadOnlyToken', function() {
+  it('feed #getReadOnlyToken', function () {
     var token = this.client.feed('user', 'test').getReadOnlyToken();
 
     expect(token).not.to.be(undefined);
@@ -47,7 +48,7 @@ describe('[UNIT] Creating tokens', function() {
     expect(token).to.be(expected);
   });
 
-  it('feed #getReadWriteToken', function() {
+  it('feed #getReadWriteToken', function () {
     var token = this.client.feed('user', 'test').getReadWriteToken();
 
     expect(token).not.to.be(undefined);

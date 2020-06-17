@@ -1,6 +1,7 @@
-var { CloudContext } = require('./utils');
-var randUserId = require('../utils/hooks').randUserId;
-var util = require('util');
+import util from 'util';
+
+import { CloudContext } from './utils';
+import { randUserId } from '../utils/hooks';
 
 const someActivityId = 'f9969ca8-e659-11e8-801f-e4a47194940e';
 // eslint-disable-next-line no-unused-vars

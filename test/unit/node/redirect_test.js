@@ -137,9 +137,9 @@ describe("[UNIT] Redirect URL's", function() {
     expect(status).to.be(200);
   });
 
-  it('should fail creating email redirects on invalid targets', function() {
+  it('should fail creating email redirects on invalid targets', function () {
     var self = this;
-    expect(function() {
+    expect(function () {
       self.client.createRedirectUrl('google.com', 'tommaso', []);
     }).to.throwException(new errors.MissingSchemaError());
   });

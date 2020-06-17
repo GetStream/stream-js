@@ -1,6 +1,7 @@
-var jwt = require('jsonwebtoken');
-var JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-var Base64 = require('Base64');
+import jwt from 'jsonwebtoken';
+import Base64 from 'Base64';
+
+const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
 function decodeBase64Url(base64UrlString) {
   try {
@@ -25,30 +26,28 @@ function safeJsonParse(thing) {
 }
 
 function padString(string) {
-  var segmentLength = 4;
-  var diff = string.length % segmentLength;
+  const segmentLength = 4;
+  const diff = string.length % segmentLength;
   if (!diff) return string;
-  var padLength = segmentLength - diff;
 
+  let padLength = segmentLength - diff;
   while (padLength--) string += '=';
+
   return string;
 }
 
 function toBase64(base64UrlString) {
-  var b64str = padString(base64UrlString)
+  return padString(base64UrlString)
     .replace(/\-/g, '+') // eslint-disable-line no-useless-escape
     .replace(/_/g, '/');
-  return b64str;
 }
 
 function headerFromJWS(jwsSig) {
-  var encodedHeader = jwsSig.split('.', 1)[0];
+  const encodedHeader = jwsSig.split('.', 1)[0];
   return safeJsonParse(decodeBase64Url(encodedHeader));
 }
 
-exports.headerFromJWS = headerFromJWS;
-
-exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
+function JWTScopeToken(apiSecret, resource, action, opts) {
   /**
    * Creates the JWT token for feedId, resource and action using the apiSecret
    * @method JWTScopeToken
@@ -62,12 +61,9 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
    * @param {string} [options.userId] - JWT payload user identifier
    * @return {string} JWT Token
    */
-  var options = opts || {},
-    noTimestamp = options.expireTokens ? !options.expireTokens : true;
-  var payload = {
-    resource: resource,
-    action: action,
-  };
+  const options = opts || {};
+  const noTimestamp = options.expireTokens ? !options.expireTokens : true;
+  const payload = { resource: resource, action: action };
 
   if (options.feedId) {
     payload['feed_id'] = options.feedId;
@@ -77,14 +73,13 @@ exports.JWTScopeToken = function(apiSecret, resource, action, opts) {
     payload['user_id'] = options.userId;
   }
 
-  var token = jwt.sign(payload, apiSecret, {
+  return jwt.sign(payload, apiSecret, {
     algorithm: 'HS256',
     noTimestamp: noTimestamp,
   });
-  return token;
-};
+}
 
-exports.JWTUserSessionToken = function(
+function JWTUserSessionToken(
   apiSecret,
   userId,
   extraData = {},
@@ -105,20 +100,13 @@ exports.JWTUserSessionToken = function(
     throw new TypeError('userId should be a string');
   }
 
-  var payload = {
-    user_id: userId,
-    ...extraData,
-  };
+  const payload = { user_id: userId, ...extraData };
 
-  var opts = Object.assign(
-    { algorithm: 'HS256', noTimestamp: true },
-    jwtOptions,
-  );
-  var token = jwt.sign(payload, apiSecret, opts);
-  return token;
-};
+  const opts = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
+  return jwt.sign(payload, apiSecret, opts);
+}
 
-exports.isJWTSignature = exports.isJWT = function(signature) {
+function isJWTSignature(signature) {
   /**
    * check if token is a valid JWT token
    * @method isJWTSignature
@@ -130,6 +118,14 @@ exports.isJWTSignature = exports.isJWT = function(signature) {
   if (signature == null || signature.length == 0) {
     return false;
   }
-  var token = signature.split(' ')[1] || signature;
+  const token = signature.split(' ')[1] || signature;
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
+}
+
+export default {
+  JWTScopeToken,
+  headerFromJWS,
+  JWTUserSessionToken,
+  isJWTSignature,
+  isJWT: isJWTSignature,
 };

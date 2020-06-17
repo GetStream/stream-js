@@ -1,18 +1,19 @@
-var expect = require('expect.js'),
-  beforeEachFn = require('../utils/hooks').beforeEach,
-  errors = require('../../../src/getstream').errors,
-  td = require('testdouble'),
-  StreamClient = require('../../../src/lib/client');
+/* eslint-disable no-unused-vars */
+import expect from 'expect.js';
+import td from 'testdouble';
 
-describe('[UNIT] Stream Personalization (node)', function() {
+import StreamClient from '../../../src/lib/client';
+import errors from '../../../src/lib/errors';
+import { beforeEachFn } from '../utils/hooks';
+
+describe('[UNIT] Stream Personalization (node)', function () {
   let get;
   let post;
   let del;
-  // eslint-disable-next-line no-unused-vars
   let callback;
 
   beforeEach(beforeEachFn);
-  beforeEach(function() {
+  beforeEach(function () {
     get = td.function();
     post = td.function();
     del = td.function();
@@ -21,12 +22,12 @@ describe('[UNIT] Stream Personalization (node)', function() {
     td.replace(this.client, 'delete', del);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     td.reset();
   });
 
-  describe('#get', function() {
-    it('should send get request correctly with options (promise)', function() {
+  describe('#get', function () {
+    it('should send get request correctly with options (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
@@ -47,11 +48,11 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send get request correctly with options (cb)', function() {
+    it('should send get request correctly with options (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource, options, cb);
@@ -69,7 +70,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send get request correctly without options (promise)', function() {
+    it('should send get request correctly without options (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
 
@@ -89,10 +90,10 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send get request correctly without options (cb)', function() {
+    it('should send get request correctly without options (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource, cb);
@@ -111,8 +112,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
     });
   });
 
-  describe('#post', function() {
-    it('should send post request correctly with options and data (promise)', function() {
+  describe('#post', function () {
+    it('should send post request correctly with options and data (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var data = { k: 'v' };
@@ -135,12 +136,12 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send post request correctly with options and data (cb)', function() {
+    it('should send post request correctly with options and data (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
       var data = { k: 'v' };
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options, data, cb);
@@ -159,7 +160,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send post request correctly with options (promise)', function() {
+    it('should send post request correctly with options (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
@@ -181,11 +182,11 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send post request correctly with options (cb)', function() {
+    it('should send post request correctly with options (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options, cb);
@@ -204,7 +205,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send post request correctly without options or data (promise)', function() {
+    it('should send post request correctly without options or data (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
 
@@ -225,10 +226,10 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send post request correctly without options or data (cb)', function() {
+    it('should send post request correctly without options or data (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, cb);
@@ -248,8 +249,8 @@ describe('[UNIT] Stream Personalization (node)', function() {
     });
   });
 
-  describe('#delete', function() {
-    it('should send delete request correctly with options (promise)', function() {
+  describe('#delete', function () {
+    it('should send delete request correctly with options (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
@@ -270,11 +271,11 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send delete request correctly with options (cb)', function() {
+    it('should send delete request correctly with options (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource, options, cb);
@@ -292,7 +293,7 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send delete request correctly without options (promise)', function() {
+    it('should send delete request correctly without options (promise)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
 
@@ -312,10 +313,10 @@ describe('[UNIT] Stream Personalization (node)', function() {
       );
     });
 
-    it('should send delete request correctly without options (cb)', function() {
+    it('should send delete request correctly without options (cb)', function () {
       var fakedJWT = 'Faked JWT';
       var resource = 'example';
-      var cb = function() {};
+      var cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource, cb);
@@ -334,32 +335,32 @@ describe('[UNIT] Stream Personalization (node)', function() {
     });
   });
 
-  describe('No secret provided', function() {
-    it('should raise SiteErrors', function() {
+  describe('No secret provided', function () {
+    it('should raise SiteErrors', function () {
       var client = new StreamClient('stub-key', null, 9498);
       var resource = 'example';
       var options = { foo: 'bar', baz: 'qux' };
       var data = { k: 'v' };
-      var cb = function() {};
+      var cb = function () {};
 
       // get
-      expect(function() {
+      expect(function () {
         client.personalization.get(resource, options);
-      }).to.throwException(function(e) {
+      }).to.throwException(function (e) {
         expect(e).to.be.a(errors.SiteError);
       });
 
       // post
-      expect(function() {
+      expect(function () {
         client.personalization.post(resource, options, data, cb);
-      }).to.throwException(function(e) {
+      }).to.throwException(function (e) {
         expect(e).to.be.a(errors.SiteError);
       });
 
       // delete
-      expect(function() {
+      expect(function () {
         client.personalization.delete(resource);
-      }).to.throwException(function(e) {
+      }).to.throwException(function (e) {
         expect(e).to.be.a(errors.SiteError);
       });
     });

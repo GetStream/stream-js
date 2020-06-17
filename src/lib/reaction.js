@@ -1,14 +1,10 @@
-var errors = require('./errors');
+import errors from './errors';
 
-var StreamReaction = function() {
-  this.initialize.apply(this, arguments);
-};
-
-StreamReaction.prototype = {
-  initialize: function(client, token) {
+export default class StreamReaction {
+  constructor(client, token) {
     /**
-     * Initialize a feed object
-     * @method intialize
+     * Initialize a reaction object
+     * @method constructor
      * @memberof StreamReaction.prototype
      * @param {StreamClient} client Stream client this feed is constructed from
      * @param {string} token JWT token
@@ -17,17 +13,17 @@ StreamReaction.prototype = {
     this.client = client;
     this.token = token;
     this.signature = token;
-  },
+  }
 
-  buildURL: function() {
-    var url = 'reaction/';
-    for (var i = 0; i < arguments.length; i++) {
+  buildURL() {
+    let url = 'reaction/';
+    for (let i = 0; i < arguments.length; i++) {
       url += arguments[i] + '/';
     }
     return url;
-  },
+  }
 
-  all: function(options, callback) {
+  all(options, callback) {
     /**
      * get all reactions
      * @method all
@@ -45,15 +41,15 @@ StreamReaction.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  _convertTargetFeeds: function(targetFeeds = []) {
-    return targetFeeds.map(
-      (elem) => (typeof elem === 'string' ? elem : elem.id),
+  _convertTargetFeeds(targetFeeds = []) {
+    return targetFeeds.map((elem) =>
+      typeof elem === 'string' ? elem : elem.id,
     );
-  },
+  }
 
-  add: function(
+  add(
     kind,
     activity,
     data = {},
@@ -77,7 +73,7 @@ StreamReaction.prototype = {
       activity = activity.id;
     }
     targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
+    const body = {
       id: id,
       activity_id: activity,
       kind: kind,
@@ -91,14 +87,14 @@ StreamReaction.prototype = {
     return this.client.post(
       {
         url: this.buildURL(),
-        body: body,
+        body,
         signature: this.signature,
       },
       callback,
     );
-  },
+  }
 
-  addChild: function(
+  addChild(
     kind,
     reaction,
     data = {},
@@ -122,7 +118,7 @@ StreamReaction.prototype = {
       reaction = reaction.id;
     }
     targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
+    const body = {
       parent: reaction,
       kind: kind,
       data: data,
@@ -135,14 +131,14 @@ StreamReaction.prototype = {
     return this.client.post(
       {
         url: this.buildURL(),
-        body: body,
+        body,
         signature: this.signature,
       },
       callback,
     );
-  },
+  }
 
-  get: function(id, callback) {
+  get(id, callback) {
     /**
      * get reaction
      * @method add
@@ -159,9 +155,9 @@ StreamReaction.prototype = {
       },
       callback,
     );
-  },
+  }
 
-  filter: function(conditions, callback) {
+  filter(conditions, callback) {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -192,34 +188,27 @@ StreamReaction.prototype = {
       );
     }
 
-    let lookupType =
+    const lookupType =
       (user_id && 'user_id') ||
       (activity_id && 'activity_id') ||
       (reaction_id && 'reaction_id');
-    let value = user_id || activity_id || reaction_id;
+    const value = user_id || activity_id || reaction_id;
 
-    let url = this.buildURL(lookupType, value);
-
-    if (conditions.kind) {
-      url = this.buildURL(lookupType, value, conditions.kind);
-    }
+    const url = conditions.kind
+      ? this.buildURL(lookupType, value, conditions.kind)
+      : this.buildURL(lookupType, value);
 
     return this.client.get(
       {
-        url: url,
-        qs: qs,
+        url,
+        qs,
         signature: this.signature,
       },
       callback,
     );
-  },
+  }
 
-  update: function(
-    id,
-    data,
-    { targetFeeds = [], targetFeedsExtraData } = {},
-    callback,
-  ) {
+  update(id, data, { targetFeeds = [], targetFeedsExtraData } = {}, callback) {
     /**
      * update reaction
      * @method add
@@ -233,7 +222,7 @@ StreamReaction.prototype = {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
     targetFeeds = this._convertTargetFeeds(targetFeeds);
-    var body = {
+    const body = {
       data: data,
       target_feeds: targetFeeds,
     };
@@ -243,14 +232,14 @@ StreamReaction.prototype = {
     return this.client.put(
       {
         url: this.buildURL(id),
-        body: body,
+        body,
         signature: this.signature,
       },
       callback,
     );
-  },
+  }
 
-  delete: function(id, callback) {
+  delete(id, callback) {
     /**
      * delete reaction
      * @method delete
@@ -267,7 +256,5 @@ StreamReaction.prototype = {
       },
       callback,
     );
-  },
-};
-
-module.exports = StreamReaction;
+  }
+}
