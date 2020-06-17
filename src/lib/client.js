@@ -564,7 +564,7 @@ class StreamClient {
      * @return {Promise}                Promise object
      */
     return new Promise(
-      function (fulfill, reject) {
+      function(fulfill, reject) {
         this.send('request', 'get', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
@@ -586,7 +586,7 @@ class StreamClient {
      * @return {Promise}                Promise object
      */
     return new Promise(
-      function (fulfill, reject) {
+      function(fulfill, reject) {
         this.send('request', 'post', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
@@ -608,7 +608,7 @@ class StreamClient {
      * @return {Promise}                Promise object
      */
     return new Promise(
-      function (fulfill, reject) {
+      function(fulfill, reject) {
         this.send('request', 'delete', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.gzip = true;
@@ -630,7 +630,7 @@ class StreamClient {
      * @return {Promise}                Promise object
      */
     return new Promise(
-      function (fulfill, reject) {
+      function(fulfill, reject) {
         this.send('request', 'put', kwargs, cb);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'PUT';
@@ -912,7 +912,7 @@ class StreamClient {
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
-    changes.forEach(function (item) {
+    changes.forEach(function(item) {
       if (!(item instanceof Object)) {
         throw new TypeError(`changeset should be and Object`);
       }
@@ -957,7 +957,7 @@ class StreamClient {
 // StreamClient.prototype.collection = StreamClient.prototype.collections;
 
 if (qs) {
-  StreamClient.prototype.createRedirectUrl = function (
+  StreamClient.prototype.createRedirectUrl = function(
     targetUrl,
     userId,
     events,

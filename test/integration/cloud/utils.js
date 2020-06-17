@@ -130,7 +130,7 @@ export class CloudContext {
     }
 
     if (fn.length == 0) {
-      return async function () {
+      return async function() {
         if (ctx.failed) {
           this.skip();
         }
@@ -146,7 +146,7 @@ export class CloudContext {
         }
       };
     }
-    return function (done) {
+    return function(done) {
       if (ctx.failed) {
         this.skip();
       }

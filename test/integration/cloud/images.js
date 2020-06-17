@@ -89,7 +89,7 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', async()=>{
+    ctx.test('When the image is requested it should return 200', async () => {
       const { status } = await axios.get(imageUrl);
       status.should.eql(200);
     });
@@ -118,7 +118,7 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', async()=>{
+    ctx.test('When the image is requested it should return 200', async () => {
       const { status } = await axios.get(imageUrl);
       status.should.eql(200);
     });
