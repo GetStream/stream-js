@@ -1,0 +1,31 @@
+module.exports = {
+  plugins: ['prettier'],
+  extends: ['airbnb-base', 'eslint:recommended', 'plugin:prettier/recommended', 'plugin:sonarjs/recommended'],
+  parser: 'babel-eslint',
+  env: {
+    es6: true,
+    browser: true,
+    commonjs: true,
+    mocha: true,
+  },
+  globals: {
+    process: true,
+  },
+  rules: {
+    camelcase: 0,
+    'consistent-return': 0,
+    'no-underscore-dangle': 0,
+    'import/prefer-default-export': 0,
+    'func-names': 0,
+    'no-param-reassign': 0,
+    'prefer-destructuring': 1,
+    'max-classes-per-file': 0,
+    'no-plusplus': 0,
+    'no-unused-vars': ['error', { args: 'none' }],
+    'sonarjs/cognitive-complexity': 0,
+    'sonarjs/no-collapsible-if': 0,
+    'sonarjs/no-duplicate-string': 0,
+    'sonarjs/no-identical-functions': 0,
+    'sonarjs/prefer-immediate-return': 0,
+  },
+};
