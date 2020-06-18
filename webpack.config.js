@@ -1,4 +1,3 @@
-/* globals __dirname */
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 

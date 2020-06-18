@@ -2,7 +2,7 @@ const stream = require('../../../src/getstream').default;
 const config = require('./config');
 
 function jwt(resource, action, options) {
-  const KJUR = require('exports?KJUR!./kjur');
+  const KJUR = require('exports?KJUR!./kjur'); // eslint-disable-line
 
   let header = {
     alg: 'HS256',

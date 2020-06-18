@@ -9,11 +9,11 @@ import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client instantiation (Node)', function () {
   it('with secret', function () {
-    new StreamClient('stub-key', 'stub-secret', 9498);
+    new StreamClient('stub-key', 'stub-secret', 9498); // eslint-disable-line no-new
   });
 
   it('without secret', function () {
-    new StreamClient('stub-key', null, 9498);
+    new StreamClient('stub-key', null, 9498); // eslint-disable-line no-new
   });
 });
 

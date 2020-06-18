@@ -6,6 +6,7 @@ import { randUserId } from '../utils/hooks';
 const someActivityId = 'f9969ca8-e659-11e8-801f-e4a47194940e';
 // eslint-disable-next-line no-unused-vars
 function log(...args) {
+  // eslint-disable-next-line no-console
   console.log(util.inspect(...args, { showHidden: false, depth: null, colors: true }));
 }
 

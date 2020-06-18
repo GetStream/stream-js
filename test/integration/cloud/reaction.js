@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import url from 'url';
 import expect from 'expect.js';
 

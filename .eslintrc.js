@@ -24,7 +24,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'func-names': 0,
     'no-param-reassign': 0,
-    'prefer-destructuring': 1,
+    'prefer-destructuring': ['error', { object: true, array: false }],
     'max-classes-per-file': 0,
     'no-plusplus': 0,
     'no-unused-vars': ['error', { args: 'none' }],

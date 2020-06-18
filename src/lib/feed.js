@@ -167,7 +167,7 @@ export default class StreamFeed {
     utils.validateUserId(targetUserId);
 
     let activityCopyLimit;
-    const last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1]; // eslint-disable-line prefer-rest-params
     // callback is always the last argument
     callback = last.call ? last : undefined;
 
