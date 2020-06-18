@@ -3,18 +3,6 @@ import Base64 from 'Base64';
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
-function decodeBase64Url(base64UrlString) {
-  try {
-    return Base64.atob(toBase64(base64UrlString));
-  } catch (e) {
-    /* istanbul ignore else */
-    if (e.name === 'InvalidCharacterError') {
-      return undefined;
-    }
-    throw e;
-  }
-}
-
 function safeJsonParse(thing) {
   if (typeof thing === 'object') return thing;
   try {
@@ -39,6 +27,18 @@ function toBase64(base64UrlString) {
   return padString(base64UrlString)
     .replace(/\-/g, '+') // eslint-disable-line no-useless-escape
     .replace(/_/g, '/');
+}
+
+function decodeBase64Url(base64UrlString) {
+  try {
+    return Base64.atob(toBase64(base64UrlString));
+  } catch (e) {
+    /* istanbul ignore else */
+    if (e.name === 'InvalidCharacterError') {
+      return undefined;
+    }
+    throw e;
+  }
 }
 
 function headerFromJWS(jwsSig) {

@@ -1,5 +1,95 @@
 import errors from './errors';
 
+class CollectionEntry {
+  constructor(store, collection, id, data) {
+    this.collection = collection;
+    this.store = store;
+    this.id = id;
+    this.data = data;
+  }
+
+  _streamRef() {
+    return `SO:${this.collection}:${this.id}`;
+  }
+
+  get(callback) {
+    /**
+     * get item from collection and sync data
+     * @method get
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+    return this.store.get(this.collection, this.id).then((response) => {
+      this.data = response.data;
+      this.full = response;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
+  }
+
+  add(callback) {
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    return this.store.add(this.collection, this.id, this.data).then((response) => {
+      this.data = response.data;
+      this.full = response;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
+  }
+
+  update(callback) {
+    /**
+     * Update item in the object storage
+     * @method update
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+    return this.store.update(this.collection, this.id, this.data).then((response) => {
+      this.data = response.data;
+      this.full = response;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
+  }
+
+  delete(callback) {
+    /**
+     * Delete item from collection
+     * @method delete
+     * @memberof CollectionEntry.prototype
+     * @param  {requestCallback} callback Callback to call on completion
+     * @return {Promise} Promise object
+     * @example collection.delete("cheese101")
+     */
+    return this.store.delete(this.collection, this.id).then((response) => {
+      this.data = null;
+      this.full = null;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
+  }
+}
+
 export default class Collections {
   /**
    * Initialize a feed object
@@ -245,92 +335,3 @@ export default class Collections {
   }
 }
 
-class CollectionEntry {
-  constructor(store, collection, id, data) {
-    this.collection = collection;
-    this.store = store;
-    this.id = id;
-    this.data = data;
-  }
-
-  _streamRef() {
-    return `SO:${this.collection}:${this.id}`;
-  }
-
-  get(callback) {
-    /**
-     * get item from collection and sync data
-     * @method get
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-     */
-    return this.store.get(this.collection, this.id).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
-  }
-
-  add(callback) {
-    /**
-     * Add item to collection
-     * @method add
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    return this.store.add(this.collection, this.id, this.data).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
-  }
-
-  update(callback) {
-    /**
-     * Update item in the object storage
-     * @method update
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
-     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
-     */
-    return this.store.update(this.collection, this.id, this.data).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
-  }
-
-  delete(callback) {
-    /**
-     * Delete item from collection
-     * @method delete
-     * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
-     * @return {Promise} Promise object
-     * @example collection.delete("cheese101")
-     */
-    return this.store.delete(this.collection, this.id).then((response) => {
-      this.data = null;
-      this.full = null;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
-  }
-}
