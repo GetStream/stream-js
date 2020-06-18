@@ -28,9 +28,7 @@ function connect(apiKey, apiSecret, appId, options) {
    * "https://thierry:pass@gestream.io/?app=1"
    */
   if (typeof process !== 'undefined' && process.env.STREAM_URL && !apiKey) {
-    const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(
-      process.env.STREAM_URL,
-    );
+    const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
     apiKey = parts[1];
     apiSecret = parts[2];
     const location = parts[3];

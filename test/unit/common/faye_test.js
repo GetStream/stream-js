@@ -8,8 +8,8 @@ describe('[UNIT] Faye (browser)', function () {
   beforeEach(beforeEachFn);
 
   it('#getFayeAuthorization', function () {
-    var self = this;
-    var auth = this.client.getFayeAuthorization();
+    const self = this;
+    const auth = this.client.getFayeAuthorization();
 
     expect(auth.incoming).to.be.a(Function);
     expect(auth.outgoing).to.be.a(Function);
@@ -17,7 +17,7 @@ describe('[UNIT] Faye (browser)', function () {
     auth.incoming('matthisk', function (message) {
       expect(message).to.be('matthisk');
     });
-    this.client.subscriptions['test'] = {
+    this.client.subscriptions.test = {
       userId: 'matthisk',
       token: 'token',
     };
@@ -30,7 +30,7 @@ describe('[UNIT] Faye (browser)', function () {
   });
 
   it('#getFayeClient', function () {
-    var client = this.client.getFayeClient();
+    const client = this.client.getFayeClient();
 
     expect(client).to.be.a(Faye.Client);
   });

@@ -10,12 +10,7 @@ export interface APIResponse {
 /**
  * Create StreamClient
  */
-export function connect(
-  apiKey: string,
-  apiSecret: string | null,
-  appId: string,
-  options?: object,
-): stream.Client;
+export function connect(apiKey: string, apiSecret: string | null, appId: string, options?: object): stream.Client;
 
 export class CollectionEntry {
   constructor(store: Collections, collection: string, id: string, data: object);
@@ -45,64 +40,34 @@ export class Collections {
   buildURL(collection: string, itemId?: string): string;
 
   // Instantiate a collection entry object
-  entry(
-    collection: string,
-    itemId?: string,
-    itemData?: object,
-  ): CollectionEntry;
+  entry(collection: string, itemId?: string, itemData?: object): CollectionEntry;
 
   // Get a collection entry
   get(collection: string, itemId: string): Promise<object>;
-  get(
-    collection: string,
-    itemId: string,
-    callback: GenericCallback<CollectionEntry>,
-  ): void;
+  get(collection: string, itemId: string, callback: GenericCallback<CollectionEntry>): void;
 
   // Add a single entry to a collection
   add(collection: string, itemId: string, itemData?: object): Promise<object>;
-  add(
-    collection: string,
-    itemId: string,
-    itemData?: object,
-    callback?: GenericCallback<CollectionEntry>,
-  ): void;
+  add(collection: string, itemId: string, itemData?: object, callback?: GenericCallback<CollectionEntry>): void;
 
   // Update a single collection entry
   update(collection: string, entryId: string, data?: object): Promise<object>;
-  update(
-    collection: string,
-    entryId: string,
-    data?: object,
-    callback?: GenericCallback<CollectionEntry>,
-  ): void;
+  update(collection: string, entryId: string, data?: object, callback?: GenericCallback<CollectionEntry>): void;
 
   // Delete a single collection entry
   delete(collection: string, entryId: string): Promise<object>;
   delete(collection: string, entryId: string, callback: RestCallback): void;
 
   // Upsert one or more items within a collection.
-  upsert(
-    collectionName: string,
-    data: object | object[],
-    callback: RestCallback,
-  ): void;
+  upsert(collectionName: string, data: object | object[], callback: RestCallback): void;
   upsert(collectionName: string, data: object | object[]): Promise<object>;
 
   // Select all objects with ids from the collection.
-  select(
-    collectionName: string,
-    ids: object | object[],
-    callback: RestCallback,
-  ): void;
+  select(collectionName: string, ids: object | object[], callback: RestCallback): void;
   select(collectionName: string, ids: object | object[]): Promise<object>;
 
   // Remove all objects by id from the collection.
-  deleteMany(
-    collectionName: string,
-    ids: object | object[],
-    callback: RestCallback,
-  ): void;
+  deleteMany(collectionName: string, ids: object | object[], callback: RestCallback): void;
   deleteMany(collectionName: string, ids: object | object[]): Promise<object>;
 }
 
@@ -118,12 +83,7 @@ export class Personalization {
   // Post data to personalization endpoint.
   post(resource: string, callback: RestCallback): void;
   post(resource: string, options: object, callback: RestCallback): void;
-  post(
-    resource: string,
-    options: object,
-    data: object,
-    callback: RestCallback,
-  ): void;
+  post(resource: string, options: object, data: object, callback: RestCallback): void;
   post(resource: string, options?: object, data?: object): Promise<object>;
 
   // Delete metadata or activities
@@ -146,16 +106,9 @@ export interface ImageProcessOptions {
 export class StreamImageStore {
   constructor(client: StreamClient, token: string);
 
-  upload(
-    uri: string | Buffer,
-    name?: string,
-    contentType?: string,
-  ): Promise<FileUploadAPIResponse>;
+  upload(uri: string | Buffer, name?: string, contentType?: string): Promise<FileUploadAPIResponse>;
 
-  process(
-    uri: string,
-    options: ImageProcessOptions,
-  ): Promise<FileUploadAPIResponse>;
+  process(uri: string, options: ImageProcessOptions): Promise<FileUploadAPIResponse>;
 
   thumbmail(
     uri: string,
@@ -170,23 +123,14 @@ export class StreamImageStore {
 export class StreamFileStore {
   constructor(client: StreamClient, token: string);
 
-  upload(
-    uri: string | Buffer,
-    name?: string,
-    contentType?: string,
-  ): Promise<FileUploadAPIResponse>;
+  upload(uri: string | Buffer, name?: string, contentType?: string): Promise<FileUploadAPIResponse>;
 
   delete(uri: string): Promise<{}>;
 }
 
 export class Feed {
   /** Construct Feed. */
-  constructor(
-    client: StreamClient,
-    feedSlug: string,
-    userId: string,
-    token: string,
-  );
+  constructor(client: StreamClient, feedSlug: string, userId: string, token: string);
 
   // Add activity
   addActivity(activity: Activity): Promise<object>;
@@ -201,40 +145,14 @@ export class Feed {
   addActivities(activities: Activity[], callback: RestCallback): void;
 
   // Follow feed
-  follow(
-    targetSlug: string,
-    targetUserId: string,
-    callback: RestCallback,
-  ): void;
-  follow(
-    targetSlug: string,
-    targetUserId: string,
-    options: object,
-    callback: RestCallback,
-  ): void;
-  follow(
-    targetSlug: string,
-    targetUserId: string,
-    options?: object,
-  ): Promise<object>;
+  follow(targetSlug: string, targetUserId: string, callback: RestCallback): void;
+  follow(targetSlug: string, targetUserId: string, options: object, callback: RestCallback): void;
+  follow(targetSlug: string, targetUserId: string, options?: object): Promise<object>;
 
   // Unfollow feed
-  unfollow(
-    targetSlug: string,
-    targetUserId: string,
-    callback: RestCallback,
-  ): void;
-  unfollow(
-    targetSlug: string,
-    targetUserId: string,
-    options: object,
-    callback: RestCallback,
-  ): void;
-  unfollow(
-    targetSlug: string,
-    targetUserId: string,
-    options?: object,
-  ): Promise<object>;
+  unfollow(targetSlug: string, targetUserId: string, callback: RestCallback): void;
+  unfollow(targetSlug: string, targetUserId: string, options: object, callback: RestCallback): void;
+  unfollow(targetSlug: string, targetUserId: string, options?: object): Promise<object>;
 
   // List followed feeds
   following(options: object): Promise<object>;
@@ -254,11 +172,7 @@ export class Feed {
 
   // Activity details
   getActivityDetail(activityId: string, options?: object): Promise<object>;
-  getActivityDetail(
-    activityId: string,
-    options: object,
-    callback: RestCallback,
-  ): void;
+  getActivityDetail(activityId: string, options: object, callback: RestCallback): void;
 
   // Subscriptions
   getFayeClient(): object; // would like to return `Faye.Client` here, but they haven't release any ts def files yet
@@ -279,26 +193,10 @@ export class Reaction {
   /** Construct Reaction. */
   constructor(client: StreamClient);
 
-  add(
-    kind: string,
-    activity: string | Activity,
-    data?: object,
-    targetFeeds?: string[],
-  ): Promise<object>;
-  add(
-    kind: string,
-    activity: string | Activity,
-    data: object,
-    targetFeeds: string[],
-    callback: RestCallback,
-  ): void;
+  add(kind: string, activity: string | Activity, data?: object, targetFeeds?: string[]): Promise<object>;
+  add(kind: string, activity: string | Activity, data: object, targetFeeds: string[], callback: RestCallback): void;
 
-  addChild(
-    kind: string,
-    reaction: string | Reaction,
-    data?: object,
-    targetFeeds?: string[],
-  ): Promise<object>;
+  addChild(kind: string, reaction: string | Reaction, data?: object, targetFeeds?: string[]): Promise<object>;
   addChild(
     kind: string,
     reaction: string | Reaction,
@@ -314,12 +212,7 @@ export class Reaction {
   filter(conditions: object, callback: RestCallback): void;
 
   update(id: string, data: object, targetFeeds?: string[]): Promise<object>;
-  update(
-    id: string,
-    data: object,
-    targetFeeds: string[],
-    callback: RestCallback,
-  ): void;
+  update(id: string, data: object, targetFeeds: string[], callback: RestCallback): void;
 
   delete(id: string): Promise<object>;
   delete(id: string, callback: RestCallback): void;
@@ -347,12 +240,7 @@ export class User {
 
 export class StreamClient {
   /** Construct StreamClient */
-  constructor(
-    apiKey: string,
-    apiSecret?: string,
-    appId?: string,
-    options?: object,
-  );
+  constructor(apiKey: string, apiSecret?: string, appId?: string, options?: object);
 
   apiKey: string;
   appId?: string;
@@ -376,13 +264,7 @@ export class StreamClient {
   createUserToken(userId: string, extraData?: object): string;
 
   // Create feed
-  feed(
-    feedSlug: string,
-    userId: string,
-    token?: string,
-    siteId?: string,
-    options?: object,
-  ): Feed;
+  feed(feedSlug: string, userId: string, token?: string, siteId?: string, options?: object): Feed;
 
   // Update activity
   updateActivity(activity: object, callback: RestCallback): void;
@@ -401,10 +283,7 @@ export class StreamClient {
   activitiesPartialUpdate(changes: object): Promise<object>;
 
   // Update activities
-  updateActivities(
-    activities: object[],
-    callback: (args: object[]) => void,
-  ): void;
+  updateActivities(activities: object[], callback: (args: object[]) => void): void;
 
   // Add activity to many feeds
   /**
@@ -454,10 +333,7 @@ export class StreamClient {
    * unfollowMany.
    * Available in node environments with batchOperations enabled
    */
-  unfollowMany(
-    unfollows: object[],
-    callback?: (err: object, httpResponse: object, body: object) => void,
-  ): void;
+  unfollowMany(unfollows: object[], callback?: (err: object, httpResponse: object, body: object) => void): void;
 
   /**
    * og.
@@ -557,10 +433,6 @@ export interface Activity {
   site_id?: never;
 }
 
-export type RestCallback = (
-  err: object,
-  httpResponse: object,
-  body: object,
-) => void;
+export type RestCallback = (err: object, httpResponse: object, body: object) => void;
 
 export type GenericCallback<T = any> = (data: T) => void;

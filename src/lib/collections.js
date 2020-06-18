@@ -14,8 +14,8 @@ export default class Collections {
   }
 
   buildURL(collection, itemId) {
-    const url = 'collections/' + collection + '/';
-    return itemId === undefined ? url : url + itemId + '/';
+    const url = `collections/${collection}/`;
+    return itemId === undefined ? url : `${url + itemId}/`;
   }
 
   entry(collection, itemId, itemData) {
@@ -40,11 +40,7 @@ export default class Collections {
         signature: this.token,
       })
       .then((response) => {
-        const entry = this.client.collections.entry(
-          response.collection,
-          response.id,
-          response.data,
-        );
+        const entry = this.client.collections.entry(response.collection, response.id, response.data);
         entry.full = response;
         if (callback) {
           callback(entry);
@@ -77,11 +73,7 @@ export default class Collections {
         signature: this.token,
       })
       .then((response) => {
-        const entry = this.client.collections.entry(
-          response.collection,
-          response.id,
-          response.data,
-        );
+        const entry = this.client.collections.entry(response.collection, response.id, response.data);
         entry.full = response;
         if (callback) {
           callback(entry);
@@ -111,11 +103,7 @@ export default class Collections {
         signature: this.token,
       })
       .then((response) => {
-        const entry = this.client.collections.entry(
-          response.collection,
-          response.id,
-          response.data,
-        );
+        const entry = this.client.collections.entry(response.collection, response.id, response.data);
         entry.full = response;
         if (callback) {
           callback(entry);
@@ -155,9 +143,7 @@ export default class Collections {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError(
-        'This method can only be used server-side using your API Secret',
-      );
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     const last = arguments[arguments.length - 1];
@@ -193,9 +179,7 @@ export default class Collections {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError(
-        'This method can only be used server-side using your API Secret',
-      );
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     const last = arguments[arguments.length - 1];
@@ -233,9 +217,7 @@ export default class Collections {
      */
 
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError(
-        'This method can only be used server-side using your API Secret',
-      );
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     const last = arguments[arguments.length - 1];
@@ -303,16 +285,14 @@ class CollectionEntry {
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    return this.store
-      .add(this.collection, this.id, this.data)
-      .then((response) => {
-        this.data = response.data;
-        this.full = response;
-        if (callback) {
-          callback(response);
-        }
-        return response;
-      });
+    return this.store.add(this.collection, this.id, this.data).then((response) => {
+      this.data = response.data;
+      this.full = response;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
   }
 
   update(callback) {
@@ -325,16 +305,14 @@ class CollectionEntry {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    return this.store
-      .update(this.collection, this.id, this.data)
-      .then((response) => {
-        this.data = response.data;
-        this.full = response;
-        if (callback) {
-          callback(response);
-        }
-        return response;
-      });
+    return this.store.update(this.collection, this.id, this.data).then((response) => {
+      this.data = response.data;
+      this.full = response;
+      if (callback) {
+        callback(response);
+      }
+      return response;
+    });
   }
 
   delete(callback) {

@@ -6,7 +6,10 @@ import errors from '../../../src/lib/errors';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Feed (Common)', function () {
-  var get, post, del, feed;
+  let get;
+  let post;
+  let del;
+  let feed;
 
   init.call(this);
   beforeEach(beforeEachFn);
@@ -32,13 +35,11 @@ describe('[UNIT] Stream Feed (Common)', function () {
     expect(feed.feedUrl).to.be('user/matthisk');
     expect(feed.feedTogether).to.be('usermatthisk');
     expect(feed.signature).to.be('usermatthisk token');
-    expect(feed.notificationChannel).to.be(
-      'site-' + this.client.appId + '-feed-usermatthisk',
-    );
+    expect(feed.notificationChannel).to.be(`site-${this.client.appId}-feed-usermatthisk`);
   });
 
   describe('#addActivity', function () {
-    var activity = { actor: 'matthisk', object: 0, verb: 'tweet' };
+    const activity = { actor: 'matthisk', object: 0, verb: 'tweet' };
 
     it('(1)', function () {
       feed.addActivity(activity);
@@ -56,7 +57,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(2)', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.addActivity(activity, cb);
 
       td.verify(
@@ -73,7 +74,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
   });
 
   describe('#addActivities', function () {
-    var activities = [{ actor: 'matthisk', object: 0, verb: 'tweet' }];
+    const activities = [{ actor: 'matthisk', object: 0, verb: 'tweet' }];
 
     it('(1)', function () {
       feed.addActivities(activities);
@@ -82,7 +83,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post(
           {
             url: 'feed/user/matthisk/',
-            body: { activities: activities },
+            body: { activities },
             signature: 'usermatthisk token',
           },
           undefined,
@@ -91,14 +92,14 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(2)', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.addActivities(activities, cb);
 
       td.verify(
         post(
           {
             url: 'feed/user/matthisk/',
-            body: { activities: activities },
+            body: { activities },
             signature: 'usermatthisk token',
           },
           cb,
@@ -124,7 +125,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     it('(2) default', function () {
       feed.follow('user', 'henk');
 
-      var body = {
+      const body = {
         target: 'user:henk',
       };
 
@@ -132,7 +133,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post(
           {
             url: 'feed/user/matthisk/following/',
-            body: body,
+            body,
             signature: 'usermatthisk token',
           },
           undefined,
@@ -141,10 +142,10 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(3) with cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.follow('user', 'henk', cb);
 
-      var body = {
+      const body = {
         target: 'user:henk',
       };
 
@@ -152,7 +153,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post(
           {
             url: 'feed/user/matthisk/following/',
-            body: body,
+            body,
             signature: 'usermatthisk token',
           },
           cb,
@@ -163,7 +164,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     it('(4) activity copy limit', function () {
       feed.follow('user', 'henk', { limit: 10 });
 
-      var body = {
+      const body = {
         target: 'user:henk',
         activity_copy_limit: 10,
       };
@@ -172,7 +173,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post(
           {
             url: 'feed/user/matthisk/following/',
-            body: body,
+            body,
             signature: 'usermatthisk token',
           },
           undefined,
@@ -181,10 +182,10 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(5) with cb and activity copy limit', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.follow('user', 'henk', { limit: 10 }, cb);
 
-      var body = {
+      const body = {
         target: 'user:henk',
         activity_copy_limit: 10,
       };
@@ -193,7 +194,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post(
           {
             url: 'feed/user/matthisk/following/',
-            body: body,
+            body,
             signature: 'usermatthisk token',
           },
           cb,
@@ -232,7 +233,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(3) default cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.unfollow('user', 'henk', cb);
 
       td.verify(
@@ -265,7 +266,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(5) default cb keep_history', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.unfollow('user', 'henk', { keepHistory: true }, cb);
 
       td.verify(
@@ -300,7 +301,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(2) cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.following({}, cb);
 
       td.verify(
@@ -316,9 +317,9 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(3) options', function () {
-      var cb = function () {};
-      var filter = ['a', 'b', 'c'];
-      feed.following({ filter: filter }, cb);
+      const cb = function () {};
+      const filter = ['a', 'b', 'c'];
+      feed.following({ filter }, cb);
 
       td.verify(
         get(
@@ -352,7 +353,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(2) cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.followers({}, cb);
 
       td.verify(
@@ -368,9 +369,9 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(3) options', function () {
-      var cb = function () {};
-      var filter = ['a', 'b', 'c'];
-      feed.followers({ filter: filter }, cb);
+      const cb = function () {};
+      const filter = ['a', 'b', 'c'];
+      feed.followers({ filter }, cb);
 
       td.verify(
         get(
@@ -408,7 +409,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(2) cb', function () {
-      var cb = function cb() {};
+      const cb = function cb() {};
       feed.get({}, cb);
 
       let expectedUrl = 'feed/user/matthisk/';
@@ -453,7 +454,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(4) options plus cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.get(
         {
           mark_read: ['a', 'b'],
@@ -498,8 +499,8 @@ describe('[UNIT] Stream Feed (Common)', function () {
     it('(2) default', function () {
       td.replace(this.client, 'appId', 1234);
 
-      var fn = td.function();
-      var subscribeFn = td.function();
+      const fn = td.function();
+      const subscribeFn = td.function();
 
       td.when(fn()).thenReturn({
         subscribe: subscribeFn,
@@ -509,15 +510,15 @@ describe('[UNIT] Stream Feed (Common)', function () {
 
       feed.subscribe();
 
-      td.verify(subscribeFn('/' + feed.notificationChannel, undefined));
+      td.verify(subscribeFn(`/${feed.notificationChannel}`, undefined));
     });
 
     it('(3) cb', function () {
-      var cb = function () {};
+      const cb = function () {};
       td.replace(this.client, 'appId', 1234);
 
-      var fn = td.function();
-      var subscribeFn = td.function();
+      const fn = td.function();
+      const subscribeFn = td.function();
 
       td.when(fn()).thenReturn({
         subscribe: subscribeFn,
@@ -527,14 +528,14 @@ describe('[UNIT] Stream Feed (Common)', function () {
 
       feed.subscribe(cb);
 
-      td.verify(subscribeFn('/' + feed.notificationChannel, cb));
+      td.verify(subscribeFn(`/${feed.notificationChannel}`, cb));
     });
   });
 
   describe('#unsubscribe', function () {
     it('(1) default', function () {
-      var subscriptionId = '/' + feed.notificationChannel;
-      var subscriptionDbl = td.object(['cancel']);
+      const subscriptionId = `/${feed.notificationChannel}`;
+      const subscriptionDbl = td.object(['cancel']);
 
       feed.client.subscriptions[subscriptionId] = {
         fayeSubscription: subscriptionDbl,
@@ -578,7 +579,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it('(3)', function () {
-      var cb = function () {};
+      const cb = function () {};
       feed.removeActivity('aID', cb);
 
       td.verify(
@@ -608,45 +609,30 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
 
     it("throws an error if no `new_targets`, `add_targets`, or `remove_targets` isn't provided", function () {
-      var noTargets = function () {
+      const noTargets = function () {
         feed.updateActivityToTargets('foreign_id:1234', new Date());
       };
       expect(noTargets).to.throwException();
     });
 
     it('throws an error if `new_targets` is provided along with either `add_targets` or `remove_targets`', function () {
-      var newTargetsWithAdd = function () {
-        feed.updateActivityToTargets(
-          'foreign_id:1234',
-          new Date(),
-          ['targetFeed:1234'],
-          ['anotherTargetFeed:1234'],
-        );
+      const newTargetsWithAdd = function () {
+        feed.updateActivityToTargets('foreign_id:1234', new Date(), ['targetFeed:1234'], ['anotherTargetFeed:1234']);
       };
-      var newTargetsWithRemove = function () {
-        feed.updateActivityToTargets(
-          'foreign_id:1234',
-          new Date(),
-          ['targetFeed:1234'],
-          null,
-          ['anotherTargetFeed:1234'],
-        );
+      const newTargetsWithRemove = function () {
+        feed.updateActivityToTargets('foreign_id:1234', new Date(), ['targetFeed:1234'], null, [
+          'anotherTargetFeed:1234',
+        ]);
       };
       expect(newTargetsWithAdd).to.throwException();
       expect(newTargetsWithRemove).to.throwException();
     });
 
     it('throws an error if `add_targets` and `remove_targets` both contain the same ID', function () {
-      var sameTargets1 = function () {
-        feed.updateActivityToTargets(
-          'foreign_id:1234',
-          new Date(),
-          null,
-          ['targetFeed:1234'],
-          ['targetFeed:1234'],
-        );
+      const sameTargets1 = function () {
+        feed.updateActivityToTargets('foreign_id:1234', new Date(), null, ['targetFeed:1234'], ['targetFeed:1234']);
       };
-      var sameTargets2 = function () {
+      const sameTargets2 = function () {
         feed.updateActivityToTargets(
           'foreign_id:1234',
           new Date(),

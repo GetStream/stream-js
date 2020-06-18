@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { CloudContext } from './utils';
 
 describe('Read followers', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   ctx.createUsers();
 
@@ -26,20 +26,17 @@ describe('Read followers', () => {
       expect(ctx.response.results).to.have.lengthOf(3);
     });
 
-    ctx.responseShould(
-      'should include a user key with bob and carl',
-      async function () {
-        this.skip();
-        ctx.response.should.have.property('users');
-        ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);
-        ctx.response.users[ctx.carl.userId].data.should.eql(ctx.userData.carl);
-      },
-    );
+    ctx.responseShould('should include a user key with bob and carl', async function () {
+      this.skip();
+      ctx.response.should.have.property('users');
+      ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);
+      ctx.response.users[ctx.carl.userId].data.should.eql(ctx.userData.carl);
+    });
   });
 });
 
 describe('Read followings', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   ctx.createUsers();
 
@@ -61,14 +58,11 @@ describe('Read followings', () => {
       expect(ctx.response.results).to.have.lengthOf(3);
     });
 
-    ctx.responseShould(
-      'should include a user key with bob and carl',
-      async function () {
-        this.skip();
-        ctx.response.should.have.property('users');
-        ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);
-        ctx.response.users[ctx.carl.userId].data.should.eql(ctx.userData.carl);
-      },
-    );
+    ctx.responseShould('should include a user key with bob and carl', async function () {
+      this.skip();
+      ctx.response.should.have.property('users');
+      ctx.response.users[ctx.bob.userId].data.should.eql(ctx.userData.bob);
+      ctx.response.users[ctx.carl.userId].data.should.eql(ctx.userData.carl);
+    });
   });
 });

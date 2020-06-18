@@ -37,7 +37,7 @@ export default class Personalization {
 
     return this.client.get(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         signature: options.token || this.client.getPersonalizationToken(),
@@ -71,7 +71,7 @@ export default class Personalization {
 
     return this.client.post(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         body: data,
@@ -102,7 +102,7 @@ export default class Personalization {
 
     return this.client.delete(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         signature: this.client.getPersonalizationToken(),

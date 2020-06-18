@@ -12,7 +12,7 @@ function replaceStreamObjects(obj) {
     cloned = obj.map((v) => replaceStreamObjects(v));
   } else if (isPlainObject(obj)) {
     cloned = {};
-    for (let k in obj) {
+    for (const k in obj) {
       cloned[k] = replaceStreamObjects(obj[k]);
     }
   } else if (isObject(obj) && obj._streamRef !== undefined) {
@@ -39,15 +39,11 @@ export default class StreamFeed {
      */
 
     if (!feedSlug || !userId) {
-      throw new errors.FeedError(
-        'Please provide a feed slug and user id, ie client.feed("user", "1")',
-      );
+      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
 
     if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError(
-        'Please initialize the feed using client.feed("user", "1") not client.feed("user:1")',
-      );
+      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
 
     utils.validateFeedSlug(feedSlug);
@@ -55,24 +51,21 @@ export default class StreamFeed {
 
     // raise an error if there is no token
     if (!this.apiSecret && !token) {
-      throw new errors.FeedError(
-        'Missing token, in client side mode please provide a feed secret',
-      );
+      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
     }
 
     this.client = client;
     this.slug = feedSlug;
     this.userId = userId;
-    this.id = this.slug + ':' + this.userId;
+    this.id = `${this.slug}:${this.userId}`;
     this.token = token;
 
     this.feedUrl = this.id.replace(':', '/');
     this.feedTogether = this.id.replace(':', '');
-    this.signature = this.feedTogether + ' ' + this.token;
+    this.signature = `${this.feedTogether} ${this.token}`;
 
     // faye setup
-    this.notificationChannel =
-      'site-' + this.client.appId + '-feed-' + this.feedTogether;
+    this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
 
     this.enrichByDefault = false;
   }
@@ -95,7 +88,7 @@ export default class StreamFeed {
 
     return this.client.post(
       {
-        url: 'feed/' + this.feedUrl + '/',
+        url: `feed/${this.feedUrl}/`,
         body: activity,
         signature: this.signature,
       },
@@ -119,12 +112,12 @@ export default class StreamFeed {
     const identifier = activityId.foreignId || activityId;
     const params = {};
     if (activityId.foreignId) {
-      params['foreign_id'] = '1';
+      params.foreign_id = '1';
     }
 
     return this.client.delete(
       {
-        url: 'feed/' + this.feedUrl + '/' + identifier + '/',
+        url: `feed/${this.feedUrl}/${identifier}/`,
         qs: params,
         signature: this.signature,
       },
@@ -144,7 +137,7 @@ export default class StreamFeed {
     const body = { activities: replaceStreamObjects(activities) };
     return this.client.post(
       {
-        url: 'feed/' + this.feedUrl + '/',
+        url: `feed/${this.feedUrl}/`,
         body,
         signature: this.signature,
       },
@@ -186,19 +179,16 @@ export default class StreamFeed {
     }
 
     const body = {
-      target: targetSlug + ':' + targetUserId,
+      target: `${targetSlug}:${targetUserId}`,
     };
 
-    if (
-      typeof activityCopyLimit !== 'undefined' &&
-      activityCopyLimit !== null
-    ) {
-      body['activity_copy_limit'] = activityCopyLimit;
+    if (typeof activityCopyLimit !== 'undefined' && activityCopyLimit !== null) {
+      body.activity_copy_limit = activityCopyLimit;
     }
 
     return this.client.post(
       {
-        url: 'feed/' + this.feedUrl + '/following/',
+        url: `feed/${this.feedUrl}/following/`,
         body,
         signature: this.signature,
       },
@@ -224,15 +214,14 @@ export default class StreamFeed {
     const qs = {};
     if (typeof optionsOrCallback === 'function') callback = optionsOrCallback;
     if (typeof optionsOrCallback === 'object') options = optionsOrCallback;
-    if (typeof options.keepHistory === 'boolean' && options.keepHistory)
-      qs['keep_history'] = '1';
+    if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
 
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
-    const targetFeedId = targetSlug + ':' + targetUserId;
+    const targetFeedId = `${targetSlug}:${targetUserId}`;
     return this.client.delete(
       {
-        url: 'feed/' + this.feedUrl + '/following/' + targetFeedId + '/',
+        url: `feed/${this.feedUrl}/following/${targetFeedId}/`,
         qs,
         signature: this.signature,
       },
@@ -257,7 +246,7 @@ export default class StreamFeed {
 
     return this.client.get(
       {
-        url: 'feed/' + this.feedUrl + '/following/',
+        url: `feed/${this.feedUrl}/following/`,
         qs: options,
         signature: this.signature,
       },
@@ -283,7 +272,7 @@ export default class StreamFeed {
 
     return this.client.get(
       {
-        url: 'feed/' + this.feedUrl + '/followers/',
+        url: `feed/${this.feedUrl}/followers/`,
         qs: options,
         signature: this.signature,
       },
@@ -303,23 +292,21 @@ export default class StreamFeed {
      * @example feed.get({limit: 10, mark_seen: true})
      */
 
-    if (options && options['mark_read'] && options['mark_read'].join) {
-      options['mark_read'] = options['mark_read'].join(',');
+    if (options && options.mark_read && options.mark_read.join) {
+      options.mark_read = options.mark_read.join(',');
     }
 
-    if (options && options['mark_seen'] && options['mark_seen'].join) {
-      options['mark_seen'] = options['mark_seen'].join(',');
+    if (options && options.mark_seen && options.mark_seen.join) {
+      options.mark_seen = options.mark_seen.join(',');
     }
 
     this.client.replaceReactionOptions(options);
 
-    const path = this.client.shouldUseEnrichEndpoint(options)
-      ? 'enrich/feed/'
-      : 'feed/';
+    const path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
 
     return this.client.get(
       {
-        url: path + this.feedUrl + '/',
+        url: `${path + this.feedUrl}/`,
         qs: options,
         signature: this.signature,
       },
@@ -379,13 +366,7 @@ export default class StreamFeed {
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
      * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
-    return this.get(
-      Object.assign(
-        { id_lte: activityId, id_gte: activityId, limit: 1 },
-        options || {},
-      ),
-      callback,
-    );
+    return this.get({ id_lte: activityId, id_gte: activityId, limit: 1, ...(options || {}) }, callback);
   }
 
   getFayeClient() {
@@ -417,11 +398,8 @@ export default class StreamFeed {
       );
     }
 
-    const subscription = this.getFayeClient().subscribe(
-      '/' + this.notificationChannel,
-      callback,
-    );
-    this.client.subscriptions['/' + this.notificationChannel] = {
+    const subscription = this.getFayeClient().subscribe(`/${this.notificationChannel}`, callback);
+    this.client.subscriptions[`/${this.notificationChannel}`] = {
       token: this.token,
       userId: this.notificationChannel,
       fayeSubscription: subscription,
@@ -435,22 +413,14 @@ export default class StreamFeed {
      * Cancel updates created via feed.subscribe()
      * @return void
      */
-    const streamSubscription = this.client.subscriptions[
-      '/' + this.notificationChannel
-    ];
+    const streamSubscription = this.client.subscriptions[`/${this.notificationChannel}`];
     if (streamSubscription) {
-      delete this.client.subscriptions['/' + this.notificationChannel];
+      delete this.client.subscriptions[`/${this.notificationChannel}`];
       streamSubscription.fayeSubscription.cancel();
     }
   }
 
-  updateActivityToTargets(
-    foreign_id,
-    time,
-    new_targets,
-    added_targets,
-    removed_targets,
-  ) {
+  updateActivityToTargets(foreign_id, time, new_targets, added_targets, removed_targets) {
     /**
      * Updates an activity's "to" fields
      * @since 3.10.0
@@ -475,9 +445,7 @@ export default class StreamFeed {
 
     if (new_targets) {
       if (added_targets || removed_targets) {
-        throw new Error(
-          "Can't include add_targets or removed_targets if you're also including new_targets",
-        );
+        throw new Error("Can't include add_targets or removed_targets if you're also including new_targets");
       }
     }
 
@@ -487,30 +455,28 @@ export default class StreamFeed {
         // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
         for (let j = 0; j < removed_targets.length; j++) {
           if (removed_targets[j] == added_targets[i]) {
-            throw new Error(
-              "Can't have the same feed ID in added_targets and removed_targets.",
-            );
+            throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
           }
         }
       }
     }
 
     const body = {
-      foreign_id: foreign_id,
-      time: time,
+      foreign_id,
+      time,
     };
     if (new_targets) {
-      body['new_targets'] = new_targets;
+      body.new_targets = new_targets;
     }
     if (added_targets) {
-      body['added_targets'] = added_targets;
+      body.added_targets = added_targets;
     }
     if (removed_targets) {
-      body['removed_targets'] = removed_targets;
+      body.removed_targets = removed_targets;
     }
 
     return this.client.post({
-      url: 'feed_targets/' + this.feedUrl + '/activity_to_targets/',
+      url: `feed_targets/${this.feedUrl}/activity_to_targets/`,
       signature: this.signature,
       body,
     });

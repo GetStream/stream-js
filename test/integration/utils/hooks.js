@@ -2,46 +2,41 @@ const stream = require('../../../src/getstream').default;
 const config = require('./config');
 
 function jwt(resource, action, options) {
-  var KJUR = require('exports?KJUR!./kjur');
+  const KJUR = require('exports?KJUR!./kjur');
 
-  var header = {
+  let header = {
     alg: 'HS256',
     typ: 'JWT',
   };
-  var payload = {
-    resource: resource,
-    action: action,
+  let payload = {
+    resource,
+    action,
   };
 
   if (options.feedId) {
-    payload['feed_id'] = options.feedId;
+    payload.feed_id = options.feedId;
   }
 
   if (options.userId) {
-    payload['user_id'] = options.userId;
+    payload.user_id = options.userId;
   }
 
   header = JSON.stringify(header);
   payload = JSON.stringify(payload);
 
-  var res = KJUR.jws.JWS.sign(
-    'HS256',
-    header,
-    payload,
-    process.env.STREAM_API_SECRET,
-  );
+  const res = KJUR.jws.JWS.sign('HS256', header, payload, process.env.STREAM_API_SECRET);
 
   return res;
 }
 
 function randUserId(userId) {
-  return userId + '-' + Date.now() + '-' + Math.round(Math.random() * 1000);
+  return `${userId}-${Date.now()}-${Math.round(Math.random() * 1000)}`;
 }
 
 function createFeedWithToken(client, feedGroup, userId, readOnly) {
   userId = randUserId(userId);
 
-  var token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
+  const token = jwt('*', readOnly ? 'read' : '*', { feedId: feedGroup + userId });
   return client.feed(feedGroup, userId, token);
 }
 
@@ -54,16 +49,11 @@ function initBrowser() {
 }
 
 function beforeEachNode() {
-  this.client = stream.connect(
-    config.API_KEY,
-    config.API_SECRET,
-    config.APP_ID,
-    {
-      group: 'testCycle',
-      location: 'qa',
-      protocol: 'https',
-    },
-  );
+  this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
+    group: 'testCycle',
+    location: 'qa',
+    protocol: 'https',
+  });
   this.user1 = this.client.feed('user', randUserId('11'));
   this.user2 = this.client.feed('user', randUserId('22'));
   this.user3 = this.client.feed('user', randUserId('33'));

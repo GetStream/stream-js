@@ -9,9 +9,7 @@ function validateFeedId(feedId) {
    */
   const parts = feedId.split(':');
   if (parts.length !== 2) {
-    throw new errors.FeedError(
-      'Invalid feedId, expected something like user:1 got ' + feedId,
-    );
+    throw new errors.FeedError(`Invalid feedId, expected something like user:1 got ${feedId}`);
   }
 
   const [feedSlug, userId] = parts;
@@ -26,9 +24,7 @@ function validateFeedSlug(feedSlug) {
    */
   const valid = validFeedSlugRe.test(feedSlug);
   if (!valid) {
-    throw new errors.FeedError(
-      'Invalid feedSlug, please use letters, numbers or _: ' + feedSlug,
-    );
+    throw new errors.FeedError(`Invalid feedSlug, please use letters, numbers or _: ${feedSlug}`);
   }
 
   return feedSlug;
@@ -40,9 +36,7 @@ function validateUserId(userId) {
    */
   const valid = validUserIdRe.test(userId);
   if (!valid) {
-    throw new errors.FeedError(
-      'Invalid userId, please use letters, numbers, - or _: ' + userId,
-    );
+    throw new errors.FeedError(`Invalid userId, please use letters, numbers, - or _: ${userId}`);
   }
 
   return userId;
@@ -50,16 +44,12 @@ function validateUserId(userId) {
 
 function rfc3986(str) {
   return str.replace(/[!'()*]/g, function (c) {
-    return '%' + c.charCodeAt(0).toString(16).toUpperCase();
+    return `%${c.charCodeAt(0).toString(16).toUpperCase()}`;
   });
 }
 
 function isReadableStream(obj) {
-  return (
-    typeof obj === 'object' &&
-    typeof (obj._read === 'function') &&
-    typeof (obj._readableState === 'object')
-  );
+  return typeof obj === 'object' && typeof (obj._read === 'function') && typeof (obj._readableState === 'object');
 }
 
 export default {

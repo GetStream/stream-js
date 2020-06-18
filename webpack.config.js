@@ -43,10 +43,7 @@ module.exports = (env, argv = []) => ({
   },
 
   output: {
-    path:
-      argv.minify !== undefined
-        ? path.join(__dirname, 'dist', 'js_min')
-        : path.join(__dirname, 'dist', 'js'),
+    path: argv.minify !== undefined ? path.join(__dirname, 'dist', 'js_min') : path.join(__dirname, 'dist', 'js'),
     publicPath: 'dist/',
     filename: 'getstream.js',
     chunkFilename: '[chunkhash].js',

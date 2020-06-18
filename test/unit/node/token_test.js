@@ -7,13 +7,13 @@ describe('[UNIT] Creating tokens', function () {
   beforeEach(beforeEachFn);
 
   it('#getReadOnlyToken', function () {
-    var token = this.client.getReadOnlyToken('user', 'test');
+    const token = this.client.getReadOnlyToken('user', 'test');
 
     expect(token).not.to.be(undefined);
 
-    var feedId = 'usertest';
-    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: feedId,
+    const feedId = 'usertest';
+    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId,
       expireTokens: this.client.expireTokens,
     });
 
@@ -21,13 +21,13 @@ describe('[UNIT] Creating tokens', function () {
   });
 
   it('#getReadWriteToken', function () {
-    var token = this.client.getReadWriteToken('user', 'test');
+    const token = this.client.getReadWriteToken('user', 'test');
 
     expect(token).not.to.be(undefined);
 
-    var feedId = 'usertest';
-    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: feedId,
+    const feedId = 'usertest';
+    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId,
       expireTokens: this.client.expireTokens,
     });
 
@@ -35,13 +35,13 @@ describe('[UNIT] Creating tokens', function () {
   });
 
   it('feed #getReadOnlyToken', function () {
-    var token = this.client.feed('user', 'test').getReadOnlyToken();
+    const token = this.client.feed('user', 'test').getReadOnlyToken();
 
     expect(token).not.to.be(undefined);
 
-    var feedId = 'usertest';
-    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: feedId,
+    const feedId = 'usertest';
+    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+      feedId,
       expireTokens: this.client.expireTokens,
     });
 
@@ -49,13 +49,13 @@ describe('[UNIT] Creating tokens', function () {
   });
 
   it('feed #getReadWriteToken', function () {
-    var token = this.client.feed('user', 'test').getReadWriteToken();
+    const token = this.client.feed('user', 'test').getReadWriteToken();
 
     expect(token).not.to.be(undefined);
 
-    var feedId = 'usertest';
-    var expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: feedId,
+    const feedId = 'usertest';
+    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+      feedId,
       expireTokens: this.client.expireTokens,
     });
 

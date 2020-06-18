@@ -1,10 +1,10 @@
 import { CloudContext } from './utils';
 
 describe('User profile story', () => {
-  let ctx = new CloudContext();
-  let aliceData = ctx.userData.alice;
-  let bobData = ctx.userData.bob;
-  let newBobData = {
+  const ctx = new CloudContext();
+  const aliceData = ctx.userData.alice;
+  const bobData = ctx.userData.bob;
+  const newBobData = {
     name: bobData.name,
     hates: bobData.likes,
   };
@@ -15,7 +15,7 @@ describe('User profile story', () => {
     });
   });
 
-  let checkUserResponse = (userFn, data) => {
+  const checkUserResponse = (userFn, data) => {
     ctx.responseShouldHaveFields('id', 'created_at', 'updated_at', 'data');
 
     ctx.responseShould('have id and data matching the request', () => {
@@ -28,35 +28,22 @@ describe('User profile story', () => {
     });
   };
 
-  let checkProfileResponse = (userFn, data, following, followers) => {
-    ctx.responseShouldHaveFields(
-      'id',
-      'created_at',
-      'updated_at',
-      'data',
-      'following_count',
-      'followers_count',
-    );
+  const checkProfileResponse = (userFn, data, following, followers) => {
+    ctx.responseShouldHaveFields('id', 'created_at', 'updated_at', 'data', 'following_count', 'followers_count');
 
-    ctx.responseShould(
-      'have id and data matching the previously submitted data',
-      () => {
-        ctx.response.id.should.equal(userFn().id);
-        ctx.response.data.should.eql(data);
-      },
-    );
+    ctx.responseShould('have id and data matching the previously submitted data', () => {
+      ctx.response.id.should.equal(userFn().id);
+      ctx.response.data.should.eql(data);
+    });
 
     ctx.test('the local user data should be updated', () => {
       userFn().data.should.eql(data);
     });
 
-    ctx.responseShould(
-      'contain the counts for following and followers for timeline->user feedgroups',
-      () => {
-        ctx.response.following_count.should.equal(following);
-        ctx.response.followers_count.should.equal(followers);
-      },
-    );
+    ctx.responseShould('contain the counts for following and followers for timeline->user feedgroups', () => {
+      ctx.response.following_count.should.equal(following);
+      ctx.response.followers_count.should.equal(followers);
+    });
   };
 
   describe('When alice creates her account', () => {
@@ -69,18 +56,11 @@ describe('User profile story', () => {
 
   describe('When alice looks at her own profile', () => {
     ctx.requestShouldNotError(async () => {
-      let user = await ctx.user.profile();
+      const user = await ctx.user.profile();
       ctx.response = user.full;
     });
 
-    ctx.responseShouldHaveFields(
-      'id',
-      'created_at',
-      'updated_at',
-      'data',
-      'followers_count',
-      'following_count',
-    );
+    ctx.responseShouldHaveFields('id', 'created_at', 'updated_at', 'data', 'followers_count', 'following_count');
   });
 
   describe('When alice tries to create her account again', () => {
@@ -121,42 +101,14 @@ describe('User profile story', () => {
 
   describe('When creating follow relationships', () => {
     ctx.requestShouldNotError(async () => {
-      let promises = [];
-      promises.push(
-        ctx.alice
-          .feed('timeline', ctx.alice.userId)
-          .follow('user', ctx.bob.userId),
-      );
-      promises.push(
-        ctx.alice
-          .feed('user', ctx.alice.userId)
-          .follow('user', ctx.carl.userId),
-      );
-      promises.push(
-        ctx.alice
-          .feed('timeline', ctx.alice.userId)
-          .follow('timeline', ctx.dave.userId),
-      );
-      promises.push(
-        ctx.bob
-          .feed('timeline', ctx.bob.userId)
-          .follow('user', ctx.alice.userId),
-      );
-      promises.push(
-        ctx.bob
-          .feed('notification', ctx.bob.userId)
-          .follow('user', ctx.alice.userId),
-      );
-      promises.push(
-        ctx.carl
-          .feed('notification', ctx.carl.userId)
-          .follow('user', ctx.alice.userId),
-      );
-      promises.push(
-        ctx.dave
-          .feed('notification', ctx.dave.userId)
-          .follow('user', ctx.alice.userId),
-      );
+      const promises = [];
+      promises.push(ctx.alice.feed('timeline', ctx.alice.userId).follow('user', ctx.bob.userId));
+      promises.push(ctx.alice.feed('user', ctx.alice.userId).follow('user', ctx.carl.userId));
+      promises.push(ctx.alice.feed('timeline', ctx.alice.userId).follow('timeline', ctx.dave.userId));
+      promises.push(ctx.bob.feed('timeline', ctx.bob.userId).follow('user', ctx.alice.userId));
+      promises.push(ctx.bob.feed('notification', ctx.bob.userId).follow('user', ctx.alice.userId));
+      promises.push(ctx.carl.feed('notification', ctx.carl.userId).follow('user', ctx.alice.userId));
+      promises.push(ctx.dave.feed('notification', ctx.dave.userId).follow('user', ctx.alice.userId));
       await Promise.all(promises);
     });
   });
@@ -173,9 +125,7 @@ describe('User profile story', () => {
 
   describe('When alice tries to set a string as user data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice
-        .user(ctx.alice.userId)
-        .update('some string');
+      ctx.response = await ctx.alice.user(ctx.alice.userId).update('some string');
     });
   });
 

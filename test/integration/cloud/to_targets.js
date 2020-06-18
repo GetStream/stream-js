@@ -1,12 +1,12 @@
 import { CloudContext } from './utils';
 
 describe('To targets', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   ctx.createUsers();
   ctx.aliceAddsCheeseBurger();
 
   describe('When alice adds an activity with a badly typed to target', () => {
-    let at = new Date().toISOString();
+    const at = new Date().toISOString();
 
     ctx.requestShouldError(400, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
@@ -20,7 +20,7 @@ describe('To targets', () => {
   });
 
   describe('When alice adds an activity with a to target that she cannot write to', () => {
-    let at = new Date().toISOString();
+    const at = new Date().toISOString();
 
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
@@ -34,7 +34,7 @@ describe('To targets', () => {
   });
 
   describe('When alice adds an activity with a to target that she can write to', () => {
-    let at = new Date().toISOString();
+    const at = new Date().toISOString();
 
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({

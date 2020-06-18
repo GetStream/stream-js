@@ -4,12 +4,12 @@ import request from 'request';
 import { CloudContext } from './utils';
 
 describe('Files', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   let fileURL;
 
   describe('When alice adds a new file', () => {
     ctx.requestShouldNotError(async () => {
-      let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
+      const file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
       ctx.response = await ctx.alice.files.upload(file, 'helloworld.txt');
     });
 
@@ -21,7 +21,7 @@ describe('Files', () => {
 
   describe('When alice adds a big file', () => {
     ctx.requestShouldError(413, async () => {
-      let file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
+      const file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
       ctx.response = await ctx.alice.files.upload(file, 'toolarge2.jpeg');
     });
   });

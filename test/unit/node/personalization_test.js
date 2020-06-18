@@ -28,9 +28,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
 
   describe('#get', function () {
     it('should send get request correctly with options (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource, options);
@@ -38,7 +38,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         get(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             signature: fakedJWT,
@@ -49,10 +49,10 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send get request correctly with options (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource, options, cb);
@@ -60,7 +60,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         get(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             signature: fakedJWT,
@@ -71,8 +71,8 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send get request correctly without options (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource);
@@ -80,7 +80,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         get(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             signature: fakedJWT,
@@ -91,9 +91,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send get request correctly without options (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.get(resource, cb);
@@ -101,7 +101,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         get(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             signature: fakedJWT,
@@ -114,10 +114,10 @@ describe('[UNIT] Stream Personalization (node)', function () {
 
   describe('#post', function () {
     it('should send post request correctly with options and data (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var data = { k: 'v' };
-      var options = { foo: 'bar', baz: 'qux' };
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const data = { k: 'v' };
+      const options = { foo: 'bar', baz: 'qux' };
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options, data);
@@ -125,7 +125,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             body: data,
@@ -137,11 +137,11 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send post request correctly with options and data (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
-      var data = { k: 'v' };
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
+      const data = { k: 'v' };
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options, data, cb);
@@ -149,7 +149,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             body: data,
@@ -161,9 +161,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send post request correctly with options (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options);
@@ -171,7 +171,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             body: {},
@@ -183,10 +183,10 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send post request correctly with options (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, options, cb);
@@ -194,7 +194,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             body: {},
@@ -206,8 +206,8 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send post request correctly without options or data (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource);
@@ -215,7 +215,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             body: {},
@@ -227,9 +227,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send post request correctly without options or data (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.post(resource, cb);
@@ -237,7 +237,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         post(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             body: {},
@@ -251,9 +251,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
 
   describe('#delete', function () {
     it('should send delete request correctly with options (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource, options);
@@ -261,7 +261,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         del(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             signature: fakedJWT,
@@ -272,10 +272,10 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send delete request correctly with options (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource, options, cb);
@@ -283,7 +283,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         del(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: options,
             signature: fakedJWT,
@@ -294,8 +294,8 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send delete request correctly without options (promise)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource);
@@ -303,7 +303,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         del(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             signature: fakedJWT,
@@ -314,9 +314,9 @@ describe('[UNIT] Stream Personalization (node)', function () {
     });
 
     it('should send delete request correctly without options (cb)', function () {
-      var fakedJWT = 'Faked JWT';
-      var resource = 'example';
-      var cb = function () {};
+      const fakedJWT = 'Faked JWT';
+      const resource = 'example';
+      const cb = function () {};
 
       this.client._personalizationToken = fakedJWT;
       this.client.personalization.delete(resource, cb);
@@ -324,7 +324,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
       td.verify(
         del(
           {
-            url: resource + '/',
+            url: `${resource}/`,
             serviceName: 'personalization',
             qs: {},
             signature: fakedJWT,
@@ -337,11 +337,11 @@ describe('[UNIT] Stream Personalization (node)', function () {
 
   describe('No secret provided', function () {
     it('should raise SiteErrors', function () {
-      var client = new StreamClient('stub-key', null, 9498);
-      var resource = 'example';
-      var options = { foo: 'bar', baz: 'qux' };
-      var data = { k: 'v' };
-      var cb = function () {};
+      const client = new StreamClient('stub-key', null, 9498);
+      const resource = 'example';
+      const options = { foo: 'bar', baz: 'qux' };
+      const data = { k: 'v' };
+      const cb = function () {};
 
       // get
       expect(function () {

@@ -19,10 +19,10 @@ module.exports.wrapCB = function (expectedStatusCode, done, cb) {
 };
 
 module.exports.feed = function (client, feedId, userId) {
-  var token = signing.JWTScopeToken(config.API_SECRET, '*', '*', {
-    feedId: feedId,
-    userId: userId,
-  }).token;
+  const { token } = signing.JWTScopeToken(config.API_SECRET, '*', '*', {
+    feedId,
+    userId,
+  });
 
   return client.feed(feedId, userId, token);
 };

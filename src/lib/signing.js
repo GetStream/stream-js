@@ -10,9 +10,8 @@ function decodeBase64Url(base64UrlString) {
     /* istanbul ignore else */
     if (e.name === 'InvalidCharacterError') {
       return undefined;
-    } else {
-      throw e;
     }
+    throw e;
   }
 }
 
@@ -63,28 +62,23 @@ function JWTScopeToken(apiSecret, resource, action, opts) {
    */
   const options = opts || {};
   const noTimestamp = options.expireTokens ? !options.expireTokens : true;
-  const payload = { resource: resource, action: action };
+  const payload = { resource, action };
 
   if (options.feedId) {
-    payload['feed_id'] = options.feedId;
+    payload.feed_id = options.feedId;
   }
 
   if (options.userId) {
-    payload['user_id'] = options.userId;
+    payload.user_id = options.userId;
   }
 
   return jwt.sign(payload, apiSecret, {
     algorithm: 'HS256',
-    noTimestamp: noTimestamp,
+    noTimestamp,
   });
 }
 
-function JWTUserSessionToken(
-  apiSecret,
-  userId,
-  extraData = {},
-  jwtOptions = {},
-) {
+function JWTUserSessionToken(apiSecret, userId, extraData = {}, jwtOptions = {}) {
   /**
    * Creates the JWT token that can be used for a UserSession
    * @method JWTUserSessionToken

@@ -17,17 +17,15 @@ function addToMany(activity, feeds, callback) {
    */
 
   if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError(
-      'This method can only be used server-side using your API Secret',
-    );
+    throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
   return this.makeSignedRequest(
     {
       url: 'feed/add_to_many/',
       body: {
-        activity: activity,
-        feeds: feeds,
+        activity,
+        feeds,
       },
     },
     callback,
@@ -49,24 +47,19 @@ function followMany(follows, callbackOrActivityCopyLimit, callback) {
   const qs = {};
 
   if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError(
-      'This method can only be used server-side using your API Secret',
-    );
+    throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
   if (typeof callbackOrActivityCopyLimit === 'number') {
     activityCopyLimit = callbackOrActivityCopyLimit;
   }
 
-  if (
-    callbackOrActivityCopyLimit &&
-    typeof callbackOrActivityCopyLimit === 'function'
-  ) {
+  if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'function') {
     callback = callbackOrActivityCopyLimit;
   }
 
   if (typeof activityCopyLimit !== 'undefined') {
-    qs['activity_copy_limit'] = activityCopyLimit;
+    qs.activity_copy_limit = activityCopyLimit;
   }
 
   return this.makeSignedRequest(
@@ -91,9 +84,7 @@ function unfollowMany(unfollows, callback) {
    */
 
   if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError(
-      'This method can only be used server-side using your API Secret',
-    );
+    throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
   return this.makeSignedRequest(

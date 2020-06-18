@@ -19,9 +19,7 @@ describe('[UNIT] Stream Client (Common)', function () {
   it('#connect', function () {
     expect(this.client.apiKey).to.be(config.API_KEY);
     expect(this.client.version).to.be('v1.0');
-    expect(this.client.fayeUrl).to.be(
-      'https://faye-us-east.stream-io-api.com/faye',
-    );
+    expect(this.client.fayeUrl).to.be('https://faye-us-east.stream-io-api.com/faye');
     expect(this.client.group).to.be('unspecified');
     expect(this.client.location).to.be(undefined);
     expect(this.client.expireTokens).to.be(false);
@@ -100,7 +98,7 @@ describe('[UNIT] Stream Client (Common)', function () {
 
   describe('#feed', function () {
     it('(1) throw', function () {
-      var self = this;
+      const self = this;
 
       function toThrow() {
         self.client.feed();
@@ -112,7 +110,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('(2) throw', function () {
-      var self = this;
+      const self = this;
 
       function toThrow() {
         self.client.feed('user:jaap');
@@ -124,7 +122,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('(3) throw', function () {
-      var self = this;
+      const self = this;
 
       function toThrow() {
         self.client.feed('user###', 'jaap');
@@ -136,7 +134,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('(4) throw', function () {
-      var self = this;
+      const self = this;
 
       function toThrow() {
         self.client.feed('user', '###jaap');
@@ -148,7 +146,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('(5) throw with colon', function () {
-      var self = this;
+      const self = this;
 
       function toThrow() {
         self.client.feed('user:jaap', 'jaap');
@@ -171,7 +169,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done(err);
       }
 
-      var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
       task(null, { statusCode: 200 }, {});
     });
@@ -186,7 +184,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done();
       }
 
-      var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
       task(null, { statusCode: 500 }, {});
     });
@@ -201,7 +199,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done();
       }
 
-      var task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
 
       task(new Error('oops'), { statusCode: 200 }, {});
     });
@@ -214,7 +212,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done(err);
       }
 
-      var task = this.client.wrapPromiseTask(
+      const task = this.client.wrapPromiseTask(
         function () {
           done();
         },
@@ -228,17 +226,15 @@ describe('[UNIT] Stream Client (Common)', function () {
 
   describe('#enrichUrl', function () {
     it('(1) api service', function () {
-      var feedGroup = 'user';
-      var url = this.client.enrichUrl(feedGroup);
-      expect(url).to.be(
-        this.client.baseUrl + this.client.version + '/' + feedGroup,
-      );
+      const feedGroup = 'user';
+      const url = this.client.enrichUrl(feedGroup);
+      expect(url).to.be(`${this.client.baseUrl + this.client.version}/${feedGroup}`);
     });
   });
 
   describe('#enrichKwargs', function () {
     it('(1) api service - simple auth type', function () {
-      var kwargs = this.client.enrichKwargs({
+      const kwargs = this.client.enrichKwargs({
         url: 'feed',
         signature: 'Basic encoded_password',
       });
@@ -248,17 +244,17 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(kwargs.json).to.be(true);
       expect(kwargs.headers['stream-auth-type']).to.be('simple');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers['Authorization']).to.be('Basic encoded_password');
+      expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
       expect(kwargs.url).to.contain('api.stream-io-api.com');
     });
 
     it('(2) api service - jwt signature', function () {
-      var signature =
+      const signature =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG5Eb2UiLCJhY3Rpb24iOiJyZWFkIn0.dfayorXXS1rAyd97BGCNgrCodPH9X3P80DPMH5b9D_A';
 
-      var kwargs = this.client.enrichKwargs({
+      const kwargs = this.client.enrichKwargs({
         url: 'feed',
-        signature: 'feedname ' + signature,
+        signature: `feedname ${signature}`,
       });
 
       expect(kwargs.qs.api_key).to.be(this.client.apiKey);
@@ -266,12 +262,12 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(kwargs.json).to.be(true);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers['Authorization']).to.be(signature);
+      expect(kwargs.headers.Authorization).to.be(signature);
       expect(kwargs.url).to.contain('api.stream-io-api.com');
     });
 
     it('(3) personalization service - simple auth type', function () {
-      var kwargs = this.client.enrichKwargs({
+      const kwargs = this.client.enrichKwargs({
         url: 'feed',
         serviceName: 'personalization',
         signature: 'Basic encoded_password',
@@ -282,18 +278,18 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(kwargs.json).to.be(true);
       expect(kwargs.headers['stream-auth-type']).to.be('simple');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers['Authorization']).to.be('Basic encoded_password');
+      expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
       expect(kwargs.url).to.contain('personalization.stream-io-api.com');
     });
 
     it('(4) personalization service - jwt signature', function () {
-      var signature =
+      const signature =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiJwZXJzb25hbGl6YXRpb24iLCJmZWVkX2lkIjoiKiIsInVzZXJfaWQiOiIqIn0.JvX_IGajZSPD5zDOVpeZLkn0hhClMheN_ILnowyBUN';
 
-      var kwargs = this.client.enrichKwargs({
+      const kwargs = this.client.enrichKwargs({
         url: 'feed',
         serviceName: 'personalization',
-        signature: 'feedname ' + signature,
+        signature: `feedname ${signature}`,
       });
 
       expect(kwargs.qs.api_key).to.be(this.client.apiKey);
@@ -301,17 +297,17 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(kwargs.json).to.be(true);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers['Authorization']).to.be(signature);
+      expect(kwargs.headers.Authorization).to.be(signature);
       expect(kwargs.url).to.contain('personalization.stream-io-api.com');
     });
   });
 
   describe('Requests', function () {
-    var tdRequest = td.function();
+    const tdRequest = td.function();
 
     function toExpect(method) {
-      var arg0 = { url: 'feed', method: method, gzip: true };
-      var fun = td.matchers.isA(Function);
+      const arg0 = { url: 'feed', method, gzip: true };
+      const fun = td.matchers.isA(Function);
       return tdRequest(arg0, fun);
     }
 
@@ -333,7 +329,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('#delete', function () {
-      this.client['delete']({ url: 'feed' });
+      this.client.delete({ url: 'feed' });
 
       td.verify(toExpect('DELETE'));
     });

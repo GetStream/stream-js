@@ -20,20 +20,20 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
   it('fayeSubscribeListening', function (done) {
     this.timeout(60000);
 
-    var testUser1 = this.user1,
-      testUser2 = this.user2,
-      testUser3 = this.user3;
+    const testUser1 = this.user1;
+    const testUser2 = this.user2;
+    const testUser3 = this.user3;
 
-    var messages = 0,
-      N_MESSAGES = 3,
-      activity = {
-        verb: 'test',
-        actor: 'User:1',
-        object: 1,
-      };
+    let messages = 0;
+    const N_MESSAGES = 3;
+    const activity = {
+      verb: 'test',
+      actor: 'User:1',
+      object: 1,
+    };
 
-    var msgCallback = function (message) {
-      if (message && message['new'] && message['new'].length > 0) {
+    const msgCallback = function (message) {
+      if (message && message.new && message.new.length > 0) {
         messages += 1;
       }
 
@@ -42,7 +42,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
       }
     };
 
-    var httpCallback = function (error, response, body) {
+    const httpCallback = function (error, response, body) {
       if (error) done(error);
       if (response.statusCode !== 201) done(body);
     };
@@ -60,27 +60,27 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
 
   it('fayeSubscribeListeningWrongToken', function (done) {
     // Invalid token:
-    var testUser1 = this.client.feed(
+    const testUser1 = this.client.feed(
       'user',
       '111',
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiIqIiwiZmVlZF9pZCI6InVzZXIyMjIifQ.WXZTbUgxfitUVwJOhRKu9HRnpf-Je8AwA5BmiUG6vYY',
     );
     // Valid token:
-    var testUser2 = this.user2;
+    const testUser2 = this.user2;
 
-    var messages = 0,
-      activity = {
-        verb: 'test',
-        actor: 'User:1',
-        object: 1,
-      };
+    let messages = 0;
+    const activity = {
+      verb: 'test',
+      actor: 'User:1',
+      object: 1,
+    };
 
-    var httpCallback = function (error, response, body) {
+    const httpCallback = function (error, response, body) {
       if (error) done(error);
       if (response.statusCode !== 201) done(body);
     };
 
-    var doneYet = function () {
+    const doneYet = function () {
       messages++;
 
       if (messages === 2) done();
@@ -101,38 +101,38 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
 
   it('fayeSubscribeScope', function (done) {
     this.user1ReadOnly.getFayeClient();
-    var isDone = false;
+    let isDone = false;
 
-    var doneYet = function () {
+    const doneYet = function () {
       if (!isDone) {
         done();
         isDone = true;
       }
     };
 
-    var subscription = this.user1ReadOnly.subscribe(doneYet);
+    const subscription = this.user1ReadOnly.subscribe(doneYet);
     subscription.then(doneYet);
   });
 
   it('fayeSubscribeScopeTampered', function (done) {
     this.user1ReadOnly.getFayeClient();
-    var isDone = false;
+    let isDone = false;
 
-    var doneYet = function () {
+    const doneYet = function () {
       if (!isDone) {
         done();
         isDone = true;
       }
     };
-    var subscription = this.user1ReadOnly.subscribe(doneYet);
+    const subscription = this.user1ReadOnly.subscribe(doneYet);
     subscription.then(doneYet);
   });
 
   it('fayeSubscribeError', function (done) {
-    var client = stream.connect('5crf3bhfzesn');
+    const client = stream.connect('5crf3bhfzesn');
 
     function sub() {
-      var user1 = client.feed('user', '11', 'secret');
+      const user1 = client.feed('user', '11', 'secret');
       user1.subscribe();
     }
     expect(sub).to.throwException(function (e) {
