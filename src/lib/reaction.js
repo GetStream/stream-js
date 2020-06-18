@@ -15,13 +15,9 @@ export default class StreamReaction {
     this.signature = token;
   }
 
-  buildURL() {
-    let url = 'reaction/';
-    for (let i = 0; i < arguments.length; i++) {
-      url += `${arguments[i]}/`;
-    }
-    return url;
-  }
+  buildURL = (...args) => {
+    return `${['reaction', ...args].join('/')}/`;
+  };
 
   all(options, callback) {
     /**
@@ -43,9 +39,9 @@ export default class StreamReaction {
     );
   }
 
-  _convertTargetFeeds(targetFeeds = []) {
+  _convertTargetFeeds = (targetFeeds = []) => {
     return targetFeeds.map((elem) => (typeof elem === 'string' ? elem : elem.id));
-  }
+  };
 
   add(kind, activity, data = {}, { id, targetFeeds = [], userId, targetFeedsExtraData } = {}, callback) {
     /**
@@ -165,7 +161,7 @@ export default class StreamReaction {
       qs.limit = 10;
     }
 
-    if ((user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) != 1) {
+    if ((user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) !== 1) {
       throw new errors.SiteError(
         'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );

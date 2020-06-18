@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import signing from '../../../src/lib/signin';
+import signing from '../../../src/lib/signing';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Browser)', function () {

@@ -26,31 +26,27 @@ describe('Reaction pagination', () => {
   });
 
   describe('When bob adds 25 likes to the activity and some comments', () => {
-    for (let index = 0; index < 25; index++) {
-      ctx.requestShouldNotError(async () => {
-        if (index % 3 == 0) {
-          ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, {
-            index,
-          });
-          delete ctx.response.duration;
-          ctx.response.user = ctx.bob.currentUser.full;
-          comments.unshift(ctx.response);
-        }
-        ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, {
-          index,
-        });
+    const addReactionReq = async (index) => {
+      if (index % 3 === 0) {
+        ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, { index });
         delete ctx.response.duration;
         ctx.response.user = ctx.bob.currentUser.full;
-        likes.unshift(ctx.response);
-        if (index % 4 == 0) {
-          ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, {
-            index,
-          });
-          delete ctx.response.duration;
-          ctx.response.user = ctx.bob.currentUser.full;
-          claps.unshift(ctx.response);
-        }
-      });
+        comments.unshift(ctx.response);
+      }
+      ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, { index });
+      delete ctx.response.duration;
+      ctx.response.user = ctx.bob.currentUser.full;
+      likes.unshift(ctx.response);
+      if (index % 4 === 0) {
+        ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, { index });
+        delete ctx.response.duration;
+        ctx.response.user = ctx.bob.currentUser.full;
+        claps.unshift(ctx.response);
+      }
+    };
+
+    for (let index = 0; index < 25; index++) {
+      ctx.requestShouldNotError(() => addReactionReq(index));
     }
   });
 
@@ -613,11 +609,11 @@ describe('Nested reactions madness', () => {
         const activity = ctx.response.results[0];
         activity.latest_reactions.should.have.all.keys('comment');
         activity.latest_reactions.comment.should.have.length(1);
-        const comment = activity.latest_reactions.comment[0];
-        comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
-        comment.own_children.clap.should.have.length(5);
-        comment.own_children.like.should.have.length(5);
-        comment.own_children.unlike.should.have.length(5);
+        const commentReaction = activity.latest_reactions.comment[0];
+        commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+        commentReaction.own_children.clap.should.have.length(5);
+        commentReaction.own_children.like.should.have.length(5);
+        commentReaction.own_children.unlike.should.have.length(5);
         activity.reaction_counts.should.have.all.keys('comment');
         activity.reaction_counts.should.eql({
           comment: 1,
@@ -910,11 +906,11 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     ctx.activityShould('contain the activity with the nested like', () => {
       ctx.activity.latest_reactions.should.have.all.keys('comment');
       ctx.activity.latest_reactions.comment.should.have.length(1);
-      const comment = ctx.activity.latest_reactions.comment[0];
-      comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
-      comment.latest_children.should.have.all.keys('like');
-      comment.latest_children.like.should.have.length(1);
-      comment.latest_children.like[0].parent.should.eql(comment.id);
+      const commentReaction = ctx.activity.latest_reactions.comment[0];
+      commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+      commentReaction.latest_children.should.have.all.keys('like');
+      commentReaction.latest_children.like.should.have.length(1);
+      commentReaction.latest_children.like[0].parent.should.eql(commentReaction.id);
     });
   });
 

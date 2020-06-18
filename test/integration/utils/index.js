@@ -5,32 +5,30 @@ import Promise from '../../../src/lib/promise';
 
 import config from './config';
 
-module.exports.wrapCB = function (expectedStatusCode, done, cb) {
+export function wrapCB(expectedStatusCode, done, cb) {
   return function (error, response) {
     if (error) return done(error);
     expect(response.statusCode).to.be(expectedStatusCode);
 
     if (typeof cb === 'function') {
-      cb.apply(cb, arguments);
+      cb.apply(cb, [error, response]);
     } else {
       done();
     }
   };
-};
+}
 
-module.exports.feed = function (client, feedId, userId) {
+function feed(client, feedId, userId) {
   const { token } = signing.JWTScopeToken(config.API_SECRET, '*', '*', {
     feedId,
     userId,
   });
 
   return client.feed(feedId, userId, token);
-};
+}
 
-module.exports.delay = function (s, wth) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
-      resolve(wth);
-    }, s);
-  });
-};
+function delay(s, wth) {
+  return new Promise((resolve) => setTimeout(() => resolve(wth), s));
+}
+
+export default { feed, delay };

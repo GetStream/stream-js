@@ -54,9 +54,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
         delete activity.target;
         delete activity.origin;
 
-        const activities = [activity];
-
-        return self.client.updateActivities(activities);
+        return self.client.updateActivities([activity]);
       })
       .then(function () {
         return self.user1.get({ limit: 2 });
@@ -78,17 +76,15 @@ describe('[INTEGRATION] Stream client (Node)', function () {
 
     return this.user1
       .addActivity(activity)
-      .then(function (body) {
-        const activity = body;
+      .then(function (addedActivity) {
+        delete addedActivity.id;
+        delete addedActivity.duration;
+        delete addedActivity.to;
+        delete addedActivity.time;
 
-        delete activity.id;
-        delete activity.duration;
-        delete activity.to;
-        delete activity.time;
+        addedActivity.foreign_id = 'aap';
 
-        activity.foreign_id = 'aap';
-
-        return self.client.updateActivity(activity);
+        return self.client.updateActivity(addedActivity);
       })
       .then(function () {
         throw new Error('Expected InputException');
@@ -110,15 +106,13 @@ describe('[INTEGRATION] Stream client (Node)', function () {
 
     return this.user1
       .addActivity(activity)
-      .then(function (body) {
-        const activity = body;
+      .then(function (addedActivity) {
+        delete addedActivity.duration;
+        delete addedActivity.to;
 
-        delete activity.duration;
-        delete activity.to;
+        addedActivity.time = 'aap';
 
-        activity.time = 'aap';
-
-        return self.client.updateActivity(activity);
+        return self.client.updateActivity(addedActivity);
       })
       .then(function () {
         throw new Error('Expected InputException');
@@ -140,15 +134,13 @@ describe('[INTEGRATION] Stream client (Node)', function () {
 
     return this.user1
       .addActivity(activity)
-      .then(function (body) {
-        const activity = body;
+      .then(function (addedActivity) {
+        delete addedActivity.duration;
+        delete addedActivity.time;
 
-        delete activity.duration;
-        delete activity.time;
+        addedActivity.to = ['to:something'];
 
-        activity.to = ['to:something'];
-
-        return self.client.updateActivity(activity);
+        return self.client.updateActivity(addedActivity);
       })
       .then(function () {
         throw new Error('Expected InputException');

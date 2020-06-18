@@ -37,7 +37,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
         messages += 1;
       }
 
-      if (messages == N_MESSAGES) {
+      if (messages === N_MESSAGES) {
         done();
       }
     };

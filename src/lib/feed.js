@@ -12,9 +12,9 @@ function replaceStreamObjects(obj) {
     cloned = obj.map((v) => replaceStreamObjects(v));
   } else if (isPlainObject(obj)) {
     cloned = {};
-    for (const k in obj) {
+    Object.keys(obj).forEach((k) => {
       cloned[k] = replaceStreamObjects(obj[k]);
-    }
+    });
   } else if (isObject(obj) && obj._streamRef !== undefined) {
     cloned = obj._streamRef();
   }
@@ -451,14 +451,11 @@ export default class StreamFeed {
 
     if (added_targets && removed_targets) {
       // brute force - iterate through added, check to see if removed contains that element
-      for (let i = 0; i < added_targets.length; i++) {
-        // would normally use Array.prototype.includes here, but it's not supported in Node.js v4 :(
-        for (let j = 0; j < removed_targets.length; j++) {
-          if (removed_targets[j] == added_targets[i]) {
-            throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
-          }
+      added_targets.forEach((added_target) => {
+        if (removed_targets.includes(added_target)) {
+          throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
         }
-      }
+      });
     }
 
     const body = {

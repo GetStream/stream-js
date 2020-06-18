@@ -109,7 +109,7 @@ function isJWTSignature(signature) {
    * @param {string} signature - Signature to check
    * @return {boolean}
    */
-  if (signature == null || signature.length == 0) {
+  if (signature == null || signature.length === 0) {
     return false;
   }
   const token = signature.split(' ')[1] || signature;

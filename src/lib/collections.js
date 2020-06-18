@@ -103,10 +103,10 @@ export default class Collections {
     this.token = token;
   }
 
-  buildURL(collection, itemId) {
+  buildURL = (collection, itemId) => {
     const url = `collections/${collection}/`;
     return itemId === undefined ? url : `${url + itemId}/`;
-  }
+  };
 
   entry(collection, itemId, itemData) {
     return new CollectionEntry(this, collection, itemId, itemData);
@@ -236,10 +236,6 @@ export default class Collections {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    const last = arguments[arguments.length - 1];
-    // callback is always the last argument
-    callback = last.call ? last : undefined;
-
     if (!Array.isArray(data)) {
       data = [data];
     }
@@ -253,7 +249,7 @@ export default class Collections {
         body,
         signature: this.client.getCollectionsToken(),
       },
-      callback,
+      callback instanceof Function ? callback : undefined,
     );
   }
 
@@ -272,10 +268,6 @@ export default class Collections {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    const last = arguments[arguments.length - 1];
-    // callback is always the last argument
-    callback = last.call ? last : undefined;
-
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
@@ -291,7 +283,7 @@ export default class Collections {
         qs: params,
         signature: this.client.getCollectionsToken(),
       },
-      callback,
+      callback instanceof Function ? callback : undefined,
     );
   }
 
@@ -310,10 +302,6 @@ export default class Collections {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    const last = arguments[arguments.length - 1];
-    // callback is always the last argument
-    callback = last.call ? last : undefined;
-
     if (!Array.isArray(ids)) {
       ids = [ids];
     }
@@ -330,8 +318,7 @@ export default class Collections {
         qs: params,
         signature: this.client.getCollectionsToken(),
       },
-      callback,
+      callback instanceof Function ? callback : undefined,
     );
   }
 }
-

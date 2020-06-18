@@ -1,6 +1,6 @@
 import request from 'request';
 import qs from 'qs';
-import url from 'url';
+import Url from 'url';
 import http from 'http';
 import https from 'https';
 import Faye from 'faye';
@@ -180,7 +180,7 @@ class StreamClient {
       serviceName = 'api';
     }
     let url = this.baseUrl;
-    if (serviceName != 'api') {
+    if (serviceName !== 'api') {
       url = `https://${serviceName}.stream-io-api.com/${serviceName}/`;
     }
 
@@ -194,7 +194,7 @@ class StreamClient {
     }
 
     let urlEnvironmentKey;
-    if (serviceName == 'api') {
+    if (serviceName === 'api') {
       urlEnvironmentKey = 'STREAM_BASE_URL';
     } else {
       urlEnvironmentKey = `STREAM_${serviceName.toUpperCase()}_URL`;
@@ -241,14 +241,14 @@ class StreamClient {
     }
   }
 
-  send() {
+  send(...args) {
     /**
      * Call the given handler with the arguments
      * @method send
      * @memberof StreamClient.prototype
      * @access private
      */
-    let args = Array.prototype.slice.call(arguments);
+
     const key = args[0];
     args = args.slice(1);
     if (this.handlers[key]) {
@@ -296,17 +296,15 @@ class StreamClient {
      * @memberof StreamClient.prototype
      * @access private
      */
-    const client = this;
 
-    function callback() {
+    const callback = (...args) => {
       // first hit the global callback, subsequently forward
-      const args = Array.prototype.slice.call(arguments);
       const sendArgs = ['response'].concat(args);
-      client.send.apply(client, sendArgs);
+      this.send(sendArgs);
       if (cb !== undefined) {
-        cb.apply(client, args);
+        cb.apply(this, args);
       }
-    }
+    };
 
     return callback;
   }
@@ -399,7 +397,7 @@ class StreamClient {
     return `${this.getBaseUrl(serviceName) + this.version}/${relativeUrl}`;
   }
 
-  replaceReactionOptions(options) {
+  replaceReactionOptions = (options) => {
     // Shortcut options for reaction enrichment
     if (options && options.reactions) {
       if (options.reactions.own != null) {
@@ -416,7 +414,7 @@ class StreamClient {
       }
       delete options.reactions;
     }
-  }
+  };
 
   shouldUseEnrichEndpoint(options) {
     if (options && options.enrich) {
@@ -678,19 +676,19 @@ class StreamClient {
     return this.updateActivities([activity], callback);
   }
 
-  getActivities(params, callback) {
+  getActivities({ ids, foreignIDTimes, ...params }, callback) {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
-    const { ids, foreignIDTimes, ...qs } = params;
+
     if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
-      qs.ids = ids.join(',');
+      params.ids = ids.join(',');
     } else if (foreignIDTimes) {
       if (!(foreignIDTimes instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
@@ -705,8 +703,8 @@ class StreamClient {
         timestamps.push(fidTime.time);
       });
 
-      qs.foreign_ids = foreignIDs.join(',');
-      qs.timestamps = timestamps.join(',');
+      params.foreign_ids = foreignIDs.join(',');
+      params.timestamps = timestamps.join(',');
     } else {
       throw new TypeError('Missing ids or foreignIDTimes params');
     }
@@ -719,13 +717,13 @@ class StreamClient {
       });
     }
 
-    this.replaceReactionOptions(qs);
-    const path = this.shouldUseEnrichEndpoint(qs) ? 'enrich/activities/' : 'activities/';
+    this.replaceReactionOptions(params);
+    const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
     return this.get(
       {
         url: path,
-        qs,
+        qs: params,
         signature: token,
       },
       callback,
@@ -925,10 +923,10 @@ if (qs) {
      * @param  {array} events     List of events to track
      * @return {string}           The redirect url
      */
-    const uri = url.parse(targetUrl);
+    const uri = Url.parse(targetUrl);
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
-      throw new errors.MissingSchemaError(`Invalid URI: "${url.format(uri)}"`);
+      throw new errors.MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
     }
 
     const authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', {
@@ -952,11 +950,11 @@ if (qs) {
 
 // If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 if (BatchOperations) {
-  for (const key in BatchOperations) {
+  Object.keys(BatchOperations).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(BatchOperations, key)) {
       StreamClient.prototype[key] = BatchOperations[key];
     }
-  }
+  });
 }
 
 export default StreamClient;

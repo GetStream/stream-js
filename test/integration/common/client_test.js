@@ -401,23 +401,21 @@ describe('[INTEGRATION] Stream client (Common)', function () {
 
     return self.user1
       .addActivity(activity)
-      .then(function add2(body) {
+      .then((body) => {
         activityIdOne = body.id;
-        const activity = {
+        return self.user1.addActivity({
           actor: 2,
           verb: 'watch',
           object: 2,
-        };
-        return self.user1.addActivity(activity);
+        });
       })
-      .then(function add3(body) {
+      .then((body) => {
         activityIdTwo = body.id;
-        const activity = {
+        return self.user1.addActivity({
           actor: 3,
           verb: 'run',
           object: 2,
-        };
-        return self.user1.addActivity(activity);
+        });
       })
       .then(function (body) {
         return utils.delay(200, body);
@@ -480,13 +478,11 @@ describe('[INTEGRATION] Stream client (Common)', function () {
       })
       .then(function (body) {
         const notificationId = body.results[0].id;
-        const params = {
+        return self.notification3.get({
           limit: 2,
           mark_seen: true,
           mark_read: notificationId,
-        };
-
-        return self.notification3.get(params);
+        });
       })
       .then(function () {
         return self.notification3.get(params);

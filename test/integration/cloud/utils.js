@@ -91,7 +91,7 @@ export class CloudContext {
       expect.fail(null, null, 'calling ctx.test from within a ctx.test is not supported');
     }
 
-    if (fn.length == 0) {
+    if (fn.length === 0) {
       return async function () {
         if (ctx.failed) {
           this.skip();
@@ -163,8 +163,8 @@ export class CloudContext {
         if (!(e instanceof stream.errors.StreamApiError)) {
           throw e;
         }
-        if (e.response.statusCode != statusCode) {
-          console.log(e.error);
+        if (e.response.statusCode !== statusCode) {
+          console.log(e.error); // eslint-disable-line no-console
         }
         e.response.statusCode.should.equal(statusCode);
         this.error = e;
@@ -227,11 +227,11 @@ export class CloudContext {
     });
   }
 
-  shouldEqualBesideDuration(obj1, obj2) {
+  shouldEqualBesideDuration = (obj1, obj2) => {
     const obj1Copy = { ...obj1, duration: null };
     const obj2Copy = { ...obj2, duration: null };
     obj1Copy.should.eql(obj2Copy);
-  }
+  };
 
   responseShouldEqualPreviousResponse() {
     this.responseShould('be the same as the previous response', () => {
@@ -275,9 +275,9 @@ export class CloudContext {
     });
   }
 
-  reactionToReactionInActivity(reaction, user) {
+  reactionToReactionInActivity = (reaction, user) => {
     reaction = { ...reaction };
     reaction.user = user.full;
     return reaction;
-  }
+  };
 }

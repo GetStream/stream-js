@@ -55,7 +55,7 @@ describe('Images', () => {
     });
   });
 
-  describe('When the image ${imageUrl} is requested', () => {
+  describe('When the image {imageUrl} is requested', () => {
     ctx.test('should return 200', function (done) {
       request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
