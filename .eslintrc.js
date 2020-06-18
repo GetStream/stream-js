@@ -1,6 +1,12 @@
 module.exports = {
-  plugins: ['prettier'],
-  extends: ['airbnb-base', 'eslint:recommended', 'plugin:prettier/recommended', 'plugin:sonarjs/recommended'],
+  plugins: ['prettier', 'chai-friendly'],
+  extends: [
+    'airbnb-base',
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'plugin:sonarjs/recommended',
+    'plugin:chai-friendly/recommended',
+  ],
   parser: 'babel-eslint',
   env: {
     es6: true,
