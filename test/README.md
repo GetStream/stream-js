@@ -9,7 +9,7 @@ Testing & stream-js
 
 # Lint
 
-Your code should always be clean when doing `npm run lint`. It runs `eslint`.
+Your code should always be clean when doing `yarn run lint`. It runs `eslint`.
 
 
 # Organisation of the tests directory
@@ -37,7 +37,7 @@ mocha test/unit/common/client_test.js
 # Whole dir
 mocha test/unit/common/*_test.js
 # All unit tests
-npm test
+yarn test
 ```
 
 
@@ -54,7 +54,7 @@ They are great because they mimic a real setup where someone would perform an AP
 
 # Coverage
 
-We like to see that the metrics being generated are actually covered by tests. To generate the coverage report you can run ``npm run coverage``, this will invoke the nodejs istanbul coverage reporter and store its output in ``/coverage``.
+We like to see that the metrics being generated are actually covered by tests. To generate the coverage report you can run ``yarn run coverage``, this will invoke the nodejs istanbul coverage reporter and store its output in ``/coverage``.
 
 Coverage is also tracked by [coveralls.io](https://coveralls.io/github/GetStream/stream-js). Note, however, that Travis does not enforce coverage. It will not fail the test run if you don't have 100% coverage.
 
