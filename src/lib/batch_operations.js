@@ -123,7 +123,7 @@ function makeSignedRequest(kwargs, cb) {
   }
 
   return new Promise(
-    function(fulfill, reject) {
+    function (fulfill, reject) {
       this.send('request', 'post', kwargs, cb);
 
       kwargs.url = this.enrichUrl(kwargs.url);

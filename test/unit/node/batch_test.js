@@ -5,10 +5,10 @@ import Promise from '../../../src/lib/promise';
 import errors from '../../../src/lib/errors';
 import { beforeEachFn } from '../utils/hooks';
 
-describe('[UNIT] Stream Client Batch (Node)', function() {
+describe('[UNIT] Stream Client Batch (Node)', function () {
   beforeEach(beforeEachFn);
 
-  afterEach(function() {
+  afterEach(function () {
     td.reset();
   });
 
@@ -18,7 +18,7 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
     return msr;
   }
 
-  it('#addToMany', function() {
+  it('#addToMany', function () {
     expect(this.client.addToMany).to.be.a(Function);
 
     var msr = replaceMSR.call(this);
@@ -42,13 +42,13 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
     );
   });
 
-  it('#followMany', function() {
+  it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
     var msr = replaceMSR.call(this);
 
     var follows = [];
-    var cb = function() {};
+    var cb = function () {};
 
     this.client.followMany(follows, 10, cb);
 
@@ -66,13 +66,13 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
     );
   });
 
-  it('#followMany', function() {
+  it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
     var msr = replaceMSR.call(this);
 
     var follows = [];
-    var cb = function() {};
+    var cb = function () {};
 
     this.client.followMany(follows, cb);
 
@@ -88,13 +88,13 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
     );
   });
 
-  it('#followMany', function() {
+  it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
     var msr = replaceMSR.call(this);
 
     var follows = [];
-    var cb = function() {};
+    var cb = function () {};
 
     this.client.followMany(follows, 0, cb);
 
@@ -112,7 +112,7 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
     );
   });
 
-  it('#makeSignedRequest', function() {
+  it('#makeSignedRequest', function () {
     var self = this;
     td.replace(this.client, 'apiSecret', '');
 
@@ -120,24 +120,24 @@ describe('[UNIT] Stream Client Batch (Node)', function() {
       self.client.makeSignedRequest({});
     }
 
-    expect(throws).to.throwException(function(err) {
+    expect(throws).to.throwException(function (err) {
       expect(err).to.be.a(errors.SiteError);
     });
   });
 
-  it('#makeSignedRequest', function() {
+  it('#makeSignedRequest', function () {
     var p = this.client.makeSignedRequest({});
 
     expect(p).to.be.a(Promise);
   });
 
-  it('#unfollowMany', function() {
+  it('#unfollowMany', function () {
     expect(this.client.unfollowMany).to.be.a(Function);
 
     var msr = replaceMSR.call(this);
 
     var unfollows = [];
-    var cb = function() {};
+    var cb = function () {};
 
     this.client.unfollowMany(unfollows, cb);
 

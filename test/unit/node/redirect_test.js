@@ -12,8 +12,8 @@ const decodedUrl = (redirectUrl) => {
   const decoded = jwt.verify(queryString.authorization, config.API_SECRET);
   return decoded;
 };
-describe("[UNIT] Redirect URL's", function() {
-  it('should create email redirects (analytics.stream-io-api.com)', function() {
+describe("[UNIT] Redirect URL's", function () {
+  it('should create email redirects (analytics.stream-io-api.com)', function () {
     const expectedParts = [
       'https://analytics.stream-io-api.com/analytics/redirect/',
       'auth_type=jwt',
@@ -57,7 +57,7 @@ describe("[UNIT] Redirect URL's", function() {
       expect(redirectUrl).to.contain(expectedParts[i]);
     }
   });
-  it('should create email redirects (analytics.getstream.io)', function() {
+  it('should create email redirects (analytics.getstream.io)', function () {
     process.env.STREAM_ANALYTICS_BASE_URL =
       'https://analytics.getstream.io/analytics/';
     const expectedParts = [
@@ -102,7 +102,7 @@ describe("[UNIT] Redirect URL's", function() {
     delete process.env['STREAM_ANALYTICS_BASE_URL'];
   });
 
-  it('should follow redirect urls', async function() {
+  it('should follow redirect urls', async function () {
     const mockEvents = [
       {
         content_list: ['tweet:1', 'tweet:2', 'tweet:3'],
@@ -137,9 +137,9 @@ describe("[UNIT] Redirect URL's", function() {
     expect(status).to.be(200);
   });
 
-  it('should fail creating email redirects on invalid targets', function() {
+  it('should fail creating email redirects on invalid targets', function () {
     var self = this;
-    expect(function() {
+    expect(function () {
       self.client.createRedirectUrl('google.com', 'tommaso', []);
     }).to.throwException(new errors.MissingSchemaError());
   });
