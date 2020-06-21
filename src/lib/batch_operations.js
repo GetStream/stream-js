@@ -1,6 +1,5 @@
-import httpSignature from 'http-signature';
-import request from 'request';
-
+import axios from 'axios';
+import crypto from 'crypto';
 import errors from './errors';
 import Promise from './promise';
 
@@ -25,7 +24,7 @@ function addToMany(activity, feeds, callback) {
   return this.makeSignedRequest(
     {
       url: 'feed/add_to_many/',
-      body: {
+      data: {
         activity: activity,
         feeds: feeds,
       },
@@ -72,8 +71,8 @@ function followMany(follows, callbackOrActivityCopyLimit, callback) {
   return this.makeSignedRequest(
     {
       url: 'follow_many/',
-      body: follows,
-      qs,
+      data: follows,
+      params: qs,
     },
     callback,
   );
@@ -99,7 +98,7 @@ function unfollowMany(unfollows, callback) {
   return this.makeSignedRequest(
     {
       url: 'unfollow_many/',
-      body: unfollows,
+      data: unfollows,
     },
     callback,
   );
@@ -122,28 +121,42 @@ function makeSignedRequest(kwargs, cb) {
     );
   }
 
-  return new Promise(
-    function (fulfill, reject) {
-      this.send('request', 'post', kwargs, cb);
-
-      kwargs.url = this.enrichUrl(kwargs.url);
-      kwargs.json = true;
-      kwargs.method = 'POST';
-      kwargs.headers = { 'X-Api-Key': this.apiKey };
-      // Make sure withCredentials is not enabled, different browser
-      // fallbacks handle it differently by default (meteor)
-      kwargs.withCredentials = false;
-
-      const callback = this.wrapPromiseTask(cb, fulfill, reject);
-      const req = request(kwargs, callback);
-
-      httpSignature.sign(req, {
-        algorithm: 'hmac-sha256',
-        key: this.apiSecret,
-        keyId: this.apiKey,
-      });
-    }.bind(this),
-  );
+  this.send('request', 'post', kwargs, cb);
+  function generateSignature(apiSecret, apiKey, algorithm = 'SHA256') {
+    const date = new Date().toUTCString();
+    const value = `date: ${date}`;
+    const signature = crypto
+      .createHmac(algorithm, apiSecret)
+      .update(value)
+      .digest('base64');
+    function setHeader() {
+      kwargs.headers = {
+        ...kwargs.headers,
+        Date: date,
+        Authorization: `Signature keyId="${apiKey}",algorithm="hmac-sha256",headers="date",signature="${signature}"`,
+      };
+    }
+    setHeader();
+  }
+  kwargs.url = this.enrichUrl(kwargs.url);
+  kwargs.method = 'POST';
+  kwargs.headers = {
+    'X-Api-Key': this.apiKey,
+  };
+  kwargs.withCredentials = false;
+  generateSignature(this.apiSecret, this.apiKey);
+  return axios(kwargs)
+    .then(function (response) {
+      return Promise.resolve(response.data);
+    })
+    .catch(function (error) {
+      var errorMessage = new errors.StreamApiError(
+        JSON.stringify(kwargs.data) +
+          ' with HTTP status code ' +
+          error.response.data.status_code,
+      );
+      return Promise.reject(errorMessage);
+    });
 }
 
 export default {

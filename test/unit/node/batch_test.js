@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import Promise from '../../../src/lib/promise';
 import errors from '../../../src/lib/errors';
 import { beforeEachFn } from '../utils/hooks';
 
@@ -32,7 +31,7 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
       msr(
         {
           url: 'feed/add_to_many/',
-          body: {
+          data: {
             activity: activity,
             feeds: feeds,
           },
@@ -56,8 +55,8 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
       msr(
         {
           url: 'follow_many/',
-          body: follows,
-          qs: {
+          data: follows,
+          params: {
             activity_copy_limit: 10,
           },
         },
@@ -80,8 +79,8 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
       msr(
         {
           url: 'follow_many/',
-          body: follows,
-          qs: {},
+          data: follows,
+          params: {},
         },
         cb,
       ),
@@ -102,8 +101,8 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
       msr(
         {
           url: 'follow_many/',
-          body: follows,
-          qs: {
+          data: follows,
+          params: {
             activity_copy_limit: 0,
           },
         },
@@ -127,8 +126,9 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
 
   it('#makeSignedRequest', function () {
     var p = this.client.makeSignedRequest({});
-
-    expect(p).to.be.a(Promise);
+    p.catch((err) => {
+      expect(err).to.be.a(Error);
+    });
   });
 
   it('#unfollowMany', function () {
@@ -145,7 +145,7 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
       msr(
         {
           url: 'unfollow_many/',
-          body: unfollows,
+          data: unfollows,
         },
         cb,
       ),
