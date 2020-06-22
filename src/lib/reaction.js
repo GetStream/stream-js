@@ -19,31 +19,27 @@ export default class StreamReaction {
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  all(options, callback) {
+  all(options) {
     /**
      * get all reactions
      * @method all
      * @memberof StreamReaction.prototype
      * @param  {object}   options  {limit:}
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.all()
      * @example reactions.all({limit:100})
      */
-    return this.client.get(
-      {
-        url: this.buildURL(),
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.get({
+      url: this.buildURL(),
+      signature: this.signature,
+    });
   }
 
   _convertTargetFeeds = (targetFeeds = []) => {
     return targetFeeds.map((elem) => (typeof elem === 'string' ? elem : elem.id));
   };
 
-  add(kind, activity, data = {}, { id, targetFeeds = [], userId, targetFeedsExtraData } = {}, callback) {
+  add(kind, activity, data = {}, { id, targetFeeds = [], userId, targetFeedsExtraData } = {}) {
     /**
      * add reaction
      * @method add
@@ -52,7 +48,6 @@ export default class StreamReaction {
      * @param  {string}   activity Activity or an ActivityID
      * @param  {object}   data  data related to reaction
      * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
@@ -72,17 +67,14 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post(
-      {
-        url: this.buildURL(),
-        body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.post({
+      url: this.buildURL(),
+      body,
+      signature: this.signature,
+    });
   }
 
-  addChild(kind, reaction, data = {}, { targetFeeds = [], userId, targetFeedsExtraData } = {}, callback) {
+  addChild(kind, reaction, data = {}, { targetFeeds = [], userId, targetFeedsExtraData } = {}) {
     /**
      * add reaction
      * @method add
@@ -91,7 +83,6 @@ export default class StreamReaction {
      * @param  {string}   reaction Reaction or a ReactionID
      * @param  {object}   data  data related to reaction
      * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
@@ -110,36 +101,29 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post(
-      {
-        url: this.buildURL(),
-        body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.post({
+      url: this.buildURL(),
+      body,
+      signature: this.signature,
+    });
   }
 
-  get(id, callback) {
+  get(id) {
     /**
      * get reaction
      * @method add
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get(
-      {
-        url: this.buildURL(id),
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.get({
+      url: this.buildURL(id),
+      signature: this.signature,
+    });
   }
 
-  filter(conditions, callback) {
+  filter(conditions) {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -150,7 +134,6 @@ export default class StreamReaction {
      * @method lookup
      * @memberof StreamReaction.prototype
      * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
      * @example reactions.lookup({user_id: "john", kinds:"like"})
@@ -172,17 +155,14 @@ export default class StreamReaction {
 
     const url = conditions.kind ? this.buildURL(lookupType, value, conditions.kind) : this.buildURL(lookupType, value);
 
-    return this.client.get(
-      {
-        url,
-        qs,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.get({
+      url,
+      qs,
+      signature: this.signature,
+    });
   }
 
-  update(id, data, { targetFeeds = [], targetFeedsExtraData } = {}, callback) {
+  update(id, data, { targetFeeds = [], targetFeedsExtraData } = {}) {
     /**
      * update reaction
      * @method add
@@ -190,7 +170,6 @@ export default class StreamReaction {
      * @param  {string}   id Reaction Id
      * @param  {object}   data  Data associated to reaction
      * @param  {array}   targetFeeds  Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
@@ -203,32 +182,25 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.put(
-      {
-        url: this.buildURL(id),
-        body,
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.put({
+      url: this.buildURL(id),
+      body,
+      signature: this.signature,
+    });
   }
 
-  delete(id, callback) {
+  delete(id) {
     /**
      * delete reaction
      * @method delete
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.delete(
-      {
-        url: this.buildURL(id),
-        signature: this.signature,
-      },
-      callback,
-    );
+    return this.client.delete({
+      url: this.buildURL(id),
+      signature: this.signature,
+    });
   }
 }

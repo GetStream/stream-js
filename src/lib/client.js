@@ -21,13 +21,6 @@ import errors from './errors';
 import utils from './utils';
 
 /**
- * @callback requestCallback
- * @param {object} [errors]
- * @param {object} response
- * @param {object} body
- */
-
-/**
  * Client to connect to Stream api
  * @class StreamClient
  */
@@ -256,20 +249,16 @@ class StreamClient {
     }
   }
 
-  wrapPromiseTask(cb, fulfill, reject) {
+  wrapPromiseTask = (fulfill, reject) => {
     /**
      * Wrap a task to be used as a promise
      * @method wrapPromiseTask
      * @memberof StreamClient.prototype
      * @private
-     * @param {requestCallback} cb
      * @param {function} fulfill
      * @param {function} reject
      * @return {function}
      */
-    const client = this;
-
-    const callback = this.wrapCallback(cb);
     return function task(error, response, body) {
       if (error) {
         reject(new errors.StreamApiError(error, body, response));
@@ -284,30 +273,8 @@ class StreamClient {
       } else {
         fulfill(body);
       }
-
-      callback.call(client, error, response, body);
     };
-  }
-
-  wrapCallback(cb) {
-    /**
-     * Wrap callback for HTTP request
-     * @method wrapCallBack
-     * @memberof StreamClient.prototype
-     * @access private
-     */
-
-    const callback = (...args) => {
-      // first hit the global callback, subsequently forward
-      const sendArgs = ['response'].concat(args);
-      this.send(sendArgs);
-      if (cb !== undefined) {
-        cb.apply(this, args);
-      }
-    };
-
-    return callback;
-  }
+  };
 
   userAgent() {
     /**
@@ -520,89 +487,85 @@ class StreamClient {
     return this.fayeClient;
   }
 
-  get(kwargs, cb) {
+  get(kwargs) {
     /**
      * Shorthand function for get request
      * @method get
      * @memberof StreamClient.prototype
      * @private
      * @param  {object}   kwargs
-     * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
     return new Promise(
       function (fulfill, reject) {
-        this.send('request', 'get', kwargs, cb);
+        this.send('request', 'get', kwargs);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'GET';
         kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(cb, fulfill, reject);
+        const callback = this.wrapPromiseTask(fulfill, reject);
         this.request(kwargs, callback);
       }.bind(this),
     );
   }
 
-  post(kwargs, cb) {
+  post(kwargs) {
     /**
      * Shorthand function for post request
      * @method post
      * @memberof StreamClient.prototype
      * @private
      * @param  {object}   kwargs
-     * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
     return new Promise(
       function (fulfill, reject) {
-        this.send('request', 'post', kwargs, cb);
+        this.send('request', 'post', kwargs);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'POST';
         kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(cb, fulfill, reject);
+        const callback = this.wrapPromiseTask(fulfill, reject);
         this.request(kwargs, callback);
       }.bind(this),
     );
   }
 
-  delete(kwargs, cb) {
+  delete(kwargs) {
     /**
      * Shorthand function for delete request
      * @method delete
      * @memberof StreamClient.prototype
      * @private
      * @param  {object}   kwargs
-     * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
     return new Promise(
       function (fulfill, reject) {
-        this.send('request', 'delete', kwargs, cb);
+        this.send('request', 'delete', kwargs);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.gzip = true;
         kwargs.method = 'DELETE';
-        const callback = this.wrapPromiseTask(cb, fulfill, reject);
+        const callback = this.wrapPromiseTask(fulfill, reject);
         this.request(kwargs, callback);
       }.bind(this),
     );
   }
 
-  put(kwargs, cb) {
+  put(kwargs) {
     /**
      * Shorthand function for put request
      * @method put
      * @memberof StreamClient.prototype
      * @private
      * @param  {object}   kwargs
-     * @param  {requestCallback} cb     Callback to call on completion
      * @return {Promise}                Promise object
      */
     return new Promise(
       function (fulfill, reject) {
-        this.send('request', 'put', kwargs, cb);
+        this.send('request', 'put', kwargs);
         kwargs = this.enrichKwargs(kwargs);
         kwargs.method = 'PUT';
         kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(cb, fulfill, reject);
+        const callback = this.wrapPromiseTask(fulfill, reject);
         this.request(kwargs, callback);
       }.bind(this),
     );
@@ -628,7 +591,7 @@ class StreamClient {
     return this.createUserSessionToken(userId, extraData);
   }
 
-  updateActivities(activities, callback) {
+  updateActivities(activities) {
     /**
      * Updates all supplied activities on the getstream-io api
      * @since  3.1.0
@@ -651,17 +614,14 @@ class StreamClient {
 
     const body = { activities };
 
-    return this.post(
-      {
-        url: 'activities/',
-        body,
-        signature: authToken,
-      },
-      callback,
-    );
+    return this.post({
+      url: 'activities/',
+      body,
+      signature: authToken,
+    });
   }
 
-  updateActivity(activity, callback) {
+  updateActivity(activity) {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
@@ -673,10 +633,10 @@ class StreamClient {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    return this.updateActivities([activity], callback);
+    return this.updateActivities([activity]);
   }
 
-  getActivities({ ids, foreignIDTimes, ...params }, callback) {
+  getActivities({ ids, foreignIDTimes, ...params }) {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
@@ -720,14 +680,11 @@ class StreamClient {
     this.replaceReactionOptions(params);
     const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
-    return this.get(
-      {
-        url: path,
-        qs: params,
-        signature: token,
-      },
-      callback,
-    );
+    return this.get({
+      url: path,
+      qs: params,
+      signature: token,
+    });
   }
 
   getOrCreateToken() {
@@ -759,18 +716,15 @@ class StreamClient {
     });
   }
 
-  personalizedFeed(options = {}, callback) {
-    return this.get(
-      {
-        url: 'enrich/personalization/feed/',
-        qs: options,
-        signature: this.getOrCreateToken(),
-      },
-      callback,
-    );
+  personalizedFeed(options = {}) {
+    return this.get({
+      url: 'enrich/personalization/feed/',
+      qs: options,
+      signature: this.getOrCreateToken(),
+    });
   }
 
-  activityPartialUpdate(data, callback) {
+  activityPartialUpdate(data) {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
@@ -803,7 +757,7 @@ class StreamClient {
      *   ]
      * })
      */
-    return this.activitiesPartialUpdate([data], callback).then((response) => {
+    return this.activitiesPartialUpdate([data]).then((response) => {
       const activity = response.activities[0];
       delete response.activities;
       assignIn(activity, response);
@@ -811,7 +765,7 @@ class StreamClient {
     });
   }
 
-  activitiesPartialUpdate(changes, callback) {
+  activitiesPartialUpdate(changes) {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0
@@ -895,16 +849,13 @@ class StreamClient {
       });
     }
 
-    return this.post(
-      {
-        url: 'activity/',
-        body: {
-          changes,
-        },
-        signature: authToken,
+    return this.post({
+      url: 'activity/',
+      body: {
+        changes,
       },
-      callback,
-    );
+      signature: authToken,
+    });
   }
 }
 
