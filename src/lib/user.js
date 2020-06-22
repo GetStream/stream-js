@@ -14,7 +14,7 @@ export default class StreamUser {
     this.data = undefined;
     this.full = undefined;
     this.token = userAuthToken;
-    this.url = 'user/' + this.id + '/';
+    this.url = `user/${this.id}/`;
   }
 
   _streamRef() {
@@ -47,7 +47,7 @@ export default class StreamUser {
         qs: options,
       })
       .then((response) => {
-        this.full = Object.assign({}, response);
+        this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
         if (callback) {
@@ -79,7 +79,7 @@ export default class StreamUser {
         signature: this.token,
       })
       .then((response) => {
-        this.full = Object.assign({}, response);
+        this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
         if (callback) {
@@ -99,7 +99,7 @@ export default class StreamUser {
         signature: this.token,
       })
       .then((response) => {
-        this.full = Object.assign({}, response);
+        this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
         if (callback) {

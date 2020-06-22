@@ -1,25 +1,24 @@
+/* eslint-disable no-await-in-loop */
 import url from 'url';
 import expect from 'expect.js';
 
 import { CloudContext } from './utils';
 
 describe('Reaction pagination', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   let eatActivity;
-  let likes = [];
-  let claps = [];
-  let comments = [];
+  const likes = [];
+  const claps = [];
+  const comments = [];
 
   ctx.createUsers();
 
   describe('When alice creates 1 activity', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
       delete eatActivity.duration;
       eatActivity.actor = ctx.alice.currentUser.full;
@@ -27,35 +26,27 @@ describe('Reaction pagination', () => {
   });
 
   describe('When bob adds 25 likes to the activity and some comments', () => {
-    for (let index = 0; index < 25; index++) {
-      ctx.requestShouldNotError(async () => {
-        if (index % 3 == 0) {
-          ctx.response = await ctx.bob.reactions.add(
-            'comment',
-            eatActivity.id,
-            {
-              index,
-            },
-          );
-          delete ctx.response.duration;
-          ctx.response.user = ctx.bob.currentUser.full;
-          comments.unshift(ctx.response);
-        }
-        ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, {
-          index,
-        });
+    const addReactionReq = async (index) => {
+      if (index % 3 === 0) {
+        ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, { index });
         delete ctx.response.duration;
         ctx.response.user = ctx.bob.currentUser.full;
-        likes.unshift(ctx.response);
-        if (index % 4 == 0) {
-          ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, {
-            index,
-          });
-          delete ctx.response.duration;
-          ctx.response.user = ctx.bob.currentUser.full;
-          claps.unshift(ctx.response);
-        }
-      });
+        comments.unshift(ctx.response);
+      }
+      ctx.response = await ctx.bob.reactions.add('like', eatActivity.id, { index });
+      delete ctx.response.duration;
+      ctx.response.user = ctx.bob.currentUser.full;
+      likes.unshift(ctx.response);
+      if (index % 4 === 0) {
+        ctx.response = await ctx.bob.reactions.add('clap', eatActivity.id, { index });
+        delete ctx.response.duration;
+        ctx.response.user = ctx.bob.currentUser.full;
+        claps.unshift(ctx.response);
+      }
+    };
+
+    for (let index = 0; index < 25; index++) {
+      ctx.requestShouldNotError(() => addReactionReq(index));
     }
   });
 
@@ -72,18 +63,15 @@ describe('Reaction pagination', () => {
       'reaction_counts',
     );
 
-    ctx.activityShould(
-      'contain dave his last reactions in latest_reactions and own_reactions',
-      () => {
-        let lastFiveReactions = {
-          like: likes.slice(0, 5),
-          comment: comments.slice(0, 5),
-          clap: claps.slice(0, 5),
-        };
-        ctx.activity.own_reactions.should.eql(lastFiveReactions);
-        ctx.activity.latest_reactions.should.eql(lastFiveReactions);
-      },
-    );
+    ctx.activityShould('contain dave his last reactions in latest_reactions and own_reactions', () => {
+      const lastFiveReactions = {
+        like: likes.slice(0, 5),
+        comment: comments.slice(0, 5),
+        clap: claps.slice(0, 5),
+      };
+      ctx.activity.own_reactions.should.eql(lastFiveReactions);
+      ctx.activity.latest_reactions.should.eql(lastFiveReactions);
+    });
 
     ctx.activityShould('contain correct reaction counts', () => {
       ctx.activity.reaction_counts.should.eql({
@@ -93,42 +81,39 @@ describe('Reaction pagination', () => {
       });
     });
 
-    ctx.activityShould(
-      'contain correct next urls in latest_reactions_extra',
-      () => {
-        let keys = ['like', 'comment', 'clap'];
-        const latest_extra = ctx.activity.latest_reactions_extra;
-        latest_extra.should.have.all.keys(keys);
-        const checkQuery = (extra, kind, reactions, withUser) => {
-          extra.next.should.be.a('string');
-          extra.next.slice(0, 4).should.eql('http');
-          const expectedQuery = {
-            id_lt: reactions[4].id,
-            limit: '5',
-            withOwnChildren: 'false',
-          };
-          if (withUser) {
-            expectedQuery.user_id = ctx.bob.userId;
-          }
-
-          const query = url.parse(extra.next, true).query;
-          latest_extra[kind].next.should.include('/activity_id/');
-          latest_extra[kind].next.should.include(`/${kind}/`);
-          latest_extra[kind].next.should.include(`/${ctx.activity.id}/`);
-          expect(query).to.eql(expectedQuery);
+    ctx.activityShould('contain correct next urls in latest_reactions_extra', () => {
+      const keys = ['like', 'comment', 'clap'];
+      const latest_extra = ctx.activity.latest_reactions_extra;
+      latest_extra.should.have.all.keys(keys);
+      const checkQuery = (extra, kind, reactions, withUser) => {
+        extra.next.should.be.a('string');
+        extra.next.slice(0, 4).should.eql('http');
+        const expectedQuery = {
+          id_lt: reactions[4].id,
+          limit: '5',
+          withOwnChildren: 'false',
         };
-        checkQuery(latest_extra.like, 'like', likes);
-        checkQuery(latest_extra.comment, 'comment', comments);
-        checkQuery(latest_extra.clap, 'clap', claps);
-      },
-    );
+        if (withUser) {
+          expectedQuery.user_id = ctx.bob.userId;
+        }
+
+        const { query } = url.parse(extra.next, true);
+        latest_extra[kind].next.should.include('/activity_id/');
+        latest_extra[kind].next.should.include(`/${kind}/`);
+        latest_extra[kind].next.should.include(`/${ctx.activity.id}/`);
+        expect(query).to.eql(expectedQuery);
+      };
+      checkQuery(latest_extra.like, 'like', likes);
+      checkQuery(latest_extra.comment, 'comment', comments);
+      checkQuery(latest_extra.clap, 'clap', claps);
+    });
   });
 
   describe('Paginate the whole thing', () => {
     let resp;
 
     ctx.test('errors with multiple lookup types', async () => {
-      let conditions = {
+      const conditions = {
         activity_id: eatActivity.id,
         user_id: ctx.alice.userId,
       };
@@ -136,7 +121,7 @@ describe('Reaction pagination', () => {
     });
 
     ctx.test('reactions should be enriched when filtering', async () => {
-      let conditions = {
+      const conditions = {
         activity_id: eatActivity.id,
         kind: 'like',
         limit: 1,
@@ -149,7 +134,7 @@ describe('Reaction pagination', () => {
 
     describe('when filtering with with_activity_data', () => {
       ctx.requestShouldNotError(async () => {
-        let conditions = {
+        const conditions = {
           activity_id: eatActivity.id,
           limit: 1,
           with_activity_data: true,
@@ -157,19 +142,14 @@ describe('Reaction pagination', () => {
         ctx.response = await ctx.alice.reactions.filter(conditions);
         ctx.activity = ctx.response.activity;
       });
-      ctx.activityShouldHaveFields(
-        'latest_reactions',
-        'latest_reactions_extra',
-        'own_reactions',
-        'reaction_counts',
-      );
+      ctx.activityShouldHaveFields('latest_reactions', 'latest_reactions_extra', 'own_reactions', 'reaction_counts');
       ctx.test('the activity should be returned', async () => {
         ctx.activity.should.deep.include(eatActivity);
       });
     });
 
     ctx.test('specify page size using limit param', async () => {
-      let conditions = {
+      const conditions = {
         activity_id: eatActivity.id,
         kind: 'like',
         limit: 3,
@@ -179,7 +159,7 @@ describe('Reaction pagination', () => {
     });
 
     ctx.test('specify page size using limit param > result set', async () => {
-      let conditions = {
+      const conditions = {
         activity_id: eatActivity.id,
         kind: 'like',
         limit: 300,
@@ -188,91 +168,75 @@ describe('Reaction pagination', () => {
       resp.results.length.should.eql(25);
     });
 
-    ctx.test(
-      'pagination without kind param and limit >25 should return 25 mixed reactions',
-      async () => {
-        let conditions = {
-          activity_id: eatActivity.id,
-          limit: 100,
-        };
+    ctx.test('pagination without kind param and limit >25 should return 25 mixed reactions', async () => {
+      const conditions = {
+        activity_id: eatActivity.id,
+        limit: 100,
+      };
+      resp = await ctx.alice.reactions.filter(conditions);
+      resp.results.length.should.eql(25);
+      resp.results[0].kind.should.eql('clap');
+      resp.results[1].kind.should.eql('like');
+      resp.results[2].kind.should.eql('comment');
+    });
+
+    ctx.test('and then alice reads the reactions for that activity five at the time in descending order', async () => {
+      let done = false;
+      let readLikes = [];
+      const conditions = {
+        activity_id: eatActivity.id,
+        kind: 'like',
+        limit: 5,
+      };
+      while (!done) {
         resp = await ctx.alice.reactions.filter(conditions);
-        resp.results.length.should.eql(25);
-        resp.results[0].kind.should.eql('clap');
-        resp.results[1].kind.should.eql('like');
-        resp.results[2].kind.should.eql('comment');
-      },
-    );
+        done = resp.next === undefined || resp.next === '' || resp.next === null;
+        conditions.id_lt = resp.results[resp.results.length - 1].id;
+        readLikes = readLikes.concat(resp.results);
+      }
+      readLikes.should.eql(likes);
+    });
 
-    ctx.test(
-      'and then alice reads the reactions for that activity five at the time in descending order',
-      async () => {
-        let done = false;
-        let readLikes = [];
-        let conditions = {
-          activity_id: eatActivity.id,
-          kind: 'like',
-          limit: 5,
-        };
-        while (!done) {
-          resp = await ctx.alice.reactions.filter(conditions);
-          done =
-            resp.next === undefined || resp.next === '' || resp.next === null;
-          conditions.id_lt = resp.results[resp.results.length - 1].id;
-          readLikes = readLikes.concat(resp.results);
-        }
-        readLikes.should.eql(likes);
-      },
-    );
+    ctx.test('reading everything in reverse order should also work', async () => {
+      let done = false;
+      let readLikesReversed = [];
+      const conditions = {
+        activity_id: eatActivity.id,
+        kind: 'like',
+        limit: 5,
+        id_gte: resp.results[resp.results.length - 1].id,
+      };
 
-    ctx.test(
-      'reading everything in reverse order should also work',
-      async () => {
-        let done = false;
-        let readLikesReversed = [];
-        let conditions = {
-          activity_id: eatActivity.id,
-          kind: 'like',
-          limit: 5,
-          id_gte: resp.results[resp.results.length - 1].id,
-        };
-
-        while (!done) {
-          resp = await ctx.alice.reactions.filter(conditions);
-          done =
-            resp.next === undefined || resp.next === '' || resp.next === null;
-          readLikesReversed = resp.results
-            .slice()
-            .reverse()
-            .concat(readLikesReversed);
-          conditions.id_gt = resp.results[resp.results.length - 1].id;
-          delete conditions.id_gte;
-        }
-        readLikesReversed.should.eql(likes);
-      },
-    );
+      while (!done) {
+        resp = await ctx.alice.reactions.filter(conditions);
+        done = resp.next === undefined || resp.next === '' || resp.next === null;
+        readLikesReversed = resp.results.slice().reverse().concat(readLikesReversed);
+        conditions.id_gt = resp.results[resp.results.length - 1].id;
+        delete conditions.id_gte;
+      }
+      readLikesReversed.should.eql(likes);
+    });
   });
 });
 
 describe('Nested reactions pagination', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   let eatActivity;
   let daveComment;
   let carlComment;
   let aliceDaveComment;
-  let carlCommentLikes = [];
-  let daveCommentLikes = [];
-  let aliceDaveCommentLikes = [];
+  const carlCommentLikes = [];
+  const daveCommentLikes = [];
+  const aliceDaveCommentLikes = [];
 
   ctx.createUsers();
 
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
     });
   });
@@ -306,11 +270,7 @@ describe('Nested reactions pagination', () => {
   describe("and then alice likes dave's comment 33 times", () => {
     ctx.requestShouldNotError(async () => {
       for (let i = 0; i < 33; i++) {
-        const response = await ctx.alice.reactions.addChild(
-          'like',
-          daveComment,
-          { i },
-        );
+        const response = await ctx.alice.reactions.addChild('like', daveComment, { i });
         delete response.duration;
         daveCommentLikes.push(response);
       }
@@ -320,11 +280,7 @@ describe('Nested reactions pagination', () => {
   describe("and then alice unlikes carl's comment 33 times", () => {
     ctx.requestShouldNotError(async () => {
       for (let i = 0; i < 33; i++) {
-        const response = await ctx.alice.reactions.addChild(
-          'unlike',
-          carlComment,
-          { i },
-        );
+        const response = await ctx.alice.reactions.addChild('unlike', carlComment, { i });
         delete response.duration;
         carlCommentLikes.push(response);
       }
@@ -333,22 +289,14 @@ describe('Nested reactions pagination', () => {
 
   describe("and then alice comments dave's comment", () => {
     ctx.requestShouldNotError(async () => {
-      aliceDaveComment = await ctx.alice.reactions.addChild(
-        'comment',
-        daveComment,
-        { text: 'I like' },
-      );
+      aliceDaveComment = await ctx.alice.reactions.addChild('comment', daveComment, { text: 'I like' });
     });
   });
 
   describe("and then alice unlikes own comment of dave's comment 33 times", () => {
     ctx.requestShouldNotError(async () => {
       for (let i = 0; i < 33; i++) {
-        const response = await ctx.alice.reactions.addChild(
-          'unlike',
-          aliceDaveComment,
-          { i },
-        );
+        const response = await ctx.alice.reactions.addChild('unlike', aliceDaveComment, { i });
         delete response.duration;
         aliceDaveCommentLikes.push(response);
       }
@@ -358,62 +306,53 @@ describe('Nested reactions pagination', () => {
   describe('pagination time', () => {
     let resp;
 
-    ctx.test(
-      'alice reads the children reactions for dave comment five at the time in descending order',
-      async () => {
-        let done = false;
-        let readChildren = [];
-        let conditions = {
-          reaction_id: daveComment.id,
-          kind: 'like',
-          limit: 5,
-        };
-        while (!done) {
-          resp = await ctx.alice.reactions.filter(conditions);
-          done =
-            resp.next === undefined || resp.next === '' || resp.next === null;
-          conditions.id_lt = resp.results[resp.results.length - 1].id;
-          readChildren = readChildren.concat(resp.results);
-        }
-        readChildren.should.eql(daveCommentLikes.reverse());
-      },
-    );
+    ctx.test('alice reads the children reactions for dave comment five at the time in descending order', async () => {
+      let done = false;
+      let readChildren = [];
+      const conditions = {
+        reaction_id: daveComment.id,
+        kind: 'like',
+        limit: 5,
+      };
+      while (!done) {
+        resp = await ctx.alice.reactions.filter(conditions);
+        done = resp.next === undefined || resp.next === '' || resp.next === null;
+        conditions.id_lt = resp.results[resp.results.length - 1].id;
+        readChildren = readChildren.concat(resp.results);
+      }
+      readChildren.should.eql(daveCommentLikes.reverse());
+    });
 
-    ctx.test(
-      'alice reads the children reactions for carl comment four at the time in descending order',
-      async () => {
-        let done = false;
-        let readChildren = [];
-        let conditions = {
-          reaction_id: carlComment.id,
-          kind: 'unlike',
-          limit: 4,
-        };
-        while (!done) {
-          resp = await ctx.alice.reactions.filter(conditions);
-          done =
-            resp.next === undefined || resp.next === '' || resp.next === null;
-          conditions.id_lt = resp.results[resp.results.length - 1].id;
-          readChildren = readChildren.concat(resp.results);
-        }
-        readChildren.should.eql(carlCommentLikes.reverse());
-      },
-    );
+    ctx.test('alice reads the children reactions for carl comment four at the time in descending order', async () => {
+      let done = false;
+      let readChildren = [];
+      const conditions = {
+        reaction_id: carlComment.id,
+        kind: 'unlike',
+        limit: 4,
+      };
+      while (!done) {
+        resp = await ctx.alice.reactions.filter(conditions);
+        done = resp.next === undefined || resp.next === '' || resp.next === null;
+        conditions.id_lt = resp.results[resp.results.length - 1].id;
+        readChildren = readChildren.concat(resp.results);
+      }
+      readChildren.should.eql(carlCommentLikes.reverse());
+    });
 
     ctx.test(
       'alice reads the children reactions for alice comment of dave comment four at the time in descending order',
       async () => {
         let done = false;
         let readChildren = [];
-        let conditions = {
+        const conditions = {
           reaction_id: aliceDaveComment.id,
           kind: 'unlike',
           limit: 4,
         };
         while (!done) {
           resp = await ctx.alice.reactions.filter(conditions);
-          done =
-            resp.next === undefined || resp.next === '' || resp.next === null;
+          done = resp.next === undefined || resp.next === '' || resp.next === null;
           conditions.id_lt = resp.results[resp.results.length - 1].id;
           readChildren = readChildren.concat(resp.results);
         }
@@ -424,7 +363,7 @@ describe('Nested reactions pagination', () => {
 });
 
 describe('Nested reactions violations', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   ctx.createUsers();
 
@@ -443,12 +382,10 @@ describe('Nested reactions violations', () => {
 
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.currentUser.full;
     });
@@ -465,41 +402,30 @@ describe('Nested reactions violations', () => {
 
   describe('When a reaction is added at the second nesting level', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.reactions.addChild(
-        'comment',
-        commentFirstLevel,
-        { text: 'Yes!' },
-      );
+      ctx.response = await ctx.alice.reactions.addChild('comment', commentFirstLevel, { text: 'Yes!' });
       commentSecondLevel = ctx.response;
     });
   });
 
   describe('When a reaction is added at the third nesting level', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.reactions.addChild(
-        'comment',
-        commentSecondLevel,
-        { text: 'I want too!' },
-      );
+      ctx.response = await ctx.bob.reactions.addChild('comment', commentSecondLevel, { text: 'I want too!' });
       commentThirdLevel = ctx.response;
     });
   });
 
   describe('When a reaction is added at the forth+ nesting level', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.reactions.addChild(
-        'like',
-        commentThirdLevel,
-      );
+      ctx.response = await ctx.alice.reactions.addChild('like', commentThirdLevel);
     });
   });
 });
 
 describe('Nested reactions madness', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   let eatActivity;
   let comment;
-  let commentData = {
+  const commentData = {
     text: 'Looking yummy! @carl wanna get this on Tuesday?',
   };
   let likeReaction;
@@ -509,12 +435,10 @@ describe('Nested reactions madness', () => {
 
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.currentUser.full;
     });
@@ -522,11 +446,7 @@ describe('Nested reactions madness', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.reactions.add(
-        'comment',
-        eatActivity.id,
-        commentData,
-      );
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, commentData);
       comment = ctx.response;
     });
   });
@@ -540,7 +460,7 @@ describe('Nested reactions madness', () => {
 
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
-      let reaction = await ctx.alice.reactions.get(comment.id);
+      const reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.should.have.all.keys('like');
       reaction.children_counts.like.should.eql(1);
       reaction.latest_children.should.have.all.keys('like');
@@ -550,7 +470,7 @@ describe('Nested reactions madness', () => {
 
   describe("and then alice likes Bob's comment 103 times", () => {
     ctx.requestShouldNotError(async () => {
-      let promises = [];
+      const promises = [];
       for (let i = 0; i < 103; i++) {
         promises.push(ctx.alice.reactions.addChild('like', comment));
       }
@@ -560,7 +480,7 @@ describe('Nested reactions madness', () => {
 
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
-      let reaction = await ctx.alice.reactions.get(comment.id);
+      const reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(104);
       reaction.latest_children.should.have.all.keys('like');
       reaction.latest_children.like.should.have.length(10);
@@ -569,7 +489,7 @@ describe('Nested reactions madness', () => {
 
   describe('and then alice deletes 103 likes', () => {
     ctx.requestShouldNotError(async () => {
-      let promises = [];
+      const promises = [];
       for (let i = 0; i < children.length; i++) {
         promises.push(ctx.alice.reactions.delete(children[i].id));
       }
@@ -579,14 +499,11 @@ describe('Nested reactions madness', () => {
 
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
-      let reaction = await ctx.alice.reactions.get(comment.id);
+      const reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
       reaction.latest_children.should.have.all.keys('like');
       reaction.latest_children.like.should.have.length(1);
-      ctx.shouldEqualBesideDuration(
-        reaction.latest_children.like[0],
-        likeReaction,
-      );
+      ctx.shouldEqualBesideDuration(reaction.latest_children.like[0], likeReaction);
     });
   });
 
@@ -598,7 +515,7 @@ describe('Nested reactions madness', () => {
 
   describe('and then alice reads the comment reaction', () => {
     ctx.requestShouldNotError(async () => {
-      let reaction = await ctx.alice.reactions.get(comment.id);
+      const reaction = await ctx.alice.reactions.get(comment.id);
       reaction.children_counts.like.should.eql(1);
       reaction.latest_children.should.have.all.keys('like');
       reaction.latest_children.like.should.have.length(1);
@@ -612,45 +529,27 @@ describe('Nested reactions madness', () => {
         .get({ limit: 1, reactions: { own: true, recent: true } });
     });
 
-    ctx.responseShouldHaveActivityWithFields(
-      'own_reactions',
-      'latest_reactions',
-      'latest_reactions_extra',
-    );
+    ctx.responseShouldHaveActivityWithFields('own_reactions', 'latest_reactions', 'latest_reactions_extra');
 
     ctx.test('the activity should have the whole reaction trail', () => {
-      let activity = ctx.response.results[0];
+      const activity = ctx.response.results[0];
       activity.latest_reactions.should.have.all.keys('comment');
       activity.latest_reactions.comment.should.have.length(1);
-      activity.latest_reactions.comment[0].latest_children.should.have.all.keys(
-        'like',
-      );
-      activity.latest_reactions.comment[0].latest_children.like.should.have.length(
-        1,
-      );
-      activity.latest_reactions.comment[0].children_counts.should.have.all.keys(
-        'like',
-      );
+      activity.latest_reactions.comment[0].latest_children.should.have.all.keys('like');
+      activity.latest_reactions.comment[0].latest_children.like.should.have.length(1);
+      activity.latest_reactions.comment[0].children_counts.should.have.all.keys('like');
       activity.latest_reactions.comment[0].children_counts.like.should.eql(1);
 
-      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.should.have.all.keys(
-        'like',
-      );
-      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.like.should.have.length(
-        1,
-      );
-      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.should.have.all.keys(
-        'like',
-      );
-      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.like.should.eql(
-        1,
-      );
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.should.have.all.keys('like');
+      activity.latest_reactions.comment[0].latest_children.like[0].latest_children.like.should.have.length(1);
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.should.have.all.keys('like');
+      activity.latest_reactions.comment[0].latest_children.like[0].children_counts.like.should.eql(1);
     });
   });
 
   describe('and then alice creates 3 different kind of children reactions', () => {
     ctx.requestShouldNotError(async () => {
-      let promises = [];
+      const promises = [];
       for (let i = 0; i < 29; i++) {
         let kind;
         switch (i % 3) {
@@ -673,7 +572,7 @@ describe('Nested reactions madness', () => {
 
     describe('and then alice reads the comment reaction', () => {
       ctx.requestShouldNotError(async () => {
-        let reaction = await ctx.alice.reactions.get(comment.id);
+        const reaction = await ctx.alice.reactions.get(comment.id);
         reaction.children_counts.should.eql({
           clap: 10,
           like: 10,
@@ -707,14 +606,14 @@ describe('Nested reactions madness', () => {
       );
 
       ctx.test('the activity should have the whole reaction trail', () => {
-        let activity = ctx.response.results[0];
+        const activity = ctx.response.results[0];
         activity.latest_reactions.should.have.all.keys('comment');
         activity.latest_reactions.comment.should.have.length(1);
-        const comment = activity.latest_reactions.comment[0];
-        comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
-        comment.own_children.clap.should.have.length(5);
-        comment.own_children.like.should.have.length(5);
-        comment.own_children.unlike.should.have.length(5);
+        const commentReaction = activity.latest_reactions.comment[0];
+        commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+        commentReaction.own_children.clap.should.have.length(5);
+        commentReaction.own_children.like.should.have.length(5);
+        commentReaction.own_children.unlike.should.have.length(5);
         activity.reaction_counts.should.have.all.keys('comment');
         activity.reaction_counts.should.eql({
           comment: 1,
@@ -749,23 +648,20 @@ describe('Nested reactions madness', () => {
         'reaction_counts',
       );
 
-      ctx.test(
-        'the activity should have no reactions and the counts should be all to 0',
-        () => {
-          let activity = ctx.response.results[0];
-          activity.latest_reactions.should.eql({});
-          activity.reaction_counts.should.have.all.keys('comment');
-          activity.reaction_counts.should.eql({
-            comment: 0,
-          });
-        },
-      );
+      ctx.test('the activity should have no reactions and the counts should be all to 0', () => {
+        const activity = ctx.response.results[0];
+        activity.latest_reactions.should.eql({});
+        activity.reaction_counts.should.have.all.keys('comment');
+        activity.reaction_counts.should.eql({
+          comment: 0,
+        });
+      });
     });
   });
 });
 
 describe('Reaction CRUD and posting reactions to feeds', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   let eatActivity;
   let commentActivity;
@@ -778,12 +674,10 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
   ctx.createUsers();
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.currentUser.full;
     });
@@ -791,21 +685,16 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.bob.reactions.add(
-        'comment',
-        eatActivity.id,
-        commentData,
-        {
-          targetFeeds: [
-            ctx.bob.feed('user', ctx.bob.userId).id,
-            ctx.bob.feed('notification', ctx.alice.userId).id,
-            ctx.bob.feed('notification', ctx.carl.userId).id,
-          ],
-          targetFeedsExtraData: {
-            custom: 'yay',
-          },
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, commentData, {
+        targetFeeds: [
+          ctx.bob.feed('user', ctx.bob.userId).id,
+          ctx.bob.feed('notification', ctx.alice.userId).id,
+          ctx.bob.feed('notification', ctx.carl.userId).id,
+        ],
+        targetFeedsExtraData: {
+          custom: 'yay',
         },
-      );
+      });
       delete ctx.response.target_feeds_extra_data;
       comment = ctx.response;
     });
@@ -866,9 +755,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice
-          .feed('notification', ctx.alice.userId)
-          .get();
+        ctx.response = await ctx.alice.feed('notification', ctx.alice.userId).get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -878,9 +765,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl
-          .feed('notification', ctx.carl.userId)
-          .get();
+        ctx.response = await ctx.carl.feed('notification', ctx.carl.userId).get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -914,12 +799,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       commentData = {
         text: 'Looking yummy! @dave wanna get this on Tuesday?',
       };
-      ctx.response = await ctx.bob.reactions.add(
-        'comment',
-        eatActivity.id,
-        commentData,
-        { id: comment.id },
-      );
+      ctx.response = await ctx.bob.reactions.add('comment', eatActivity.id, commentData, { id: comment.id });
     });
   });
 
@@ -968,9 +848,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice
-          .feed('notification', ctx.alice.userId)
-          .get();
+        ctx.response = await ctx.alice.feed('notification', ctx.alice.userId).get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -980,18 +858,14 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl
-          .feed('notification', ctx.carl.userId)
-          .get();
+        ctx.response = await ctx.carl.feed('notification', ctx.carl.userId).get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then dave reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave
-          .feed('notification', ctx.dave.userId)
-          .get();
+        ctx.response = await ctx.dave.feed('notification', ctx.dave.userId).get();
       });
       ctx.responseShouldHaveActivityInGroupWithFields('reaction', 'custom');
       ctx.activityShould('be the same as on bob his feed', () => {
@@ -1031,12 +905,12 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     );
     ctx.activityShould('contain the activity with the nested like', () => {
       ctx.activity.latest_reactions.should.have.all.keys('comment');
-      ctx.activity.latest_reactions['comment'].should.have.length(1);
-      let comment = ctx.activity.latest_reactions['comment'][0];
-      comment.should.have.all.keys(...ctx.fields.reaction, 'own_children');
-      comment.latest_children.should.have.all.keys('like');
-      comment.latest_children.like.should.have.length(1);
-      comment.latest_children.like[0].parent.should.eql(comment.id);
+      ctx.activity.latest_reactions.comment.should.have.length(1);
+      const commentReaction = ctx.activity.latest_reactions.comment[0];
+      commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+      commentReaction.latest_children.should.have.all.keys('like');
+      commentReaction.latest_children.like.should.have.length(1);
+      commentReaction.latest_children.like[0].parent.should.eql(commentReaction.id);
     });
   });
 
@@ -1072,10 +946,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         commentData = {
           text: 'Alice you are the best!!!!',
         };
-        ctx.response = await ctx.alice.reactions.update(
-          comment.id,
-          commentData,
-        );
+        ctx.response = await ctx.alice.reactions.update(comment.id, commentData);
       });
     });
 
@@ -1094,27 +965,21 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
     describe('and then alice reads her own notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.alice
-          .feed('notification', ctx.alice.userId)
-          .get();
+        ctx.response = await ctx.alice.feed('notification', ctx.alice.userId).get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then carl reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.carl
-          .feed('notification', ctx.carl.userId)
-          .get();
+        ctx.response = await ctx.carl.feed('notification', ctx.carl.userId).get();
       });
       ctx.responseShouldHaveNoActivities();
     });
 
     describe('and then dave reads his notification feed', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.dave
-          .feed('notification', ctx.dave.userId)
-          .get();
+        ctx.response = await ctx.dave.feed('notification', ctx.dave.userId).get();
       });
       ctx.responseShouldHaveNoActivities();
     });
@@ -1122,35 +987,29 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
 
   describe('When alice tries to set a string as the reaction data', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.reactions.add(
-        'comment',
-        eatActivity.id,
-        'some string',
-      );
+      ctx.response = await ctx.alice.reactions.add('comment', eatActivity.id, 'some string');
     });
   });
 });
 
 describe('Reaction CRUD server side', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   let eatActivity;
   let comment;
   let like;
   let expectedCommentData;
-  let commentData = {
+  const commentData = {
     text: 'Looking yummy! @carl wanna get this on Tuesday?',
   };
 
   ctx.createUsers();
   describe('When alice eats a cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('user', ctx.alice.userId)
-        .addActivity({
-          verb: 'eat',
-          object: 'cheeseburger',
-        });
+      ctx.response = await ctx.alice.feed('user', ctx.alice.userId).addActivity({
+        verb: 'eat',
+        object: 'cheeseburger',
+      });
       eatActivity = ctx.response;
       eatActivity.actor = ctx.alice.currentUser.full;
     });
@@ -1158,19 +1017,14 @@ describe('Reaction CRUD server side', () => {
 
   describe('When server side bob comments on that alice ate the cheese burger', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.serverSideClient.reactions.add(
-        'comment',
-        eatActivity.id,
-        commentData,
-        {
-          targetFeeds: [
-            ctx.bob.feed('user', ctx.bob.userId),
-            ctx.bob.feed('notification', ctx.alice.userId).id,
-            ctx.bob.feed('notification', ctx.carl.userId).id,
-          ],
-          userId: ctx.bob.userId,
-        },
-      );
+      ctx.response = await ctx.serverSideClient.reactions.add('comment', eatActivity.id, commentData, {
+        targetFeeds: [
+          ctx.bob.feed('user', ctx.bob.userId),
+          ctx.bob.feed('notification', ctx.alice.userId).id,
+          ctx.bob.feed('notification', ctx.carl.userId).id,
+        ],
+        userId: ctx.bob.userId,
+      });
       comment = ctx.response;
     });
 
@@ -1201,9 +1055,7 @@ describe('Reaction CRUD server side', () => {
 
     describe('and then alice reads bob feed his from the server side', () => {
       ctx.requestShouldNotError(async () => {
-        ctx.response = await ctx.serverSideClient
-          .feed('user', ctx.bob.userId)
-          .get({ enrich: true });
+        ctx.response = await ctx.serverSideClient.feed('user', ctx.bob.userId).get({ enrich: true });
       });
       ctx.responseShouldHaveActivityWithFields('reaction');
       ctx.activityShould('contain the expected data', () => {

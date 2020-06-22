@@ -23,12 +23,7 @@ export class CloudContext {
       group: 'testCycle',
     };
 
-    this.serverSideClient = stream.connect(
-      config.API_KEY,
-      config.API_SECRET,
-      config.APP_ID,
-      this.clientOptions,
-    );
+    this.serverSideClient = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, this.clientOptions);
 
     // apiKey, apiSecret, appId, options
     this.alice = this.createUserClient('alice');
@@ -73,35 +68,11 @@ export class CloudContext {
       'children_counts',
     ];
     this.fields = {
-      collection: [
-        'id',
-        'created_at',
-        'updated_at',
-        'collection',
-        'data',
-        'duration',
-        'foreign_id',
-      ],
+      collection: ['id', 'created_at', 'updated_at', 'collection', 'data', 'duration', 'foreign_id'],
       reaction: reactionFields,
       reactionResponse: ['duration', ...reactionFields],
-      activity: [
-        'id',
-        'foreign_id',
-        'time',
-        'actor',
-        'verb',
-        'target',
-        'object',
-        'origin',
-      ],
-      reactionInActivity: [
-        'id',
-        'kind',
-        'user',
-        'data',
-        'created_at',
-        'updated_at',
-      ],
+      activity: ['id', 'foreign_id', 'time', 'actor', 'verb', 'target', 'object', 'origin'],
+      reactionInActivity: ['id', 'kind', 'user', 'data', 'created_at', 'updated_at'],
     };
   }
 
@@ -111,25 +82,16 @@ export class CloudContext {
   }
 
   createUserClient(userId, extraData) {
-    return stream.connect(
-      config.API_KEY,
-      this.createUserToken(userId, extraData),
-      config.APP_ID,
-      this.clientOptions,
-    );
+    return stream.connect(config.API_KEY, this.createUserToken(userId, extraData), config.APP_ID, this.clientOptions);
   }
 
   wrapFn(fn) {
-    let ctx = this;
+    const ctx = this;
     if (ctx.runningTest) {
-      expect.fail(
-        null,
-        null,
-        'calling ctx.test from within a ctx.test is not supported',
-      );
+      expect.fail(null, null, 'calling ctx.test from within a ctx.test is not supported');
     }
 
-    if (fn.length == 0) {
+    if (fn.length === 0) {
       return async function () {
         if (ctx.failed) {
           this.skip();
@@ -179,41 +141,41 @@ export class CloudContext {
   requestShouldNotError(fn) {
     this.test('the request should not error', fn);
   }
+
   noRequestsShouldError(fn) {
     this.test('the request should not error', fn);
   }
+
   responseShould(label, fn) {
-    this.test('the response should ' + label, fn);
+    this.test(`the response should ${label}`, fn);
   }
+
   activityShould(label, fn) {
-    this.test('the activity should ' + label, fn);
+    this.test(`the activity should ${label}`, fn);
   }
 
   requestShouldError(statusCode, fn) {
-    this.test(
-      'the request should error with status ' + statusCode,
-      async () => {
-        try {
-          await fn();
-          expect.fail(null, null, 'request should not succeed');
-        } catch (e) {
-          if (!(e instanceof stream.errors.StreamApiError)) {
-            throw e;
-          }
-          if (e.response.statusCode != statusCode) {
-            console.log(e.error);
-          }
-          e.response.statusCode.should.equal(statusCode);
-          this.error = e;
-          this.response = e.error;
+    this.test(`the request should error with status ${statusCode}`, async () => {
+      try {
+        await fn();
+        expect.fail(null, null, 'request should not succeed');
+      } catch (e) {
+        if (!(e instanceof stream.errors.StreamApiError)) {
+          throw e;
         }
-      },
-    );
+        if (e.response.statusCode !== statusCode) {
+          console.log(e.error); // eslint-disable-line no-console
+        }
+        e.response.statusCode.should.equal(statusCode);
+        this.error = e;
+        this.response = e.error;
+      }
+    });
   }
 
   responseShouldHaveFields(...fields) {
     this.responseShould('have all expected fields', () => {
-      let response = this.response.full || this.response;
+      const response = this.response.full || this.response;
       response.should.have.all.keys(fields);
     });
   }
@@ -257,19 +219,19 @@ export class CloudContext {
 
   responseShouldHaveNewUpdatedAt() {
     this.responseShould('have an updated updated_at', () => {
-      let response = this.response.full || this.response;
-      let prevResponse = this.prevResponse.full || this.prevResponse;
+      const response = this.response.full || this.response;
+      const prevResponse = this.prevResponse.full || this.prevResponse;
       should.exist(prevResponse.updated_at);
       should.exist(response.updated_at);
       response.updated_at.should.not.equal(prevResponse.updated_at);
     });
   }
 
-  shouldEqualBesideDuration(obj1, obj2) {
-    let obj1Copy = Object.assign({}, obj1, { duration: null });
-    let obj2Copy = Object.assign({}, obj2, { duration: null });
+  shouldEqualBesideDuration = (obj1, obj2) => {
+    const obj1Copy = { ...obj1, duration: null };
+    const obj2Copy = { ...obj2, duration: null };
     obj1Copy.should.eql(obj2Copy);
-  }
+  };
 
   responseShouldEqualPreviousResponse() {
     this.responseShould('be the same as the previous response', () => {
@@ -277,12 +239,8 @@ export class CloudContext {
       should.exist(this.response);
       let response = this.response.full || this.response;
       let prevResponse = this.prevResponse.full || this.prevResponse;
-      response = Object.assign({}, response, {
-        duration: this.response === null,
-      });
-      prevResponse = Object.assign({}, prevResponse, {
-        duration: this.prevResponse === null,
-      });
+      response = { ...response, duration: this.response === null };
+      prevResponse = { ...prevResponse, duration: this.prevResponse === null };
       response.should.eql(prevResponse);
     });
   }
@@ -290,11 +248,7 @@ export class CloudContext {
   aliceAddsCheeseBurger() {
     describe('When alice adds a cheese burger to the food collection', () => {
       this.requestShouldNotError(async () => {
-        this.cheeseBurger = await this.alice.collections.add(
-          'food',
-          null,
-          this.cheeseBurgerData,
-        );
+        this.cheeseBurger = await this.alice.collections.add('food', null, this.cheeseBurgerData);
 
         this.response = this.cheeseBurger.full;
       });
@@ -303,16 +257,10 @@ export class CloudContext {
 
       this.responseShouldHaveUUID();
 
-      this.responseShould(
-        'have collection and data matching the request',
-        () => {
-          this.response.collection.should.equal('food');
-          this.shouldEqualBesideDuration(
-            this.response.data,
-            this.cheeseBurgerData,
-          );
-        },
-      );
+      this.responseShould('have collection and data matching the request', () => {
+        this.response.collection.should.equal('food');
+        this.shouldEqualBesideDuration(this.response.data, this.cheeseBurgerData);
+      });
     });
   }
 
@@ -327,9 +275,9 @@ export class CloudContext {
     });
   }
 
-  reactionToReactionInActivity(reaction, user) {
-    reaction = Object.assign({}, reaction);
+  reactionToReactionInActivity = (reaction, user) => {
+    reaction = { ...reaction };
     reaction.user = user.full;
     return reaction;
-  }
+  };
 }

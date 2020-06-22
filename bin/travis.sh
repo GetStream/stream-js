@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
-npm run build
+yarn run build
 if [ "${CLOUD_TESTS:='no'}" == "yes" ]; then
-    npm run test-cloud
+    yarn run test-cloud
 else
-    npm test
+    yarn test
 fi
-npm run coverage
+yarn run coverage
 if [ "${RUN_LINTERS:='no'}" == "yes" ]; then
-    npm run lint
-    npm run dtslint
+    yarn run lint
+    yarn run dtslint
 fi

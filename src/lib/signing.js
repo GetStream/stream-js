@@ -3,19 +3,6 @@ import Base64 from 'Base64';
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
-function decodeBase64Url(base64UrlString) {
-  try {
-    return Base64.atob(toBase64(base64UrlString));
-  } catch (e) {
-    /* istanbul ignore else */
-    if (e.name === 'InvalidCharacterError') {
-      return undefined;
-    } else {
-      throw e;
-    }
-  }
-}
-
 function safeJsonParse(thing) {
   if (typeof thing === 'object') return thing;
   try {
@@ -42,6 +29,18 @@ function toBase64(base64UrlString) {
     .replace(/_/g, '/');
 }
 
+function decodeBase64Url(base64UrlString) {
+  try {
+    return Base64.atob(toBase64(base64UrlString));
+  } catch (e) {
+    /* istanbul ignore else */
+    if (e.name === 'InvalidCharacterError') {
+      return undefined;
+    }
+    throw e;
+  }
+}
+
 function headerFromJWS(jwsSig) {
   const encodedHeader = jwsSig.split('.', 1)[0];
   return safeJsonParse(decodeBase64Url(encodedHeader));
@@ -63,28 +62,23 @@ function JWTScopeToken(apiSecret, resource, action, opts) {
    */
   const options = opts || {};
   const noTimestamp = options.expireTokens ? !options.expireTokens : true;
-  const payload = { resource: resource, action: action };
+  const payload = { resource, action };
 
   if (options.feedId) {
-    payload['feed_id'] = options.feedId;
+    payload.feed_id = options.feedId;
   }
 
   if (options.userId) {
-    payload['user_id'] = options.userId;
+    payload.user_id = options.userId;
   }
 
   return jwt.sign(payload, apiSecret, {
     algorithm: 'HS256',
-    noTimestamp: noTimestamp,
+    noTimestamp,
   });
 }
 
-function JWTUserSessionToken(
-  apiSecret,
-  userId,
-  extraData = {},
-  jwtOptions = {},
-) {
+function JWTUserSessionToken(apiSecret, userId, extraData = {}, jwtOptions = {}) {
   /**
    * Creates the JWT token that can be used for a UserSession
    * @method JWTUserSessionToken
@@ -115,7 +109,7 @@ function isJWTSignature(signature) {
    * @param {string} signature - Signature to check
    * @return {boolean}
    */
-  if (signature == null || signature.length == 0) {
+  if (signature == null || signature.length === 0) {
     return false;
   }
   const token = signature.split(' ')[1] || signature;

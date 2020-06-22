@@ -28,7 +28,7 @@ export default class Personalization {
      * @return {Promise} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
      */
-    const last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1]; // eslint-disable-line prefer-rest-params
     // callback is always the last argument
     callback = last.call ? last : undefined;
     if (!options || options.call) {
@@ -37,7 +37,7 @@ export default class Personalization {
 
     return this.client.get(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         signature: options.token || this.client.getPersonalizationToken(),
@@ -59,7 +59,7 @@ export default class Personalization {
      * @return {Promise} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
      */
-    const last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1]; // eslint-disable-line prefer-rest-params
     // callback is always the last argument
     callback = last.call ? last : undefined;
     if (!options || options.call) {
@@ -71,7 +71,7 @@ export default class Personalization {
 
     return this.client.post(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         body: data,
@@ -93,7 +93,7 @@ export default class Personalization {
      * @return {Promise} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'}, cb)
      */
-    const last = arguments[arguments.length - 1];
+    const last = arguments[arguments.length - 1]; // eslint-disable-line prefer-rest-params
     // callback is always the last argument
     callback = last.call ? last : undefined;
     if (!options || options.call) {
@@ -102,7 +102,7 @@ export default class Personalization {
 
     return this.client.delete(
       {
-        url: resource + '/',
+        url: `${resource}/`,
         serviceName: 'personalization',
         qs: options,
         signature: this.client.getPersonalizationToken(),

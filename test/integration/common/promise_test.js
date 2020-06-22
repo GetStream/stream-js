@@ -11,7 +11,7 @@ describe('[INTEGRATION] Stream client (Promises)', function () {
   });
 
   it('post promises', function () {
-    var activity = {
+    const activity = {
       actor: 'test-various:characters',
       verb: 'add',
       object: 1,
@@ -21,7 +21,7 @@ describe('[INTEGRATION] Stream client (Promises)', function () {
   });
 
   it('post promises fail', function (done) {
-    var activity = {
+    const activity = {
       actor: 'test-various:characters',
       verb: 'add',
       object: '',

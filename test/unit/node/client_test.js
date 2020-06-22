@@ -9,11 +9,11 @@ import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client instantiation (Node)', function () {
   it('with secret', function () {
-    new StreamClient('stub-key', 'stub-secret', 9498);
+    new StreamClient('stub-key', 'stub-secret', 9498); // eslint-disable-line no-new
   });
 
   it('without secret', function () {
-    new StreamClient('stub-key', null, 9498);
+    new StreamClient('stub-key', null, 9498); // eslint-disable-line no-new
   });
 });
 
@@ -21,7 +21,7 @@ describe('[UNIT] Stream Client (Node)', function () {
   beforeEach(beforeEachFn);
 
   it('#updateActivities', function () {
-    var self = this;
+    const self = this;
 
     expect(function () {
       self.client.updateActivities('A-String-Thing');
@@ -31,27 +31,22 @@ describe('[UNIT] Stream Client (Node)', function () {
   });
 
   it('#userAgent', function () {
-    var useragent = this.client.userAgent();
+    const useragent = this.client.userAgent();
 
     expect(useragent).to.be('stream-javascript-client-node-unknown');
   });
 
   it('#feed', function () {
-    var feed = this.client.feed('user', 'jaap', '123456789');
+    const feed = this.client.feed('user', 'jaap', '123456789');
 
     expect(feed).to.be.a(StreamFeed);
   });
 
   describe('#enrichUrl', function () {
     it('(1) personalization service', function () {
-      var resource = 'influencers';
-      var url = this.client.enrichUrl(resource, 'personalization');
-      expect(url).to.be(
-        'https://personalization.stream-io-api.com/personalization/' +
-          this.client.version +
-          '/' +
-          resource,
-      );
+      const resource = 'influencers';
+      const url = this.client.enrichUrl(resource, 'personalization');
+      expect(url).to.be(`https://personalization.stream-io-api.com/personalization/${this.client.version}/${resource}`);
     });
   });
 
@@ -84,10 +79,10 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
 
     it('(1) works', function () {
-      var post = td.function();
+      const post = td.function();
       td.replace(this.client, 'post', post);
 
-      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
 
       this.client.updateActivities(activities);
 
@@ -102,11 +97,11 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
 
     it('(2) works - callback', function () {
-      var post = td.function();
+      const post = td.function();
       td.replace(this.client, 'post', post);
 
-      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-      var fn = function () {};
+      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      const fn = function () {};
 
       this.client.updateActivities(activities, fn);
 
@@ -121,10 +116,10 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
 
     it('(3) update single activity', function () {
-      var post = td.function();
+      const post = td.function();
       td.replace(this.client, 'post', post);
 
-      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
 
       this.client.updateActivity(activities[0]);
 
@@ -139,11 +134,11 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
 
     it('(3) update single activity - callback', function () {
-      var fn = function () {};
-      var post = td.function();
+      const fn = function () {};
+      const post = td.function();
       td.replace(this.client, 'post', post);
 
-      var activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
+      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
 
       this.client.updateActivity(activities[0], fn);
 
@@ -160,7 +155,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('#getActivities', function () {
     it('throws', function () {
-      var self = this;
+      const self = this;
 
       function isGoingToThrow1() {
         self.client.getActivities({});
@@ -196,12 +191,12 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by ID', function () {
       it('(1) works', function () {
-        var get = td.function();
+        const get = td.function();
         td.replace(this.client, 'get', get);
 
-        var ids = ['one', 'two', 'three'];
+        const ids = ['one', 'two', 'three'];
 
-        this.client.getActivities({ ids: ids });
+        this.client.getActivities({ ids });
 
         td.verify(
           get(
@@ -214,13 +209,13 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var get = td.function();
+        const get = td.function();
         td.replace(this.client, 'get', get);
 
-        var ids = ['one', 'two', 'three'];
-        var fn = function () {};
+        const ids = ['one', 'two', 'three'];
+        const fn = function () {};
 
-        this.client.getActivities({ ids: ids }, fn);
+        this.client.getActivities({ ids }, fn);
 
         td.verify(
           get(
@@ -235,15 +230,15 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by foreign ID and time', function () {
       it('(1) works', function () {
-        var get = td.function();
+        const get = td.function();
         td.replace(this.client, 'get', get);
 
-        var foreignIDTimes = [
+        const foreignIDTimes = [
           { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
           { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
         ];
 
-        this.client.getActivities({ foreignIDTimes: foreignIDTimes });
+        this.client.getActivities({ foreignIDTimes });
 
         td.verify(
           get(
@@ -256,16 +251,16 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var get = td.function();
+        const get = td.function();
         td.replace(this.client, 'get', get);
 
-        var foreignIDTimes = [
+        const foreignIDTimes = [
           { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
           { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
         ];
-        var fn = function () {};
+        const fn = function () {};
 
-        this.client.getActivities({ foreignIDTimes: foreignIDTimes }, fn);
+        this.client.getActivities({ foreignIDTimes }, fn);
 
         td.verify(
           get(
@@ -281,7 +276,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('#activityPartialUpdate', function () {
     it('throws', function () {
-      var self = this;
+      const self = this;
 
       function isGoingToThrow1() {
         self.client.activityPartialUpdate({});
@@ -328,11 +323,11 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by ID', function () {
       it('(1) works', function () {
-        var post = td.function();
+        const post = td.function();
         td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
-        var data = {
+        const data = {
           id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
           set: { 'foo.bar': 42 },
           unset: ['baz'],
@@ -351,16 +346,16 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var post = td.function();
+        const post = td.function();
         td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
-        var data = {
+        const data = {
           id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
-        var fn = function () {};
+        const fn = function () {};
 
         this.client.activityPartialUpdate(data, fn);
 
@@ -377,11 +372,11 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by foreign ID and time', function () {
       it('(1) works', function () {
-        var post = td.function();
+        const post = td.function();
         td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
-        var data = {
+        const data = {
           foreignID: 'product:123',
           time: '2016-11-10T13:20:00.000000',
           set: { 'foo.bar': 42 },
@@ -401,17 +396,17 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var post = td.function();
+        const post = td.function();
         td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
         td.replace(this.client, 'post', post);
 
-        var data = {
+        const data = {
           foreignID: 'product:123',
           time: '2016-11-10T13:20:00.000000',
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
-        var fn = function () {};
+        const fn = function () {};
 
         this.client.activityPartialUpdate(data, fn);
 
@@ -429,7 +424,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('#activitiesPartialUpdate', function () {
     it('throws', function () {
-      var self = this;
+      const self = this;
 
       function isGoingToThrow1() {
         self.client.activitiesPartialUpdate({});
@@ -503,10 +498,10 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by ID', function () {
       it('(1) works', function () {
-        var post = td.function();
+        const post = td.function();
         td.replace(this.client, 'post', post);
 
-        var changes = [
+        const changes = [
           {
             id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
             set: { 'foo.bar': 42 },
@@ -532,10 +527,10 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var post = td.function();
+        const post = td.function();
         td.replace(this.client, 'post', post);
 
-        var changes = [
+        const changes = [
           {
             id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
             set: { 'foo.bar': 42 },
@@ -547,7 +542,7 @@ describe('[UNIT] Stream Client (Node)', function () {
             unset: ['bar'],
           },
         ];
-        var fn = function () {};
+        const fn = function () {};
 
         this.client.activitiesPartialUpdate(changes, fn);
 
@@ -564,10 +559,10 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by foreign ID and time', function () {
       it('(1) works', function () {
-        var post = td.function();
+        const post = td.function();
         td.replace(this.client, 'post', post);
 
-        var changes = [
+        const changes = [
           {
             foreign_id: 'product:123',
             time: '2016-11-10T13:20:00.000000',
@@ -595,10 +590,10 @@ describe('[UNIT] Stream Client (Node)', function () {
       });
 
       it('(2) works - callback', function () {
-        var post = td.function();
+        const post = td.function();
         td.replace(this.client, 'post', post);
 
-        var changes = [
+        const changes = [
           {
             foreign_id: 'product:123',
             time: '2016-11-10T13:20:00.000000',
@@ -612,7 +607,7 @@ describe('[UNIT] Stream Client (Node)', function () {
             unset: ['bar'],
           },
         ];
-        var fn = function () {};
+        const fn = function () {};
 
         this.client.activitiesPartialUpdate(changes, fn);
 
@@ -630,8 +625,8 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('getAnalyticsToken', function () {
     it('generate correct token', function () {
-      var client = stream.connect('12345', 'abcdefghijklmnop');
-      var token = client.getAnalyticsToken();
+      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const token = client.getAnalyticsToken();
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc',
       );
@@ -640,16 +635,16 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('createUserSessionToken', function () {
     it('with userId only', function () {
-      var client = stream.connect('12345', 'abcdefghijklmnop');
-      var token = client.createUserSessionToken('42');
+      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const token = client.createUserSessionToken('42');
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
       );
     });
 
     it('with extra data', function () {
-      var client = stream.connect('12345', 'abcdefghijklmnop');
-      var token = client.createUserSessionToken('42', { a: 'b' });
+      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const token = client.createUserSessionToken('42', { a: 'b' });
       const jwtBody = jwtDecode(token);
       expect(jwtBody).to.eql({
         user_id: '42',
@@ -673,37 +668,37 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('connect', function () {
     it('#LOCAL', function () {
-      process.env['LOCAL'] = 1;
+      process.env.LOCAL = 1;
 
-      var client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('http://localhost:8000/api/');
 
-      delete process.env['LOCAL'];
+      delete process.env.LOCAL;
     });
 
     it('#LOCAL', function () {
-      var client = stream.connect('12345', 'abcdefghijklmnop', null, {
+      const client = stream.connect('12345', 'abcdefghijklmnop', null, {
         location: 'nl-NL',
       });
       expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
     });
 
     it('#LOCAL_FAYE', function () {
-      process.env['LOCAL_FAYE'] = 1;
+      process.env.LOCAL_FAYE = 1;
 
-      var client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
 
-      delete process.env['LOCAL_FAYE'];
+      delete process.env.LOCAL_FAYE;
     });
 
     it('#STREAM_BASE_URL', function () {
-      process.env['STREAM_BASE_URL'] = 'https://local.stream-io-api.com/api/';
+      process.env.STREAM_BASE_URL = 'https://local.stream-io-api.com/api/';
 
-      var client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = stream.connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
 
-      delete process.env['STREAM_BASE_URL'];
+      delete process.env.STREAM_BASE_URL;
     });
   });
 });

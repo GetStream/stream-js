@@ -13,7 +13,7 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   });
 
   function replaceMSR() {
-    var msr = td.function();
+    const msr = td.function();
     td.replace(this.client, 'makeSignedRequest', msr);
     return msr;
   }
@@ -21,10 +21,10 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   it('#addToMany', function () {
     expect(this.client.addToMany).to.be.a(Function);
 
-    var msr = replaceMSR.call(this);
+    const msr = replaceMSR.call(this);
 
-    var activity = { actor: 'matthisk', object: 0, verb: 'tweet' };
-    var feeds = ['global:feed', 'global:feed2'];
+    const activity = { actor: 'matthisk', object: 0, verb: 'tweet' };
+    const feeds = ['global:feed', 'global:feed2'];
 
     this.client.addToMany(activity, feeds);
 
@@ -33,8 +33,8 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
         {
           url: 'feed/add_to_many/',
           body: {
-            activity: activity,
-            feeds: feeds,
+            activity,
+            feeds,
           },
         },
         undefined,
@@ -45,10 +45,10 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
-    var msr = replaceMSR.call(this);
+    const msr = replaceMSR.call(this);
 
-    var follows = [];
-    var cb = function () {};
+    const follows = [];
+    const cb = function () {};
 
     this.client.followMany(follows, 10, cb);
 
@@ -69,10 +69,10 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
-    var msr = replaceMSR.call(this);
+    const msr = replaceMSR.call(this);
 
-    var follows = [];
-    var cb = function () {};
+    const follows = [];
+    const cb = function () {};
 
     this.client.followMany(follows, cb);
 
@@ -91,10 +91,10 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   it('#followMany', function () {
     expect(this.client.followMany).to.be.a(Function);
 
-    var msr = replaceMSR.call(this);
+    const msr = replaceMSR.call(this);
 
-    var follows = [];
-    var cb = function () {};
+    const follows = [];
+    const cb = function () {};
 
     this.client.followMany(follows, 0, cb);
 
@@ -113,7 +113,7 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   });
 
   it('#makeSignedRequest', function () {
-    var self = this;
+    const self = this;
     td.replace(this.client, 'apiSecret', '');
 
     function throws() {
@@ -126,7 +126,7 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   });
 
   it('#makeSignedRequest', function () {
-    var p = this.client.makeSignedRequest({});
+    const p = this.client.makeSignedRequest({});
 
     expect(p).to.be.a(Promise);
   });
@@ -134,10 +134,10 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   it('#unfollowMany', function () {
     expect(this.client.unfollowMany).to.be.a(Function);
 
-    var msr = replaceMSR.call(this);
+    const msr = replaceMSR.call(this);
 
-    var unfollows = [];
-    var cb = function () {};
+    const unfollows = [];
+    const cb = function () {};
 
     this.client.unfollowMany(unfollows, cb);
 

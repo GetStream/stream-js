@@ -1,19 +1,13 @@
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js')();
+const webpack = require('webpack'); // eslint-disable-line import/no-extraneous-dependencies
+const webpackConfig = require('./webpack.config.js')();
 
 // Webpack config tweaks for test-time
-delete webpackConfig['entry'];
-delete webpackConfig['output'];
-webpackConfig['devtool'] = 'inline-source-map';
-webpackConfig['plugins'] = [
-  new webpack.EnvironmentPlugin([
-    'STREAM_API_KEY',
-    'STREAM_API_SECRET',
-    'STREAM_APP_ID',
-  ]),
-];
-webpackConfig['node']['Buffer'] = true;
-webpackConfig['module']['rules'].push({
+delete webpackConfig.entry;
+delete webpackConfig.output;
+webpackConfig.devtool = 'inline-source-map';
+webpackConfig.plugins = [new webpack.EnvironmentPlugin(['STREAM_API_KEY', 'STREAM_API_SECRET', 'STREAM_APP_ID'])];
+webpackConfig.node.Buffer = true;
+webpackConfig.module.rules.push({
   test: /\.json$/,
   exclude: /node_modules/,
   loader: 'json-loader',
