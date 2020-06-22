@@ -25,21 +25,14 @@ export default class StreamUser {
     return this._streamRef();
   }
 
-  delete(callback) {
-    return this.client
-      .delete({
-        url: this.url,
-        signature: this.token,
-      })
-      .then((response) => {
-        if (callback) {
-          callback(response);
-        }
-        return response;
-      });
+  delete() {
+    return this.client.delete({
+      url: this.url,
+      signature: this.token,
+    });
   }
 
-  get(options, callback) {
+  get(options) {
     return this.client
       .get({
         url: this.url,
@@ -50,9 +43,6 @@ export default class StreamUser {
         this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
         return this;
       });
   }
@@ -67,7 +57,7 @@ export default class StreamUser {
     return {};
   }
 
-  create(data, options, callback) {
+  create(data, options) {
     return this.client
       .post({
         url: 'user/',
@@ -82,14 +72,11 @@ export default class StreamUser {
         this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
         return this;
       });
   }
 
-  update(data, callback) {
+  update(data) {
     return this.client
       .put({
         url: this.url,
@@ -102,18 +89,15 @@ export default class StreamUser {
         this.full = { ...response };
         delete this.full.duration;
         this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
         return this;
       });
   }
 
-  getOrCreate(data, callback) {
-    return this.create(data, { get_or_create: true }, callback);
+  getOrCreate(data) {
+    return this.create(data, { get_or_create: true });
   }
 
-  profile(callback) {
-    return this.get({ with_follow_counts: true }, callback);
+  profile() {
+    return this.get({ with_follow_counts: true });
   }
 }

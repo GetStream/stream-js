@@ -25,34 +25,30 @@ describe('[UNIT] Stream Collections (node)', function () {
   });
 
   describe('#delete_many', function () {
-    it('should send get request correctly with single id (callback)', function () {
+    it('should send get request correctly with single id', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const id = 'john';
-      const cb = function () {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.deleteMany(collectionName, id, cb);
+      this.client.collections.deleteMany(collectionName, id);
 
       td.verify(
-        del(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            qs: {
-              collection_name: collectionName,
-              ids: id,
-            },
-            signature: fakedJWT,
+        del({
+          url: 'collections/',
+          serviceName: 'api',
+          qs: {
+            collection_name: collectionName,
+            ids: id,
           },
-          cb,
-        ),
+          signature: fakedJWT,
+        }),
       );
     });
   });
 
   describe('#upsert', function () {
-    it('should send post request correctly with single object (promise)', function () {
+    it('should send post request correctly with single object', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const data = { id: 'john', username: 'johndoe', favorite_color: 'gray' };
@@ -63,43 +59,36 @@ describe('[UNIT] Stream Collections (node)', function () {
       const expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
       td.verify(
-        post(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            body: expected_body,
-            signature: fakedJWT,
-          },
-          undefined,
-        ),
+        post({
+          url: 'collections/',
+          serviceName: 'api',
+          body: expected_body,
+          signature: fakedJWT,
+        }),
       );
     });
 
-    it('should send post request correctly with single object (cb)', function () {
+    it('should send post request correctly with single object', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const data = { id: 'john', username: 'johndoe', favorite_color: 'gray' };
-      const cb = function () {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data, cb);
+      this.client.collections.upsert(collectionName, data);
 
       const expected_body = { data: {} };
       expected_body.data[collectionName] = [data];
       td.verify(
-        post(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            body: expected_body,
-            signature: fakedJWT,
-          },
-          cb,
-        ),
+        post({
+          url: 'collections/',
+          serviceName: 'api',
+          body: expected_body,
+          signature: fakedJWT,
+        }),
       );
     });
 
-    it('should send post request correctly with multiple objects (promise)', function () {
+    it('should send post request correctly with multiple objects', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const data = [
@@ -113,48 +102,18 @@ describe('[UNIT] Stream Collections (node)', function () {
       const expected_body = { data: {} };
       expected_body.data[collectionName] = data;
       td.verify(
-        post(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            body: expected_body,
-            signature: fakedJWT,
-          },
-          undefined,
-        ),
-      );
-    });
-
-    it('should send post request correctly with multiple objects (cb)', function () {
-      const fakedJWT = 'Faked JWT';
-      const collectionName = 'user';
-      const data = [
-        { id: 'john', username: 'johndoe', favorite_color: 'gray' },
-        { id: 'dave', username: 'daveo', favorite_color: 'green' },
-      ];
-      const cb = function () {};
-
-      this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsert(collectionName, data, cb);
-
-      const expected_body = { data: {} };
-      expected_body.data[collectionName] = data;
-      td.verify(
-        post(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            body: expected_body,
-            signature: fakedJWT,
-          },
-          cb,
-        ),
+        post({
+          url: 'collections/',
+          serviceName: 'api',
+          body: expected_body,
+          signature: fakedJWT,
+        }),
       );
     });
   });
 
   describe('#select', function () {
-    it('should send get request correctly with single id (promise)', function () {
+    it('should send get request correctly with single id', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const id = 'john';
@@ -163,41 +122,34 @@ describe('[UNIT] Stream Collections (node)', function () {
       this.client.collections.select(collectionName, id);
 
       td.verify(
-        get(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            qs: { foreign_ids: `${collectionName}:${id}` },
-            signature: fakedJWT,
-          },
-          undefined,
-        ),
+        get({
+          url: 'collections/',
+          serviceName: 'api',
+          qs: { foreign_ids: `${collectionName}:${id}` },
+          signature: fakedJWT,
+        }),
       );
     });
 
-    it('should send get request correctly with single id (callback)', function () {
+    it('should send get request correctly with single id', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const id = 'john';
-      const cb = function () {};
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, id, cb);
+      this.client.collections.select(collectionName, id);
 
       td.verify(
-        get(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            qs: { foreign_ids: `${collectionName}:${id}` },
-            signature: fakedJWT,
-          },
-          cb,
-        ),
+        get({
+          url: 'collections/',
+          serviceName: 'api',
+          qs: { foreign_ids: `${collectionName}:${id}` },
+          signature: fakedJWT,
+        }),
       );
     });
 
-    it('should send get request correctly with multiple ids (promise)', function () {
+    it('should send get request correctly with multiple ids', function () {
       const fakedJWT = 'Faked JWT';
       const collectionName = 'user';
       const ids = ['john', 'dave'];
@@ -206,49 +158,18 @@ describe('[UNIT] Stream Collections (node)', function () {
       this.client.collections.select(collectionName, ids);
 
       td.verify(
-        get(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            qs: {
-              foreign_ids: ids
-                .map(function (id) {
-                  return `${collectionName}:${id}`;
-                })
-                .join(','),
-            },
-            signature: fakedJWT,
+        get({
+          url: 'collections/',
+          serviceName: 'api',
+          qs: {
+            foreign_ids: ids
+              .map(function (id) {
+                return `${collectionName}:${id}`;
+              })
+              .join(','),
           },
-          undefined,
-        ),
-      );
-    });
-
-    it('should send get request correctly with multiple ids (callback)', function () {
-      const fakedJWT = 'Faked JWT';
-      const collectionName = 'user';
-      const ids = ['john', 'dave'];
-      const cb = function () {};
-
-      this.client._collectionsToken = fakedJWT;
-      this.client.collections.select(collectionName, ids, cb);
-
-      td.verify(
-        get(
-          {
-            url: 'collections/',
-            serviceName: 'api',
-            qs: {
-              foreign_ids: ids
-                .map(function (id) {
-                  return `${collectionName}:${id}`;
-                })
-                .join(','),
-            },
-            signature: fakedJWT,
-          },
-          cb,
-        ),
+          signature: fakedJWT,
+        }),
       );
     });
 
@@ -258,25 +179,24 @@ describe('[UNIT] Stream Collections (node)', function () {
         const collectionName = 'user';
         const ids = ['john', 'dave'];
         const data = { id: 'john', username: 'johndoe', favorite_color: 'gray' };
-        const cb = function () {};
 
         // upsert
         expect(function () {
-          client.collections.upsert(collectionName, data, cb);
+          client.collections.upsert(collectionName, data);
         }).to.throwException(function (e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // select
         expect(function () {
-          client.collections.select(collectionName, ids, cb);
+          client.collections.select(collectionName, ids);
         }).to.throwException(function (e) {
           expect(e).to.be.a(errors.SiteError);
         });
 
         // delete
         expect(function () {
-          client.collections.deleteMany(collectionName, ids, cb);
+          client.collections.deleteMany(collectionName, ids);
         }).to.throwException(function (e) {
           expect(e).to.be.a(errors.SiteError);
         });

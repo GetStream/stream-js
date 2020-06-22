@@ -169,7 +169,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done(err);
       }
 
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(fulfill, reject);
 
       task(null, { statusCode: 200 }, {});
     });
@@ -184,7 +184,7 @@ describe('[UNIT] Stream Client (Common)', function () {
         done();
       }
 
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(fulfill, reject);
 
       task(null, { statusCode: 500 }, {});
     });
@@ -199,28 +199,9 @@ describe('[UNIT] Stream Client (Common)', function () {
         done();
       }
 
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
+      const task = this.client.wrapPromiseTask(fulfill, reject);
 
       task(new Error('oops'), { statusCode: 200 }, {});
-    });
-
-    it('(4) with callback', function (done) {
-      function fulfill() {}
-
-      function reject(err) {
-        expect(err).to.be.a(errors.StreamApiError);
-        done(err);
-      }
-
-      const task = this.client.wrapPromiseTask(
-        function () {
-          done();
-        },
-        fulfill,
-        reject,
-      );
-
-      task(null, { statusCode: 200 }, {});
     });
   });
 
@@ -326,6 +307,12 @@ describe('[UNIT] Stream Client (Common)', function () {
       this.client.post({ url: 'feed' });
 
       td.verify(toExpect('POST'));
+    });
+
+    it('#put', function () {
+      this.client.put({ url: 'feed' });
+
+      td.verify(toExpect('PUT'));
     });
 
     it('#delete', function () {

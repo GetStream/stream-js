@@ -107,7 +107,7 @@ client = stream.connect(
 user1 = client.feed('user', '1');
 
 // Get activities from 5 to 10 (slow pagination)
-user1.get({ limit: 5, offset: 5 }, callback);
+user1.get({ limit: 5, offset: 5 });
 // Filter on an id less than a given UUID
 user1.get({ limit: 5, id_lt: 'e561de8f-00f1-11e4-b400-0cc47a024be0' });
 
@@ -167,7 +167,6 @@ user1.follow('flat', '42', { limit: 0 });
 user1.followers({ limit: '10', offset: '10' });
 user1.following({ limit: '10', offset: '0' });
 
-// all methods support callback as the last argument
 user1.follow('flat', '42');
 
 // adding multiple activities

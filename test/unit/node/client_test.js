@@ -91,31 +91,11 @@ describe('[UNIT] Stream Client (Node)', function () {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined,
         ),
       );
     });
 
-    it('(2) works - callback', function () {
-      const post = td.function();
-      td.replace(this.client, 'post', post);
-
-      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-      const fn = function () {};
-
-      this.client.updateActivities(activities, fn);
-
-      td.verify(
-        post(
-          td.matchers.contains({
-            url: 'activities/',
-          }),
-          fn,
-        ),
-      );
-    });
-
-    it('(3) update single activity', function () {
+    it('(2) update single activity', function () {
       const post = td.function();
       td.replace(this.client, 'post', post);
 
@@ -128,26 +108,6 @@ describe('[UNIT] Stream Client (Node)', function () {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined,
-        ),
-      );
-    });
-
-    it('(3) update single activity - callback', function () {
-      const fn = function () {};
-      const post = td.function();
-      td.replace(this.client, 'post', post);
-
-      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-
-      this.client.updateActivity(activities[0], fn);
-
-      td.verify(
-        post(
-          td.matchers.contains({
-            url: 'activities/',
-          }),
-          fn,
         ),
       );
     });
@@ -203,26 +163,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const get = td.function();
-        td.replace(this.client, 'get', get);
-
-        const ids = ['one', 'two', 'three'];
-        const fn = function () {};
-
-        this.client.getActivities({ ids }, fn);
-
-        td.verify(
-          get(
-            td.matchers.contains({
-              url: 'activities/',
-            }),
-            fn,
           ),
         );
       });
@@ -245,29 +185,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const get = td.function();
-        td.replace(this.client, 'get', get);
-
-        const foreignIDTimes = [
-          { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
-          { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
-        ];
-        const fn = function () {};
-
-        this.client.getActivities({ foreignIDTimes }, fn);
-
-        td.verify(
-          get(
-            td.matchers.contains({
-              url: 'activities/',
-            }),
-            fn,
           ),
         );
       });
@@ -340,31 +257,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
-        td.replace(this.client, 'post', post);
-
-        const data = {
-          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
-          set: { 'foo.bar': 42 },
-          unset: ['baz'],
-        };
-        const fn = function () {};
-
-        this.client.activityPartialUpdate(data, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });
@@ -390,32 +282,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
-        td.replace(this.client, 'post', post);
-
-        const data = {
-          foreignID: 'product:123',
-          time: '2016-11-10T13:20:00.000000',
-          set: { 'foo.bar': 42 },
-          unset: ['baz'],
-        };
-        const fn = function () {};
-
-        this.client.activityPartialUpdate(data, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });
@@ -521,37 +387,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.replace(this.client, 'post', post);
-
-        const changes = [
-          {
-            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
-            set: { 'foo.bar': 42 },
-            unset: ['baz'],
-          },
-          {
-            id: '8d2dcad8-1e34-11e9-8b10-9cb6d0925edd',
-            set: { 'foo.baz': 43 },
-            unset: ['bar'],
-          },
-        ];
-        const fn = function () {};
-
-        this.client.activitiesPartialUpdate(changes, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });
@@ -584,39 +419,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.replace(this.client, 'post', post);
-
-        const changes = [
-          {
-            foreign_id: 'product:123',
-            time: '2016-11-10T13:20:00.000000',
-            set: { 'foo.bar': 42 },
-            unset: ['baz'],
-          },
-          {
-            foreign_id: 'product:321',
-            time: '2016-11-10T13:20:00.000000',
-            set: { 'foo.baz': 43 },
-            unset: ['bar'],
-          },
-        ];
-        const fn = function () {};
-
-        this.client.activitiesPartialUpdate(changes, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });

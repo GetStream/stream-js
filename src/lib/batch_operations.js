@@ -4,7 +4,7 @@ import request from 'request';
 import errors from './errors';
 import Promise from './promise';
 
-function addToMany(activity, feeds, callback) {
+function addToMany(activity, feeds) {
   /**
    * Add one activity to many feeds
    * @method addToMany
@@ -12,7 +12,6 @@ function addToMany(activity, feeds, callback) {
    * @since 2.3.0
    * @param  {object}   activity The activity to add
    * @param  {Array}   feeds    Array of objects describing the feeds to add to
-   * @param  {requestCallback} callback Callback called on completion
    * @return {Promise}           Promise object
    */
 
@@ -20,19 +19,16 @@ function addToMany(activity, feeds, callback) {
     throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
-  return this.makeSignedRequest(
-    {
-      url: 'feed/add_to_many/',
-      body: {
-        activity,
-        feeds,
-      },
+  return this.makeSignedRequest({
+    url: 'feed/add_to_many/',
+    body: {
+      activity,
+      feeds,
     },
-    callback,
-  );
+  });
 }
 
-function followMany(follows, callbackOrActivityCopyLimit, callback) {
+function followMany(follows, activityCopyLimit) {
   /**
    * Follow multiple feeds with one API call
    * @method followMany
@@ -40,46 +36,32 @@ function followMany(follows, callbackOrActivityCopyLimit, callback) {
    * @since 2.3.0
    * @param  {Array}   follows  The follow relations to create
    * @param  {number}  [activityCopyLimit] How many activities should be copied from the target feed
-   * @param  {requestCallback} [callback] Callback called on completion
    * @return {Promise}           Promise object
    */
-  let activityCopyLimit;
   const qs = {};
 
   if (!this.usingApiSecret || this.apiKey == null) {
     throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
-  if (typeof callbackOrActivityCopyLimit === 'number') {
-    activityCopyLimit = callbackOrActivityCopyLimit;
-  }
-
-  if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'function') {
-    callback = callbackOrActivityCopyLimit;
-  }
-
-  if (typeof activityCopyLimit !== 'undefined') {
+  if (typeof activityCopyLimit === 'number') {
     qs.activity_copy_limit = activityCopyLimit;
   }
 
-  return this.makeSignedRequest(
-    {
-      url: 'follow_many/',
-      body: follows,
-      qs,
-    },
-    callback,
-  );
+  return this.makeSignedRequest({
+    url: 'follow_many/',
+    body: follows,
+    qs,
+  });
 }
 
-function unfollowMany(unfollows, callback) {
+function unfollowMany(unfollows) {
   /**
    * Unfollow multiple feeds with one API call
    * @method unfollowMany
    * @memberof StreamClient.prototype
    * @since 3.15.0
    * @param  {Array}   unfollows  The follow relations to remove
-   * @param  {requestCallback} [callback] Callback called on completion
    * @return {Promise}           Promise object
    */
 
@@ -87,16 +69,13 @@ function unfollowMany(unfollows, callback) {
     throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
-  return this.makeSignedRequest(
-    {
-      url: 'unfollow_many/',
-      body: unfollows,
-    },
-    callback,
-  );
+  return this.makeSignedRequest({
+    url: 'unfollow_many/',
+    body: unfollows,
+  });
 }
 
-function makeSignedRequest(kwargs, cb) {
+function makeSignedRequest(kwargs) {
   /**
    * Method to create request to api with application level authentication
    * @method makeSignedRequest
@@ -104,7 +83,6 @@ function makeSignedRequest(kwargs, cb) {
    * @since 2.3.0
    * @access private
    * @param  {object}   kwargs Arguments for the request
-   * @param  {requestCallback} cb     Callback to call on completion
    * @return {Promise}         Promise object
    */
   if (!this.apiSecret) {
@@ -115,7 +93,7 @@ function makeSignedRequest(kwargs, cb) {
 
   return new Promise(
     function (fulfill, reject) {
-      this.send('request', 'post', kwargs, cb);
+      this.send('request', 'post', kwargs);
 
       kwargs.url = this.enrichUrl(kwargs.url);
       kwargs.json = true;
@@ -125,7 +103,7 @@ function makeSignedRequest(kwargs, cb) {
       // fallbacks handle it differently by default (meteor)
       kwargs.withCredentials = false;
 
-      const callback = this.wrapPromiseTask(cb, fulfill, reject);
+      const callback = this.wrapPromiseTask(fulfill, reject);
       const req = request(kwargs, callback);
 
       httpSignature.sign(req, {
