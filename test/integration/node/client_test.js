@@ -3,80 +3,64 @@ import expect from 'expect.js';
 import stream from '../../../src/getstream';
 import errors from '../../../src/lib/errors';
 
-import { wrapCB } from '../utils';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Node)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
-  it('get feed', function (done) {
-    this.user1.get(
-      {
-        limit: 1,
-      },
-      function (error, response) {
-        if (error) done(error);
-        expect(response.statusCode).to.eql(200);
-
-        const userAgent = response.req._headers['x-stream-client'];
-        expect(userAgent.indexOf('stream-javascript-client')).to.eql(0);
-
-        done();
-      },
-    );
+  it('get feed', function () {
+    return this.user1.get({ limit: 1 }).then((response) => {
+      expect(response.results).to.eql([]);
+      expect(response.next).to.be('');
+    });
   });
 
   it('update activities', function () {
-    const self = this;
     const activities = [
       {
         actor: 1,
         verb: 'tweet',
         object: 1,
         foreign_id: 'update_activity_1',
+        time: new Date(),
       },
       {
         actor: 2,
         verb: 'tweet',
-        object: 3,
-        foreign_id: 'update_activity_1',
+        object: 2,
+        foreign_id: 'update_activity_2',
+        time: new Date(),
       },
     ];
 
     return this.user1
       .addActivities(activities)
-      .then(function (body) {
-        const activity = body.activities[0];
-
+      .then((body) => {
+        const activity = body.activities.find((a) => a.foreign_id === activities[0].foreign_id);
         activity.answer = 10;
         delete activity.to;
         delete activity.target;
         delete activity.origin;
-
-        return self.client.updateActivities([activity]);
+        return this.client.updateActivities([activity]);
       })
-      .then(function () {
-        return self.user1.get({ limit: 2 });
-      })
-      .then(function (body) {
-        const activity = body.results[1];
+      .then(() => this.user1.get({ limit: 2 }))
+      .then((body) => {
+        const activity = body.results.find((a) => a.foreign_id === activities[0].foreign_id);
         expect(activity.answer).to.be(10);
       });
   });
 
-  it('update activity illegal foreign id', function () {
-    const self = this;
-
+  it('update activity illegal foreign id', function (done) {
     const activity = {
       actor: 1,
       verb: 'tweet',
       object: 2,
     };
 
-    return this.user1
+    this.user1
       .addActivity(activity)
-      .then(function (addedActivity) {
+      .then((addedActivity) => {
         delete addedActivity.id;
         delete addedActivity.duration;
         delete addedActivity.to;
@@ -84,107 +68,99 @@ describe('[INTEGRATION] Stream client (Node)', function () {
 
         addedActivity.foreign_id = 'aap';
 
-        return self.client.updateActivity(addedActivity);
+        return this.client.updateActivity(addedActivity);
       })
-      .then(function () {
+      .then(() => {
         throw new Error('Expected InputException');
       })
-      .catch(function (reason) {
-        expect(reason.error.code).to.be(4);
-        expect(reason.error.exception).to.be('InputException');
+      .catch((err) => {
+        expect(err.error.code).to.be(4);
+        expect(err.error.exception).to.be('InputException');
+        done();
       });
   });
 
-  it('update activity illegal time', function () {
-    const self = this;
-
+  it('update activity illegal time', function (done) {
     const activity = {
       actor: 1,
       verb: 'tweet',
       object: 2,
     };
 
-    return this.user1
+    this.user1
       .addActivity(activity)
-      .then(function (addedActivity) {
+      .then((addedActivity) => {
         delete addedActivity.duration;
         delete addedActivity.to;
 
         addedActivity.time = 'aap';
 
-        return self.client.updateActivity(addedActivity);
+        return this.client.updateActivity(addedActivity);
       })
-      .then(function () {
+      .then(() => {
         throw new Error('Expected InputException');
       })
-      .catch(function (reason) {
-        expect(reason.error.code).to.be(4);
-        expect(reason.error.exception).to.be('InputException');
+      .catch((err) => {
+        expect(err.error.code).to.be(4);
+        expect(err.error.exception).to.be('InputException');
+        done();
       });
   });
 
-  it('update activity illegal to field', function () {
-    const self = this;
-
+  it('update activity illegal to field', function (done) {
     const activity = {
       actor: 1,
       verb: 'tweet',
       object: 2,
     };
 
-    return this.user1
+    this.user1
       .addActivity(activity)
-      .then(function (addedActivity) {
+      .then((addedActivity) => {
         delete addedActivity.duration;
         delete addedActivity.time;
 
         addedActivity.to = ['to:something'];
 
-        return self.client.updateActivity(addedActivity);
+        return this.client.updateActivity(addedActivity);
       })
-      .then(function () {
+      .then(() => {
         throw new Error('Expected InputException');
       })
-      .catch(function (reason) {
+      .catch((reason) => {
         expect(reason.error.code).to.be(4);
         expect(reason.error.exception).to.be('InputException');
+        done();
       });
   });
 
   it('updating many activities', function () {
-    const self = this;
     const activities = [];
-    for (let i = 0; i < 10; i++) {
+    const count = 10;
+    for (let i = 0; i < count; i++) {
       activities.push({
         verb: 'do',
         object: `object:${i}`,
         actor: `user:${i}`,
         foreign_id: `update_activities_${i}`,
+        time: new Date(),
       });
     }
 
     return this.user1
       .addActivities(activities)
-      .then(function (body) {
-        const activitiesCreated = body.activities;
+      .then((body) => {
+        expect(body.activities.length).to.be(count);
 
-        for (let j = 0; j < activitiesCreated.length; j++) {
-          activitiesCreated[j].answer = 100;
-        }
-
-        return self.client.updateActivities(activitiesCreated);
+        const updatedActivities = body.activities.map((a) => ({ ...a, answer: 100 }));
+        return this.client.updateActivities(updatedActivities);
       })
-      .then(function () {
-        return self.user1.get({
-          limit: 10,
+      .then(() => this.user1.get({ limit: 10 }))
+      .then(({ results }) => {
+        expect(results.length).to.be(count);
+        results.forEach((a) => {
+          expect(a.answer).to.be(100);
         });
-      })
-      .then(function (body) {
-        const activitiesUpdated = body.results;
-
-        for (let n = 0; n < activitiesUpdated.length; n++) {
-          expect(activitiesUpdated[n].answer).to.be(100);
-        }
       });
   });
 
@@ -192,71 +168,127 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     const activity = {
       verb: 'do',
       actor: 'user:1',
-      object: 'object:1',
+      object: 'object:11',
       time: new Date().toISOString(),
       foreign_id: 'update_activity_11',
     };
 
-    return this.client.updateActivity(activity);
+    return this.user1
+      .addActivity(activity)
+      .then((body) => {
+        delete body.duration;
+        delete body.to;
+        delete body.id;
+
+        delete body.target;
+        delete body.origin;
+        body.answer = 11;
+        return this.client.updateActivity(body);
+      })
+      .then(() => this.user1.get({ limit: 1 }))
+      .then(({ results }) => {
+        expect(results[0].foreign_id).to.be(activity.foreign_id);
+        expect(results[0].answer).to.be(11);
+      });
   });
 
-  it('supports adding activity to multiple feeds', function (done) {
+  it('supports adding activity to multiple feeds', function () {
     const activity = {
       actor: 'user:11',
       verb: 'like',
       object: '000',
     };
-    const feeds = ['flat:33', 'user:11'];
+    const feeds = [this.flat3.id, this.user1.id];
 
-    this.client.addToMany(activity, feeds, wrapCB(201, done));
+    return this.client
+      .addToMany(activity, feeds)
+      .then(() => this.flat3.get({ limit: 1 }))
+      .then(({ results }) => {
+        expect(results[0].actor).to.be(activity.actor);
+        expect(results[0].verb).to.be(activity.verb);
+        expect(results[0].object).to.be(activity.object);
+
+        return this.user1.get({ limit: 1 });
+      })
+      .then(({ results }) => {
+        expect(results[0].actor).to.be(activity.actor);
+        expect(results[0].verb).to.be(activity.verb);
+        expect(results[0].object).to.be(activity.object);
+      });
   });
 
-  it('supports batch following', function (done) {
+  it('supports batch following', function () {
     const follows = [
       {
-        source: 'flat:1',
+        source: this.flat3.id,
         target: 'user:1',
       },
       {
-        source: 'flat:1',
+        source: this.flat3.id,
         target: 'user:2',
       },
       {
-        source: 'flat:1',
+        source: this.flat3.id,
         target: 'user:3',
       },
     ];
 
-    this.client.followMany(follows, null, wrapCB(201, done));
+    return this.client
+      .followMany(follows)
+      .then(() => this.flat3.following({ limit: 3 }))
+      .then(({ results }) => {
+        const sortedFollows = results
+          .map((f) => ({ source: f.feed_id, target: f.target_id }))
+          .sort((a, b) => (a.target > b.target ? 1 : -1));
+        expect(sortedFollows).to.be.eql(follows);
+      });
   });
 
-  it('supports batch following with activity_copy_limit', function (done) {
+  it.skip('supports batch following with activity_copy_limit', function () {
+    const activities = [];
+    const copyLimit = 25;
+    for (let i = 0; i < copyLimit * 2; i++) {
+      activities.push({
+        verb: 'do',
+        object: `object:${i}`,
+        actor: `user:${i}`,
+        foreign_id: `follow_activities_${i}`,
+        time: new Date(),
+      });
+    }
+
     const follows = [
       {
-        source: 'flat:1',
-        target: 'user:1',
+        source: this.flat3.id,
+        target: this.user1.id,
       },
       {
-        source: 'flat:1',
+        source: this.flat3.id,
         target: 'user:2',
       },
       {
-        source: 'flat:1',
+        source: this.flat3.id,
         target: 'user:3',
       },
     ];
 
-    this.client.followMany(
-      follows,
-      20,
-      wrapCB(201, done, function (error, response) {
-        expect(response.req.path.indexOf('activity_copy_limit=20')).to.not.be(0);
-        done();
-      }),
-    );
+    return this.user1
+      .addActivities(activities)
+      .then(this.client.followMany(follows, copyLimit))
+      .then(() => this.flat3.following({ limit: 10 }))
+      .then(({ results }) => {
+        const sortedFollows = results
+          .map((f) => ({ source: f.feed_id, target: f.target_id }))
+          .sort((a, b) => (a.target > b.target ? 1 : -1));
+        expect(sortedFollows).to.be.eql(follows);
+      })
+      .then(() => this.flat3.get({ limit: 100 }))
+      .then(({ results }) => {
+        expect(results.length).to.be(copyLimit);
+      });
   });
 
-  it('supports batch unfollowing', function (done) {
+  it('supports batch unfollowing', function () {
     const unfollows = [
       {
         source: 'flat:1',
@@ -273,15 +305,15 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       },
     ];
 
-    this.client.unfollowMany(unfollows, wrapCB(201, done));
+    return this.client.unfollowMany(unfollows).then((response) => {
+      expect(response.duration).to.be.a('string');
+    });
   });
 
   it('no secret application auth', function () {
     const client = stream.connect('ahj2ndz7gsan');
 
-    expect(function () {
-      client.addToMany({}, []);
-    }).to.throwError(function (e) {
+    expect(() => client.addToMany({}, [])).to.throwError((e) => {
       expect(e).to.be.a(errors.SiteError);
     });
   });
@@ -298,7 +330,6 @@ describe('[INTEGRATION] Stream client (Node)', function () {
   });
 
   it('add activity using to', function () {
-    const self = this;
     let activityId = null;
     const activity = {
       actor: 1,
@@ -310,228 +341,179 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       name: 'Vondelpark',
       distance: '20',
     };
-    activity.to = [self.flat3.id, 'user:everyone'];
+    activity.to = [this.flat3.id, 'user:everyone'];
 
     return this.user1
       .addActivity(activity)
-      .then(function (body) {
+      .then((body) => {
         activityId = body.id;
-        return self.flat3.get({ limit: 1 });
+        return this.flat3.get({ limit: 1 });
       })
-      .then(function (body) {
+      .then((body) => {
         expect(body.results[0].id).to.eql(activityId);
       });
   });
+
   describe("updating activity's 'to' targets", function () {
-    it("replaces an activity's 'to' targets with `new_targets` (activity has existing targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
-
+    it("replaces an activity's 'to' targets with `new_targets` (activity has no existing targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
       };
-      this.user1
-        .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, ['user:5678']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(1);
-          expect(response.results[0].to).to.contain('user:5678');
-          return done();
-        });
-    });
-    it("replaces an activity's 'to' targets with `new_targets` (activity has no existing targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
 
-      const activity = {
-        actor: 1,
-        verb: 'test',
-        object: 1,
-        foreign_id: 1234,
-        time: timestamp,
-        to: ['user:1234'],
-      };
-      this.user1
+      const newTargets = ['user:5678'];
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, ['user:5678']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(1);
-          expect(response.results[0].to).to.contain('user:5678');
-          return done();
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, newTargets))
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.eql(newTargets);
         });
     });
 
-    it("add new targets to an activity's 'to' targets with `add_targets` (activity has existing targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
-
+    it("replaces an activity's 'to' targets with `new_targets` (activity has existing targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
         to: ['user:1234'],
       };
-      this.user1
+
+      const newTargets = ['user:4321'];
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, ['user:5678']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, newTargets))
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.eql(newTargets);
+        });
+    });
+
+    it("add new targets to an activity's 'to' targets with `add_targets` (activity has existing targets)", function () {
+      const activity = {
+        actor: 1,
+        verb: 'test',
+        object: 1,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
+        to: ['user:1234'],
+      };
+
+      return this.user1
+        .addActivity(activity)
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, ['user:5678']))
+        .then(() => this.user1.get())
+        .then((response) => {
           expect(response.results[0].to).to.have.length(2);
           expect(response.results[0].to).to.contain('user:1234');
           expect(response.results[0].to).to.contain('user:5678');
-          done();
         });
     });
-    it("add new targets to an activity's 'to' targets with `add_targets` (activity has no existing targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
 
+    it("add new targets to an activity's 'to' targets with `add_targets` (activity has no existing targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
       };
-      this.user1
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, ['user:5678']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(1);
-          expect(response.results[0].to).to.contain('user:5678');
-          done();
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, ['user:5678']))
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.eql(['user:5678']);
         });
     });
 
-    it("remove targets from an activity's 'to' targets with `remove_targets` (end result still has targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
-
+    it("remove targets from an activity's 'to' targets with `remove_targets` (end result still has targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
         to: ['user:1234', 'user:5678'],
       };
-      this.user1
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, null, ['user:5678']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(1);
-          expect(response.results[0].to).to.contain('user:1234');
-          done();
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, null, ['user:5678']))
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.eql(['user:1234']);
         });
     });
-    it("remove targets from an activity's 'to' targets with `remove_targets` (end result has no targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
 
+    it("remove targets from an activity's 'to' targets with `remove_targets` (end result has no targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
         to: ['user:1234'],
       };
-      this.user1
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, null, ['user:1234']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(0);
-          done();
+        .then(() => this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, null, ['user:1234']))
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.be(undefined);
         });
     });
 
-    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has no other existing targets)", function (done) {
-      const self = this;
-      const timestamp = new Date();
-
+    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has no other existing targets)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
         to: ['user:1234'],
       };
-      this.user1
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, ['user:5678'], ['user:1234']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
-          expect(response.results[0].to).to.have.length(1);
-          expect(response.results[0].to).to.have.contain('user:5678');
-          done();
+        .then(() =>
+          this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, ['user:5678'], ['user:1234']),
+        )
+        .then(() => this.user1.get())
+        .then(({ results }) => {
+          expect(results[0].to).to.eql(['user:5678']);
         });
     });
 
-    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has other existing targets too, that don't get modified)", function (done) {
-      const self = this;
-      const timestamp = new Date();
-
+    it("replaces an activity's 'to' targets with a combination of `add_targets` and `remove_targets` (activity has other existing targets too, that don't get modified)", function () {
       const activity = {
         actor: 1,
         verb: 'test',
         object: 1,
-        foreign_id: 1234,
-        time: timestamp,
+        foreign_id: 'random_foregin_id',
+        time: new Date(),
         to: ['user:0000', 'user:1234'],
       };
-      this.user1
+
+      return this.user1
         .addActivity(activity)
-        .then(function () {
-          return self.user1.updateActivityToTargets(1234, timestamp, null, ['user:5678'], ['user:1234']);
-        })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (response) {
+        .then(() =>
+          this.user1.updateActivityToTargets(activity.foreign_id, activity.time, null, ['user:5678'], ['user:1234']),
+        )
+        .then(() => this.user1.get())
+        .then((response) => {
           expect(response.results[0].to).to.have.length(2);
           expect(response.results[0].to).to.have.contain('user:0000');
           expect(response.results[0].to).to.have.contain('user:5678');
-          done();
         });
     });
   });
@@ -539,9 +521,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
   describe('get activities', function () {
     let activity;
 
-    beforeEach(function (done) {
-      const self = this;
-      this.user1
+    beforeEach(function () {
+      return this.user1
         .addActivity({
           actor: 1,
           verb: 'test',
@@ -549,27 +530,23 @@ describe('[INTEGRATION] Stream client (Node)', function () {
           foreign_id: 1234,
           time: new Date(),
         })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (resp) {
+        .then(() => this.user1.get())
+        .then((resp) => {
           activity = resp.results[0];
-          done();
         });
     });
 
     describe('by ID', function () {
-      it('allows to retrieve activities directly by their ID', function (done) {
-        this.client.getActivities({ ids: [activity.id] }).then(function (resp) {
+      it('allows to retrieve activities directly by their ID', function () {
+        return this.client.getActivities({ ids: [activity.id] }).then((resp) => {
           expect(resp.results[0]).to.eql(activity);
-          done();
         });
       });
     });
 
     describe('by foreign ID and time', function () {
-      it('allows to retrieve activities directly by their ID', function (done) {
-        this.client
+      it('allows to retrieve activities directly by their ID', function () {
+        return this.client
           .getActivities({
             foreignIDTimes: [
               {
@@ -578,9 +555,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
               },
             ],
           })
-          .then(function (resp) {
+          .then((resp) => {
             expect(resp.results[0]).to.eql(activity);
-            done();
           });
       });
     });
@@ -590,9 +566,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     let activity;
     let expected;
 
-    beforeEach(function (done) {
-      const self = this;
-      this.user1
+    beforeEach(function () {
+      return this.user1
         .addActivity({
           actor: 1,
           verb: 'test',
@@ -606,10 +581,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
           popularity: 50,
           color: 'blue',
         })
-        .then(function () {
-          return self.user1.get();
-        })
-        .then(function (resp) {
+        .then(() => this.user1.get())
+        .then((resp) => {
           activity = resp.results[0];
 
           expected = activity;
@@ -625,16 +598,12 @@ describe('[INTEGRATION] Stream client (Node)', function () {
               baz: 999,
             },
           };
-
-          done();
         });
     });
 
     describe('by ID', function () {
-      it('allows to update the activity', function (done) {
-        const self = this;
-
-        this.client
+      it('allows to update the activity', function () {
+        return this.client
           .activityPartialUpdate({
             id: activity.id,
             set: {
@@ -649,22 +618,18 @@ describe('[INTEGRATION] Stream client (Node)', function () {
             },
             unset: ['color'],
           })
-          .then(function () {
-            self.client.getActivities({ ids: [activity.id] }).then(function (resp) {
-              expect(resp.results[0]).to.eql(expected);
-              done();
-            });
+          .then(() => this.client.getActivities({ ids: [activity.id] }))
+          .then((resp) => {
+            expect(resp.results[0]).to.eql(expected);
           });
       });
     });
 
     describe('by foreign ID and time', function () {
-      it('allows to update the activity', function (done) {
-        const self = this;
-
-        this.client
+      it('allows to update the activity', function () {
+        return this.client
           .activityPartialUpdate({
-            foreignID: activity.foreign_id,
+            foreign_id: activity.foreign_id,
             time: activity.time,
             set: {
               popularity: 75,
@@ -678,11 +643,9 @@ describe('[INTEGRATION] Stream client (Node)', function () {
             },
             unset: ['color'],
           })
-          .then(function () {
-            self.client.getActivities({ ids: [activity.id] }).then(function (resp) {
-              expect(resp.results[0]).to.eql(expected);
-              done();
-            });
+          .then(() => this.client.getActivities({ ids: [activity.id] }))
+          .then((resp) => {
+            expect(resp.results[0]).to.eql(expected);
           });
       });
     });
