@@ -21,7 +21,7 @@
     "lint-fix": "prettier --write '**/*.{js,ts}' && eslint --fix '**/*.js'",
     "test": "yarn run test-unit-node",
     "test-unit-node": "mocha --require @babel/register test/unit/common test/unit/node",
-    "test-integration-node": "mocha --require @babel/register test/integration/common test/integration/node",
+    "test-integration-node": "mocha --require @babel/register test/integration/common test/integration/node --exit",
     "test-cloud": "mocha --require @babel/register test/integration/cloud --timeout 40000",
     "test-cloud-local": "LOCAL=true mocha --require @babel/register test/integration/cloud --timeout 40000 -i --grep 'Files|Images'",
     "test-browser": "karma start karma.config.js",
