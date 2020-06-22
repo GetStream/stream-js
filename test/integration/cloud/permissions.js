@@ -6,16 +6,15 @@ import { randUserId } from '../utils/hooks';
 const someActivityId = 'f9969ca8-e659-11e8-801f-e4a47194940e';
 // eslint-disable-next-line no-unused-vars
 function log(...args) {
-  console.log(
-    util.inspect(...args, { showHidden: false, depth: null, colors: true }),
-  );
+  // eslint-disable-next-line no-console
+  console.log(util.inspect(...args, { showHidden: false, depth: null, colors: true }));
 }
 
 describe('Permission checking', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   ctx.createUsers();
   describe('When alice tries to impersonate bob', () => {
-    let at = new Date().toISOString();
+    const at = new Date().toISOString();
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.feed('user').addActivity({
         actor: ctx.bob.currentUser,
@@ -33,16 +32,12 @@ describe('Permission checking', () => {
   });
   describe('When alice tries to update bob', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice
-        .user(ctx.bob.userId)
-        .update({ hacked: true });
+      ctx.response = await ctx.alice.user(ctx.bob.userId).update({ hacked: true });
     });
   });
   describe('When alice tries to delete bob', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice
-        .user(ctx.bob.userId)
-        .update({ hacked: true });
+      ctx.response = await ctx.alice.user(ctx.bob.userId).update({ hacked: true });
     });
   });
 
@@ -54,20 +49,16 @@ describe('Permission checking', () => {
 
   describe('When alice tries to mark her own notification feed', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice
-        .feed('notification')
-        .get({ mark_seen: true, mark_read: true });
+      ctx.response = await ctx.alice.feed('notification').get({ mark_seen: true, mark_read: true });
     });
   });
 
   describe('When alice tries to post to bobs timeline', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice
-        .feed('timeline', ctx.bob.userId)
-        .addActivity({
-          verb: 'post',
-          object: "I'm writing this directly on your timeline",
-        });
+      ctx.response = await ctx.alice.feed('timeline', ctx.bob.userId).addActivity({
+        verb: 'post',
+        object: "I'm writing this directly on your timeline",
+      });
     });
   });
 
@@ -83,12 +74,7 @@ describe('Permission checking', () => {
 
   describe('When alice tries to post to someone elses timeline by using target feeds when adding a reaction', () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.alice.reactions.add(
-        'comment',
-        someActivityId,
-        {},
-        { targetFeeds: ['timeline:123'] },
-      );
+      ctx.response = await ctx.alice.reactions.add('comment', someActivityId, {}, { targetFeeds: ['timeline:123'] });
     });
   });
 
@@ -106,29 +92,21 @@ describe('Permission checking', () => {
 
   describe('When alice tries to add a child reaction with bobs user id', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.reactions.addChild(
-        'like',
-        someActivityId,
-        {
-          userId: ctx.bob.userId,
-        },
-      );
+      ctx.response = await ctx.alice.reactions.addChild('like', someActivityId, {
+        userId: ctx.bob.userId,
+      });
     });
   });
 
   describe('When alice tries to make bob follow her', () => {
     ctx.requestShouldError(403, async () => {
-      await ctx.alice
-        .feed('timeline', ctx.bob.userId)
-        .follow('user', ctx.alice.userId);
+      await ctx.alice.feed('timeline', ctx.bob.userId).follow('user', ctx.alice.userId);
     });
   });
 
   describe('When alice tries to make bob unfollow her', () => {
     ctx.requestShouldError(403, async () => {
-      await ctx.alice
-        .feed('timeline', ctx.bob.userId)
-        .unfollow('user', ctx.alice.userId);
+      await ctx.alice.feed('timeline', ctx.bob.userId).unfollow('user', ctx.alice.userId);
     });
   });
 
@@ -146,9 +124,7 @@ describe('Permission checking', () => {
 
   describe('When alice tries to delete an activity from bob his feed', () => {
     ctx.requestShouldError(403, async () => {
-      await ctx.alice
-        .feed('user', ctx.bob.userId)
-        .removeActivity(someActivityId);
+      await ctx.alice.feed('user', ctx.bob.userId).removeActivity(someActivityId);
     });
   });
 

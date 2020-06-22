@@ -4,12 +4,12 @@ import request from 'request';
 import { CloudContext } from './utils';
 
 describe('Images', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
   let imageUrl;
 
   describe('When alice adds a txt file as image', () => {
     ctx.requestShouldError(400, async () => {
-      let file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
+      const file = fs.createReadStream('./test/integration/cloud/helloworld.txt');
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
     });
     ctx.responseShould('have useful error message', () => {
@@ -19,14 +19,14 @@ describe('Images', () => {
 
   describe('When alice adds a big file', () => {
     ctx.requestShouldError(413, async () => {
-      let file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
+      const file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
       ctx.response = await ctx.alice.images.upload(file, 'toolarge2.jpeg');
     });
   });
 
   describe('When alice adds a new image', () => {
     ctx.requestShouldNotError(async () => {
-      let file = fs.createReadStream('./test/integration/cloud/helloworld.jpg');
+      const file = fs.createReadStream('./test/integration/cloud/helloworld.jpg');
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.jpg');
     });
 
@@ -55,7 +55,7 @@ describe('Images', () => {
     });
   });
 
-  describe('When the image ${imageUrl} is requested', () => {
+  describe('When the image {imageUrl} is requested', () => {
     ctx.test('should return 200', function (done) {
       request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
@@ -75,9 +75,7 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function (
-      done,
-    ) {
+    ctx.test('When the image is requested it should return 200', function (done) {
       request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
@@ -98,9 +96,7 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function (
-      done,
-    ) {
+    ctx.test('When the image is requested it should return 200', function (done) {
       request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();
@@ -131,9 +127,7 @@ describe('Images', () => {
       ctx.response.should.have.all.keys('file', 'duration');
       imageUrl = ctx.response.file;
     });
-    ctx.test('When the image is requested it should return 200', function (
-      done,
-    ) {
+    ctx.test('When the image is requested it should return 200', function (done) {
       request.get(imageUrl, function (err, res) {
         res.statusCode.should.eql(200);
         done();

@@ -1,6 +1,5 @@
-import fetch from '@stream-io/cross-fetch';
+import fetch, { Headers } from '@stream-io/cross-fetch';
 import FormData from 'form-data';
-import { Headers } from '@stream-io/cross-fetch';
 
 import utils from './utils';
 import errors from './errors';
@@ -21,7 +20,7 @@ export default class StreamImageStore {
       fileField = uri;
     } else {
       fileField = {
-        uri: uri,
+        uri,
         name: name || uri.split('/').reverse()[0],
       };
       if (contentType != null) {
@@ -29,16 +28,13 @@ export default class StreamImageStore {
       }
     }
     data.append('file', fileField);
-    return fetch(
-      `${this.client.enrichUrl('images/')}?api_key=${this.client.apiKey}`,
-      {
-        method: 'post',
-        body: data,
-        headers: new Headers({
-          Authorization: this.token,
-        }),
-      },
-    ).then((r) => {
+    return fetch(`${this.client.enrichUrl('images/')}?api_key=${this.client.apiKey}`, {
+      method: 'post',
+      body: data,
+      headers: new Headers({
+        Authorization: this.token,
+      }),
+    }).then((r) => {
       if (r.ok) {
         return r.json();
       }
@@ -52,7 +48,7 @@ export default class StreamImageStore {
           // ignore json parsing errors
         }
         throw new errors.StreamApiError(
-          JSON.stringify(responseData) + ' with HTTP status code ' + r.status,
+          `${JSON.stringify(responseData)} with HTTP status code ${r.status}`,
           responseData,
           r,
         );

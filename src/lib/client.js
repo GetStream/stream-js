@@ -1,6 +1,6 @@
 import request from 'request';
 import qs from 'qs';
-import url from 'url';
+import Url from 'url';
 import http from 'http';
 import https from 'https';
 import Faye from 'faye';
@@ -52,14 +52,13 @@ class StreamClient {
     this.baseUrl = 'https://api.stream-io-api.com/api/';
     this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
     this.apiKey = apiKey;
-    this.usingApiSecret =
-      apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
+    this.usingApiSecret = apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
     this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
-      let jwtBody = jwtDecode(this.userToken);
+      const jwtBody = jwtDecode(this.userToken);
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
       }
@@ -71,17 +70,14 @@ class StreamClient {
     this.appId = appId;
     this.options = options;
     this.version = this.options.version || 'v1.0';
-    this.fayeUrl =
-      this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
+    this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
     this.fayeClient = null;
     this.request = request;
     // track a source name for the api calls, ie get started or databrowser
     this.group = this.options.group || 'unspecified';
     // track subscriptions made on feeds created by this client
     this.subscriptions = {};
-    this.expireTokens = this.options.expireTokens
-      ? this.options.expireTokens
-      : false;
+    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
@@ -90,23 +86,16 @@ class StreamClient {
       this.fayeUrl = 'http://localhost:9999/faye/';
     }
 
-    if (
-      typeof process !== 'undefined' &&
-      process.env.STREAM_ANALYTICS_BASE_URL
-    ) {
+    if (typeof process !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
       this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
     }
 
     this.handlers = {};
-    this.browser =
-      typeof this.options.browser !== 'undefined'
-        ? this.options.browser
-        : typeof window !== 'undefined';
+    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
     this.node = !this.browser;
 
     if (!this.browser) {
-      const keepAlive =
-        this.options.keepAlive === undefined ? true : this.options.keepAlive;
+      const keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
 
       const httpsAgent = new https.Agent({
         keepAlive,
@@ -118,9 +107,7 @@ class StreamClient {
         keepAliveMsecs: 3000,
       });
 
-      this.requestAgent = this.baseUrl.startsWith('https://')
-        ? httpsAgent
-        : httpAgent;
+      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
     }
 
     this.personalization = new Personalization(this);
@@ -143,12 +130,11 @@ class StreamClient {
     }
 
     if (this.apiSecret) {
-      this._personalizationToken = signing.JWTScopeToken(
-        this.apiSecret,
-        'personalization',
-        '*',
-        { userId: '*', feedId: '*', expireTokens: this.expireTokens },
-      );
+      this._personalizationToken = signing.JWTScopeToken(this.apiSecret, 'personalization', '*', {
+        userId: '*',
+        feedId: '*',
+        expireTokens: this.expireTokens,
+      });
     } else {
       throw new errors.SiteError(
         'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
@@ -164,12 +150,10 @@ class StreamClient {
     }
 
     if (this.apiSecret) {
-      this._collectionsToken = signing.JWTScopeToken(
-        this.apiSecret,
-        'collections',
-        '*',
-        { feedId: '*', expireTokens: this.expireTokens },
-      );
+      this._collectionsToken = signing.JWTScopeToken(this.apiSecret, 'collections', '*', {
+        feedId: '*',
+        expireTokens: this.expireTokens,
+      });
     } else {
       throw new errors.SiteError(
         'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
@@ -185,11 +169,10 @@ class StreamClient {
         userId: '*',
         expireTokens: this.expireTokens,
       });
-    } else {
-      throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
-      );
     }
+    throw new errors.SiteError(
+      'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
+    );
   }
 
   getBaseUrl(serviceName) {
@@ -197,36 +180,24 @@ class StreamClient {
       serviceName = 'api';
     }
     let url = this.baseUrl;
-    if (serviceName != 'api') {
-      url =
-        'https://' + serviceName + '.stream-io-api.com/' + serviceName + '/';
+    if (serviceName !== 'api') {
+      url = `https://${serviceName}.stream-io-api.com/${serviceName}/`;
     }
 
     if (this.location) {
       const protocol = this.options.protocol || 'https';
-      url =
-        protocol +
-        '://' +
-        this.location +
-        '-' +
-        serviceName +
-        '.stream-io-api.com/' +
-        serviceName +
-        '/';
+      url = `${protocol}://${this.location}-${serviceName}.stream-io-api.com/${serviceName}/`;
     }
 
-    if (
-      (typeof process !== 'undefined' && process.env.LOCAL) ||
-      this.options.local
-    ) {
-      url = 'http://localhost:8000/' + serviceName + '/';
+    if ((typeof process !== 'undefined' && process.env.LOCAL) || this.options.local) {
+      url = `http://localhost:8000/${serviceName}/`;
     }
 
     let urlEnvironmentKey;
-    if (serviceName == 'api') {
+    if (serviceName === 'api') {
       urlEnvironmentKey = 'STREAM_BASE_URL';
     } else {
-      urlEnvironmentKey = 'STREAM_' + serviceName.toUpperCase() + '_URL';
+      urlEnvironmentKey = `STREAM_${serviceName.toUpperCase()}_URL`;
     }
     if (typeof process !== 'undefined' && process.env[urlEnvironmentKey]) {
       url = process.env[urlEnvironmentKey];
@@ -270,14 +241,14 @@ class StreamClient {
     }
   }
 
-  send() {
+  send(...args) {
     /**
      * Call the given handler with the arguments
      * @method send
      * @memberof StreamClient.prototype
      * @access private
      */
-    let args = Array.prototype.slice.call(arguments);
+
     const key = args[0];
     args = args.slice(1);
     if (this.handlers[key]) {
@@ -302,12 +273,10 @@ class StreamClient {
     return function task(error, response, body) {
       if (error) {
         reject(new errors.StreamApiError(error, body, response));
-      } else if (!/^2/.test('' + response.statusCode)) {
+      } else if (!/^2/.test(`${response.statusCode}`)) {
         reject(
           new errors.StreamApiError(
-            JSON.stringify(body) +
-              ' with HTTP status code ' +
-              response.statusCode,
+            `${JSON.stringify(body)} with HTTP status code ${response.statusCode}`,
             body,
             response,
           ),
@@ -327,17 +296,15 @@ class StreamClient {
      * @memberof StreamClient.prototype
      * @access private
      */
-    const client = this;
 
-    function callback() {
+    const callback = (...args) => {
       // first hit the global callback, subsequently forward
-      const args = Array.prototype.slice.call(arguments);
       const sendArgs = ['response'].concat(args);
-      client.send.apply(client, sendArgs);
+      this.send(sendArgs);
       if (cb !== undefined) {
-        cb.apply(client, args);
+        cb.apply(this, args);
       }
-    }
+    };
 
     return callback;
   }
@@ -352,7 +319,7 @@ class StreamClient {
     const description = this.node ? 'node' : 'browser';
     // TODO: get the version here in a way which works in both and browserify
     const version = 'unknown';
-    return 'stream-javascript-client-' + description + '-' + version;
+    return `stream-javascript-client-${description}-${version}`;
   }
 
   getReadOnlyToken(feedSlug, userId) {
@@ -401,7 +368,7 @@ class StreamClient {
     if (token === undefined) {
       if (this.usingApiSecret) {
         token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
-          feedId: '' + feedSlug + userId,
+          feedId: `${feedSlug}${userId}`,
         });
       } else {
         token = this.userToken;
@@ -427,10 +394,10 @@ class StreamClient {
       serviceName = 'api';
     }
 
-    return this.getBaseUrl(serviceName) + this.version + '/' + relativeUrl;
+    return `${this.getBaseUrl(serviceName) + this.version}/${relativeUrl}`;
   }
 
-  replaceReactionOptions(options) {
+  replaceReactionOptions = (options) => {
     // Shortcut options for reaction enrichment
     if (options && options.reactions) {
       if (options.reactions.own != null) {
@@ -447,11 +414,11 @@ class StreamClient {
       }
       delete options.reactions;
     }
-  }
+  };
 
   shouldUseEnrichEndpoint(options) {
     if (options && options.enrich) {
-      let result = options.enrich;
+      const result = options.enrich;
       delete options.enrich;
       return result;
     }
@@ -482,7 +449,7 @@ class StreamClient {
       kwargs.agent = this.requestAgent;
     }
 
-    kwargs.qs['api_key'] = this.apiKey;
+    kwargs.qs.api_key = this.apiKey;
     kwargs.qs.location = this.group;
     kwargs.json = true;
     let signature = kwargs.signature || this.signature;
@@ -513,7 +480,7 @@ class StreamClient {
      * @private
      * @return {object} Faye authorization middleware
      */
-    const apiKey = this.apiKey;
+    const { apiKey } = this;
 
     return {
       incoming: (message, callback) => {
@@ -670,9 +637,7 @@ class StreamClient {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.SiteError(
-        'This method can only be used server-side using your API Secret',
-      );
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     if (!(activities instanceof Array)) {
@@ -684,7 +649,7 @@ class StreamClient {
       expireTokens: this.expireTokens,
     });
 
-    const body = { activities: activities };
+    const body = { activities };
 
     return this.post(
       {
@@ -705,27 +670,25 @@ class StreamClient {
      */
 
     if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.SiteError(
-        'This method can only be used server-side using your API Secret',
-      );
+      throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
     return this.updateActivities([activity], callback);
   }
 
-  getActivities(params, callback) {
+  getActivities({ ids, foreignIDTimes, ...params }, callback) {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
-    const { ids, foreignIDTimes, ...qs } = params;
+
     if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
-      qs['ids'] = ids.join(',');
+      params.ids = ids.join(',');
     } else if (foreignIDTimes) {
       if (!(foreignIDTimes instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
@@ -740,8 +703,8 @@ class StreamClient {
         timestamps.push(fidTime.time);
       });
 
-      qs['foreign_ids'] = foreignIDs.join(',');
-      qs['timestamps'] = timestamps.join(',');
+      params.foreign_ids = foreignIDs.join(',');
+      params.timestamps = timestamps.join(',');
     } else {
       throw new TypeError('Missing ids or foreignIDTimes params');
     }
@@ -754,15 +717,13 @@ class StreamClient {
       });
     }
 
-    this.replaceReactionOptions(qs);
-    const path = this.shouldUseEnrichEndpoint(qs)
-      ? 'enrich/activities/'
-      : 'activities/';
+    this.replaceReactionOptions(params);
+    const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
     return this.get(
       {
         url: path,
-        qs,
+        qs: params,
         signature: token,
       },
       callback,
@@ -770,9 +731,7 @@ class StreamClient {
   }
 
   getOrCreateToken() {
-    return this.usingApiSecret
-      ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' })
-      : this.userToken;
+    return this.usingApiSecret ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' }) : this.userToken;
   }
 
   user(userId) {
@@ -781,9 +740,7 @@ class StreamClient {
 
   setUser(data) {
     if (this.usingApiSecret) {
-      throw new errors.SiteError(
-        'This method can only be used client-side using a user token',
-      );
+      throw new errors.SiteError('This method can only be used client-side using a user token');
     }
 
     const body = { ...data };
@@ -919,10 +876,7 @@ class StreamClient {
       if (item.foreignID) {
         item.foreign_id = item.foreignID;
       }
-      if (
-        item.id === undefined &&
-        (item.foreign_id === undefined || item.time === undefined)
-      ) {
+      if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
         throw new TypeError('missing id or foreign ID and time');
       }
       if (item.set && !(item.set instanceof Object)) {
@@ -945,7 +899,7 @@ class StreamClient {
       {
         url: 'activity/',
         body: {
-          changes: changes,
+          changes,
         },
         signature: authToken,
       },
@@ -957,11 +911,7 @@ class StreamClient {
 // StreamClient.prototype.collection = StreamClient.prototype.collections;
 
 if (qs) {
-  StreamClient.prototype.createRedirectUrl = function (
-    targetUrl,
-    userId,
-    events,
-  ) {
+  StreamClient.prototype.createRedirectUrl = function (targetUrl, userId, events) {
     /**
      * Creates a redirect url for tracking the given events in the context of
      * an email using Stream's analytics platform. Learn more at
@@ -973,21 +923,17 @@ if (qs) {
      * @param  {array} events     List of events to track
      * @return {string}           The redirect url
      */
-    const uri = url.parse(targetUrl);
+    const uri = Url.parse(targetUrl);
 
     if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
-      throw new errors.MissingSchemaError(
-        'Invalid URI: "' + url.format(uri) + '"',
-      );
+      throw new errors.MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
     }
 
-    const authToken = signing.JWTScopeToken(
-      this.apiSecret,
-      'redirect_and_track',
-      '*',
-      { userId: '*', expireTokens: this.expireTokens },
-    );
-    const analyticsUrl = this.baseAnalyticsUrl + 'redirect/';
+    const authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', {
+      userId: '*',
+      expireTokens: this.expireTokens,
+    });
+    const analyticsUrl = `${this.baseAnalyticsUrl}redirect/`;
     const kwargs = {
       auth_type: 'jwt',
       authorization: authToken,
@@ -998,17 +944,17 @@ if (qs) {
 
     const qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
 
-    return analyticsUrl + '?' + qString;
+    return `${analyticsUrl}?${qString}`;
   };
 }
 
 // If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
 if (BatchOperations) {
-  for (const key in BatchOperations) {
+  Object.keys(BatchOperations).forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(BatchOperations, key)) {
       StreamClient.prototype[key] = BatchOperations[key];
     }
-  }
+  });
 }
 
 export default StreamClient;

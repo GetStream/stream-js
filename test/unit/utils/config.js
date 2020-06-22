@@ -1,10 +1,9 @@
-var isNodeEnv = typeof window === 'undefined';
+const isNodeEnv = typeof window === 'undefined';
 
-var LOCAL_RUN = false;
+const LOCAL_RUN = false;
 
-var API_KEY = 'q56mdvdzreye',
-  API_SECRET =
-    'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf';
+const API_KEY = 'q56mdvdzreye';
+const API_SECRET = 'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf';
 
 if (LOCAL_RUN && isNodeEnv) {
   module.exports.API_KEY = process.env.STREAM_API_KEY || API_KEY;

@@ -12,10 +12,16 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 
 ### Installation
 
-#### Install from NPM
+#### Install from NPM/YARN
 
 ```bash
 npm install getstream
+```
+
+or if you are using yarn
+
+```bash
+yarn install getstream
 ```
 
 ### Using JS deliver

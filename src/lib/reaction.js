@@ -15,13 +15,9 @@ export default class StreamReaction {
     this.signature = token;
   }
 
-  buildURL() {
-    let url = 'reaction/';
-    for (let i = 0; i < arguments.length; i++) {
-      url += arguments[i] + '/';
-    }
-    return url;
-  }
+  buildURL = (...args) => {
+    return `${['reaction', ...args].join('/')}/`;
+  };
 
   all(options, callback) {
     /**
@@ -43,19 +39,11 @@ export default class StreamReaction {
     );
   }
 
-  _convertTargetFeeds(targetFeeds = []) {
-    return targetFeeds.map((elem) =>
-      typeof elem === 'string' ? elem : elem.id,
-    );
-  }
+  _convertTargetFeeds = (targetFeeds = []) => {
+    return targetFeeds.map((elem) => (typeof elem === 'string' ? elem : elem.id));
+  };
 
-  add(
-    kind,
-    activity,
-    data = {},
-    { id, targetFeeds = [], userId, targetFeedsExtraData } = {},
-    callback,
-  ) {
+  add(kind, activity, data = {}, { id, targetFeeds = [], userId, targetFeedsExtraData } = {}, callback) {
     /**
      * add reaction
      * @method add
@@ -74,10 +62,10 @@ export default class StreamReaction {
     }
     targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
-      id: id,
+      id,
       activity_id: activity,
-      kind: kind,
-      data: data,
+      kind,
+      data,
       target_feeds: targetFeeds,
       user_id: userId,
     };
@@ -94,13 +82,7 @@ export default class StreamReaction {
     );
   }
 
-  addChild(
-    kind,
-    reaction,
-    data = {},
-    { targetFeeds = [], userId, targetFeedsExtraData } = {},
-    callback,
-  ) {
+  addChild(kind, reaction, data = {}, { targetFeeds = [], userId, targetFeedsExtraData } = {}, callback) {
     /**
      * add reaction
      * @method add
@@ -120,8 +102,8 @@ export default class StreamReaction {
     targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
       parent: reaction,
-      kind: kind,
-      data: data,
+      kind,
+      data,
       target_feeds: targetFeeds,
       user_id: userId,
     };
@@ -174,29 +156,21 @@ export default class StreamReaction {
      * @example reactions.lookup({user_id: "john", kinds:"like"})
      */
 
-    let { user_id, activity_id, reaction_id, ...qs } = conditions;
+    const { user_id, activity_id, reaction_id, ...qs } = conditions;
     if (!qs.limit) {
       qs.limit = 10;
     }
 
-    if (
-      (user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) !=
-      1
-    ) {
+    if ((user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) !== 1) {
       throw new errors.SiteError(
         'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );
     }
 
-    const lookupType =
-      (user_id && 'user_id') ||
-      (activity_id && 'activity_id') ||
-      (reaction_id && 'reaction_id');
+    const lookupType = (user_id && 'user_id') || (activity_id && 'activity_id') || (reaction_id && 'reaction_id');
     const value = user_id || activity_id || reaction_id;
 
-    const url = conditions.kind
-      ? this.buildURL(lookupType, value, conditions.kind)
-      : this.buildURL(lookupType, value);
+    const url = conditions.kind ? this.buildURL(lookupType, value, conditions.kind) : this.buildURL(lookupType, value);
 
     return this.client.get(
       {
@@ -223,7 +197,7 @@ export default class StreamReaction {
      */
     targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
-      data: data,
+      data,
       target_feeds: targetFeeds,
     };
     if (targetFeedsExtraData != null) {

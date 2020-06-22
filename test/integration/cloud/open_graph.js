@@ -1,13 +1,11 @@
 import { CloudContext } from './utils';
 
 describe('OpenGraph story', () => {
-  let ctx = new CloudContext();
+  const ctx = new CloudContext();
 
   describe('When alice requests opengraph info for our blog', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.og(
-        'https://getstream.io/blog/try-out-the-stream-api-with-postman',
-      );
+      ctx.response = await ctx.alice.og('https://getstream.io/blog/try-out-the-stream-api-with-postman');
     });
 
     ctx.responseShould('have the expected content', () => {
@@ -16,8 +14,7 @@ describe('OpenGraph story', () => {
         title: 'Try out the Stream API with Postman - The Stream Blog',
         description: 'Many of us at Stream use Postman regularly as w…',
         url: 'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
-        favicon:
-          '/blog/icons/icon-48x48.png?v=428e1cda5f1a9b09c558311127be2859',
+        favicon: '/blog/icons/icon-48x48.png?v=428e1cda5f1a9b09c558311127be2859',
         images: [
           {
             height: 600,
@@ -31,9 +28,7 @@ describe('OpenGraph story', () => {
 
   describe('When alice requests opengraph info for a binary blob', () => {
     ctx.requestShouldError(400, async () => {
-      ctx.response = await ctx.alice.og(
-        'https://github.com/buger/goreplay/releases/download/v0.14.0/gor.exe',
-      );
+      ctx.response = await ctx.alice.og('https://github.com/buger/goreplay/releases/download/v0.14.0/gor.exe');
     });
 
     ctx.responseShould('have the expected content', () => {
