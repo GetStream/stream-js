@@ -24,7 +24,12 @@ module.exports = function (config) {
     frameworks: ['mocha'],
 
     // list of files / patterns to load in the browser
-    files: ['test/unit/common/**/*_test.js', 'test/unit/browser/**/*_test.js'],
+    files: [
+      'test/unit/common/**/*_test.js',
+      'test/unit/browser/**/*_test.js',
+      'test/integration/common/**/*_test.js',
+      'test/integration/browser/**/*_test.js',
+    ],
 
     // list of files to exclude
     exclude: [],
@@ -34,6 +39,8 @@ module.exports = function (config) {
     preprocessors: {
       'test/unit/common/**/*_test.js': ['webpack', 'sourcemap'],
       'test/unit/browser/**/*_test.js': ['webpack', 'sourcemap'],
+      'test/integration/common/**/*_test.js': ['webpack', 'sourcemap'],
+      'test/integration/browser/**/*_test.js': ['webpack', 'sourcemap'],
     },
 
     // Webpack configuration for webpack preprocessor
