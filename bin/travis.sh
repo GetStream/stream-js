@@ -3,6 +3,7 @@ set -e
 yarn run build
 if [ "${CLOUD_TESTS:='no'}" == "yes" ]; then
     yarn run test-cloud
+    yarn run test-integration-node
 else
     yarn test
 fi
