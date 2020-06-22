@@ -383,7 +383,7 @@ class StreamClient {
     }
   };
 
-  shouldUseEnrichEndpoint(options) {
+  shouldUseEnrichEndpoint(options = {}) {
     if (options && options.enrich) {
       const result = options.enrich;
       delete options.enrich;
