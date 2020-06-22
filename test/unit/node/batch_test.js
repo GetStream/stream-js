@@ -29,16 +29,13 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
     this.client.addToMany(activity, feeds);
 
     td.verify(
-      msr(
-        {
-          url: 'feed/add_to_many/',
-          body: {
-            activity,
-            feeds,
-          },
+      msr({
+        url: 'feed/add_to_many/',
+        body: {
+          activity,
+          feeds,
         },
-        undefined,
-      ),
+      }),
     );
   });
 
@@ -48,21 +45,17 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
     const msr = replaceMSR.call(this);
 
     const follows = [];
-    const cb = function () {};
 
-    this.client.followMany(follows, 10, cb);
+    this.client.followMany(follows, 10);
 
     td.verify(
-      msr(
-        {
-          url: 'follow_many/',
-          body: follows,
-          qs: {
-            activity_copy_limit: 10,
-          },
+      msr({
+        url: 'follow_many/',
+        body: follows,
+        qs: {
+          activity_copy_limit: 10,
         },
-        cb,
-      ),
+      }),
     );
   });
 
@@ -72,19 +65,15 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
     const msr = replaceMSR.call(this);
 
     const follows = [];
-    const cb = function () {};
 
-    this.client.followMany(follows, cb);
+    this.client.followMany(follows);
 
     td.verify(
-      msr(
-        {
-          url: 'follow_many/',
-          body: follows,
-          qs: {},
-        },
-        cb,
-      ),
+      msr({
+        url: 'follow_many/',
+        body: follows,
+        qs: {},
+      }),
     );
   });
 
@@ -94,21 +83,17 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
     const msr = replaceMSR.call(this);
 
     const follows = [];
-    const cb = function () {};
 
-    this.client.followMany(follows, 0, cb);
+    this.client.followMany(follows, 0);
 
     td.verify(
-      msr(
-        {
-          url: 'follow_many/',
-          body: follows,
-          qs: {
-            activity_copy_limit: 0,
-          },
+      msr({
+        url: 'follow_many/',
+        body: follows,
+        qs: {
+          activity_copy_limit: 0,
         },
-        cb,
-      ),
+      }),
     );
   });
 
@@ -137,18 +122,14 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
     const msr = replaceMSR.call(this);
 
     const unfollows = [];
-    const cb = function () {};
 
-    this.client.unfollowMany(unfollows, cb);
+    this.client.unfollowMany(unfollows);
 
     td.verify(
-      msr(
-        {
-          url: 'unfollow_many/',
-          body: unfollows,
-        },
-        cb,
-      ),
+      msr({
+        url: 'unfollow_many/',
+        body: unfollows,
+      }),
     );
   });
 });

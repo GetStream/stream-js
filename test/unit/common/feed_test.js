@@ -38,74 +38,30 @@ describe('[UNIT] Stream Feed (Common)', function () {
     expect(feed.notificationChannel).to.be(`site-${this.client.appId}-feed-usermatthisk`);
   });
 
-  describe('#addActivity', function () {
+  it('#addActivity', function () {
     const activity = { actor: 'matthisk', object: 0, verb: 'tweet' };
+    feed.addActivity(activity);
 
-    it('(1)', function () {
-      feed.addActivity(activity);
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/',
-            body: activity,
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
-      );
-    });
-
-    it('(2)', function () {
-      const cb = function () {};
-      feed.addActivity(activity, cb);
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/',
-            body: activity,
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
+    td.verify(
+      post({
+        url: 'feed/user/matthisk/',
+        body: activity,
+        signature: 'usermatthisk token',
+      }),
+    );
   });
 
-  describe('#addActivities', function () {
+  it('#addActivities', function () {
     const activities = [{ actor: 'matthisk', object: 0, verb: 'tweet' }];
+    feed.addActivities(activities);
 
-    it('(1)', function () {
-      feed.addActivities(activities);
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/',
-            body: { activities },
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
-      );
-    });
-
-    it('(2)', function () {
-      const cb = function () {};
-      feed.addActivities(activities, cb);
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/',
-            body: { activities },
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
+    td.verify(
+      post({
+        url: 'feed/user/matthisk/',
+        body: { activities },
+        signature: 'usermatthisk token',
+      }),
+    );
   });
 
   describe('#follow', function () {
@@ -130,38 +86,15 @@ describe('[UNIT] Stream Feed (Common)', function () {
       };
 
       td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/following/',
-            body,
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        post({
+          url: 'feed/user/matthisk/following/',
+          body,
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(3) with cb', function () {
-      const cb = function () {};
-      feed.follow('user', 'henk', cb);
-
-      const body = {
-        target: 'user:henk',
-      };
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/following/',
-            body,
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
-
-    it('(4) activity copy limit', function () {
+    it('(3) activity copy limit', function () {
       feed.follow('user', 'henk', { limit: 10 });
 
       const body = {
@@ -170,35 +103,11 @@ describe('[UNIT] Stream Feed (Common)', function () {
       };
 
       td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/following/',
-            body,
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
-      );
-    });
-
-    it('(5) with cb and activity copy limit', function () {
-      const cb = function () {};
-      feed.follow('user', 'henk', { limit: 10 }, cb);
-
-      const body = {
-        target: 'user:henk',
-        activity_copy_limit: 10,
-      };
-
-      td.verify(
-        post(
-          {
-            url: 'feed/user/matthisk/following/',
-            body,
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
+        post({
+          url: 'feed/user/matthisk/following/',
+          body,
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
@@ -221,65 +130,25 @@ describe('[UNIT] Stream Feed (Common)', function () {
       feed.unfollow('user', 'henk');
 
       td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/following/user:henk/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        del({
+          url: 'feed/user/matthisk/following/user:henk/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(3) default cb', function () {
-      const cb = function () {};
-      feed.unfollow('user', 'henk', cb);
-
-      td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/following/user:henk/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
-
-    it('(4) default keep_history', function () {
+    it('(3) default keep_history', function () {
       feed.unfollow('user', 'henk', { keepHistory: true });
 
       td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/following/user:henk/',
-            qs: {
-              keep_history: '1',
-            },
-            signature: 'usermatthisk token',
+        del({
+          url: 'feed/user/matthisk/following/user:henk/',
+          qs: {
+            keep_history: '1',
           },
-          undefined,
-        ),
-      );
-    });
-
-    it('(5) default cb keep_history', function () {
-      const cb = function () {};
-      feed.unfollow('user', 'henk', { keepHistory: true }, cb);
-
-      td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/following/user:henk/',
-            qs: {
-              keep_history: '1',
-            },
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
@@ -289,49 +158,26 @@ describe('[UNIT] Stream Feed (Common)', function () {
       feed.following({});
 
       td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/following/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        get({
+          url: 'feed/user/matthisk/following/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(2) cb', function () {
-      const cb = function () {};
-      feed.following({}, cb);
-
-      td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/following/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
-
-    it('(3) options', function () {
-      const cb = function () {};
+    it('(2) options', function () {
       const filter = ['a', 'b', 'c'];
-      feed.following({ filter }, cb);
+      feed.following({ filter });
 
       td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/following/',
-            qs: {
-              filter: 'a,b,c',
-            },
-            signature: 'usermatthisk token',
+        get({
+          url: 'feed/user/matthisk/following/',
+          qs: {
+            filter: 'a,b,c',
           },
-          cb,
-        ),
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
@@ -341,49 +187,26 @@ describe('[UNIT] Stream Feed (Common)', function () {
       feed.followers({});
 
       td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/followers/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        get({
+          url: 'feed/user/matthisk/followers/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(2) cb', function () {
-      const cb = function () {};
-      feed.followers({}, cb);
-
-      td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/followers/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
-
-    it('(3) options', function () {
-      const cb = function () {};
+    it('(2) options', function () {
       const filter = ['a', 'b', 'c'];
-      feed.followers({ filter }, cb);
+      feed.followers({ filter });
 
       td.verify(
-        get(
-          {
-            url: 'feed/user/matthisk/followers/',
-            qs: {
-              filter: 'a,b,c',
-            },
-            signature: 'usermatthisk token',
+        get({
+          url: 'feed/user/matthisk/followers/',
+          qs: {
+            filter: 'a,b,c',
           },
-          cb,
-        ),
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
@@ -397,38 +220,15 @@ describe('[UNIT] Stream Feed (Common)', function () {
       }
 
       td.verify(
-        get(
-          {
-            url: expectedUrl,
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        get({
+          url: expectedUrl,
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(2) cb', function () {
-      const cb = function cb() {};
-      feed.get({}, cb);
-
-      let expectedUrl = 'feed/user/matthisk/';
-      if (feed.client.enrichByDefault) {
-        expectedUrl = 'enrich/feed/user/matthisk/';
-      }
-      td.verify(
-        get(
-          {
-            url: expectedUrl,
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
-      );
-    });
-
-    it('(3) default', function () {
+    it('(2) default', function () {
       feed.get({
         mark_read: ['a', 'b'],
         mark_seen: ['c', 'd'],
@@ -439,46 +239,36 @@ describe('[UNIT] Stream Feed (Common)', function () {
       }
 
       td.verify(
-        get(
-          {
-            url: expectedUrl,
-            qs: {
-              mark_read: 'a,b',
-              mark_seen: 'c,d',
-            },
-            signature: 'usermatthisk token',
+        get({
+          url: expectedUrl,
+          qs: {
+            mark_read: 'a,b',
+            mark_seen: 'c,d',
           },
-          undefined,
-        ),
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
-    it('(4) options plus cb', function () {
-      const cb = function () {};
-      feed.get(
-        {
-          mark_read: ['a', 'b'],
-          mark_seen: ['c', 'd'],
-        },
-        cb,
-      );
+    it('(4) options', function () {
+      feed.get({
+        mark_read: ['a', 'b'],
+        mark_seen: ['c', 'd'],
+      });
       let expectedUrl = 'feed/user/matthisk/';
       if (feed.client.enrichByDefault) {
         expectedUrl = 'enrich/feed/user/matthisk/';
       }
 
       td.verify(
-        get(
-          {
-            url: expectedUrl,
-            qs: {
-              mark_read: 'a,b',
-              mark_seen: 'c,d',
-            },
-            signature: 'usermatthisk token',
+        get({
+          url: expectedUrl,
+          qs: {
+            mark_read: 'a,b',
+            mark_seen: 'c,d',
           },
-          cb,
-        ),
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
@@ -552,14 +342,11 @@ describe('[UNIT] Stream Feed (Common)', function () {
       feed.removeActivity('aID');
 
       td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/aID/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
+        del({
+          url: 'feed/user/matthisk/aID/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
       );
     });
 
@@ -567,30 +354,11 @@ describe('[UNIT] Stream Feed (Common)', function () {
       feed.removeActivity({ foreignId: 'fID' });
 
       td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/fID/',
-            qs: { foreign_id: '1' },
-            signature: 'usermatthisk token',
-          },
-          undefined,
-        ),
-      );
-    });
-
-    it('(3)', function () {
-      const cb = function () {};
-      feed.removeActivity('aID', cb);
-
-      td.verify(
-        del(
-          {
-            url: 'feed/user/matthisk/aID/',
-            qs: {},
-            signature: 'usermatthisk token',
-          },
-          cb,
-        ),
+        del({
+          url: 'feed/user/matthisk/fID/',
+          qs: { foreign_id: '1' },
+          signature: 'usermatthisk token',
+        }),
       );
     });
   });
