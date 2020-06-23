@@ -5,7 +5,6 @@ import http from 'http';
 import https from 'https';
 import Faye from 'faye';
 import jwtDecode from 'jwt-decode';
-import assignIn from 'lodash/assignIn';
 
 import Personalization from './personalization';
 import BatchOperations from './batch_operations';
@@ -755,7 +754,7 @@ class StreamClient {
     return this.activitiesPartialUpdate([data]).then((response) => {
       const activity = response.activities[0];
       delete response.activities;
-      assignIn(activity, response);
+      Object.assign(activity, response);
       return activity;
     });
   }
