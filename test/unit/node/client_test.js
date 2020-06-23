@@ -240,50 +240,47 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     describe('by ID', function () {
       it('(1) works', function () {
+        const id = '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4';
         const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
+        td.when(post(td.matchers.contains({ url: 'activity/' })), { ignoreExtraArgs: true }).thenResolve({
+          activities: [{ id }],
+        });
         td.replace(this.client, 'post', post);
 
         const data = {
-          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+          id,
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
 
-        this.client.activityPartialUpdate(data);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-          ),
-        );
+        return this.client.activityPartialUpdate(data).then((res) => {
+          expect(res).to.eql({ id });
+        });
       });
     });
 
     describe('by foreign ID and time', function () {
       it('(1) works', function () {
+        const foreignID = 'product:123';
+        const duration = '30ms';
+
         const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
+        td.when(post(td.matchers.contains({ url: 'activity/' })), { ignoreExtraArgs: true }).thenResolve({
+          activities: [{ foreignID }],
+          duration,
+        });
         td.replace(this.client, 'post', post);
 
         const data = {
-          foreignID: 'product:123',
+          foreignID,
           time: '2016-11-10T13:20:00.000000',
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
 
-        this.client.activityPartialUpdate(data);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-          ),
-        );
+        return this.client.activityPartialUpdate(data).then((res) => {
+          expect(res).to.eql({ foreignID, duration });
+        });
       });
     });
   });
