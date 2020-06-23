@@ -572,11 +572,10 @@ class StreamClient {
   }
 
   /**
-   * Deprecated: use createUserToken instead
    * @param {string} userId
    * @param {object} extraData
    */
-  createUserSessionToken(userId, extraData = {}) {
+  createUserToken(userId, extraData = {}) {
     if (!this.usingApiSecret || this.apiKey == null) {
       throw new errors.FeedError(
         'In order to create user tokens you need to initialize the API client with your API Secret',
@@ -585,10 +584,6 @@ class StreamClient {
     return signing.JWTUserSessionToken(this.apiSecret, userId, extraData, {
       noTimestamp: !this.expireTokens,
     });
-  }
-
-  createUserToken(userId, extraData = {}) {
-    return this.createUserSessionToken(userId, extraData);
   }
 
   updateActivities(activities) {
