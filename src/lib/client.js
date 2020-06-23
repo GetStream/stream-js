@@ -754,8 +754,7 @@ class StreamClient {
     return this.activitiesPartialUpdate([data]).then((response) => {
       const activity = response.activities[0];
       delete response.activities;
-      Object.assign(activity, response);
-      return activity;
+      return { ...activity, ...response };
     });
   }
 

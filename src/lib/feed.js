@@ -15,7 +15,7 @@ function replaceStreamObjects(obj) {
     Object.keys(obj).forEach((k) => {
       cloned[k] = replaceStreamObjects(obj[k]);
     });
-  } else if (isObject(obj) && obj.ref && {}.toString.call(obj.ref) === '[object Function]') {
+  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
     cloned = obj.ref();
   }
   return cloned;
