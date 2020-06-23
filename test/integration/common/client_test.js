@@ -12,9 +12,9 @@ describe('[INTEGRATION] Stream client (Common)', function () {
     let responseCalled = 0;
 
     const limit = 1;
-    const callback = (method, options) => {
+    const requestCallback = (method, options) => {
       expect(method).to.be('get');
-      expect(options.url).to.be(this.client.enrichUrl(`feed/${this.user1.feedUrl}/`));
+      expect(options.url).to.be(`feed/${this.user1.feedUrl}/`);
       expect(options.qs.limit).to.be(limit);
 
       requestCalled += 1;
@@ -24,16 +24,16 @@ describe('[INTEGRATION] Stream client (Common)', function () {
       responseCalled += 1;
     };
 
-    this.client.on('request', callback);
+    this.client.on('request', requestCallback);
     this.client.on('response', responseCallback);
 
-    this.user1
+    return this.user1
       .get({ limit })
       .then(() => {
         expect(requestCalled).to.be(1);
         expect(responseCalled).to.be(1);
 
-        this.client.off('responseCallback');
+        this.client.off('response');
         return this.user1.get({ limit });
       })
       .then(() => {

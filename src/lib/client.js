@@ -259,7 +259,7 @@ class StreamClient {
      * @param {function} reject
      * @return {function}
      */
-    return function task(error, response, body) {
+    return (error, response, body) => {
       if (error) {
         reject(new errors.StreamApiError(error, body, response));
       } else if (!/^2/.test(`${response.statusCode}`)) {
@@ -271,6 +271,7 @@ class StreamClient {
           ),
         );
       } else {
+        this.send('response', error, response, body);
         fulfill(body);
       }
     };
