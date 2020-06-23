@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import Promise from '../../../src/lib/promise';
 import errors from '../../../src/lib/errors';
 import { beforeEachFn } from '../utils/hooks';
 
@@ -111,6 +110,8 @@ describe('[UNIT] Stream Client Batch (Node)', function () {
   });
 
   it('#makeSignedRequest', function () {
+    this.client.request = () => ({ getHeader: () => new Date(), setHeader: () => '', headers: { Date: new Date() } });
+
     const p = this.client.makeSignedRequest({});
 
     expect(p).to.be.a(Promise);

@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 
 import signing from '../../../src/lib/signing';
-import Promise from '../../../src/lib/promise';
 
 import config from './config';
 

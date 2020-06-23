@@ -15,7 +15,6 @@ import StreamFileStore from './files';
 import StreamImageStore from './images';
 import StreamReaction from './reaction';
 import StreamUser from './user';
-import Promise from './promise';
 import signing from './signing';
 import errors from './errors';
 import utils from './utils';

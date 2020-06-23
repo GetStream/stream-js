@@ -2,7 +2,6 @@ import httpSignature from 'http-signature';
 import request from 'request';
 
 import errors from './errors';
-import Promise from './promise';
 
 function addToMany(activity, feeds) {
   /**

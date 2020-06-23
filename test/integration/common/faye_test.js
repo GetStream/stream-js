@@ -2,7 +2,6 @@ import expect from 'expect.js';
 
 import stream from '../../../src/getstream';
 import errors from '../../../src/lib/errors';
-import Promise from '../../../src/lib/promise';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Faye)', function () {
