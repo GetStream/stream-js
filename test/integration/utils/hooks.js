@@ -1,8 +1,9 @@
 const stream = require('../../../src/getstream').default;
 const config = require('./config');
 
+// this function can only be run in browser context
 function jwt(resource, action, options) {
-  const KJUR = require('exports?KJUR!./kjur'); // eslint-disable-line
+  const KJUR = require('./kjur'); // eslint-disable-line
 
   let header = {
     alg: 'HS256',
@@ -24,9 +25,7 @@ function jwt(resource, action, options) {
   header = JSON.stringify(header);
   payload = JSON.stringify(payload);
 
-  const res = KJUR.jws.JWS.sign('HS256', header, payload, process.env.STREAM_API_SECRET);
-
-  return res;
+  return KJUR.jws.JWS.sign('HS256', header, payload, process.env.STREAM_API_SECRET);
 }
 
 function randUserId(userId) {
