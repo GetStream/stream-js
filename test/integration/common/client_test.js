@@ -1,6 +1,7 @@
 import expect from 'expect.js';
 
 import errors from '../../../src/lib/errors';
+import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Common)', function () {
@@ -14,7 +15,7 @@ describe('[INTEGRATION] Stream client (Common)', function () {
     const limit = 1;
     const requestCallback = (method, options) => {
       expect(method).to.be('get');
-      expect(options.url).to.be(`feed/${this.user1.feedUrl}/`);
+      expect(options.url).to.be(`${config.IS_NODE_ENV ? '' : 'enrich/'}feed/${this.user1.feedUrl}/`);
       expect(options.qs.limit).to.be(limit);
 
       requestCalled += 1;
