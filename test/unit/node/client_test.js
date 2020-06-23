@@ -432,10 +432,10 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
   });
 
-  describe('createUserSessionToken', function () {
+  describe('createUserToken', function () {
     it('with userId only', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop');
-      const token = client.createUserSessionToken('42');
+      const token = client.createUserToken('42');
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
       );
@@ -443,7 +443,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     it('with extra data', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop');
-      const token = client.createUserSessionToken('42', { a: 'b' });
+      const token = client.createUserToken('42', { a: 'b' });
       const jwtBody = jwtDecode(token);
       expect(jwtBody).to.eql({
         user_id: '42',
@@ -457,7 +457,7 @@ describe('[UNIT] Stream Client (Node)', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop', 1234, {
         expireTokens: true,
       });
-      const token = client.createUserSessionToken('42');
+      const token = client.createUserToken('42');
       const timestamp = Date.now() / 1000;
       const jwtBody = jwtDecode(token);
       expect(jwtBody.user_id).to.eql('42');

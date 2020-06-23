@@ -5,7 +5,6 @@ import http from 'http';
 import https from 'https';
 import Faye from 'faye';
 import jwtDecode from 'jwt-decode';
-import assignIn from 'lodash/assignIn';
 
 import Personalization from './personalization';
 import BatchOperations from './batch_operations';
@@ -572,11 +571,10 @@ class StreamClient {
   }
 
   /**
-   * Deprecated: use createUserToken instead
    * @param {string} userId
    * @param {object} extraData
    */
-  createUserSessionToken(userId, extraData = {}) {
+  createUserToken(userId, extraData = {}) {
     if (!this.usingApiSecret || this.apiKey == null) {
       throw new errors.FeedError(
         'In order to create user tokens you need to initialize the API client with your API Secret',
@@ -585,10 +583,6 @@ class StreamClient {
     return signing.JWTUserSessionToken(this.apiSecret, userId, extraData, {
       noTimestamp: !this.expireTokens,
     });
-  }
-
-  createUserToken(userId, extraData = {}) {
-    return this.createUserSessionToken(userId, extraData);
   }
 
   updateActivities(activities) {
@@ -760,8 +754,7 @@ class StreamClient {
     return this.activitiesPartialUpdate([data]).then((response) => {
       const activity = response.activities[0];
       delete response.activities;
-      assignIn(activity, response);
-      return activity;
+      return { ...activity, ...response };
     });
   }
 

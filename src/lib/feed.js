@@ -15,8 +15,8 @@ function replaceStreamObjects(obj) {
     Object.keys(obj).forEach((k) => {
       cloned[k] = replaceStreamObjects(obj[k]);
     });
-  } else if (isObject(obj) && obj._streamRef !== undefined) {
-    cloned = obj._streamRef();
+  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
+    cloned = obj.ref();
   }
   return cloned;
 }
@@ -81,7 +81,7 @@ export default class StreamFeed {
 
     activity = replaceStreamObjects(activity);
     if (!activity.actor && this.client.currentUser) {
-      activity.actor = this.client.currentUser._streamRef();
+      activity.actor = this.client.currentUser.ref();
     }
 
     return this.client.post({

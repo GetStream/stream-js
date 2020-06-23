@@ -32,6 +32,5 @@ module.exports = {
     'sonarjs/no-collapsible-if': 0,
     'sonarjs/no-duplicate-string': 0,
     'sonarjs/no-identical-functions': 0,
-    'sonarjs/prefer-immediate-return': 0,
   },
 };
