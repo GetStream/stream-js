@@ -1,3 +1,5 @@
+import FormData from 'form-data';
+
 import errors from './errors';
 
 const validFeedSlugRe = /^[\w]+$/;
@@ -34,7 +36,7 @@ function rfc3986(str) {
 }
 
 function isReadableStream(obj) {
-  return typeof obj === 'object' && typeof (obj._read === 'function') && typeof (obj._readableState === 'object');
+  return typeof obj === 'object' && typeof obj._read === 'function' && typeof obj._readableState === 'object';
 }
 
 function validateFeedId(feedId) {
@@ -52,10 +54,26 @@ function validateFeedId(feedId) {
   return feedId;
 }
 
+function addFileToFormData(uri, name, contentType) {
+  const data = new FormData();
+
+  let fileField;
+  if (isReadableStream(uri) || (uri && uri.toString && uri.toString() === '[object File]')) {
+    fileField = uri;
+  } else {
+    fileField = { uri, name: name || uri.split('/').reverse()[0] };
+    if (contentType != null) fileField.type = contentType;
+  }
+
+  data.append('file', fileField);
+  return data;
+}
+
 export default {
   validateFeedId,
   validateFeedSlug,
   validateUserId,
   rfc3986,
   isReadableStream,
+  addFileToFormData,
 };

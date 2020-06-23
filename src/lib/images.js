@@ -1,5 +1,4 @@
 import fetch, { Headers } from '@stream-io/cross-fetch';
-import FormData from 'form-data';
 
 import utils from './utils';
 import errors from './errors';
@@ -13,21 +12,8 @@ export default class StreamImageStore {
   // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
   upload(uri, name, contentType) {
-    const data = new FormData();
+    const data = utils.addFileToFormData(uri, name, contentType);
 
-    let fileField;
-    if (utils.isReadableStream(uri)) {
-      fileField = uri;
-    } else {
-      fileField = {
-        uri,
-        name: name || uri.split('/').reverse()[0],
-      };
-      if (contentType != null) {
-        fileField.type = contentType;
-      }
-    }
-    data.append('file', fileField);
     return fetch(`${this.client.enrichUrl('images/')}?api_key=${this.client.apiKey}`, {
       method: 'post',
       body: data,
