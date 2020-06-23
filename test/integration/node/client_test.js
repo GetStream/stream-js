@@ -244,7 +244,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       });
   });
 
-  it.skip('supports batch following with activity_copy_limit', function () {
+  it('supports batch following with activity_copy_limit', function () {
     const activities = [];
     const copyLimit = 25;
     for (let i = 0; i < copyLimit * 2; i++) {
@@ -274,7 +274,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
 
     return this.user1
       .addActivities(activities)
-      .then(this.client.followMany(follows, copyLimit))
+      .then(() => this.client.followMany(follows, copyLimit))
       .then(() => this.flat3.following({ limit: 10 }))
       .then(({ results }) => {
         const sortedFollows = results
