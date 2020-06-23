@@ -58,7 +58,7 @@ function addFileToFormData(uri, name, contentType) {
   const data = new FormData();
 
   let fileField;
-  if (isReadableStream(uri) || uri instanceof File) {
+  if (isReadableStream(uri) || (uri && uri.toString && uri.toString() === '[object File]')) {
     fileField = uri;
   } else {
     fileField = { uri, name: name || uri.split('/').reverse()[0] };
