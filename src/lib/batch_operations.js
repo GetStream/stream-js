@@ -1,5 +1,4 @@
 import httpSignature from 'http-signature';
-import request from 'request';
 
 import errors from './errors';
 
@@ -90,28 +89,26 @@ function makeSignedRequest(kwargs) {
     );
   }
 
-  return new Promise(
-    function (fulfill, reject) {
-      this.send('request', 'post', kwargs);
+  return new Promise((fulfill, reject) => {
+    this.send('request', 'post', kwargs);
 
-      kwargs.url = this.enrichUrl(kwargs.url);
-      kwargs.json = true;
-      kwargs.method = 'POST';
-      kwargs.headers = { 'X-Api-Key': this.apiKey };
-      // Make sure withCredentials is not enabled, different browser
-      // fallbacks handle it differently by default (meteor)
-      kwargs.withCredentials = false;
+    kwargs.url = this.enrichUrl(kwargs.url);
+    kwargs.json = true;
+    kwargs.method = 'POST';
+    kwargs.headers = { 'X-Api-Key': this.apiKey };
+    // Make sure withCredentials is not enabled, different browser
+    // fallbacks handle it differently by default (meteor)
+    kwargs.withCredentials = false;
 
-      const callback = this.wrapPromiseTask(fulfill, reject);
-      const req = request(kwargs, callback);
+    const callback = this.wrapPromiseTask(fulfill, reject);
+    const req = this.request(kwargs, callback);
 
-      httpSignature.sign(req, {
-        algorithm: 'hmac-sha256',
-        key: this.apiSecret,
-        keyId: this.apiKey,
-      });
-    }.bind(this),
-  );
+    httpSignature.sign(req, {
+      algorithm: 'hmac-sha256',
+      key: this.apiSecret,
+      keyId: this.apiKey,
+    });
+  });
 }
 
 export default {
