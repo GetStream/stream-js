@@ -25,7 +25,7 @@ describe('Enriching not existing references', () => {
         ctx.activity.verb.should.eql('eat');
         ctx.activity.actor.should.eql({
           error: 'ReferenceNotFound',
-          reference: ctx.alice.currentUser._streamRef(),
+          reference: ctx.alice.currentUser.ref(),
           reference_type: 'user',
           id: ctx.alice.userId,
         });
@@ -33,7 +33,7 @@ describe('Enriching not existing references', () => {
           collection: 'food',
           id: ctx.cheeseBurger.id,
           error: 'ReferenceNotFound',
-          reference: ctx.cheeseBurger._streamRef(),
+          reference: ctx.cheeseBurger.ref(),
           reference_type: 'object',
         });
         ctx.activity.notExistingActivity.should.eql({

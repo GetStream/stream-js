@@ -8,7 +8,7 @@ class CollectionEntry {
     this.data = data;
   }
 
-  _streamRef() {
+  ref() {
     return `SO:${this.collection}:${this.id}`;
   }
 

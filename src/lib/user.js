@@ -17,12 +17,8 @@ export default class StreamUser {
     this.url = `user/${this.id}/`;
   }
 
-  _streamRef() {
-    return `SU:${this.id}`;
-  }
-
   ref() {
-    return this._streamRef();
+    return `SU:${this.id}`;
   }
 
   delete() {
