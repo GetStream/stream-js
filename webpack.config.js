@@ -9,7 +9,7 @@ module.exports = (env, argv = []) => ({
   module: {
     rules: [
       {
-        test: /(jsonwebtoken|http-signature|batch_operations|qs)/,
+        test: /(jsonwebtoken|batch_operations|qs)/,
         use: 'null-loader',
       },
       {

@@ -42,10 +42,6 @@ describe('[UNIT] Stream Client (browser)', function () {
     expect(client.fayeUrl).to.be('https://hello.world');
   });
 
-  it("shouldn't support signed requests on the client", function () {
-    expect(this.client.makeSignedRequest).to.be(undefined);
-  });
-
   it('#userAgent', function () {
     const useragent = this.client.userAgent();
 
