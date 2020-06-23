@@ -1,5 +1,3 @@
-import httpSignature from 'http-signature';
-
 import errors from './errors';
 
 function addToMany(activity, feeds) {
@@ -17,12 +15,13 @@ function addToMany(activity, feeds) {
     throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
-  return this.makeSignedRequest({
+  return this.post({
     url: 'feed/add_to_many/',
     body: {
       activity,
       feeds,
     },
+    signature: this.getOrCreateToken(),
   });
 }
 
@@ -46,10 +45,11 @@ function followMany(follows, activityCopyLimit) {
     qs.activity_copy_limit = activityCopyLimit;
   }
 
-  return this.makeSignedRequest({
+  return this.post({
     url: 'follow_many/',
     body: follows,
     qs,
+    signature: this.getOrCreateToken(),
   });
 }
 
@@ -67,47 +67,10 @@ function unfollowMany(unfollows) {
     throw new errors.SiteError('This method can only be used server-side using your API Secret');
   }
 
-  return this.makeSignedRequest({
+  return this.post({
     url: 'unfollow_many/',
     body: unfollows,
-  });
-}
-
-function makeSignedRequest(kwargs) {
-  /**
-   * Method to create request to api with application level authentication
-   * @method makeSignedRequest
-   * @memberof StreamClient.prototype
-   * @since 2.3.0
-   * @access private
-   * @param  {object}   kwargs Arguments for the request
-   * @return {Promise}         Promise object
-   */
-  if (!this.apiSecret) {
-    throw new errors.SiteError(
-      'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
-    );
-  }
-
-  return new Promise((fulfill, reject) => {
-    this.send('request', 'post', kwargs);
-
-    kwargs.url = this.enrichUrl(kwargs.url);
-    kwargs.json = true;
-    kwargs.method = 'POST';
-    kwargs.headers = { 'X-Api-Key': this.apiKey };
-    // Make sure withCredentials is not enabled, different browser
-    // fallbacks handle it differently by default (meteor)
-    kwargs.withCredentials = false;
-
-    const callback = this.wrapPromiseTask(fulfill, reject);
-    const req = this.request(kwargs, callback);
-
-    httpSignature.sign(req, {
-      algorithm: 'hmac-sha256',
-      key: this.apiSecret,
-      keyId: this.apiKey,
-    });
+    signature: this.getOrCreateToken(),
   });
 }
 
@@ -115,5 +78,4 @@ export default {
   addToMany,
   followMany,
   unfollowMany,
-  makeSignedRequest,
 };
