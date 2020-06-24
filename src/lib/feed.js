@@ -85,15 +85,9 @@ export default class StreamFeed {
      * @example
      * feed.removeActivity({'foreignId': foreignId});
      */
-    const identifier = activityId.foreignId || activityId;
-    const params = {};
-    if (activityId.foreignId) {
-      params.foreign_id = '1';
-    }
-
     return this.client.delete({
-      url: `feed/${this.feedUrl}/${identifier}/`,
-      qs: params,
+      url: `feed/${this.feedUrl}/${activityId.foreignId || activityId}/`,
+      qs: activityId.foreignId ? { foreign_id: '1' } : {},
       signature: this.signature,
     });
   }
@@ -106,15 +100,14 @@ export default class StreamFeed {
      * @param  {Array}   activities Array of activities to add
      * @return {Promise}               XHR request object
      */
-    const body = { activities: utils.replaceStreamObjects(activities) };
     return this.client.post({
       url: `feed/${this.feedUrl}/`,
-      body,
+      body: { activities: utils.replaceStreamObjects(activities) },
       signature: this.signature,
     });
   }
 
-  follow(targetSlug, targetUserId, options) {
+  follow(targetSlug, targetUserId, options = {}) {
     /**
      * Follows the given target feed
      * @method follow
@@ -134,22 +127,8 @@ export default class StreamFeed {
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
 
-    let activityCopyLimit;
-
-    // check for additional options
-    if (options && !options.call) {
-      if (typeof options.limit !== 'undefined' && options.limit !== null) {
-        activityCopyLimit = options.limit;
-      }
-    }
-
-    const body = {
-      target: `${targetSlug}:${targetUserId}`,
-    };
-
-    if (typeof activityCopyLimit !== 'undefined' && activityCopyLimit !== null) {
-      body.activity_copy_limit = activityCopyLimit;
-    }
+    const body = { target: `${targetSlug}:${targetUserId}` };
+    if (typeof options.limit === 'number') body.activity_copy_limit = options.limit;
 
     return this.client.post({
       url: `feed/${this.feedUrl}/following/`,
@@ -184,7 +163,7 @@ export default class StreamFeed {
     });
   }
 
-  following(options) {
+  following(options = {}) {
     /**
      * List which feeds this feed is following
      * @method following
@@ -194,7 +173,7 @@ export default class StreamFeed {
      * @return {Promise} Promise object
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
      */
-    if (options !== undefined && options.filter) {
+    if (options.filter) {
       options.filter = options.filter.join(',');
     }
 
@@ -205,7 +184,7 @@ export default class StreamFeed {
     });
   }
 
-  followers(options) {
+  followers(options = {}) {
     /**
      * List the followers of this feed
      * @method followers
@@ -216,7 +195,7 @@ export default class StreamFeed {
      * @example
      * feed.followers({limit:10, filter: ['user:1', 'user:2']});
      */
-    if (options !== undefined && options.filter) {
+    if (options.filter) {
       options.filter = options.filter.join(',');
     }
 
@@ -227,7 +206,7 @@ export default class StreamFeed {
     });
   }
 
-  get(options) {
+  get(options = {}) {
     /**
      * Reads the feed
      * @method get
@@ -238,11 +217,11 @@ export default class StreamFeed {
      * @example feed.get({limit: 10, mark_seen: true})
      */
 
-    if (options && options.mark_read && options.mark_read.join) {
+    if (options.mark_read && options.mark_read.join) {
       options.mark_read = options.mark_read.join(',');
     }
 
-    if (options && options.mark_seen && options.mark_seen.join) {
+    if (options.mark_seen && options.mark_seen.join) {
       options.mark_seen = options.mark_seen.join(',');
     }
 
@@ -251,7 +230,7 @@ export default class StreamFeed {
     const path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
 
     return this.client.get({
-      url: `${path + this.feedUrl}/`,
+      url: `${path}${this.feedUrl}/`,
       qs: options,
       signature: this.signature,
     });
@@ -270,7 +249,6 @@ export default class StreamFeed {
      * @example
      * client.getReadOnlyToken('user', '1');
      */
-
     return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
       feedId: `${this.slug}${this.userId}`,
       expireTokens: this.client.expireTokens,
@@ -400,19 +378,10 @@ export default class StreamFeed {
       });
     }
 
-    const body = {
-      foreign_id,
-      time,
-    };
-    if (new_targets) {
-      body.new_targets = new_targets;
-    }
-    if (added_targets) {
-      body.added_targets = added_targets;
-    }
-    if (removed_targets) {
-      body.removed_targets = removed_targets;
-    }
+    const body = { foreign_id, time };
+    if (new_targets) body.new_targets = new_targets;
+    if (added_targets) body.added_targets = added_targets;
+    if (removed_targets) body.removed_targets = removed_targets;
 
     return this.client.post({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,

@@ -27,7 +27,6 @@ export default class Personalization {
      * @return {Promise} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-
     return this.client.get({
       url: `${resource}/`,
       serviceName: 'personalization',
@@ -48,7 +47,6 @@ export default class Personalization {
      * @return {Promise} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-
     return this.client.post({
       url: `${resource}/`,
       serviceName: 'personalization',
@@ -69,7 +67,6 @@ export default class Personalization {
      * @return {Promise} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-
     return this.client.delete({
       url: `${resource}/`,
       serviceName: 'personalization',

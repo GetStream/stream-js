@@ -167,37 +167,24 @@ class StreamClient {
   }
 
   getBaseUrl(serviceName) {
-    if (!serviceName) {
-      serviceName = 'api';
-    }
-    let url = this.baseUrl;
-    if (serviceName !== 'api') {
-      url = `https://${serviceName}.stream-io-api.com/${serviceName}/`;
-    }
+    if (!serviceName) serviceName = 'api';
+
+    if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
+
+    const urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : `STREAM_${serviceName.toUpperCase()}_URL`;
+    if (typeof process !== 'undefined' && process.env[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
+
+    if ((typeof process !== 'undefined' && process.env.LOCAL) || this.options.local)
+      return `http://localhost:8000/${serviceName}/`;
 
     if (this.location) {
       const protocol = this.options.protocol || 'https';
-      url = `${protocol}://${this.location}-${serviceName}.stream-io-api.com/${serviceName}/`;
+      return `${protocol}://${this.location}-${serviceName}.stream-io-api.com/${serviceName}/`;
     }
 
-    if ((typeof process !== 'undefined' && process.env.LOCAL) || this.options.local) {
-      url = `http://localhost:8000/${serviceName}/`;
-    }
+    if (serviceName !== 'api') return `https://${serviceName}.stream-io-api.com/${serviceName}/`;
 
-    let urlEnvironmentKey;
-    if (serviceName === 'api') {
-      urlEnvironmentKey = 'STREAM_BASE_URL';
-    } else {
-      urlEnvironmentKey = `STREAM_${serviceName.toUpperCase()}_URL`;
-    }
-    if (typeof process !== 'undefined' && process.env[urlEnvironmentKey]) {
-      url = process.env[urlEnvironmentKey];
-    }
-    if (this.options.urlOverride && this.options.urlOverride[serviceName]) {
-      return this.options.urlOverride[serviceName];
-    }
-
-    return url;
+    return this.baseUrl;
   }
 
   on(event, callback) {
@@ -232,19 +219,14 @@ class StreamClient {
     }
   }
 
-  send(...args) {
+  send(key, ...args) {
     /**
      * Call the given handler with the arguments
      * @method send
      * @memberof StreamClient.prototype
      * @access private
      */
-
-    const key = args[0];
-    args = args.slice(1);
-    if (this.handlers[key]) {
-      this.handlers[key].apply(this, args);
-    }
+    if (this.handlers[key]) this.handlers[key].apply(this, args);
   }
 
   userAgent() {
@@ -299,7 +281,6 @@ class StreamClient {
      * @example
      * client.feed('user', '1');
      */
-
     if (token === undefined) {
       if (this.usingApiSecret) {
         token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
@@ -325,16 +306,12 @@ class StreamClient {
      * @private
      * @param {string} relativeUrl
      */
-    if (!serviceName) {
-      serviceName = 'api';
-    }
-
-    return `${this.getBaseUrl(serviceName) + this.version}/${relativeUrl}`;
+    return `${this.getBaseUrl(serviceName)}${this.version}/${relativeUrl}`;
   }
 
-  replaceReactionOptions = (options) => {
+  replaceReactionOptions = (options = {}) => {
     // Shortcut options for reaction enrichment
-    if (options && options.reactions) {
+    if (options.reactions) {
       if (options.reactions.own != null) {
         options.withOwnReactions = options.reactions.own;
       }
@@ -352,7 +329,7 @@ class StreamClient {
   };
 
   shouldUseEnrichEndpoint(options = {}) {
-    if (options && options.enrich) {
+    if (options.enrich) {
       const result = options.enrich;
       delete options.enrich;
       return result;
@@ -375,7 +352,6 @@ class StreamClient {
      * @param {object} kwargs
      * @private
      */
-
     const signature = kwargs.signature || this.signature;
     const isJWT = signing.isJWTSignature(signature);
 
@@ -405,8 +381,6 @@ class StreamClient {
      * @private
      * @return {object} Faye authorization middleware
      */
-    const { apiKey } = this;
-
     return {
       incoming: (message, callback) => {
         callback(message);
@@ -418,7 +392,7 @@ class StreamClient {
 
           message.ext = {
             user_id: subscription.userId,
-            api_key: apiKey,
+            api_key: this.apiKey,
             signature: subscription.token,
           };
         }
@@ -541,7 +515,6 @@ class StreamClient {
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
-
     if (!this.usingApiSecret || this.apiKey == null) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
@@ -555,11 +528,9 @@ class StreamClient {
       expireTokens: this.expireTokens,
     });
 
-    const body = { activities };
-
     return this.post({
       url: 'activities/',
-      body,
+      body: { activities },
       signature: authToken,
     });
   }
@@ -571,7 +542,6 @@ class StreamClient {
      * @param  {object} activity The activity to update
      * @return {Promise}
      */
-
     if (!this.usingApiSecret || this.apiKey == null) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
@@ -586,7 +556,6 @@ class StreamClient {
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
-
     if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
@@ -638,17 +607,17 @@ class StreamClient {
     return new StreamUser(this, userId, this.getOrCreateToken());
   }
 
-  setUser(data) {
+  async setUser(data) {
     if (this.usingApiSecret) {
       throw new errors.SiteError('This method can only be used client-side using a user token');
     }
 
     const body = { ...data };
     delete body.id;
-    return this.currentUser.getOrCreate(body).then((user) => {
-      this.currentUser = user;
-      return user;
-    });
+
+    const user = await this.currentUser.getOrCreate(body);
+    this.currentUser = user;
+    return user;
   }
 
   og(url) {
@@ -667,7 +636,7 @@ class StreamClient {
     });
   }
 
-  activityPartialUpdate(data) {
+  async activityPartialUpdate(data) {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
@@ -700,11 +669,10 @@ class StreamClient {
      *   ]
      * })
      */
-    return this.activitiesPartialUpdate([data]).then((response) => {
-      const activity = response.activities[0];
-      delete response.activities;
-      return { ...activity, ...response };
-    });
+    const response = await this.activitiesPartialUpdate([data]);
+    const activity = response.activities[0];
+    delete response.activities;
+    return { ...activity, ...response };
   }
 
   activitiesPartialUpdate(changes) {

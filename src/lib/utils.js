@@ -11,8 +11,7 @@ function validateFeedSlug(feedSlug) {
   /*
    * Validate that the feedSlug matches \w
    */
-  const valid = validFeedSlugRe.test(feedSlug);
-  if (!valid) {
+  if (!validFeedSlugRe.test(feedSlug)) {
     throw new errors.FeedError(`Invalid feedSlug, please use letters, numbers or _: ${feedSlug}`);
   }
 
@@ -23,8 +22,7 @@ function validateUserId(userId) {
   /*
    * Validate the userId matches \w
    */
-  const valid = validUserIdRe.test(userId);
-  if (!valid) {
+  if (!validUserIdRe.test(userId)) {
     throw new errors.FeedError(`Invalid userId, please use letters, numbers, - or _: ${userId}`);
   }
 
@@ -32,9 +30,7 @@ function validateUserId(userId) {
 }
 
 function rfc3986(str) {
-  return str.replace(/[!'()*]/g, function (c) {
-    return `%${c.charCodeAt(0).toString(16).toUpperCase()}`;
-  });
+  return str.replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
 }
 
 function isReadableStream(obj) {

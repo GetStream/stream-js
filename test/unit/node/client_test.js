@@ -194,49 +194,26 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('#activityPartialUpdate', function () {
     it('throws', function () {
-      const self = this;
-
-      function isGoingToThrow1() {
-        self.client.activityPartialUpdate({});
-      }
-
-      function isGoingToThrow2() {
-        self.client.activityPartialUpdate(0);
-      }
-
-      function isGoingToThrow3() {
-        self.client.activityPartialUpdate(null);
-      }
-
-      function isGoingToThrow4() {
-        self.client.activityPartialUpdate({ foreignID: 'foo:bar' });
-      }
-
-      function isGoingToThrow5() {
-        self.client.activityPartialUpdate({
-          time: '2016-11-10T13:20:00.000000',
-        });
-      }
-
-      function isGoingToThrow6() {
-        self.client.activityPartialUpdate({ id: 'test', set: 'wrong' });
-      }
-
-      function isGoingToThrow7() {
-        self.client.activityPartialUpdate({ id: 'test', unset: 'wrong' });
-      }
-
-      function isTypeError(err) {
+      const isTypeError = (err) => {
         expect(err).to.be.a(TypeError);
-      }
+      };
 
-      expect(isGoingToThrow1).to.throwException(isTypeError);
-      expect(isGoingToThrow2).to.throwException(isTypeError);
-      expect(isGoingToThrow3).to.throwException(isTypeError);
-      expect(isGoingToThrow4).to.throwException(isTypeError);
-      expect(isGoingToThrow5).to.throwException(isTypeError);
-      expect(isGoingToThrow6).to.throwException(isTypeError);
-      expect(isGoingToThrow7).to.throwException(isTypeError);
+      const throwErr = () => {
+        throw new Error('should error');
+      };
+
+      this.client.activityPartialUpdate({}).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate(0).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate(null).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate({ foreignID: 'foo:bar' }).then().then(throwErr).catch(isTypeError);
+      this.client
+        .activityPartialUpdate({ time: '2016-11-10T13:20:00.000000' })
+        .then()
+        .then(throwErr)
+        .catch(isTypeError);
+      this.client.activityPartialUpdate({ id: 'test', set: 'wrong' }).then().then(throwErr).catch(isTypeError);
+
+      return this.client.activityPartialUpdate({ id: 'test', unset: 'wrong' }).then().then(throwErr).catch(isTypeError);
     });
 
     describe('by ID', function () {

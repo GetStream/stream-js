@@ -28,65 +28,49 @@ export default class StreamUser {
     });
   }
 
-  get(options) {
-    return this.client
-      .get({
-        url: this.url,
-        signature: this.token,
-        qs: options,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        return this;
-      });
+  async get(options) {
+    const response = await this.client.get({
+      url: this.url,
+      signature: this.token,
+      qs: options,
+    });
+
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
-  _chooseData(data) {
-    if (data !== undefined) {
-      return data;
-    }
-    if (this.data !== undefined) {
-      return this.data;
-    }
-    return {};
+  async create(data, options) {
+    const response = await this.client.post({
+      url: 'user/',
+      body: {
+        id: this.id,
+        data: data || this.data || {},
+      },
+      qs: options,
+      signature: this.token,
+    });
+
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
-  create(data, options) {
-    return this.client
-      .post({
-        url: 'user/',
-        body: {
-          id: this.id,
-          data: this._chooseData(data),
-        },
-        qs: options,
-        signature: this.token,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        return this;
-      });
-  }
+  async update(data) {
+    const response = await this.client.put({
+      url: this.url,
+      body: {
+        data: data || this.data || {},
+      },
+      signature: this.token,
+    });
 
-  update(data) {
-    return this.client
-      .put({
-        url: this.url,
-        body: {
-          data: this._chooseData(data),
-        },
-        signature: this.token,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        return this;
-      });
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
   getOrCreate(data) {
