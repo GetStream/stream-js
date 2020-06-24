@@ -247,34 +247,6 @@ class StreamClient {
     }
   }
 
-  wrapPromiseTask = (fulfill, reject) => {
-    /**
-     * Wrap a task to be used as a promise
-     * @method wrapPromiseTask
-     * @memberof StreamClient.prototype
-     * @private
-     * @param {function} fulfill
-     * @param {function} reject
-     * @return {function}
-     */
-    return (error, response, body) => {
-      if (error) {
-        reject(new errors.StreamApiError(error, body, response));
-      } else if (!/^2/.test(`${response.statusCode}`)) {
-        reject(
-          new errors.StreamApiError(
-            `${JSON.stringify(body)} with HTTP status code ${response.statusCode}`,
-            body,
-            response,
-          ),
-        );
-      } else {
-        this.send('response', error, response, body);
-        fulfill(body);
-      }
-    };
-  };
-
   userAgent() {
     /**
      * Get the current user agent
