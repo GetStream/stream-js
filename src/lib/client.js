@@ -1,4 +1,4 @@
-import request from 'request';
+import axios from 'axios';
 import qs from 'qs';
 import Url from 'url';
 import http from 'http';
@@ -64,7 +64,6 @@ class StreamClient {
     this.version = this.options.version || 'v1.0';
     this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
     this.fayeClient = null;
-    this.request = request;
     // track a source name for the api calls, ie get started or databrowser
     this.group = this.options.group || 'unspecified';
     // track subscriptions made on feeds created by this client
@@ -86,21 +85,21 @@ class StreamClient {
     this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
     this.node = !this.browser;
 
-    if (!this.browser) {
+    if (this.node) {
       const keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
-
-      const httpsAgent = new https.Agent({
-        keepAlive,
-        keepAliveMsecs: 3000,
-      });
-
-      const httpAgent = new http.Agent({
-        keepAlive,
-        keepAliveMsecs: 3000,
-      });
-
-      this.requestAgent = this.baseUrl.startsWith('https://') ? httpsAgent : httpAgent;
+      this.nodeOptions = {
+        httpAgent: new http.Agent({ keepAlive, keepAliveMsecs: 3000 }),
+        httpsAgent: new https.Agent({ keepAlive, keepAliveMsecs: 3000 }),
+      };
     }
+
+    this.request = axios.create({
+      // TODO: enable this for file upload using axios
+      // maxContentLength: Infinity, // allow upload errors to be propagated correctly
+      timeout: 10 * 1000, // 10 seconds
+      withCredentials: false, // making sure cookies are not sent
+      ...(this.nodeOptions || {}),
+    });
 
     this.personalization = new Personalization(this);
 
@@ -396,7 +395,7 @@ class StreamClient {
     );
   }
 
-  enrichKwargs(kwargs) {
+  enrichKwargs({ method, ...kwargs }) {
     /**
      * Adds the API key and the signature
      * @method enrichKwargs
@@ -404,36 +403,26 @@ class StreamClient {
      * @param {object} kwargs
      * @private
      */
-    kwargs.url = this.enrichUrl(kwargs.url, kwargs.serviceName);
-    if (kwargs.qs === undefined) {
-      kwargs.qs = {};
-    }
 
-    if (!this.browser) {
-      kwargs.agent = this.requestAgent;
-    }
+    const signature = kwargs.signature || this.signature;
+    const isJWT = signing.isJWTSignature(signature);
 
-    kwargs.qs.api_key = this.apiKey;
-    kwargs.qs.location = this.group;
-    kwargs.json = true;
-    let signature = kwargs.signature || this.signature;
-    kwargs.headers = {};
-
-    // auto-detect authentication type and set HTTP headers accordingly
-    if (signing.isJWTSignature(signature)) {
-      kwargs.headers['stream-auth-type'] = 'jwt';
-      signature = signature.split(' ').reverse()[0];
-    } else {
-      kwargs.headers['stream-auth-type'] = 'simple';
-    }
-    kwargs.timeout = 10 * 1000; // 10 seconds
-
-    kwargs.headers.Authorization = signature;
-    kwargs.headers['X-Stream-Client'] = this.userAgent();
-    // Make sure withCredentials is not enabled, different browser
-    // fallbacks handle it differently by default (meteor)
-    kwargs.withCredentials = false;
-    return kwargs;
+    return {
+      method,
+      url: this.enrichUrl(kwargs.url, kwargs.serviceName),
+      data: kwargs.body,
+      params: {
+        api_key: this.apiKey,
+        location: this.group,
+        ...(kwargs.qs || {}),
+      },
+      headers: {
+        'X-Stream-Client': this.userAgent(),
+        'stream-auth-type': isJWT ? 'jwt' : 'simple',
+        Authorization: isJWT ? signature.split(' ').reverse()[0] : signature,
+        ...(kwargs.headers || {}),
+      },
+    };
   }
 
   getFayeAuthorization() {
@@ -484,25 +473,42 @@ class StreamClient {
     return this.fayeClient;
   }
 
+  handleResponse = (response) => {
+    if (/^2/.test(`${response.status}`)) {
+      this.send('response', null, response, response.data);
+      return response.data;
+    }
+
+    response.statusCode = response.status;
+    throw new errors.StreamApiError(
+      `${JSON.stringify(response.data)} with HTTP status code ${response.status}`,
+      response.data,
+      response,
+    );
+  };
+
+  doAxiosRequest = async (method, options) => {
+    this.send('request', method, options);
+
+    try {
+      const response = await this.request(this.enrichKwargs({ method, ...options }));
+      return this.handleResponse(response);
+    } catch (error) {
+      if (error.response) return this.handleResponse(error.response);
+      throw new errors.SiteError(error.message);
+    }
+  };
+
   get(kwargs) {
     /**
      * Shorthand function for get request
      * @method get
      * @memberof StreamClient.prototype
      * @private
-     * @param  {object}   kwargs
-     * @return {Promise}                Promise object
+     * @param  {object}    kwargs
+     * @return {Promise}   Promise object
      */
-    return new Promise(
-      function (fulfill, reject) {
-        this.send('request', 'get', kwargs);
-        kwargs = this.enrichKwargs(kwargs);
-        kwargs.method = 'GET';
-        kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(fulfill, reject);
-        this.request(kwargs, callback);
-      }.bind(this),
-    );
+    return this.doAxiosRequest('GET', kwargs);
   }
 
   post(kwargs) {
@@ -511,19 +517,10 @@ class StreamClient {
      * @method post
      * @memberof StreamClient.prototype
      * @private
-     * @param  {object}   kwargs
-     * @return {Promise}                Promise object
+     * @param  {object}    kwargs
+     * @return {Promise}   Promise object
      */
-    return new Promise(
-      function (fulfill, reject) {
-        this.send('request', 'post', kwargs);
-        kwargs = this.enrichKwargs(kwargs);
-        kwargs.method = 'POST';
-        kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(fulfill, reject);
-        this.request(kwargs, callback);
-      }.bind(this),
-    );
+    return this.doAxiosRequest('POST', kwargs);
   }
 
   delete(kwargs) {
@@ -532,19 +529,10 @@ class StreamClient {
      * @method delete
      * @memberof StreamClient.prototype
      * @private
-     * @param  {object}   kwargs
-     * @return {Promise}                Promise object
+     * @param  {object}    kwargs
+     * @return {Promise}   Promise object
      */
-    return new Promise(
-      function (fulfill, reject) {
-        this.send('request', 'delete', kwargs);
-        kwargs = this.enrichKwargs(kwargs);
-        kwargs.gzip = true;
-        kwargs.method = 'DELETE';
-        const callback = this.wrapPromiseTask(fulfill, reject);
-        this.request(kwargs, callback);
-      }.bind(this),
-    );
+    return this.doAxiosRequest('DELETE', kwargs);
   }
 
   put(kwargs) {
@@ -553,19 +541,10 @@ class StreamClient {
      * @method put
      * @memberof StreamClient.prototype
      * @private
-     * @param  {object}   kwargs
-     * @return {Promise}                Promise object
+     * @param  {object}    kwargs
+     * @return {Promise}   Promise object
      */
-    return new Promise(
-      function (fulfill, reject) {
-        this.send('request', 'put', kwargs);
-        kwargs = this.enrichKwargs(kwargs);
-        kwargs.method = 'PUT';
-        kwargs.gzip = true;
-        const callback = this.wrapPromiseTask(fulfill, reject);
-        this.request(kwargs, callback);
-      }.bind(this),
-    );
+    return this.doAxiosRequest('PUT', kwargs);
   }
 
   /**
