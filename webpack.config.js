@@ -49,10 +49,4 @@ module.exports = (env, argv = []) => ({
     library: 'stream',
     libraryTarget: 'umd',
   },
-
-  resolve: {
-    alias: {
-      request: '@stream-io/xmlhttp-request',
-    },
-  },
 });
