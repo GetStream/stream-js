@@ -26,11 +26,11 @@
     "test-cloud-local": "LOCAL=true mocha --require @babel/register test/integration/cloud --timeout 40000 -i --grep 'Files|Images'",
     "test-browser": "karma start karma.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
-    "coverage": "nyc --reporter=text-lcov mocha --require @babel/register bin/run-node-unit-tests.js | codecov --pipe",
+    "coverage": "nyc --reporter=text-lcov yarn run test-unit-node | codecov --pipe",
     "preversion": "yarn run test-unit-node",
     "dist": "webpack && webpack --minify",
     "version": "yarn run dist && yarn run build && git add dist",
-    "postversion": "./bin/postversion.sh"
+    "postversion": "git push && git push --tags"
   },
   "husky": {
     "hooks": {
