@@ -19,7 +19,7 @@ export default class StreamReaction {
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  all(options) {
+  all(options = {}) {
     /**
      * get all reactions
      * @method all
@@ -32,6 +32,7 @@ export default class StreamReaction {
     return this.client.get({
       url: this.buildURL(),
       signature: this.signature,
+      qs: options,
     });
   }
 
@@ -52,16 +53,12 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    if (activity instanceof Object) {
-      activity = activity.id;
-    }
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
       id,
-      activity_id: activity,
+      activity_id: activity instanceof Object ? activity.id : activity,
       kind,
       data,
-      target_feeds: targetFeeds,
+      target_feeds: this._convertTargetFeeds(targetFeeds),
       user_id: userId,
     };
     if (targetFeedsExtraData != null) {
@@ -87,15 +84,11 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    if (reaction instanceof Object) {
-      reaction = reaction.id;
-    }
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
-      parent: reaction,
+      parent: reaction instanceof Object ? reaction.id : reaction,
       kind,
       data,
-      target_feeds: targetFeeds,
+      target_feeds: this._convertTargetFeeds(targetFeeds),
       user_id: userId,
     };
     if (targetFeedsExtraData != null) {
@@ -174,10 +167,9 @@ export default class StreamReaction {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
-    targetFeeds = this._convertTargetFeeds(targetFeeds);
     const body = {
       data,
-      target_feeds: targetFeeds,
+      target_feeds: this._convertTargetFeeds(targetFeeds),
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
