@@ -63,7 +63,7 @@ export default class StreamImageStore {
     });
   }
 
-  thumbmail(uri, w, h, { crop, resize } = { crop: 'center', resize: 'clip' }) {
+  thumbnail(uri, w, h, { crop, resize } = { crop: 'center', resize: 'clip' }) {
     return this.process(uri, { w, h, crop, resize });
   }
 }

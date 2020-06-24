@@ -92,7 +92,7 @@ export class StreamImageStore {
 
   process(uri: string, options: ImageProcessOptions): Promise<FileUploadAPIResponse>;
 
-  thumbmail(
+  thumbnail(
     uri: string,
     w: number | string,
     h: number | string,
