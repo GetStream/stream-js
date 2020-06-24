@@ -37,7 +37,6 @@
     }
   },
   "browser": {
-    "request": "@stream-io/xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
     "./lib/lib/batch_operations.js": false,
@@ -47,7 +46,6 @@
     "https": false
   },
   "react-native": {
-    "request": "@stream-io/xmlhttp-request",
     "crypto": false,
     "jsonwebtoken": false,
     "./lib/lib/batch_operations.js": false,
@@ -101,6 +99,7 @@
     "null-loader": "^4.0.0",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
+    "request": "^2.88.2",
     "testdouble": "^3.16.0",
     "typescript": "^3.9.5",
     "uglifyjs-webpack-plugin": "^2.2.0",
@@ -110,16 +109,14 @@
   "dependencies": {
     "@babel/runtime": "^7.10.2",
     "@stream-io/cross-fetch": "^3.0.1",
-    "@stream-io/xmlhttp-request": "^0.4.0",
     "Base64": "^1.1.0",
+    "axios": "^0.19.2",
     "faye": "^1.3.0",
     "form-data": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
-    "qs": "^6.9.4",
-    "request": "^2.88.2",
-    "whatwg-fetch": "^3.0.0"
+    "qs": "^6.9.4"
   },
   "repository": {
     "type": "git",

@@ -3,7 +3,6 @@
  * @author Thierry Schellenbach
  * BSD License
  */
-import request from 'request';
 import Client from './lib/client';
 import errors from './lib/errors';
 import signing from './lib/signing';
@@ -45,4 +44,4 @@ function connect(apiKey, apiSecret, appId, options) {
   return new Client(apiKey, apiSecret, appId, options);
 }
 
-export default { connect, errors, request, signing, Client };
+export default { connect, errors, signing, Client };

@@ -7,11 +7,6 @@ delete webpackConfig.output;
 webpackConfig.devtool = 'inline-source-map';
 webpackConfig.plugins = [new webpack.EnvironmentPlugin(['STREAM_API_KEY', 'STREAM_API_SECRET', 'STREAM_APP_ID'])];
 webpackConfig.node.Buffer = true;
-webpackConfig.module.rules.push({
-  test: /\.json$/,
-  exclude: /node_modules/,
-  loader: 'json-loader',
-});
 
 // Karma config
 module.exports = function (config) {
