@@ -1,3 +1,4 @@
+import fetch from '@stream-io/cross-fetch';
 import axios from 'axios';
 import qs from 'qs';
 import Url from 'url';
@@ -444,6 +445,31 @@ class StreamClient {
       throw new errors.SiteError(error.message);
     }
   };
+
+  upload(url, uri, name, contentType) {
+    return fetch(`${this.enrichUrl(url)}?api_key=${this.apiKey}`, {
+      method: 'post',
+      body: utils.addFileToFormData(uri, name, contentType),
+      headers: { Authorization: this.getOrCreateToken() },
+    }).then((r) => {
+      if (r.ok) return r.json();
+
+      return r.text().then((responseData) => {
+        r.statusCode = r.status;
+
+        try {
+          responseData = JSON.parse(responseData);
+        } catch (e) {
+          // ignore json parsing errors
+        }
+        throw new errors.StreamApiError(
+          `${JSON.stringify(responseData)} with HTTP status code ${r.status}`,
+          responseData,
+          r,
+        );
+      });
+    });
+  }
 
   get(kwargs) {
     /**
