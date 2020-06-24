@@ -11,7 +11,7 @@ client.images.upload('http://foo.bar/img.jpg', 'img.jpg', 'image/jpeg'); // $Exp
 // prettier-ignore
 client.images.process('http://foo.bar/img.jpg', { crop: 'bottom', resize: 'clip', h: 50, w: 50 }); // $ExpectType Promise<FileUploadAPIResponse>
 // prettier-ignore
-client.images.thumbmail('http://foo.bar/img.jpg', 50, 50, { crop: 'bottom', resize: 'fill' }); // $ExpectType Promise<FileUploadAPIResponse>
+client.images.thumbnail('http://foo.bar/img.jpg', 50, 50, { crop: 'bottom', resize: 'fill' }); // $ExpectType Promise<FileUploadAPIResponse>
 client.images.delete('http://foo.bar/img.jpg'); // $ExpectType Promise<void>
 client.files.upload('http://foo.bar/txt.txt', 'txt.txt', 'text/plain'); // $ExpectType Promise<FileUploadAPIResponse>
 client.files.delete('http://foo.bar/txt.txt'); // $ExpectType Promise<void>
