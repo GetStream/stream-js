@@ -2,6 +2,7 @@ import expect from 'expect.js';
 import td from 'testdouble';
 import jwtDecode from 'jwt-decode';
 
+import pkg from '../../../package.json';
 import stream from '../../../src/getstream';
 import StreamClient from '../../../src/lib/client';
 import StreamFeed from '../../../src/lib/feed';
@@ -33,7 +34,7 @@ describe('[UNIT] Stream Client (Node)', function () {
   it('#userAgent', function () {
     const useragent = this.client.userAgent();
 
-    expect(useragent).to.be('stream-javascript-client-node-unknown');
+    expect(useragent).to.be(`stream-javascript-client-node-${pkg.version}`);
   });
 
   it('#feed', function () {

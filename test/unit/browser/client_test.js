@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 
+import pkg from '../../../package.json';
 import StreamFeed from '../../../src/lib/feed';
 import stream from '../../../src/getstream';
 import { init, beforeEachFn } from '../utils/hooks';
@@ -45,7 +46,7 @@ describe('[UNIT] Stream Client (browser)', function () {
   it('#userAgent', function () {
     const useragent = this.client.userAgent();
 
-    expect(useragent).to.be('stream-javascript-client-browser-unknown');
+    expect(useragent).to.be(`stream-javascript-client-browser-${pkg.version}`);
   });
 
   it('#feed throw (1)', function () {

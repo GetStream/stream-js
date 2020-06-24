@@ -17,6 +17,7 @@ import StreamUser from './user';
 import signing from './signing';
 import errors from './errors';
 import utils from './utils';
+import pkg from '../../package.json';
 
 /**
  * Client to connect to Stream api
@@ -282,10 +283,7 @@ class StreamClient {
      * @memberof StreamClient.prototype
      * @return {string} current user agent
      */
-    const description = this.node ? 'node' : 'browser';
-    // TODO: get the version here in a way which works in both and browserify
-    const version = 'unknown';
-    return `stream-javascript-client-${description}-${version}`;
+    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${pkg.version}`;
   }
 
   getReadOnlyToken(feedSlug, userId) {
