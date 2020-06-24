@@ -50,17 +50,9 @@ This package can be integrated into React Native applications. Remember to not e
 ```javascript
 var stream = require('getstream');
 // Instantiate a new client (server side)
-client = stream.connect(
-  'YOUR_API_KEY',
-  'API_KEY_SECRET',
-);
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
-client = stream.connect(
-  'YOUR_API_KEY',
-  'API_KEY_SECRET',
-  'APP_ID',
-  { location: 'us-west' },
-);
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 ```
 
 ### API client setup Node + Browser
@@ -72,17 +64,9 @@ If you want to use the API client directly on your web/mobile app you need to ge
 ```javascript
 var stream = require('getstream');
 // Instantiate a new client (server side)
-client = stream.connect(
-  'YOUR_API_KEY',
-  'API_KEY_SECRET',
-);
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
-client = stream.connect(
-  'YOUR_API_KEY',
-  'API_KEY_SECRET',
-  'APP_ID',
-  { location: 'us-west' },
-);
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Create a token for user with id "the-user-id"
 const userToken = client.createUserToken('the-user-id');
 ```
@@ -93,11 +77,7 @@ const userToken = client.createUserToken('the-user-id');
 var stream = require('getstream');
 
 // Instantiate new client with a user token
-client = stream.connect(
-  'apikey',
-  userToken,
-  'appid',
-);
+client = stream.connect('apikey', userToken, 'appid');
 ```
 
 #### Examples
@@ -114,10 +94,10 @@ user1.get({ limit: 5, id_lt: 'e561de8f-00f1-11e4-b400-0cc47a024be0' });
 // All API calls are performed asynchronous and return a Promise object
 user1
   .get({ limit: 5, id_lt: 'e561de8f-00f1-11e4-b400-0cc47a024be0' })
-  .then(function(body) {
+  .then(function (body) {
     /* on success */
   })
-  .catch(function(reason) {
+  .catch(function (reason) {
     /* on failure, reason.error contains an explanation */
   });
 
@@ -250,11 +230,7 @@ var engagement = {
   feed_id: 'user:global',
 };
 var events = [impression, engagement];
-var redirectUrl = client.createRedirectUrl(
-  'http://google.com',
-  'user_id',
-  events,
-);
+var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 
 // update the 'to' fields on an existing activity
 // client.feed("user", "ken").function (foreign_id, timestamp, new_targets, added_targets, removed_targets)
@@ -262,17 +238,9 @@ var redirectUrl = client.createRedirectUrl(
 // either provide only the `new_targets` parameter (will replace all targets on the activity),
 // OR provide the added_targets and removed_targets parameters
 // NOTE - the updateActivityToTargets method is not intended to be used in a browser environment.
-client
-  .feed('user', 'ken')
-  .updateActivityToTargets('foreign_id:1234', timestamp, ['feed:1234']);
-client
-  .feed('user', 'ken')
-  .updateActivityToTargets('foreign_id:1234', timestamp, null, ['feed:1234']);
-client
-  .feed('user', 'ken')
-  .updateActivityToTargets('foreign_id:1234', timestamp, null, null, [
-    'feed:1234',
-  ]);
+client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, ['feed:1234']);
+client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, null, ['feed:1234']);
+client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, null, null, ['feed:1234']);
 ```
 
 ### Realtime (Faye)
@@ -283,15 +251,11 @@ Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notificati
 var stream = require('getstream');
 
 // ⚠️ userToken is generated server-side (see previous section)
-client = stream.connect(
-  'YOUR_API_KEY',
-  userToken,
-  'APP_ID',
-);
+client = stream.connect('YOUR_API_KEY', userToken, 'APP_ID');
 user1 = client.feed('user', '1');
 
 // subscribe to the changes
-var subscription = user1.subscribe(function(data) {
+var subscription = user1.subscribe(function (data) {
   console.log(data);
 });
 // now whenever something changes to the feed user 1
@@ -311,7 +275,7 @@ This API Client project requires Node.js v10 at a minimum.
 
 The project is supported in line with the Node.js Foundation Release Working Group.
 
-See the [Travis configuration](.travis.yml) for details of how it is built, tested and packaged.
+See the [github action configuration](.github/workflows/ci.yml) for details of how it is built, tested and packaged.
 
 ## Contributing
 

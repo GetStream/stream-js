@@ -41,5 +41,10 @@ jobs:
           CLOUD_TESTS: ${{ matrix.cloud_tests }}
           RUN_LINTERS: ${{ matrix.run_linters }}
         run: |
-          if [ "$BROWSER_TESTS" == "no" ]; then bash ./bin/travis.sh; fi
+          yarn run build
+          yarn run coverage
+          if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-cloud; fi
+          if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-integration-node; fi
+          if [ "$RUN_LINTERS" == "yes" ]; then yarn run lint; fi
+          if [ "$RUN_LINTERS" == "yes" ]; then yarn run dtslint; fi
           if [ "$BROWSER_TESTS" == "yes" ]; then yarn run test-browser; fi
