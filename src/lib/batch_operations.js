@@ -1,4 +1,5 @@
 import errors from './errors';
+import utils from './utils';
 
 function addToMany(activity, feeds) {
   /**
@@ -18,7 +19,7 @@ function addToMany(activity, feeds) {
   return this.post({
     url: 'feed/add_to_many/',
     body: {
-      activity,
+      activity: utils.replaceStreamObjects(activity),
       feeds,
     },
     signature: this.getOrCreateToken(),

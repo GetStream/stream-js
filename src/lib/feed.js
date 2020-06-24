@@ -1,25 +1,7 @@
-import isPlainObject from 'lodash/isPlainObject';
-import isObject from 'lodash/isObject';
-
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
 import signing from './signing';
-
-function replaceStreamObjects(obj) {
-  let cloned = obj;
-  if (Array.isArray(obj)) {
-    cloned = obj.map((v) => replaceStreamObjects(v));
-  } else if (isPlainObject(obj)) {
-    cloned = {};
-    Object.keys(obj).forEach((k) => {
-      cloned[k] = replaceStreamObjects(obj[k]);
-    });
-  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
-    cloned = obj.ref();
-  }
-  return cloned;
-}
 
 /**
  * Manage api calls for specific feeds
@@ -79,7 +61,7 @@ export default class StreamFeed {
      * @return {Promise} Promise object
      */
 
-    activity = replaceStreamObjects(activity);
+    activity = utils.replaceStreamObjects(activity);
     if (!activity.actor && this.client.currentUser) {
       activity.actor = this.client.currentUser.ref();
     }
@@ -124,7 +106,7 @@ export default class StreamFeed {
      * @param  {Array}   activities Array of activities to add
      * @return {Promise}               XHR request object
      */
-    const body = { activities: replaceStreamObjects(activities) };
+    const body = { activities: utils.replaceStreamObjects(activities) };
     return this.client.post({
       url: `feed/${this.feedUrl}/`,
       body,

@@ -1,4 +1,6 @@
 import FormData from 'form-data';
+import isPlainObject from 'lodash/isPlainObject';
+import isObject from 'lodash/isObject';
 
 import errors from './errors';
 
@@ -69,6 +71,21 @@ function addFileToFormData(uri, name, contentType) {
   return data;
 }
 
+function replaceStreamObjects(obj) {
+  let cloned = obj;
+  if (Array.isArray(obj)) {
+    cloned = obj.map((v) => replaceStreamObjects(v));
+  } else if (isPlainObject(obj)) {
+    cloned = {};
+    Object.keys(obj).forEach((k) => {
+      cloned[k] = replaceStreamObjects(obj[k]);
+    });
+  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
+    cloned = obj.ref();
+  }
+  return cloned;
+}
+
 export default {
   validateFeedId,
   validateFeedSlug,
@@ -76,4 +93,5 @@ export default {
   rfc3986,
   isReadableStream,
   addFileToFormData,
+  replaceStreamObjects,
 };
