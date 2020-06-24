@@ -118,8 +118,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "qs": "^6.9.4",
-    "request": "^2.88.2",
-    "whatwg-fetch": "^3.0.0"
+    "request": "^2.88.2"
   },
   "repository": {
     "type": "git",

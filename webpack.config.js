@@ -2,7 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env, argv = []) => ({
-  entry: ['whatwg-fetch', './src/getstream.js'],
+  entry: ['./src/getstream.js'],
 
   mode: 'production',
 
