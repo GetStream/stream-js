@@ -28,6 +28,7 @@
     "generate-docs": "jsdoc -c .jsdoc",
     "coverage": "nyc --reporter=text-lcov mocha --require @babel/register bin/run-node-unit-tests.js | codecov --pipe",
     "preversion": "yarn run test-unit-node",
+    "dist": "webpack && webpack --minify",
     "version": "./bin/version.sh && git add dist",
     "postversion": "./bin/postversion.sh"
   },
