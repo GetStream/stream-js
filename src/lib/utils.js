@@ -1,6 +1,4 @@
 import FormData from 'form-data';
-import isPlainObject from 'lodash/isPlainObject';
-import isObject from 'lodash/isObject';
 
 import errors from './errors';
 
@@ -34,7 +32,7 @@ function rfc3986(str) {
 }
 
 function isReadableStream(obj) {
-  return typeof obj === 'object' && typeof obj._read === 'function' && typeof obj._readableState === 'object';
+  return obj && typeof obj === 'object' && typeof obj._read === 'function' && typeof obj._readableState === 'object';
 }
 
 function validateFeedId(feedId) {
@@ -68,17 +66,14 @@ function addFileToFormData(uri, name, contentType) {
 }
 
 function replaceStreamObjects(obj) {
-  let cloned = obj;
-  if (Array.isArray(obj)) {
-    cloned = obj.map((v) => replaceStreamObjects(v));
-  } else if (isPlainObject(obj)) {
-    cloned = {};
-    Object.keys(obj).forEach((k) => {
-      cloned[k] = replaceStreamObjects(obj[k]);
-    });
-  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
-    cloned = obj.ref();
-  }
+  if (Array.isArray(obj)) return obj.map((v) => replaceStreamObjects(v));
+  if (Object.prototype.toString.call(obj) !== '[object Object]') return obj;
+  if (typeof obj.ref === 'function') return obj.ref();
+
+  const cloned = {};
+  Object.keys(obj).forEach((k) => {
+    cloned[k] = replaceStreamObjects(obj[k]);
+  });
   return cloned;
 }
 

@@ -116,7 +116,6 @@
     "form-data": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.15",
     "qs": "^6.9.4"
   },
   "repository": {
