@@ -615,7 +615,12 @@ class StreamClient {
   }
 
   getOrCreateToken() {
-    return this.usingApiSecret ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' }) : this.userToken;
+    if (!this._getOrCreateToken) {
+      this._getOrCreateToken = this.usingApiSecret
+        ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' })
+        : this.userToken;
+    }
+    return this._getOrCreateToken;
   }
 
   user(userId) {
