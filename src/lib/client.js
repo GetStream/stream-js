@@ -94,8 +94,6 @@ class StreamClient {
     }
 
     this.request = axios.create({
-      // TODO: enable this for file upload using axios
-      // maxContentLength: Infinity, // allow upload errors to be propagated correctly
       timeout: 10 * 1000, // 10 seconds
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
@@ -370,6 +368,7 @@ class StreamClient {
         Authorization: isJWT ? signature.split(' ').reverse()[0] : signature,
         ...(kwargs.headers || {}),
       },
+      ...(kwargs.axiosOptions || {}),
     };
   }
 
@@ -444,6 +443,22 @@ class StreamClient {
       throw new errors.SiteError(error.message);
     }
   };
+
+  upload(url, uri, name, contentType, onUploadProgress) {
+    const fd = utils.addFileToFormData(uri, name, contentType);
+    return this.doAxiosRequest('POST', {
+      url,
+      body: fd,
+      headers: fd.getHeaders ? fd.getHeaders() : {}, // node vs browser
+      signature: this.getOrCreateToken(),
+      axiosOptions: {
+        timeout: 0,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        onUploadProgress,
+      },
+    });
+  }
 
   get(kwargs) {
     /**
@@ -600,7 +615,12 @@ class StreamClient {
   }
 
   getOrCreateToken() {
-    return this.usingApiSecret ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' }) : this.userToken;
+    if (!this._getOrCreateToken) {
+      this._getOrCreateToken = this.usingApiSecret
+        ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' })
+        : this.userToken;
+    }
+    return this._getOrCreateToken;
   }
 
   user(userId) {

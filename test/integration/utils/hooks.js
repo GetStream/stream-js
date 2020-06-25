@@ -44,7 +44,7 @@ function initNode() {
 }
 
 function initBrowser() {
-  this.timeout(40000);
+  this.timeout(60000);
 }
 
 function beforeEachNode() {
@@ -77,16 +77,22 @@ function beforeEachNode() {
 }
 
 function beforeEachBrowser() {
-  this.client = stream.connect(config.API_KEY);
   this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
     group: 'browserTestCycle',
     location: 'qa',
     protocol: 'https',
   });
 
+  this.browserClient = stream.connect(config.API_KEY, jwt(undefined, undefined, { userId: '123' }), config.APP_ID, {
+    group: 'browserTestCycle',
+    location: 'qa',
+  });
+
   if (this.localRun) {
     this.client.baseUrl = 'http://localhost:8000/api/';
     this.client.fayeUrl = 'http://localhost:9999/faye/';
+    this.browserClient.baseUrl = 'http://localhost:8000/api/';
+    this.browserClient.fayeUrl = 'http://localhost:9999/faye/';
   }
 
   this.user1 = createFeedWithToken(this.client, 'user', '11');
