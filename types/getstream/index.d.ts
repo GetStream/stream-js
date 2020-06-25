@@ -85,10 +85,17 @@ export interface ImageProcessOptions {
   crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
 }
 
+export type onUploadProgress = (progressEvent: ProgressEvent) => void;
+
 export class StreamImageStore {
   constructor(client: StreamClient, token: string);
 
-  upload(uri: string | Buffer, name?: string, contentType?: string): Promise<FileUploadAPIResponse>;
+  upload(
+    uri: string | Buffer,
+    name?: string,
+    contentType?: string,
+    onUploadProgress?: onUploadProgress,
+  ): Promise<FileUploadAPIResponse>;
 
   process(uri: string, options: ImageProcessOptions): Promise<FileUploadAPIResponse>;
 
@@ -105,7 +112,12 @@ export class StreamImageStore {
 export class StreamFileStore {
   constructor(client: StreamClient, token: string);
 
-  upload(uri: string | Buffer, name?: string, contentType?: string): Promise<FileUploadAPIResponse>;
+  upload(
+    uri: string | Buffer,
+    name?: string,
+    contentType?: string,
+    onUploadProgress?: onUploadProgress,
+  ): Promise<FileUploadAPIResponse>;
 
   delete(uri: string): Promise<{}>;
 }
