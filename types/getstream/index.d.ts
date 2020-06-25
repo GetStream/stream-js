@@ -91,7 +91,7 @@ export class StreamImageStore {
   constructor(client: StreamClient, token: string);
 
   upload(
-    uri: string | Buffer,
+    uri: string | Buffer | File,
     name?: string,
     contentType?: string,
     onUploadProgress?: onUploadProgress,
@@ -113,7 +113,7 @@ export class StreamFileStore {
   constructor(client: StreamClient, token: string);
 
   upload(
-    uri: string | Buffer,
+    uri: string | Buffer | File,
     name?: string,
     contentType?: string,
     onUploadProgress?: onUploadProgress,
