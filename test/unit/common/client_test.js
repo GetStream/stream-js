@@ -1,6 +1,7 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
+import utils from '../../../src/lib/utils';
 import errors from '../../../src/lib/errors';
 import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
@@ -325,6 +326,35 @@ describe('[UNIT] Stream Client (Common)', function () {
       this.client.delete({ url: 'feed' });
 
       td.verify(tdDoAxiosRequest('DELETE', { url: 'feed' }));
+    });
+
+    it('#upload', function () {
+      const url = 'images';
+      const uri = 'file://someFile.jpg';
+      const name = 'name';
+      const contentType = 'type';
+      this.client.getOrCreateToken = () => 'token';
+
+      const addFileToFormData = td.function('addFileToFormData');
+      const fd = { getHeaders: config.IS_NODE_ENV ? () => 'headers' : '' };
+      td.when(addFileToFormData(), { ignoreExtraArgs: true }).thenReturn(fd);
+      td.replace(utils, 'addFileToFormData', addFileToFormData);
+
+      this.client.upload(url, uri, name, contentType);
+
+      td.verify(
+        tdDoAxiosRequest('POST', {
+          url: 'images',
+          body: fd,
+          headers: config.IS_NODE_ENV ? 'headers' : {},
+          signature: 'token',
+          axiosOptions: {
+            timeout: 0,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+          },
+        }),
+      );
     });
   });
 

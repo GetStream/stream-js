@@ -1,4 +1,3 @@
-import fetch from '@stream-io/cross-fetch';
 import axios from 'axios';
 import qs from 'qs';
 import Url from 'url';
@@ -95,8 +94,6 @@ class StreamClient {
     }
 
     this.request = axios.create({
-      // TODO: enable this for file upload using axios
-      // maxContentLength: Infinity, // allow upload errors to be propagated correctly
       timeout: 10 * 1000, // 10 seconds
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
@@ -371,6 +368,7 @@ class StreamClient {
         Authorization: isJWT ? signature.split(' ').reverse()[0] : signature,
         ...(kwargs.headers || {}),
       },
+      ...(kwargs.axiosOptions || {}),
     };
   }
 
@@ -447,27 +445,17 @@ class StreamClient {
   };
 
   upload(url, uri, name, contentType) {
-    return fetch(`${this.enrichUrl(url)}?api_key=${this.apiKey}`, {
-      method: 'post',
-      body: utils.addFileToFormData(uri, name, contentType),
-      headers: { Authorization: this.getOrCreateToken() },
-    }).then((r) => {
-      if (r.ok) return r.json();
-
-      return r.text().then((responseData) => {
-        r.statusCode = r.status;
-
-        try {
-          responseData = JSON.parse(responseData);
-        } catch (e) {
-          // ignore json parsing errors
-        }
-        throw new errors.StreamApiError(
-          `${JSON.stringify(responseData)} with HTTP status code ${r.status}`,
-          responseData,
-          r,
-        );
-      });
+    const fd = utils.addFileToFormData(uri, name, contentType);
+    return this.doAxiosRequest('POST', {
+      url,
+      body: fd,
+      headers: fd.getHeaders ? fd.getHeaders() : {}, // node vs browser
+      signature: this.getOrCreateToken(),
+      axiosOptions: {
+        timeout: 0,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+      },
     });
   }
 
