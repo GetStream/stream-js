@@ -1,6 +1,4 @@
 import FormData from 'form-data';
-import isPlainObject from 'lodash/isPlainObject';
-import isObject from 'lodash/isObject';
 
 import errors from './errors';
 
@@ -68,18 +66,16 @@ function addFileToFormData(uri, name, contentType) {
 }
 
 function replaceStreamObjects(obj) {
-  let cloned = obj;
-  if (Array.isArray(obj)) {
-    cloned = obj.map((v) => replaceStreamObjects(v));
-  } else if (isPlainObject(obj)) {
-    cloned = {};
+  if (Array.isArray(obj)) return obj.map((v) => replaceStreamObjects(v));
+  if (Object.prototype.toString.call(obj) === '[object Object]') {
+    const cloned = {};
     Object.keys(obj).forEach((k) => {
       cloned[k] = replaceStreamObjects(obj[k]);
     });
-  } else if (isObject(obj) && obj.ref && typeof obj.ref === 'function') {
-    cloned = obj.ref();
+    return cloned;
   }
-  return cloned;
+  if (typeof obj === 'object' && typeof obj.ref === 'function') return obj.ref();
+  return obj;
 }
 
 export default {
