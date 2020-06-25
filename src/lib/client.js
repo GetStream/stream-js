@@ -444,7 +444,7 @@ class StreamClient {
     }
   };
 
-  upload(url, uri, name, contentType) {
+  upload(url, uri, name, contentType, onUploadProgress) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest('POST', {
       url,
@@ -455,6 +455,7 @@ class StreamClient {
         timeout: 0,
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
+        onUploadProgress,
       },
     });
   }

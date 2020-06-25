@@ -61,6 +61,26 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
         .catch((err) => done(err));
     });
 
+    it('should publish the upload progress', function (done) {
+      let lastProgress = { loaded: 0 };
+
+      this.browserClient
+        .upload('files/', mockedFile(2000000), null, null, (progress) => {
+          expect(progress).to.be.a('object');
+          expect(progress.loaded).to.be.a('number');
+          expect(progress.total).to.be.a('number');
+          expect(progress.loaded > lastProgress.loaded).to.be(true);
+
+          lastProgress = progress;
+        })
+        .then(({ file }) => {
+          expect(file).to.be.a('string');
+          expect(lastProgress.loaded).to.be(lastProgress.total);
+          done();
+        })
+        .catch((err) => done(err));
+    });
+
     it('should upload an image', function (done) {
       mockedImage()
         .then((file) => this.browserClient.upload('images/', file))

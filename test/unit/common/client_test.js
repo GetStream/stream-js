@@ -329,6 +329,7 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
 
     it('#upload', function () {
+      const onUploadProgress = td.function('onUploadProgress');
       const url = 'images';
       const uri = 'file://someFile.jpg';
       const name = 'name';
@@ -340,7 +341,7 @@ describe('[UNIT] Stream Client (Common)', function () {
       td.when(addFileToFormData(), { ignoreExtraArgs: true }).thenReturn(fd);
       td.replace(utils, 'addFileToFormData', addFileToFormData);
 
-      this.client.upload(url, uri, name, contentType);
+      this.client.upload(url, uri, name, contentType, onUploadProgress);
 
       td.verify(
         tdDoAxiosRequest('POST', {
@@ -352,6 +353,7 @@ describe('[UNIT] Stream Client (Common)', function () {
             timeout: 0,
             maxContentLength: Infinity,
             maxBodyLength: Infinity,
+            onUploadProgress,
           },
         }),
       );
