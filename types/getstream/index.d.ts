@@ -15,6 +15,9 @@ export function connect(apiKey: string, apiSecret: string | null, appId: string,
 export class CollectionEntry {
   constructor(store: Collections, collection: string, id: string, data: object);
 
+  // Get the entry ref string
+  ref(): string;
+
   // Get the entry from the Collection
   get(): Promise<object>;
 
@@ -181,6 +184,8 @@ export class User {
   /** Construct User. */
   constructor(client: StreamClient, userId: string);
 
+  ref(): string;
+
   delete(): Promise<object>;
 
   get(options: object): Promise<object>;
@@ -190,6 +195,8 @@ export class User {
   update(data: object): Promise<object>;
 
   getOrCreate(options: object): Promise<object>;
+
+  profile(): Promise<object>;
 }
 
 export class StreamClient {
@@ -343,7 +350,7 @@ export namespace errors {
 }
 
 export interface Activity {
-  actor: string;
+  actor: string | User;
   verb: string;
   object: string;
   time?: string;
