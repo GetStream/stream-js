@@ -167,11 +167,11 @@ export class Feed {
 
   // Updates an activity's "to" fields
   updateActivityToTargets(
-    foreign_id: string,
+    foreignId: string,
     time: string,
-    new_targets: string[],
-    added_targets: string[],
-    removed_targets: string[],
+    newTargets: string[],
+    addedTargets: string[],
+    removedTargets: string[],
   ): Promise<object>;
 }
 

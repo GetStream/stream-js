@@ -132,19 +132,19 @@ export default class StreamReaction {
      * @example reactions.lookup({user_id: "john", kinds:"like"})
      */
 
-    const { user_id, activity_id, reaction_id, ...qs } = conditions;
+    const { user_id: userId, activity_id: activityId, reaction_id: reactionId, ...qs } = conditions;
     if (!qs.limit) {
       qs.limit = 10;
     }
 
-    if ((user_id ? 1 : 0) + (activity_id ? 1 : 0) + (reaction_id ? 1 : 0) !== 1) {
+    if ((userId ? 1 : 0) + (activityId ? 1 : 0) + (reactionId ? 1 : 0) !== 1) {
       throw new errors.SiteError(
         'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
       );
     }
 
-    const lookupType = (user_id && 'user_id') || (activity_id && 'activity_id') || (reaction_id && 'reaction_id');
-    const value = user_id || activity_id || reaction_id;
+    const lookupType = (userId && 'user_id') || (activityId && 'activity_id') || (reactionId && 'reaction_id');
+    const value = userId || activityId || reactionId;
 
     const url = conditions.kind ? this.buildURL(lookupType, value, conditions.kind) : this.buildURL(lookupType, value);
 

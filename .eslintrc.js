@@ -18,7 +18,6 @@ module.exports = {
     process: true,
   },
   rules: {
-    camelcase: 0,
     'consistent-return': 0,
     'no-underscore-dangle': 0,
     'import/prefer-default-export': 0,
@@ -27,7 +26,6 @@ module.exports = {
     'prefer-destructuring': ['error', { object: true, array: false }],
     'max-classes-per-file': 0,
     'no-plusplus': 0,
-    'no-unused-vars': ['error', { args: 'none' }],
     'sonarjs/cognitive-complexity': 0,
     'sonarjs/no-collapsible-if': 0,
     'sonarjs/no-duplicate-string': 0,
