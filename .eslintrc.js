@@ -18,7 +18,6 @@ module.exports = {
     process: true,
   },
   rules: {
-    camelcase: 0,
     'consistent-return': 0,
     'no-underscore-dangle': 0,
     'import/prefer-default-export': 0,
