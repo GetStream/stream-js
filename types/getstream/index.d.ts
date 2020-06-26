@@ -153,10 +153,6 @@ export class Feed {
   // Get feed
   get(options: object): Promise<object>;
 
-  // Get tokens
-  getReadOnlyToken(): string;
-  getReadWriteToken(): string;
-
   // Activity details
   getActivityDetail(activityId: string, options?: object): Promise<object>;
 
@@ -237,7 +233,7 @@ export class StreamClient {
   createUserToken(userId: string, extraData?: object): string;
 
   // Create feed
-  feed(feedSlug: string, userId: string, token?: string, siteId?: string, options?: object): Feed;
+  feed(feedSlug: string, userId: string | User): Feed;
 
   // Update activity
   updateActivity(activity: object): Promise<object>;

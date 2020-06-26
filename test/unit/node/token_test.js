@@ -33,32 +33,4 @@ describe('[UNIT] Creating tokens', function () {
 
     expect(token).to.be(expected);
   });
-
-  it('feed #getReadOnlyToken', function () {
-    const token = this.client.feed('user', 'test').getReadOnlyToken();
-
-    expect(token).not.to.be(undefined);
-
-    const feedId = 'usertest';
-    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId,
-      expireTokens: this.client.expireTokens,
-    });
-
-    expect(token).to.be(expected);
-  });
-
-  it('feed #getReadWriteToken', function () {
-    const token = this.client.feed('user', 'test').getReadWriteToken();
-
-    expect(token).not.to.be(undefined);
-
-    const feedId = 'usertest';
-    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId,
-      expireTokens: this.client.expireTokens,
-    });
-
-    expect(token).to.be(expected);
-  });
 });

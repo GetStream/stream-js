@@ -249,7 +249,13 @@ class StreamClient {
      * @example
      * client.getReadOnlyToken('user', '1');
      */
-    return this.feed(feedSlug, userId).getReadOnlyToken();
+    utils.validateFeedSlug(feedSlug);
+    utils.validateUserId(userId);
+
+    return signing.JWTScopeToken(this.apiSecret, '*', 'read', {
+      feedId: `${feedSlug}${userId}`,
+      expireTokens: this.expireTokens,
+    });
   }
 
   getReadWriteToken(feedSlug, userId) {
@@ -264,7 +270,13 @@ class StreamClient {
      * @example
      * client.getReadWriteToken('user', '1');
      */
-    return this.feed(feedSlug, userId).getReadWriteToken();
+    utils.validateFeedSlug(feedSlug);
+    utils.validateUserId(userId);
+
+    return signing.JWTScopeToken(this.apiSecret, '*', '*', {
+      feedId: `${feedSlug}${userId}`,
+      expireTokens: this.expireTokens,
+    });
   }
 
   feed(feedSlug, userId = this.userId, token) {
@@ -274,23 +286,19 @@ class StreamClient {
      * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug
      * @param {string} userId - The user identifier
-     * @param {string} [token] - The token (DEPRECATED)
+     * @param {string} [token] - The token (DEPRECATED), used for internal testing
      * @return {StreamFeed}
      * @example
      * client.feed('user', '1');
      */
+    if (userId instanceof StreamUser) userId = userId.id;
+
     if (token === undefined) {
       if (this.usingApiSecret) {
-        token = signing.JWTScopeToken(this.apiSecret, '*', '*', {
-          feedId: `${feedSlug}${userId}`,
-        });
+        token = signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: `${feedSlug}${userId}` });
       } else {
         token = this.userToken;
       }
-    }
-
-    if (userId instanceof StreamUser) {
-      userId = userId.id;
     }
 
     return new StreamFeed(this, feedSlug, userId, token);
