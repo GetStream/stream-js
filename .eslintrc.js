@@ -26,7 +26,6 @@ module.exports = {
     'prefer-destructuring': ['error', { object: true, array: false }],
     'max-classes-per-file': 0,
     'no-plusplus': 0,
-    'no-unused-vars': ['error', { args: 'none' }],
     'sonarjs/cognitive-complexity': 0,
     'sonarjs/no-collapsible-if': 0,
     'sonarjs/no-duplicate-string': 0,
