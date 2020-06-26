@@ -340,48 +340,48 @@ export default class StreamFeed {
     }
   }
 
-  updateActivityToTargets(foreign_id, time, new_targets, added_targets, removed_targets) {
+  updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
     /**
      * Updates an activity's "to" fields
      * @since 3.10.0
-     * @param {string} foreign_id The foreign_id of the activity to update
+     * @param {string} foreignId The foreign_id of the activity to update
      * @param {string} time The time of the activity to update
-     * @param {array} new_targets Set the new "to" targets for the activity - will remove old targets
+     * @param {array} newTargets Set the new "to" targets for the activity - will remove old targets
      * @param {array} added_targets Add these new targets to the activity
-     * @param {array} removed_targets Remove these targets from the activity
+     * @param {array} removedTargets Remove these targets from the activity
      */
 
-    if (!foreign_id) {
+    if (!foreignId) {
       throw new Error('Missing `foreign_id` parameter!');
     } else if (!time) {
       throw new Error('Missing `time` parameter!');
     }
 
-    if (!new_targets && !added_targets && !removed_targets) {
+    if (!newTargets && !addedTargets && !removedTargets) {
       throw new Error(
-        'Requires you to provide at least one parameter for `new_targets`, `added_targets`, or `removed_targets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [new_targets...], [added_targets...], [removed_targets...])`',
+        'Requires you to provide at least one parameter for `newTargets`, `addedTargets`, or `removedTargets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [newTargets...], [addedTargets...], [removedTargets...])`',
       );
     }
 
-    if (new_targets) {
-      if (added_targets || removed_targets) {
-        throw new Error("Can't include add_targets or removed_targets if you're also including new_targets");
+    if (newTargets) {
+      if (addedTargets || removedTargets) {
+        throw new Error("Can't include add_targets or removedTargets if you're also including newTargets");
       }
     }
 
-    if (added_targets && removed_targets) {
+    if (addedTargets && removedTargets) {
       // brute force - iterate through added, check to see if removed contains that element
-      added_targets.forEach((added_target) => {
-        if (removed_targets.includes(added_target)) {
-          throw new Error("Can't have the same feed ID in added_targets and removed_targets.");
+      addedTargets.forEach((addedTarget) => {
+        if (removedTargets.includes(addedTarget)) {
+          throw new Error("Can't have the same feed ID in addedTargets and removedTargets.");
         }
       });
     }
 
-    const body = { foreign_id, time };
-    if (new_targets) body.new_targets = new_targets;
-    if (added_targets) body.added_targets = added_targets;
-    if (removed_targets) body.removed_targets = removed_targets;
+    const body = { foreign_id: foreignId, time };
+    if (newTargets) body.new_targets = newTargets;
+    if (addedTargets) body.added_targets = addedTargets;
+    if (removedTargets) body.removed_targets = removedTargets;
 
     return this.client.post({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,

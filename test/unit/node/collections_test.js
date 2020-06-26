@@ -56,13 +56,13 @@ describe('[UNIT] Stream Collections (node)', function () {
       this.client._collectionsToken = fakedJWT;
       this.client.collections.upsert(collectionName, data);
 
-      const expected_body = { data: {} };
-      expected_body.data[collectionName] = [data];
+      const body = { data: {} };
+      body.data[collectionName] = [data];
       td.verify(
         post({
           url: 'collections/',
           serviceName: 'api',
-          body: expected_body,
+          body,
           signature: fakedJWT,
         }),
       );
@@ -76,13 +76,13 @@ describe('[UNIT] Stream Collections (node)', function () {
       this.client._collectionsToken = fakedJWT;
       this.client.collections.upsert(collectionName, data);
 
-      const expected_body = { data: {} };
-      expected_body.data[collectionName] = [data];
+      const body = { data: {} };
+      body.data[collectionName] = [data];
       td.verify(
         post({
           url: 'collections/',
           serviceName: 'api',
-          body: expected_body,
+          body,
           signature: fakedJWT,
         }),
       );
@@ -99,13 +99,13 @@ describe('[UNIT] Stream Collections (node)', function () {
       this.client._collectionsToken = fakedJWT;
       this.client.collections.upsert(collectionName, data);
 
-      const expected_body = { data: {} };
-      expected_body.data[collectionName] = data;
+      const body = { data: {} };
+      body.data[collectionName] = data;
       td.verify(
         post({
           url: 'collections/',
           serviceName: 'api',
-          body: expected_body,
+          body,
           signature: fakedJWT,
         }),
       );
