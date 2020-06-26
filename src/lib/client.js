@@ -249,7 +249,13 @@ class StreamClient {
      * @example
      * client.getReadOnlyToken('user', '1');
      */
-    return this.feed(feedSlug, userId).getReadOnlyToken();
+    utils.validateFeedSlug(feedSlug);
+    utils.validateUserId(userId);
+
+    return signing.JWTScopeToken(this.apiSecret, '*', 'read', {
+      feedId: `${feedSlug}${userId}`,
+      expireTokens: this.expireTokens,
+    });
   }
 
   getReadWriteToken(feedSlug, userId) {
@@ -264,7 +270,13 @@ class StreamClient {
      * @example
      * client.getReadWriteToken('user', '1');
      */
-    return this.feed(feedSlug, userId).getReadWriteToken();
+    utils.validateFeedSlug(feedSlug);
+    utils.validateUserId(userId);
+
+    return signing.JWTScopeToken(this.apiSecret, '*', '*', {
+      feedId: `${feedSlug}${userId}`,
+      expireTokens: this.expireTokens,
+    });
   }
 
   feed(feedSlug, userId = this.userId, token) {

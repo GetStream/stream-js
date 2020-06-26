@@ -64,16 +64,8 @@ function beforeEachNode() {
   this.notification3 = this.client.feed('notification', randUserId('33'));
   const user1ReadOnlyId = randUserId('11');
   const user2ReadOnlyId = randUserId('22');
-  this.user1ReadOnly = this.client.feed(
-    'user',
-    user1ReadOnlyId,
-    this.client.feed('user', user1ReadOnlyId).getReadOnlyToken(),
-  );
-  this.user2ReadOnly = this.client.feed(
-    'user',
-    user2ReadOnlyId,
-    this.client.feed('user', user2ReadOnlyId).getReadOnlyToken(),
-  );
+  this.user1ReadOnly = this.client.feed('user', user1ReadOnlyId, this.client.getReadOnlyToken('user', user1ReadOnlyId));
+  this.user2ReadOnly = this.client.feed('user', user2ReadOnlyId, this.client.getReadOnlyToken('user', user2ReadOnlyId));
 }
 
 function beforeEachBrowser() {

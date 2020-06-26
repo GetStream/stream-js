@@ -153,10 +153,6 @@ export class Feed {
   // Get feed
   get(options: object): Promise<object>;
 
-  // Get tokens
-  getReadOnlyToken(): string;
-  getReadWriteToken(): string;
-
   // Activity details
   getActivityDetail(activityId: string, options?: object): Promise<object>;
 

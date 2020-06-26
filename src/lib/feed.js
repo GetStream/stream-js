@@ -1,7 +1,6 @@
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
-import signing from './signing';
 
 /**
  * Manage api calls for specific feeds
@@ -32,7 +31,7 @@ export default class StreamFeed {
     utils.validateUserId(userId);
 
     // raise an error if there is no token
-    if (!this.apiSecret && !token) {
+    if (!token) {
       throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
     }
 
@@ -233,43 +232,6 @@ export default class StreamFeed {
       url: `${path}${this.feedUrl}/`,
       qs: options,
       signature: this.signature,
-    });
-  }
-
-  getReadOnlyToken() {
-    /**
-     * Returns a token that allows only read operations
-     *
-     * @deprecated since version 4.0
-     * @method getReadOnlyToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadOnlyToken('user', '1');
-     */
-    return signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
-      feedId: `${this.slug}${this.userId}`,
-      expireTokens: this.client.expireTokens,
-    });
-  }
-
-  getReadWriteToken() {
-    /**
-     * Returns a token that allows read and write operations
-     * @deprecated since version 4.0
-     * @method getReadWriteToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example
-     * client.getReadWriteToken('user', '1');
-     */
-    return signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
-      feedId: `${this.slug}${this.userId}`,
-      expireTokens: this.client.expireTokens,
     });
   }
 
