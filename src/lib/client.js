@@ -419,7 +419,6 @@ class StreamClient {
       return response.data;
     }
 
-    response.statusCode = response.status; // maintained for backward compatibility
     throw new errors.StreamApiError(
       `${JSON.stringify(response.data)} with HTTP status code ${response.status}`,
       response.data,

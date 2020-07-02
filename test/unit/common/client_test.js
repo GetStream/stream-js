@@ -189,7 +189,7 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(() => this.client.handleResponse({ status: 400, data })).to.throwException((err) => {
         expect(err).to.be.a(errors.StreamApiError);
         expect(err.error).to.be.eql(data);
-        expect(err.response).to.be.eql({ status: 400, statusCode: 400, data });
+        expect(err.response).to.be.eql({ status: 400, data });
       });
     });
 
@@ -198,7 +198,7 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(() => this.client.handleResponse({ status: 500, data })).to.throwException((err) => {
         expect(err).to.be.a(errors.StreamApiError);
         expect(err.error).to.be.eql(data);
-        expect(err.response).to.be.eql({ status: 500, statusCode: 500, data });
+        expect(err.response).to.be.eql({ status: 500, data });
       });
     });
   });
