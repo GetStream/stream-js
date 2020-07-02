@@ -1,4 +1,3 @@
-import errors from './errors';
 import utils from './utils';
 
 function addToMany(activity, feeds) {
@@ -11,10 +10,7 @@ function addToMany(activity, feeds) {
    * @param  {Array}   feeds    Array of objects describing the feeds to add to
    * @return {Promise}           Promise object
    */
-
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
+  this._throwMissingApiSecret();
 
   return this.post({
     url: 'feed/add_to_many/',
@@ -36,15 +32,10 @@ function followMany(follows, activityCopyLimit) {
    * @param  {number}  [activityCopyLimit] How many activities should be copied from the target feed
    * @return {Promise}           Promise object
    */
+  this._throwMissingApiSecret();
+
   const qs = {};
-
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
-
-  if (typeof activityCopyLimit === 'number') {
-    qs.activity_copy_limit = activityCopyLimit;
-  }
+  if (typeof activityCopyLimit === 'number') qs.activity_copy_limit = activityCopyLimit;
 
   return this.post({
     url: 'follow_many/',
@@ -63,10 +54,7 @@ function unfollowMany(unfollows) {
    * @param  {Array}   unfollows  The follow relations to remove
    * @return {Promise}           Promise object
    */
-
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
+  this._throwMissingApiSecret();
 
   return this.post({
     url: 'unfollow_many/',
