@@ -43,7 +43,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
 
     const httpCallback = function (error, response, body) {
       if (error) done(error);
-      if (response.statusCode !== 201) done(body);
+      if (response.status !== 201) done(body);
     };
 
     Promise.all([
@@ -76,7 +76,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
 
     const httpCallback = function (error, response, body) {
       if (error) done(error);
-      if (response.statusCode !== 201) done(body);
+      if (response.status !== 201) done(body);
     };
 
     const doneYet = function () {
