@@ -100,7 +100,6 @@ class StreamClient {
 
     this.personalization = new Personalization(this);
 
-    /* istanbul ignore next */
     if (this.browser && this.usingApiSecret) {
       throw new errors.FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
