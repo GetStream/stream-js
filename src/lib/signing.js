@@ -33,7 +33,6 @@ function decodeBase64Url(base64UrlString) {
   try {
     return Base64.atob(toBase64(base64UrlString));
   } catch (e) {
-    /* istanbul ignore else */
     if (e.name === 'InvalidCharacterError') {
       return undefined;
     }

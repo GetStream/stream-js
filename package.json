@@ -8,7 +8,7 @@
   "main": "./lib/getstream.js",
   "module": "./lib/getstream.js",
   "types": "./types/getstream/index.d.ts",
-  "homepage": "https://getstream.io/docs?language=js",
+  "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
   "version": "5.0.0",
@@ -53,14 +53,6 @@
     "qs": false,
     "url": false
   },
-  "config": {
-    "blanket": {
-      "pattern": "src",
-      "data-cover-never": [
-        "node_modules"
-      ]
-    }
-  },
   "devDependencies": {
     "@babel/cli": "^7.10.4",
     "@babel/core": "^7.10.4",
@@ -75,7 +67,6 @@
     "babel-loader": "^8.1.0",
     "chai": "^4.2.0",
     "codecov": "^3.7.0",
-    "crypto-browserify": "^3.12.0",
     "dtslint": "^3.6.12",
     "eslint": "^7.3.1",
     "eslint-config-airbnb-base": "^14.2.0",
@@ -86,7 +77,6 @@
     "eslint-plugin-sonarjs": "^0.5.0",
     "expect.js": "^0.3.1",
     "husky": "^4.2.5",
-    "istanbul": "^0.4.5",
     "jsdoc": "^3.6.4",
     "json-loader": "~0.5.7",
     "karma": "^5.1.0",
