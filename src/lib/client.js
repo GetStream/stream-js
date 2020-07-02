@@ -26,7 +26,7 @@ class StreamClient {
   constructor(apiKey, apiSecretOrToken, appId, options = {}) {
     /**
      * Initialize a client
-     * @method intialize
+     * @method initialize
      * @memberof StreamClient.prototype
      * @param {string} apiKey - the api key
      * @param {string} [apiSecret] - the api secret
@@ -112,55 +112,46 @@ class StreamClient {
     this.reactions = new StreamReaction(this, this.getOrCreateToken());
   }
 
-  getPersonalizationToken() {
-    if (this._personalizationToken) {
-      return this._personalizationToken;
-    }
-
-    if (this.apiSecret) {
-      this._personalizationToken = signing.JWTScopeToken(this.apiSecret, 'personalization', '*', {
-        userId: '*',
-        feedId: '*',
-        expireTokens: this.expireTokens,
-      });
-    } else {
+  _throwMissingApiSecret() {
+    if (!this.usingApiSecret) {
       throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
+        'This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);',
       );
     }
+  }
 
+  getPersonalizationToken() {
+    if (this._personalizationToken) return this._personalizationToken;
+
+    this._throwMissingApiSecret();
+
+    this._personalizationToken = signing.JWTScopeToken(this.apiSecret, 'personalization', '*', {
+      userId: '*',
+      feedId: '*',
+      expireTokens: this.expireTokens,
+    });
     return this._personalizationToken;
   }
 
   getCollectionsToken() {
-    if (this._collectionsToken) {
-      return this._collectionsToken;
-    }
+    if (this._collectionsToken) return this._collectionsToken;
 
-    if (this.apiSecret) {
-      this._collectionsToken = signing.JWTScopeToken(this.apiSecret, 'collections', '*', {
-        feedId: '*',
-        expireTokens: this.expireTokens,
-      });
-    } else {
-      throw new errors.SiteError(
-        'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
-      );
-    }
+    this._throwMissingApiSecret();
 
+    this._collectionsToken = signing.JWTScopeToken(this.apiSecret, 'collections', '*', {
+      feedId: '*',
+      expireTokens: this.expireTokens,
+    });
     return this._collectionsToken;
   }
 
   getAnalyticsToken() {
-    if (this.apiSecret) {
-      return signing.JWTScopeToken(this.apiSecret, 'analytics', '*', {
-        userId: '*',
-        expireTokens: this.expireTokens,
-      });
-    }
-    throw new errors.SiteError(
-      'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
-    );
+    this._throwMissingApiSecret();
+
+    return signing.JWTScopeToken(this.apiSecret, 'analytics', '*', {
+      userId: '*',
+      expireTokens: this.expireTokens,
+    });
   }
 
   getBaseUrl(serviceName) {
@@ -388,10 +379,7 @@ class StreamClient {
      * @return {object} Faye authorization middleware
      */
     return {
-      incoming: (message, callback) => {
-        callback(message);
-      },
-
+      incoming: (message, callback) => callback(message),
       outgoing: (message, callback) => {
         if (message.subscription && this.subscriptions[message.subscription]) {
           const subscription = this.subscriptions[message.subscription];
@@ -431,7 +419,7 @@ class StreamClient {
       return response.data;
     }
 
-    response.statusCode = response.status;
+    response.statusCode = response.status; // maintained for backward compatibility
     throw new errors.StreamApiError(
       `${JSON.stringify(response.data)} with HTTP status code ${response.status}`,
       response.data,
@@ -520,11 +508,8 @@ class StreamClient {
    * @param {object} extraData
    */
   createUserToken(userId, extraData = {}) {
-    if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.FeedError(
-        'In order to create user tokens you need to initialize the API client with your API Secret',
-      );
-    }
+    this._throwMissingApiSecret();
+
     return signing.JWTUserSessionToken(this.apiSecret, userId, extraData, {
       noTimestamp: !this.expireTokens,
     });
@@ -537,9 +522,7 @@ class StreamClient {
      * @param  {array} activities list of activities to update
      * @return {Promise}
      */
-    if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
-    }
+    this._throwMissingApiSecret();
 
     if (!(activities instanceof Array)) {
       throw new TypeError('The activities argument should be an Array');
@@ -564,9 +547,7 @@ class StreamClient {
      * @param  {object} activity The activity to update
      * @return {Promise}
      */
-    if (!this.usingApiSecret || this.apiKey == null) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
-    }
+    this._throwMissingApiSecret();
 
     return this.updateActivities([activity]);
   }
