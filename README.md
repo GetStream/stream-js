@@ -279,18 +279,9 @@ See the [github action configuration](.github/workflows/ci.yml) for details of h
 
 ## Contributing
 
-First, make sure you can run the test suite. Tests are run via Mocha
+See extensive at [test documentation](test/README.md) for your changes.
 
-```bash
-mocha test/integration/index.js test/unit/index.js
-# browser version (needs to be build through gulp build:test)
-test/browser/test.html
-# coverage
-mocha test/cov.js -R html-cov > cov.html
-```
-
-[stream]: https://getstream.io/
-[getstream.io]: http://getstream.io/docs/?language=js
+You can find generic API documentation enriched by code snippets from this package at http://getstream.io/docs/?language=js
 
 ### Copyright and License Information
 
