@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.0.0 - 2020-07-06
+
+This release drops some of the already deprecated functions.
+
+### BREAKING CHANGES
+
+- Drop support for Node v11
+- Drop support for Node v13
+- Drop callback support for all functions. This affects some of functions and requires the callbacks to be replaced with promise, e.g. `feed1.get({}, callback)` should change to `feed1.get({}).then().catch()`
+- `Stream.request` is no longer exported
+- `"request"` and `"response"` handler params are slightly different due to using Axios
+- `client.images.thumbmail` renamed to `client.images.thumbnail`
+- `StreamApiError.response.statusCode` is renamed to `StreamApiError.response.status`
+- Drop `client.makeSignedRequest`. This function is removed due to being out of scope. Similar functionality can be reproduced by manually generating authorization token and adding it to the request header.
+- Drop `client.createUserSessionToken` in favor of `client.createUserToken`
+- Drop `collections._streamRef` in favor of `collections.ref`
+- Drop `user._streamRef` in favor of `user.ref`
+- Drop `feed.getReadOnlyToken` in favor of `client.getReadOnlyToken`
+- Drop `feed.getReadWriteToken` in favor of `client.getReadWriteToken`
+- `Feed(feedSlug: string, userId: string, token?: string)` instantian with token as last parameter is deprecated. Token should be supplied by client like `stream.connect(apiKey, userToken, appId).feed(feedSlug: string, userId: string)`
+
+### New features
+
+- `onUploadProgress` callback for uploads.
+
 ## 4.5.4 - 2020-06-12
 
 - Github Action
