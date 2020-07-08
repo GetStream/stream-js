@@ -1,10 +1,6 @@
-import httpSignature from 'http-signature';
-import request from 'request';
+import utils from './utils';
 
-import errors from './errors';
-import Promise from './promise';
-
-function addToMany(activity, feeds, callback) {
+function addToMany(activity, feeds) {
   /**
    * Add one activity to many feeds
    * @method addToMany
@@ -12,27 +8,21 @@ function addToMany(activity, feeds, callback) {
    * @since 2.3.0
    * @param  {object}   activity The activity to add
    * @param  {Array}   feeds    Array of objects describing the feeds to add to
-   * @param  {requestCallback} callback Callback called on completion
    * @return {Promise}           Promise object
    */
+  this._throwMissingApiSecret();
 
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
-
-  return this.makeSignedRequest(
-    {
-      url: 'feed/add_to_many/',
-      body: {
-        activity,
-        feeds,
-      },
+  return this.post({
+    url: 'feed/add_to_many/',
+    body: {
+      activity: utils.replaceStreamObjects(activity),
+      feeds,
     },
-    callback,
-  );
+    signature: this.getOrCreateToken(),
+  });
 }
 
-function followMany(follows, callbackOrActivityCopyLimit, callback) {
+function followMany(follows, activityCopyLimit) {
   /**
    * Follow multiple feeds with one API call
    * @method followMany
@@ -40,106 +30,41 @@ function followMany(follows, callbackOrActivityCopyLimit, callback) {
    * @since 2.3.0
    * @param  {Array}   follows  The follow relations to create
    * @param  {number}  [activityCopyLimit] How many activities should be copied from the target feed
-   * @param  {requestCallback} [callback] Callback called on completion
    * @return {Promise}           Promise object
    */
-  let activityCopyLimit;
+  this._throwMissingApiSecret();
+
   const qs = {};
+  if (typeof activityCopyLimit === 'number') qs.activity_copy_limit = activityCopyLimit;
 
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
-
-  if (typeof callbackOrActivityCopyLimit === 'number') {
-    activityCopyLimit = callbackOrActivityCopyLimit;
-  }
-
-  if (callbackOrActivityCopyLimit && typeof callbackOrActivityCopyLimit === 'function') {
-    callback = callbackOrActivityCopyLimit;
-  }
-
-  if (typeof activityCopyLimit !== 'undefined') {
-    qs.activity_copy_limit = activityCopyLimit;
-  }
-
-  return this.makeSignedRequest(
-    {
-      url: 'follow_many/',
-      body: follows,
-      qs,
-    },
-    callback,
-  );
+  return this.post({
+    url: 'follow_many/',
+    body: follows,
+    qs,
+    signature: this.getOrCreateToken(),
+  });
 }
 
-function unfollowMany(unfollows, callback) {
+function unfollowMany(unfollows) {
   /**
    * Unfollow multiple feeds with one API call
    * @method unfollowMany
    * @memberof StreamClient.prototype
    * @since 3.15.0
    * @param  {Array}   unfollows  The follow relations to remove
-   * @param  {requestCallback} [callback] Callback called on completion
    * @return {Promise}           Promise object
    */
+  this._throwMissingApiSecret();
 
-  if (!this.usingApiSecret || this.apiKey == null) {
-    throw new errors.SiteError('This method can only be used server-side using your API Secret');
-  }
-
-  return this.makeSignedRequest(
-    {
-      url: 'unfollow_many/',
-      body: unfollows,
-    },
-    callback,
-  );
-}
-
-function makeSignedRequest(kwargs, cb) {
-  /**
-   * Method to create request to api with application level authentication
-   * @method makeSignedRequest
-   * @memberof StreamClient.prototype
-   * @since 2.3.0
-   * @access private
-   * @param  {object}   kwargs Arguments for the request
-   * @param  {requestCallback} cb     Callback to call on completion
-   * @return {Promise}         Promise object
-   */
-  if (!this.apiSecret) {
-    throw new errors.SiteError(
-      'Missing secret, which is needed to perform signed requests, use var client = stream.connect(key, secret);',
-    );
-  }
-
-  return new Promise(
-    function (fulfill, reject) {
-      this.send('request', 'post', kwargs, cb);
-
-      kwargs.url = this.enrichUrl(kwargs.url);
-      kwargs.json = true;
-      kwargs.method = 'POST';
-      kwargs.headers = { 'X-Api-Key': this.apiKey };
-      // Make sure withCredentials is not enabled, different browser
-      // fallbacks handle it differently by default (meteor)
-      kwargs.withCredentials = false;
-
-      const callback = this.wrapPromiseTask(cb, fulfill, reject);
-      const req = request(kwargs, callback);
-
-      httpSignature.sign(req, {
-        algorithm: 'hmac-sha256',
-        key: this.apiSecret,
-        keyId: this.apiKey,
-      });
-    }.bind(this),
-  );
+  return this.post({
+    url: 'unfollow_many/',
+    body: unfollows,
+    signature: this.getOrCreateToken(),
+  });
 }
 
 export default {
   addToMany,
   followMany,
   unfollowMany,
-  makeSignedRequest,
 };

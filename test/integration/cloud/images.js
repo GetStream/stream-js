@@ -64,12 +64,9 @@ describe('Images', () => {
     });
   });
 
-  describe('When alice creates a thumbmail 50x50', () => {
+  describe('When alice creates a thumbnail 50x50', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.images.thumbmail(imageUrl, {
-        w: 50,
-        h: 50,
-      });
+      ctx.response = await ctx.alice.images.thumbnail(imageUrl, 50, 50);
     });
     ctx.responseShould('have the expected content', () => {
       ctx.response.should.have.all.keys('file', 'duration');

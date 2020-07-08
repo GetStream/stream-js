@@ -1,8 +1,9 @@
 const stream = require('../../../src/getstream').default;
 const config = require('./config');
 
+// this function can only be run in browser context
 function jwt(resource, action, options) {
-  const KJUR = require('exports?KJUR!./kjur'); // eslint-disable-line
+  const KJUR = require('./kjur'); // eslint-disable-line
 
   let header = {
     alg: 'HS256',
@@ -24,9 +25,7 @@ function jwt(resource, action, options) {
   header = JSON.stringify(header);
   payload = JSON.stringify(payload);
 
-  const res = KJUR.jws.JWS.sign('HS256', header, payload, process.env.STREAM_API_SECRET);
-
-  return res;
+  return KJUR.jws.JWS.sign('HS256', header, payload, process.env.STREAM_API_SECRET);
 }
 
 function randUserId(userId) {
@@ -45,7 +44,7 @@ function initNode() {
 }
 
 function initBrowser() {
-  this.timeout(40000);
+  this.timeout(60000);
 }
 
 function beforeEachNode() {
@@ -65,29 +64,27 @@ function beforeEachNode() {
   this.notification3 = this.client.feed('notification', randUserId('33'));
   const user1ReadOnlyId = randUserId('11');
   const user2ReadOnlyId = randUserId('22');
-  this.user1ReadOnly = this.client.feed(
-    'user',
-    user1ReadOnlyId,
-    this.client.feed('user', user1ReadOnlyId).getReadOnlyToken(),
-  );
-  this.user2ReadOnly = this.client.feed(
-    'user',
-    user2ReadOnlyId,
-    this.client.feed('user', user2ReadOnlyId).getReadOnlyToken(),
-  );
+  this.user1ReadOnly = this.client.feed('user', user1ReadOnlyId, this.client.getReadOnlyToken('user', user1ReadOnlyId));
+  this.user2ReadOnly = this.client.feed('user', user2ReadOnlyId, this.client.getReadOnlyToken('user', user2ReadOnlyId));
 }
 
 function beforeEachBrowser() {
-  this.client = stream.connect(config.API_KEY);
   this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
     group: 'browserTestCycle',
     location: 'qa',
     protocol: 'https',
   });
 
+  this.browserClient = stream.connect(config.API_KEY, jwt(undefined, undefined, { userId: '123' }), config.APP_ID, {
+    group: 'browserTestCycle',
+    location: 'qa',
+  });
+
   if (this.localRun) {
     this.client.baseUrl = 'http://localhost:8000/api/';
     this.client.fayeUrl = 'http://localhost:9999/faye/';
+    this.browserClient.baseUrl = 'http://localhost:8000/api/';
+    this.browserClient.fayeUrl = 'http://localhost:9999/faye/';
   }
 
   this.user1 = createFeedWithToken(this.client, 'user', '11');

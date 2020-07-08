@@ -8,85 +8,65 @@ class CollectionEntry {
     this.data = data;
   }
 
-  _streamRef() {
+  ref() {
     return `SO:${this.collection}:${this.id}`;
   }
 
-  get(callback) {
+  async get() {
     /**
      * get item from collection and sync data
      * @method get
      * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
-    return this.store.get(this.collection, this.id).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    const response = await this.store.get(this.collection, this.id);
+    this.data = response.data;
+    this.full = response;
+    return response;
   }
 
-  add(callback) {
+  async add() {
     /**
      * Add item to collection
      * @method add
      * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    return this.store.add(this.collection, this.id, this.data).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    const response = await this.store.add(this.collection, this.id, this.data);
+    this.data = response.data;
+    this.full = response;
+    return response;
   }
 
-  update(callback) {
+  async update() {
     /**
      * Update item in the object storage
      * @method update
      * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    return this.store.update(this.collection, this.id, this.data).then((response) => {
-      this.data = response.data;
-      this.full = response;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    const response = await this.store.update(this.collection, this.id, this.data);
+    this.data = response.data;
+    this.full = response;
+    return response;
   }
 
-  delete(callback) {
+  async delete() {
     /**
      * Delete item from collection
      * @method delete
      * @memberof CollectionEntry.prototype
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.delete("cheese101")
      */
-    return this.store.delete(this.collection, this.id).then((response) => {
-      this.data = null;
-      this.full = null;
-      if (callback) {
-        callback(response);
-      }
-      return response;
-    });
+    const response = await this.store.delete(this.collection, this.id);
+    this.data = null;
+    this.full = null;
+    return response;
   }
 }
 
@@ -105,41 +85,34 @@ export default class Collections {
 
   buildURL = (collection, itemId) => {
     const url = `collections/${collection}/`;
-    return itemId === undefined ? url : `${url + itemId}/`;
+    return itemId === undefined ? url : `${url}${itemId}/`;
   };
 
   entry(collection, itemId, itemData) {
     return new CollectionEntry(this, collection, itemId, itemData);
   }
 
-  get(collection, itemId, callback) {
+  async get(collection, itemId) {
     /**
      * get item from collection
      * @method get
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
      * @param  {object}   itemId  id for this entry
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
+    const response = await this.client.get({
+      url: this.buildURL(collection, itemId),
+      signature: this.token,
+    });
 
-    return this.client
-      .get({
-        url: this.buildURL(collection, itemId),
-        signature: this.token,
-      })
-      .then((response) => {
-        const entry = this.client.collections.entry(response.collection, response.id, response.data);
-        entry.full = response;
-        if (callback) {
-          callback(entry);
-        }
-        return entry;
-      });
+    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    entry.full = response;
+    return entry;
   }
 
-  add(collection, itemId, itemData, callback) {
+  async add(collection, itemId, itemData) {
     /**
      * Add item to collection
      * @method add
@@ -147,32 +120,24 @@ export default class Collections {
      * @param  {string}   collection  collection name
      * @param  {string}   itemId  entry id
      * @param  {object}   itemData  ObjectStore data
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+    const response = await this.client.post({
+      url: this.buildURL(collection),
+      body: {
+        id: itemId === null ? undefined : itemId,
+        data: itemData,
+      },
+      signature: this.token,
+    });
 
-    const body = {
-      id: itemId === null ? undefined : itemId,
-      data: itemData,
-    };
-    return this.client
-      .post({
-        url: this.buildURL(collection),
-        body,
-        signature: this.token,
-      })
-      .then((response) => {
-        const entry = this.client.collections.entry(response.collection, response.id, response.data);
-        entry.full = response;
-        if (callback) {
-          callback(entry);
-        }
-        return entry;
-      });
+    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    entry.full = response;
+    return entry;
   }
 
-  update(collection, entryId, data, callback) {
+  async update(collection, entryId, data) {
     /**
      * Update entry in the collection
      * @method update
@@ -180,145 +145,107 @@ export default class Collections {
      * @param  {string}   collection  collection name
      * @param  {object}   entryId  Collection object id
      * @param  {object}   data  ObjectStore data
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+    const response = await this.client.put({
+      url: this.buildURL(collection, entryId),
+      body: { data },
+      signature: this.token,
+    });
 
-    return this.client
-      .put({
-        url: this.buildURL(collection, entryId),
-        body: { data },
-        signature: this.token,
-      })
-      .then((response) => {
-        const entry = this.client.collections.entry(response.collection, response.id, response.data);
-        entry.full = response;
-        if (callback) {
-          callback(entry);
-        }
-        return entry;
-      });
+    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    entry.full = response;
+    return entry;
   }
 
-  delete(collection, entryId, callback) {
+  delete(collection, entryId) {
     /**
      * Delete entry from collection
      * @method delete
      * @memberof Collections.prototype
      * @param  {object}   entryId  Collection entry id
-     * @param  {requestCallback} callback Callback to call on completion
      * @return {Promise} Promise object
      * @example collection.delete("food", "cheese101")
      */
-    return this.client.delete(
-      {
-        url: this.buildURL(collection, entryId),
-        signature: this.token,
-      },
-      callback,
-    );
+    return this.client.delete({
+      url: this.buildURL(collection, entryId),
+      signature: this.token,
+    });
   }
 
-  upsert(collection, data, callback) {
+  upsert(collection, data) {
     /**
      * Upsert one or more items within a collection.
      *
      * @method upsert
      * @memberof Collections.prototype
      * @param {object|array} data - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */
-
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
+    if (!Array.isArray(data)) data = [data];
 
-    const body = { data: { [collection]: data } };
-
-    return this.client.post(
-      {
-        url: 'collections/',
-        serviceName: 'api',
-        body,
-        signature: this.client.getCollectionsToken(),
-      },
-      callback instanceof Function ? callback : undefined,
-    );
+    return this.client.post({
+      url: 'collections/',
+      serviceName: 'api',
+      body: { data: { [collection]: data } },
+      signature: this.client.getCollectionsToken(),
+    });
   }
 
-  select(collection, ids, callback) {
+  select(collection, ids) {
     /**
      * Select all objects with ids from the collection.
      *
      * @method select
      * @memberof Collections.prototype
      * @param {object|array} ids - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */
-
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    if (!Array.isArray(ids)) {
-      ids = [ids];
-    }
+    if (!Array.isArray(ids)) ids = [ids];
 
-    const params = {
-      foreign_ids: ids.map((id) => `${collection}:${id}`).join(','),
-    };
-
-    return this.client.get(
-      {
-        url: 'collections/',
-        serviceName: 'api',
-        qs: params,
-        signature: this.client.getCollectionsToken(),
-      },
-      callback instanceof Function ? callback : undefined,
-    );
+    return this.client.get({
+      url: 'collections/',
+      serviceName: 'api',
+      qs: { foreign_ids: ids.map((id) => `${collection}:${id}`).join(',') },
+      signature: this.client.getCollectionsToken(),
+    });
   }
 
-  deleteMany(collection, ids, callback) {
+  deleteMany(collection, ids) {
     /**
      * Remove all objects by id from the collection.
      *
      * @method delete
      * @memberof Collections.prototype
      * @param {object|array} ids - A single json object or an array of objects
-     * @param {requestCallback} callback - Callback to call on completion
      * @return {Promise} Promise object.
      */
-
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
     }
 
-    if (!Array.isArray(ids)) {
-      ids = [ids];
-    }
+    if (!Array.isArray(ids)) ids = [ids];
 
     const params = {
       collection_name: collection,
       ids: ids.map((id) => id.toString()).join(','),
     };
 
-    return this.client.delete(
-      {
-        url: 'collections/',
-        serviceName: 'api',
-        qs: params,
-        signature: this.client.getCollectionsToken(),
-      },
-      callback instanceof Function ? callback : undefined,
-    );
+    return this.client.delete({
+      url: 'collections/',
+      serviceName: 'api',
+      qs: params,
+      signature: this.client.getCollectionsToken(),
+    });
   }
 }

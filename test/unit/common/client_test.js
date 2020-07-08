@@ -1,6 +1,7 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
+import utils from '../../../src/lib/utils';
 import errors from '../../../src/lib/errors';
 import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
@@ -158,69 +159,47 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
   });
 
-  describe('#wrapPromiseTask', function () {
-    it('(1) success', function (done) {
-      function fulfill() {
-        done();
-      }
-
-      function reject(err) {
-        expect(err).to.be.a(errors.StreamApiError);
-        done(err);
-      }
-
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
-
-      task(null, { statusCode: 200 }, {});
+  describe('#handleResponse', function () {
+    it('(1) success 200', function () {
+      const data = { success: true };
+      const result = this.client.handleResponse({ status: 200, data });
+      expect(result).to.be.eql(data);
     });
 
-    it('(2) failure 500 status code', function (done) {
-      function fulfill() {
-        done('Expected to fail');
-      }
-
-      function reject(err) {
-        expect(err).to.be.a(errors.StreamApiError);
-        done();
-      }
-
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
-
-      task(null, { statusCode: 500 }, {});
+    it('(2) success 201', function () {
+      const data = { success: true };
+      const result = this.client.handleResponse({ status: 201, data });
+      expect(result).to.be.eql(data);
     });
 
-    it('(3) failure rejected', function (done) {
-      function fulfill() {
-        done('Expected to fail');
-      }
-
-      function reject(err) {
-        expect(err).to.be.a(errors.StreamApiError);
-        done();
-      }
-
-      const task = this.client.wrapPromiseTask(undefined, fulfill, reject);
-
-      task(new Error('oops'), { statusCode: 200 }, {});
+    it('(3) success 203', function () {
+      const data = { success: true };
+      const result = this.client.handleResponse({ status: 203, data });
+      expect(result).to.be.eql(data);
     });
 
-    it('(4) with callback', function (done) {
-      function fulfill() {}
+    it('(4) success 204', function () {
+      const data = { success: true };
+      const result = this.client.handleResponse({ status: 204, data });
+      expect(result).to.be.eql(data);
+    });
 
-      function reject(err) {
+    it('(5) failure 400 status code', function () {
+      const data = { error: true };
+      expect(() => this.client.handleResponse({ status: 400, data })).to.throwException((err) => {
         expect(err).to.be.a(errors.StreamApiError);
-        done(err);
-      }
+        expect(err.error).to.be.eql(data);
+        expect(err.response).to.be.eql({ status: 400, data });
+      });
+    });
 
-      const task = this.client.wrapPromiseTask(
-        function () {
-          done();
-        },
-        fulfill,
-        reject,
-      );
-
-      task(null, { statusCode: 200 }, {});
+    it('(6) failure 500 status code', function () {
+      const data = { error: true };
+      expect(() => this.client.handleResponse({ status: 500, data })).to.throwException((err) => {
+        expect(err).to.be.a(errors.StreamApiError);
+        expect(err.error).to.be.eql(data);
+        expect(err.response).to.be.eql({ status: 500, data });
+      });
     });
   });
 
@@ -239,9 +218,8 @@ describe('[UNIT] Stream Client (Common)', function () {
         signature: 'Basic encoded_password',
       });
 
-      expect(kwargs.qs.api_key).to.be(this.client.apiKey);
-      expect(kwargs.qs.location).to.be(this.client.group);
-      expect(kwargs.json).to.be(true);
+      expect(kwargs.params.api_key).to.be(this.client.apiKey);
+      expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('simple');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
       expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
@@ -257,9 +235,8 @@ describe('[UNIT] Stream Client (Common)', function () {
         signature: `feedname ${signature}`,
       });
 
-      expect(kwargs.qs.api_key).to.be(this.client.apiKey);
-      expect(kwargs.qs.location).to.be(this.client.group);
-      expect(kwargs.json).to.be(true);
+      expect(kwargs.params.api_key).to.be(this.client.apiKey);
+      expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
       expect(kwargs.headers.Authorization).to.be(signature);
@@ -273,9 +250,8 @@ describe('[UNIT] Stream Client (Common)', function () {
         signature: 'Basic encoded_password',
       });
 
-      expect(kwargs.qs.api_key).to.be(this.client.apiKey);
-      expect(kwargs.qs.location).to.be(this.client.group);
-      expect(kwargs.json).to.be(true);
+      expect(kwargs.params.api_key).to.be(this.client.apiKey);
+      expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('simple');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
       expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
@@ -292,46 +268,108 @@ describe('[UNIT] Stream Client (Common)', function () {
         signature: `feedname ${signature}`,
       });
 
-      expect(kwargs.qs.api_key).to.be(this.client.apiKey);
-      expect(kwargs.qs.location).to.be(this.client.group);
-      expect(kwargs.json).to.be(true);
+      expect(kwargs.params.api_key).to.be(this.client.apiKey);
+      expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
       expect(kwargs.headers.Authorization).to.be(signature);
       expect(kwargs.url).to.contain('personalization.stream-io-api.com');
     });
+
+    it('other data included', function () {
+      const kwargs = this.client.enrichKwargs({
+        url: 'feed',
+        qs: { with_activity: true },
+        body: { reaction_id: 123 },
+        headers: {
+          'content-type': 'application',
+        },
+      });
+
+      expect(kwargs.params.api_key).to.be(this.client.apiKey);
+      expect(kwargs.params.location).to.be(this.client.group);
+      expect(kwargs.params.with_activity).to.be(true);
+      expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
+      expect(kwargs.headers['content-type']).to.be('application');
+      expect(kwargs.data).to.be.eql({ reaction_id: 123 });
+      expect(kwargs.url).to.be('https://api.stream-io-api.com/api/v1.0/feed');
+    });
   });
 
   describe('Requests', function () {
-    const tdRequest = td.function();
-
-    function toExpect(method) {
-      const arg0 = { url: 'feed', method, gzip: true };
-      const fun = td.matchers.isA(Function);
-      return tdRequest(arg0, fun);
-    }
+    const tdDoAxiosRequest = td.function();
 
     beforeEach(function () {
-      this.client.request = tdRequest;
+      this.client.doAxiosRequest = tdDoAxiosRequest;
       td.replace(this.client, 'enrichKwargs', enrichKwargs);
     });
 
     it('#get', function () {
       this.client.get({ url: 'feed' });
 
-      td.verify(toExpect('GET'));
+      td.verify(tdDoAxiosRequest('GET', { url: 'feed' }));
     });
 
     it('#post', function () {
       this.client.post({ url: 'feed' });
 
-      td.verify(toExpect('POST'));
+      td.verify(tdDoAxiosRequest('POST', { url: 'feed' }));
+    });
+
+    it('#put', function () {
+      this.client.put({ url: 'feed' });
+
+      td.verify(tdDoAxiosRequest('PUT', { url: 'feed' }));
     });
 
     it('#delete', function () {
       this.client.delete({ url: 'feed' });
 
-      td.verify(toExpect('DELETE'));
+      td.verify(tdDoAxiosRequest('DELETE', { url: 'feed' }));
+    });
+
+    it('#upload', function () {
+      const onUploadProgress = td.function('onUploadProgress');
+      const url = 'images';
+      const uri = 'file://someFile.jpg';
+      const name = 'name';
+      const contentType = 'type';
+      this.client.getOrCreateToken = () => 'token';
+
+      const addFileToFormData = td.function('addFileToFormData');
+      const fd = { getHeaders: config.IS_NODE_ENV ? () => 'headers' : '' };
+      td.when(addFileToFormData(), { ignoreExtraArgs: true }).thenReturn(fd);
+      td.replace(utils, 'addFileToFormData', addFileToFormData);
+
+      this.client.upload(url, uri, name, contentType, onUploadProgress);
+
+      td.verify(
+        tdDoAxiosRequest('POST', {
+          url: 'images',
+          body: fd,
+          headers: config.IS_NODE_ENV ? 'headers' : {},
+          signature: 'token',
+          axiosOptions: {
+            timeout: 0,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+            onUploadProgress,
+          },
+        }),
+      );
+    });
+  });
+
+  describe('doAxiosRequest', function () {
+    it('#get', function () {
+      td.replace(this.client, 'enrichKwargs', enrichKwargs);
+      const tdRequest = td.function();
+      td.when(tdRequest({ method: 'GET', url: 'feed' })).thenResolve({ status: 200, data: { next: '' } });
+      this.client.request = tdRequest;
+
+      return this.client.get({ method: 'GET', url: 'feed' }).then((response) => {
+        expect(response).to.be.eql({ next: '' });
+      });
     });
   });
 });

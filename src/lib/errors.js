@@ -1,32 +1,27 @@
 const canCapture = typeof Error.captureStackTrace === 'function';
 const canStack = !!new Error().stack;
 
-const errors = {};
-
 /**
  * Abstract error object
  * @class ErrorAbstract
  * @access private
  * @param  {string}      [msg]         Error message
- * @param  {function}    constructor
  */
-function ErrorAbstract(msg, constructor) {
-  this.message = msg;
+class ErrorAbstract extends Error {
+  constructor(msg) {
+    super(msg);
 
-  Error.call(this, this.message);
+    this.message = msg;
 
-  /* istanbul ignore else */
-  if (canCapture) {
-    Error.captureStackTrace(this, constructor);
-  } else if (canStack) {
-    this.stack = new Error().stack;
-  } else {
-    this.stack = '';
+    if (canCapture) {
+      Error.captureStackTrace(this, constructor);
+    } else if (canStack) {
+      this.stack = new Error().stack;
+    } else {
+      this.stack = '';
+    }
   }
 }
-
-errors._Abstract = ErrorAbstract;
-ErrorAbstract.prototype = new Error();
 
 /**
  * FeedError
@@ -36,11 +31,7 @@ ErrorAbstract.prototype = new Error();
  * @memberof Stream.errors
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
-errors.FeedError = function FeedError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.FeedError.prototype = new ErrorAbstract();
+class FeedError extends ErrorAbstract {}
 
 /**
  * SiteError
@@ -50,11 +41,7 @@ errors.FeedError.prototype = new ErrorAbstract();
  * @memberof Stream.errors
  * @param  {string}  [msg]  An error message that will probably end up in a log.
  */
-errors.SiteError = function SiteError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.SiteError.prototype = new ErrorAbstract();
+class SiteError extends ErrorAbstract {}
 
 /**
  * MissingSchemaError
@@ -64,11 +51,7 @@ errors.SiteError.prototype = new ErrorAbstract();
  * @memberof Stream.errors
  * @param  {string} msg
  */
-errors.MissingSchemaError = function MissingSchemaError(msg) {
-  ErrorAbstract.call(this, msg);
-};
-
-errors.MissingSchemaError.prototype = new ErrorAbstract();
+class MissingSchemaError extends ErrorAbstract {}
 
 /**
  * StreamApiError
@@ -80,13 +63,18 @@ errors.MissingSchemaError.prototype = new ErrorAbstract();
  * @param  {object} data
  * @param  {object} response
  */
-errors.StreamApiError = function StreamApiError(msg, data, response) {
-  this.error = data;
-  this.response = response;
+class StreamApiError extends ErrorAbstract {
+  constructor(msg, data, response) {
+    super(msg);
 
-  ErrorAbstract.call(this, msg);
+    this.error = data;
+    this.response = response;
+  }
+}
+
+export default {
+  FeedError,
+  SiteError,
+  MissingSchemaError,
+  StreamApiError,
 };
-
-errors.StreamApiError.prototype = new ErrorAbstract();
-
-export default errors;

@@ -154,8 +154,8 @@ export class CloudContext {
     this.test(`the activity should ${label}`, fn);
   }
 
-  requestShouldError(statusCode, fn) {
-    this.test(`the request should error with status ${statusCode}`, async () => {
+  requestShouldError(status, fn) {
+    this.test(`the request should error with status ${status}`, async () => {
       try {
         await fn();
         expect.fail(null, null, 'request should not succeed');
@@ -163,10 +163,10 @@ export class CloudContext {
         if (!(e instanceof stream.errors.StreamApiError)) {
           throw e;
         }
-        if (e.response.statusCode !== statusCode) {
+        if (e.response.status !== status) {
           console.log(e.error); // eslint-disable-line no-console
         }
-        e.response.statusCode.should.equal(statusCode);
+        e.response.status.should.equal(status);
         this.error = e;
         this.response = e.error;
       }

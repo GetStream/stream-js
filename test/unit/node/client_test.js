@@ -2,6 +2,7 @@ import expect from 'expect.js';
 import td from 'testdouble';
 import jwtDecode from 'jwt-decode';
 
+import pkg from '../../../package.json';
 import stream from '../../../src/getstream';
 import StreamClient from '../../../src/lib/client';
 import StreamFeed from '../../../src/lib/feed';
@@ -33,7 +34,7 @@ describe('[UNIT] Stream Client (Node)', function () {
   it('#userAgent', function () {
     const useragent = this.client.userAgent();
 
-    expect(useragent).to.be('stream-javascript-client-node-unknown');
+    expect(useragent).to.be(`stream-javascript-client-node-${pkg.version}`);
   });
 
   it('#feed', function () {
@@ -91,31 +92,11 @@ describe('[UNIT] Stream Client (Node)', function () {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined,
         ),
       );
     });
 
-    it('(2) works - callback', function () {
-      const post = td.function();
-      td.replace(this.client, 'post', post);
-
-      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-      const fn = function () {};
-
-      this.client.updateActivities(activities, fn);
-
-      td.verify(
-        post(
-          td.matchers.contains({
-            url: 'activities/',
-          }),
-          fn,
-        ),
-      );
-    });
-
-    it('(3) update single activity', function () {
+    it('(2) update single activity', function () {
       const post = td.function();
       td.replace(this.client, 'post', post);
 
@@ -128,26 +109,6 @@ describe('[UNIT] Stream Client (Node)', function () {
           td.matchers.contains({
             url: 'activities/',
           }),
-          undefined,
-        ),
-      );
-    });
-
-    it('(3) update single activity - callback', function () {
-      const fn = function () {};
-      const post = td.function();
-      td.replace(this.client, 'post', post);
-
-      const activities = [{ actor: 'matthisk', object: 0, verb: 'do' }];
-
-      this.client.updateActivity(activities[0], fn);
-
-      td.verify(
-        post(
-          td.matchers.contains({
-            url: 'activities/',
-          }),
-          fn,
         ),
       );
     });
@@ -203,26 +164,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const get = td.function();
-        td.replace(this.client, 'get', get);
-
-        const ids = ['one', 'two', 'three'];
-        const fn = function () {};
-
-        this.client.getActivities({ ids }, fn);
-
-        td.verify(
-          get(
-            td.matchers.contains({
-              url: 'activities/',
-            }),
-            fn,
           ),
         );
       });
@@ -245,29 +186,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activities/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const get = td.function();
-        td.replace(this.client, 'get', get);
-
-        const foreignIDTimes = [
-          { foreignID: 'like:1', time: '2018-07-08T14:09:36.000000' },
-          { foreignID: 'post:2', time: '2018-07-09T20:30:40.000000' },
-        ];
-        const fn = function () {};
-
-        this.client.getActivities({ foreignIDTimes }, fn);
-
-        td.verify(
-          get(
-            td.matchers.contains({
-              url: 'activities/',
-            }),
-            fn,
           ),
         );
       });
@@ -276,148 +194,71 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('#activityPartialUpdate', function () {
     it('throws', function () {
-      const self = this;
-
-      function isGoingToThrow1() {
-        self.client.activityPartialUpdate({});
-      }
-
-      function isGoingToThrow2() {
-        self.client.activityPartialUpdate(0);
-      }
-
-      function isGoingToThrow3() {
-        self.client.activityPartialUpdate(null);
-      }
-
-      function isGoingToThrow4() {
-        self.client.activityPartialUpdate({ foreignID: 'foo:bar' });
-      }
-
-      function isGoingToThrow5() {
-        self.client.activityPartialUpdate({
-          time: '2016-11-10T13:20:00.000000',
-        });
-      }
-
-      function isGoingToThrow6() {
-        self.client.activityPartialUpdate({ id: 'test', set: 'wrong' });
-      }
-
-      function isGoingToThrow7() {
-        self.client.activityPartialUpdate({ id: 'test', unset: 'wrong' });
-      }
-
-      function isTypeError(err) {
+      const isTypeError = (err) => {
         expect(err).to.be.a(TypeError);
-      }
+      };
 
-      expect(isGoingToThrow1).to.throwException(isTypeError);
-      expect(isGoingToThrow2).to.throwException(isTypeError);
-      expect(isGoingToThrow3).to.throwException(isTypeError);
-      expect(isGoingToThrow4).to.throwException(isTypeError);
-      expect(isGoingToThrow5).to.throwException(isTypeError);
-      expect(isGoingToThrow6).to.throwException(isTypeError);
-      expect(isGoingToThrow7).to.throwException(isTypeError);
+      const throwErr = () => {
+        throw new Error('should error');
+      };
+
+      this.client.activityPartialUpdate({}).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate(0).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate(null).then().then(throwErr).catch(isTypeError);
+      this.client.activityPartialUpdate({ foreignID: 'foo:bar' }).then().then(throwErr).catch(isTypeError);
+      this.client
+        .activityPartialUpdate({ time: '2016-11-10T13:20:00.000000' })
+        .then()
+        .then(throwErr)
+        .catch(isTypeError);
+      this.client.activityPartialUpdate({ id: 'test', set: 'wrong' }).then().then(throwErr).catch(isTypeError);
+
+      return this.client.activityPartialUpdate({ id: 'test', unset: 'wrong' }).then().then(throwErr).catch(isTypeError);
     });
 
     describe('by ID', function () {
       it('(1) works', function () {
+        const id = '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4';
         const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
+        td.when(post(td.matchers.contains({ url: 'activity/' })), { ignoreExtraArgs: true }).thenResolve({
+          activities: [{ id }],
+        });
         td.replace(this.client, 'post', post);
 
         const data = {
-          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
+          id,
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
 
-        this.client.activityPartialUpdate(data);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
-        td.replace(this.client, 'post', post);
-
-        const data = {
-          id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
-          set: { 'foo.bar': 42 },
-          unset: ['baz'],
-        };
-        const fn = function () {};
-
-        this.client.activityPartialUpdate(data, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
-          ),
-        );
+        return this.client.activityPartialUpdate(data).then((res) => {
+          expect(res).to.eql({ id });
+        });
       });
     });
 
     describe('by foreign ID and time', function () {
       it('(1) works', function () {
+        const foreignID = 'product:123';
+        const duration = '30ms';
+
         const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
+        td.when(post(td.matchers.contains({ url: 'activity/' })), { ignoreExtraArgs: true }).thenResolve({
+          activities: [{ foreignID }],
+          duration,
+        });
         td.replace(this.client, 'post', post);
 
         const data = {
-          foreignID: 'product:123',
+          foreignID,
           time: '2016-11-10T13:20:00.000000',
           set: { 'foo.bar': 42 },
           unset: ['baz'],
         };
 
-        this.client.activityPartialUpdate(data);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.when(post(), { ignoreExtraArgs: true }).thenResolve('call API');
-        td.replace(this.client, 'post', post);
-
-        const data = {
-          foreignID: 'product:123',
-          time: '2016-11-10T13:20:00.000000',
-          set: { 'foo.bar': 42 },
-          unset: ['baz'],
-        };
-        const fn = function () {};
-
-        this.client.activityPartialUpdate(data, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
-          ),
-        );
+        return this.client.activityPartialUpdate(data).then((res) => {
+          expect(res).to.eql({ foreignID, duration });
+        });
       });
     });
   });
@@ -521,37 +362,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.replace(this.client, 'post', post);
-
-        const changes = [
-          {
-            id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
-            set: { 'foo.bar': 42 },
-            unset: ['baz'],
-          },
-          {
-            id: '8d2dcad8-1e34-11e9-8b10-9cb6d0925edd',
-            set: { 'foo.baz': 43 },
-            unset: ['bar'],
-          },
-        ];
-        const fn = function () {};
-
-        this.client.activitiesPartialUpdate(changes, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });
@@ -584,39 +394,6 @@ describe('[UNIT] Stream Client (Node)', function () {
             td.matchers.contains({
               url: 'activity/',
             }),
-            undefined,
-          ),
-        );
-      });
-
-      it('(2) works - callback', function () {
-        const post = td.function();
-        td.replace(this.client, 'post', post);
-
-        const changes = [
-          {
-            foreign_id: 'product:123',
-            time: '2016-11-10T13:20:00.000000',
-            set: { 'foo.bar': 42 },
-            unset: ['baz'],
-          },
-          {
-            foreign_id: 'product:321',
-            time: '2016-11-10T13:20:00.000000',
-            set: { 'foo.baz': 43 },
-            unset: ['bar'],
-          },
-        ];
-        const fn = function () {};
-
-        this.client.activitiesPartialUpdate(changes, fn);
-
-        td.verify(
-          post(
-            td.matchers.contains({
-              url: 'activity/',
-            }),
-            fn,
           ),
         );
       });
@@ -633,10 +410,10 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
   });
 
-  describe('createUserSessionToken', function () {
+  describe('createUserToken', function () {
     it('with userId only', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop');
-      const token = client.createUserSessionToken('42');
+      const token = client.createUserToken('42');
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
       );
@@ -644,7 +421,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
     it('with extra data', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop');
-      const token = client.createUserSessionToken('42', { a: 'b' });
+      const token = client.createUserToken('42', { a: 'b' });
       const jwtBody = jwtDecode(token);
       expect(jwtBody).to.eql({
         user_id: '42',
@@ -658,7 +435,7 @@ describe('[UNIT] Stream Client (Node)', function () {
       const client = stream.connect('12345', 'abcdefghijklmnop', 1234, {
         expireTokens: true,
       });
-      const token = client.createUserSessionToken('42');
+      const token = client.createUserToken('42');
       const timestamp = Date.now() / 1000;
       const jwtBody = jwtDecode(token);
       expect(jwtBody.user_id).to.eql('42');

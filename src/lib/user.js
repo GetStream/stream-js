@@ -17,103 +17,67 @@ export default class StreamUser {
     this.url = `user/${this.id}/`;
   }
 
-  _streamRef() {
+  ref() {
     return `SU:${this.id}`;
   }
 
-  ref() {
-    return this._streamRef();
+  delete() {
+    return this.client.delete({
+      url: this.url,
+      signature: this.token,
+    });
   }
 
-  delete(callback) {
-    return this.client
-      .delete({
-        url: this.url,
-        signature: this.token,
-      })
-      .then((response) => {
-        if (callback) {
-          callback(response);
-        }
-        return response;
-      });
+  async get(options) {
+    const response = await this.client.get({
+      url: this.url,
+      signature: this.token,
+      qs: options,
+    });
+
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
-  get(options, callback) {
-    return this.client
-      .get({
-        url: this.url,
-        signature: this.token,
-        qs: options,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
-        return this;
-      });
+  async create(data, options) {
+    const response = await this.client.post({
+      url: 'user/',
+      body: {
+        id: this.id,
+        data: data || this.data || {},
+      },
+      qs: options,
+      signature: this.token,
+    });
+
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
-  _chooseData(data) {
-    if (data !== undefined) {
-      return data;
-    }
-    if (this.data !== undefined) {
-      return this.data;
-    }
-    return {};
+  async update(data) {
+    const response = await this.client.put({
+      url: this.url,
+      body: {
+        data: data || this.data || {},
+      },
+      signature: this.token,
+    });
+
+    this.full = { ...response };
+    delete this.full.duration;
+    this.data = this.full.data;
+    return this;
   }
 
-  create(data, options, callback) {
-    return this.client
-      .post({
-        url: 'user/',
-        body: {
-          id: this.id,
-          data: this._chooseData(data),
-        },
-        qs: options,
-        signature: this.token,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
-        return this;
-      });
+  getOrCreate(data) {
+    return this.create(data, { get_or_create: true });
   }
 
-  update(data, callback) {
-    return this.client
-      .put({
-        url: this.url,
-        body: {
-          data: this._chooseData(data),
-        },
-        signature: this.token,
-      })
-      .then((response) => {
-        this.full = { ...response };
-        delete this.full.duration;
-        this.data = this.full.data;
-        if (callback) {
-          callback(response);
-        }
-        return this;
-      });
-  }
-
-  getOrCreate(data, callback) {
-    return this.create(data, { get_or_create: true }, callback);
-  }
-
-  profile(callback) {
-    return this.get({ with_follow_counts: true }, callback);
+  profile() {
+    return this.get({ with_follow_counts: true });
   }
 }

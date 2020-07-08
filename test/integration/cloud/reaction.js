@@ -83,8 +83,8 @@ describe('Reaction pagination', () => {
 
     ctx.activityShould('contain correct next urls in latest_reactions_extra', () => {
       const keys = ['like', 'comment', 'clap'];
-      const latest_extra = ctx.activity.latest_reactions_extra;
-      latest_extra.should.have.all.keys(keys);
+      const latestExtra = ctx.activity.latest_reactions_extra;
+      latestExtra.should.have.all.keys(keys);
       const checkQuery = (extra, kind, reactions, withUser) => {
         extra.next.should.be.a('string');
         extra.next.slice(0, 4).should.eql('http');
@@ -98,14 +98,14 @@ describe('Reaction pagination', () => {
         }
 
         const { query } = url.parse(extra.next, true);
-        latest_extra[kind].next.should.include('/activity_id/');
-        latest_extra[kind].next.should.include(`/${kind}/`);
-        latest_extra[kind].next.should.include(`/${ctx.activity.id}/`);
+        latestExtra[kind].next.should.include('/activity_id/');
+        latestExtra[kind].next.should.include(`/${kind}/`);
+        latestExtra[kind].next.should.include(`/${ctx.activity.id}/`);
         expect(query).to.eql(expectedQuery);
       };
-      checkQuery(latest_extra.like, 'like', likes);
-      checkQuery(latest_extra.comment, 'comment', comments);
-      checkQuery(latest_extra.clap, 'clap', claps);
+      checkQuery(latestExtra.like, 'like', likes);
+      checkQuery(latestExtra.comment, 'comment', comments);
+      checkQuery(latestExtra.clap, 'clap', claps);
     });
   });
 
