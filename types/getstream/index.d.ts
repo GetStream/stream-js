@@ -157,7 +157,7 @@ export class Feed {
   getActivityDetail(activityId: string, options?: object): Promise<object>;
 
   // Subscriptions
-  getFayeClient(): object; // would like to return `Faye.Client` here, but they haven't release any ts def files yet
+  getFayeClient(timeout?: number): object; // would like to return `Faye.Client` here, but they haven't release any ts def files yet
   subscribe(callback: GenericCallback): Promise<object>;
   unsubscribe(): void;
 
