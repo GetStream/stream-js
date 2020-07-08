@@ -19,15 +19,16 @@ This release drops some of the already deprecated functions.
 - Drop `user._streamRef` in favor of `user.ref`
 - Drop `feed.getReadOnlyToken` in favor of `client.getReadOnlyToken`
 - Drop `feed.getReadWriteToken` in favor of `client.getReadWriteToken`
-- `Feed(feedSlug: string, userId: string, token?: string)` instantian with token as last parameter is deprecated. Token should be supplied by client like `stream.connect(apiKey, userToken, appId).feed(feedSlug: string, userId: string)`
+- `Feed(feedSlug: string, userId: string, token?: string)` instantiation with token as last parameter is deprecated. Token should be supplied by client like `stream.connect(apiKey, userToken, appId).feed(feedSlug: string, userId: string)`
 
 ### New features
 
 - `onUploadProgress` callback for uploads.
+- `options.timeout` is honored if given in client setup
 
 ## 4.5.4 - 2020-06-12
 
-- Github Action
+- GitHub Action
 - More tests for types
 - Format change in changelog
 - Enable node 11
