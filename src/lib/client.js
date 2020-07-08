@@ -93,7 +93,7 @@ class StreamClient {
     }
 
     this.request = axios.create({
-      timeout: 10 * 1000, // 10 seconds
+      timeout: this.options.timeout || 10 * 1000, // 10 seconds
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
     });
@@ -395,7 +395,7 @@ class StreamClient {
     };
   }
 
-  getFayeClient() {
+  getFayeClient(timeout = 10) {
     /**
      * Returns this client's current Faye client
      * @method getFayeClient
@@ -404,7 +404,7 @@ class StreamClient {
      * @return {object} Faye client
      */
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client(this.fayeUrl, { timeout: 10 });
+      this.fayeClient = new Faye.Client(this.fayeUrl, { timeout });
       const authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
