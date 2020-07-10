@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import stream from '../../../src/getstream';
+import { connect } from '../../../src/getstream';
 import errors from '../../../src/lib/errors';
 
 import { init, beforeEachFn } from '../utils/hooks';
@@ -311,7 +311,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
   });
 
   it('no secret application auth', function () {
-    const client = stream.connect('ahj2ndz7gsan');
+    const client = connect('ahj2ndz7gsan');
 
     expect(() => client.addToMany({}, [])).to.throwError((e) => {
       expect(e).to.be.a(errors.SiteError);

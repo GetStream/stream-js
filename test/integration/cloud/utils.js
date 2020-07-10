@@ -1,7 +1,6 @@
-// import chai from 'chai';
 import chai, { expect } from 'chai';
 
-import stream from '../../../src/getstream';
+import { connect, errors } from '../../../src/getstream';
 import config from '../utils/config';
 import { randUserId } from '../utils/hooks';
 
@@ -23,7 +22,7 @@ export class CloudContext {
       group: 'testCycle',
     };
 
-    this.serverSideClient = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, this.clientOptions);
+    this.serverSideClient = connect(config.API_KEY, config.API_SECRET, config.APP_ID, this.clientOptions);
 
     // apiKey, apiSecret, appId, options
     this.alice = this.createUserClient('alice');
@@ -82,7 +81,7 @@ export class CloudContext {
   }
 
   createUserClient(userId, extraData) {
-    return stream.connect(config.API_KEY, this.createUserToken(userId, extraData), config.APP_ID, this.clientOptions);
+    return connect(config.API_KEY, this.createUserToken(userId, extraData), config.APP_ID, this.clientOptions);
   }
 
   wrapFn(fn) {
@@ -160,7 +159,7 @@ export class CloudContext {
         await fn();
         expect.fail(null, null, 'request should not succeed');
       } catch (e) {
-        if (!(e instanceof stream.errors.StreamApiError)) {
+        if (!(e instanceof errors.StreamApiError)) {
           throw e;
         }
         if (e.response.status !== status) {

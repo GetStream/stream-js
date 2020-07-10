@@ -3,7 +3,7 @@ import td from 'testdouble';
 import jwtDecode from 'jwt-decode';
 
 import pkg from '../../../package.json';
-import stream from '../../../src/getstream';
+import { connect } from '../../../src/getstream';
 import StreamClient from '../../../src/lib/client';
 import StreamFeed from '../../../src/lib/feed';
 import { beforeEachFn } from '../utils/hooks';
@@ -402,7 +402,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('getAnalyticsToken', function () {
     it('generate correct token', function () {
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       const token = client.getAnalyticsToken();
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6ImFuYWx5dGljcyIsImFjdGlvbiI6IioiLCJ1c2VyX2lkIjoiKiJ9.f7KFu7U2Uw_yq__9hV4-wr9S0KXo7w3wxTELOAY4qdc',
@@ -412,7 +412,7 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   describe('createUserToken', function () {
     it('with userId only', function () {
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       const token = client.createUserToken('42');
       expect(token).to.be(
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIifQ.fJP44ZlP7bly-2HvbPxBO7WUGJhc1i2hpj4TnXmtYLE',
@@ -420,7 +420,7 @@ describe('[UNIT] Stream Client (Node)', function () {
     });
 
     it('with extra data', function () {
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       const token = client.createUserToken('42', { a: 'b' });
       const jwtBody = jwtDecode(token);
       expect(jwtBody).to.eql({
@@ -432,7 +432,7 @@ describe('[UNIT] Stream Client (Node)', function () {
       );
     });
     it('with expireTokens', function () {
-      const client = stream.connect('12345', 'abcdefghijklmnop', 1234, {
+      const client = connect('12345', 'abcdefghijklmnop', 1234, {
         expireTokens: true,
       });
       const token = client.createUserToken('42');
@@ -447,14 +447,14 @@ describe('[UNIT] Stream Client (Node)', function () {
     it('#LOCAL', function () {
       process.env.LOCAL = 1;
 
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('http://localhost:8000/api/');
 
       delete process.env.LOCAL;
     });
 
     it('#LOCAL', function () {
-      const client = stream.connect('12345', 'abcdefghijklmnop', null, {
+      const client = connect('12345', 'abcdefghijklmnop', null, {
         location: 'nl-NL',
       });
       expect(client.baseUrl).to.be('https://nl-NL-api.stream-io-api.com/api/');
@@ -463,7 +463,7 @@ describe('[UNIT] Stream Client (Node)', function () {
     it('#LOCAL_FAYE', function () {
       process.env.LOCAL_FAYE = 1;
 
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       expect(client.fayeUrl).to.be('http://localhost:9999/faye/');
 
       delete process.env.LOCAL_FAYE;
@@ -472,7 +472,7 @@ describe('[UNIT] Stream Client (Node)', function () {
     it('#STREAM_BASE_URL', function () {
       process.env.STREAM_BASE_URL = 'https://local.stream-io-api.com/api/';
 
-      const client = stream.connect('12345', 'abcdefghijklmnop');
+      const client = connect('12345', 'abcdefghijklmnop');
       expect(client.baseUrl).to.be('https://local.stream-io-api.com/api/');
 
       delete process.env.STREAM_BASE_URL;

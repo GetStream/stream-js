@@ -2,10 +2,8 @@ import expect from 'expect.js';
 
 import pkg from '../../../package.json';
 import StreamFeed from '../../../src/lib/feed';
-import stream from '../../../src/getstream';
+import { connect, errors } from '../../../src/getstream';
 import { init, beforeEachFn } from '../utils/hooks';
-
-const { errors } = stream;
 
 describe('[UNIT] Stream Client (browser)', function () {
   init.call(this);
@@ -14,7 +12,7 @@ describe('[UNIT] Stream Client (browser)', function () {
   it("shouldn't allow secret keys", function () {
     // apiKey, apiSecret, appId, options
     function createFn() {
-      stream.connect('abcdefgh', '123456789');
+      connect('abcdefgh', '123456789');
     }
 
     expect(createFn).to.throwException(function (e) {
@@ -23,14 +21,14 @@ describe('[UNIT] Stream Client (browser)', function () {
   });
 
   it('should store config on the client', function () {
-    const client = stream.connect('abcdefgh', null, 1000, { option: true });
+    const client = connect('abcdefgh', null, 1000, { option: true });
 
     expect(client.apiSecret).to.be(null);
     expect(client.browser).to.be(true);
   });
 
   it('should store config on the client', function () {
-    const client = stream.connect('abcdefgh', null, 1000, {
+    const client = connect('abcdefgh', null, 1000, {
       version: 'v2.0',
       fayeUrl: 'https://hello.world',
       expireTokens: true,
