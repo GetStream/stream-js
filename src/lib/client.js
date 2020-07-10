@@ -355,9 +355,9 @@ class StreamClient {
       url: this.enrichUrl(kwargs.url, kwargs.serviceName),
       data: kwargs.body,
       params: {
+        ...(kwargs.qs || {}),
         api_key: this.apiKey,
         location: this.group,
-        ...(kwargs.qs || {}),
       },
       headers: {
         'X-Stream-Client': this.userAgent(),
