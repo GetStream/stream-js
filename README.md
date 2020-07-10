@@ -48,11 +48,14 @@ This package can be integrated into React Native applications. Remember to not e
 ### API client setup Node
 
 ```javascript
-var stream = require('getstream');
+import { connect } from 'getstream';
+// or if you are on commonjs
+const { connect } = require('getstream');
+
 // Instantiate a new client (server side)
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 ```
 
 ### API client setup Node + Browser
@@ -62,11 +65,14 @@ If you want to use the API client directly on your web/mobile app you need to ge
 #### Server-side token generation
 
 ```javascript
-var stream = require('getstream');
+import { connect } from 'getstream';
+// or if you are on commonjs
+const { connect } = require('getstream');
+
 // Instantiate a new client (server side)
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+const client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an object specifying the data center to use
-client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
+const client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
 // Create a token for user with id "the-user-id"
 const userToken = client.createUserToken('the-user-id');
 ```
@@ -74,10 +80,11 @@ const userToken = client.createUserToken('the-user-id');
 #### Client API init
 
 ```javascript
-var stream = require('getstream');
-
+import { connect } from 'getstream';
+// or if you are on commonjs
+const { connect } = require('getstream');
 // Instantiate new client with a user token
-client = stream.connect('apikey', userToken, 'appid');
+const client = stream.connect('apikey', userToken, 'appid');
 ```
 
 #### Examples
@@ -123,11 +130,11 @@ user1.removeActivity({ foreignId: 'tweet:1' });
 
 // mark a notification feed as read
 notification1 = client.feed('notification', '1');
-var params = { mark_read: true };
+params = { mark_read: true };
 notification1.get(params);
 
 // mark a notification feed as seen
-var params = { mark_seen: true };
+params = { mark_seen: true };
 notification1.get(params);
 
 // Follow another feed
@@ -169,7 +176,7 @@ activity = {
 user1.addActivity(activity);
 
 // adding one activity to multiple feeds
-var feeds = ['flat:1', 'flat:2', 'flat:3', 'flat:4'];
+feeds = ['flat:1', 'flat:2', 'flat:3', 'flat:4'];
 activity = {
   actor: 'User:2',
   verb: 'pin',
@@ -181,7 +188,7 @@ activity = {
 client.addToMany(activity, feeds);
 
 // Batch create follow relations (let flat:1 follow user:1, user:2 and user:3 feeds in one single request)
-var follows = [
+follows = [
   { source: 'flat:1', target: 'user:1' },
   { source: 'flat:1', target: 'user:2' },
   { source: 'flat:1', target: 'user:3' },
@@ -191,14 +198,14 @@ var follows = [
 client.followMany(follows);
 
 // Updating parts of an activity
-var set = {
+set = {
   'product.price': 19.99,
   shares: {
     facebook: '...',
     twitter: '...',
   },
 };
-var unset = ['daily_likes', 'popularity'];
+unset = ['daily_likes', 'popularity'];
 // ...by ID
 client.activityPartialUpdate({
   id: '54a60c1e-4ee3-494b-a1e3-50c06acb5ed4',
@@ -215,13 +222,13 @@ client.activityPartialUpdate({
 
 // ⚠️ server-side only!
 // Create redirect urls
-var impression = {
+impression = {
   content_list: ['tweet:1', 'tweet:2', 'tweet:3'],
   user_data: 'tommaso',
   location: 'email',
   feed_id: 'user:global',
 };
-var engagement = {
+engagement = {
   content: 'tweet:2',
   label: 'click',
   position: 1,
@@ -229,8 +236,8 @@ var engagement = {
   location: 'email',
   feed_id: 'user:global',
 };
-var events = [impression, engagement];
-var redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
+events = [impression, engagement];
+redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 
 // update the 'to' fields on an existing activity
 // client.feed("user", "ken").function (foreign_id, timestamp, new_targets, added_targets, removed_targets)
@@ -248,14 +255,14 @@ client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp,
 Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick guide to subscribing to feed changes
 
 ```javascript
-var stream = require('getstream');
+const { connect } = require('getstream');
 
 // ⚠️ userToken is generated server-side (see previous section)
-client = stream.connect('YOUR_API_KEY', userToken, 'APP_ID');
-user1 = client.feed('user', '1');
+const client = connect('YOUR_API_KEY', userToken, 'APP_ID');
+const user1 = client.feed('user', '1');
 
 // subscribe to the changes
-var subscription = user1.subscribe(function (data) {
+const subscription = user1.subscribe(function (data) {
   console.log(data);
 });
 // now whenever something changes to the feed user 1

@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import stream from '../../../src/getstream';
+import { connect } from '../../../src/getstream';
 import errors from '../../../src/lib/errors';
 import { init, beforeEachFn } from '../utils/hooks';
 
@@ -128,7 +128,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
   });
 
   it('fayeSubscribeError', function (done) {
-    const client = stream.connect('5crf3bhfzesn');
+    const client = connect('5crf3bhfzesn');
 
     function sub() {
       const user1 = client.feed('user', '11', 'secret');

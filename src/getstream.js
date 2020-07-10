@@ -44,4 +44,7 @@ function connect(apiKey, apiSecret, appId, options) {
   return new Client(apiKey, apiSecret, appId, options);
 }
 
+export { connect, errors, signing, Client };
+
+/* deprecated default export */
 export default { connect, errors, signing, Client };
