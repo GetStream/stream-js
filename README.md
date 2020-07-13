@@ -30,10 +30,18 @@ yarn install getstream
 <script src="https://cdn.jsdelivr.net/npm/getstream/dist/js_min/getstream.js"></script>
 ```
 
+> :warning: This will pull the latest which can be breaking for your application. Always pin a specific version as follows:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/getstream@5.0.0/dist/js_min/getstream.js"></script>
+```
+
 #### Install by downloading the JS file
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js) /
 [Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
+
+> :warning: Beware about the version you're pulling. It's the latest by default which can break your app anytime.
 
 ### Full documentation
 
