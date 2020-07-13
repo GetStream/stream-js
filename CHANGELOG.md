@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.1 - 2020-07-13
+
+- Add named exports in addition to default and deprecate default
+- Improve readme snippets
+- Add a warning for the version if installing from cdnjs
+
 ## 5.0.0 - 2020-07-06
 
 This release drops some of the already deprecated functions.
