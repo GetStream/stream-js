@@ -13,11 +13,15 @@ module.exports = (env, argv = []) => ({
         use: 'null-loader',
       },
       {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.(js|ts)$/,
         use: 'babel-loader',
+        exclude: /node_modules/,
       },
     ],
+  },
+
+  resolve: {
+    extensions: ['.js', '.ts'],
   },
 
   node: {
