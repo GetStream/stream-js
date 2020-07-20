@@ -62,8 +62,8 @@ const { connect } = require('getstream');
 
 // Instantiate a new client (server side)
 const client = connect('YOUR_API_KEY', 'API_KEY_SECRET');
-// Optionally supply the app identifier and an object specifying the data center to use
-const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west' });
+// Optionally supply the app identifier and an options object specifying the data center to use and timeout for requests (15s)
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-west', timeout: 15000 });
 ```
 
 ### API client setup Node + Browser
