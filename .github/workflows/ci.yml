@@ -46,5 +46,5 @@ jobs:
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-cloud; fi
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-integration-node; fi
           if [ "$RUN_LINTERS" == "yes" ]; then yarn run lint; fi
-          if [ "$RUN_LINTERS" == "yes" ]; then yarn run dtslint; fi
+          if [ "$RUN_LINTERS" == "yes" ]; then yarn run types; fi
           if [ "$BROWSER_TESTS" == "yes" ]; then yarn run test-browser; fi
