@@ -35,7 +35,7 @@ class ErrorAbstract extends Error {
  * @memberof Stream.errors
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
-class FeedError extends ErrorAbstract {}
+export class FeedError extends ErrorAbstract {}
 
 /**
  * SiteError
@@ -45,7 +45,7 @@ class FeedError extends ErrorAbstract {}
  * @memberof Stream.errors
  * @param  {string}  [msg]  An error message that will probably end up in a log.
  */
-class SiteError extends ErrorAbstract {}
+export class SiteError extends ErrorAbstract {}
 
 /**
  * MissingSchemaError
@@ -55,7 +55,7 @@ class SiteError extends ErrorAbstract {}
  * @memberof Stream.errors
  * @param  {string} msg
  */
-class MissingSchemaError extends ErrorAbstract {}
+export class MissingSchemaError extends ErrorAbstract {}
 
 /**
  * StreamApiError
@@ -67,7 +67,7 @@ class MissingSchemaError extends ErrorAbstract {}
  * @param  {object} data
  * @param  {object} response
  */
-class StreamApiError extends ErrorAbstract {
+export class StreamApiError extends ErrorAbstract {
   error: unknown;
   response: axios.AxiosResponse;
 
