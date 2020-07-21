@@ -15,7 +15,6 @@
   "scripts": {
     "types": "tsc --outFile types/index --declaration true --declarationMap true --emitDeclarationOnly true",
     "build": "babel src --out-dir lib --extensions '.js,.ts'",
-    "dtslint": "dtslint types/getstream",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
     "lint": "yarn run prettier && yarn run eslint",
@@ -75,7 +74,6 @@
     "babel-loader": "^8.1.0",
     "chai": "^4.2.0",
     "codecov": "^3.7.0",
-    "dtslint": "^3.6.12",
     "eslint": "^7.3.1",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
