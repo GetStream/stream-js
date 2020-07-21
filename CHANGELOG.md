@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.2 - 2020-07-20
+
+- Lodash security upgrade
+
 ## 5.0.1 - 2020-07-13
 
 - Add named exports in addition to default and deprecate default
