@@ -352,7 +352,6 @@ describe('[UNIT] Stream Client (Common)', function () {
           axiosOptions: {
             timeout: 0,
             maxContentLength: Infinity,
-            maxBodyLength: Infinity,
             onUploadProgress,
           },
         }),
