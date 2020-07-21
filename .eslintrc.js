@@ -1,3 +1,25 @@
+const sharedRules = {
+  'consistent-return': 0,
+  'no-underscore-dangle': 0,
+  'import/prefer-default-export': 0,
+  'import/extensions': ['error', 'never', { json: 'always' }],
+  'func-names': 0,
+  'no-param-reassign': 0,
+  'prefer-destructuring': ['error', { object: true, array: false }],
+  'max-classes-per-file': 0,
+  'no-plusplus': 0,
+  'sonarjs/cognitive-complexity': 0,
+  'sonarjs/no-collapsible-if': 0,
+  'sonarjs/no-duplicate-string': 0,
+  'sonarjs/no-identical-functions': 0,
+};
+
+const settings = {
+  'import/resolver': {
+    node: { extensions: ['.js', '.ts'] },
+  },
+};
+
 module.exports = {
   root: true,
   plugins: ['prettier', 'chai-friendly'],
@@ -18,28 +40,8 @@ module.exports = {
   globals: {
     process: true,
   },
-  settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.js', '.ts'],
-      },
-    },
-  },
-  rules: {
-    'consistent-return': 0,
-    'no-underscore-dangle': 0,
-    'import/prefer-default-export': 0,
-    'import/extensions': ['error', 'never', { json: 'always' }],
-    'func-names': 0,
-    'no-param-reassign': 0,
-    'prefer-destructuring': ['error', { object: true, array: false }],
-    'max-classes-per-file': 0,
-    'no-plusplus': 0,
-    'sonarjs/cognitive-complexity': 0,
-    'sonarjs/no-collapsible-if': 0,
-    'sonarjs/no-duplicate-string': 0,
-    'sonarjs/no-identical-functions': 0,
-  },
+  settings,
+  rules: sharedRules,
   overrides: [
     {
       files: ['**/*.ts'],
@@ -53,20 +55,13 @@ module.exports = {
         'plugin:sonarjs/recommended',
       ],
       parser: '@typescript-eslint/parser',
+      settings,
       rules: {
-        'consistent-return': 0,
-        'no-underscore-dangle': 0,
-        'import/prefer-default-export': 0,
-        'import/extensions': ['error', 'never', { json: 'always' }],
-        'func-names': 0,
-        'no-param-reassign': 0,
-        'prefer-destructuring': ['error', { object: true, array: false }],
-        'max-classes-per-file': 0,
-        'no-plusplus': 0,
-        'sonarjs/cognitive-complexity': 0,
-        'sonarjs/no-collapsible-if': 0,
-        'sonarjs/no-duplicate-string': 0,
-        'sonarjs/no-identical-functions': 0,
+        ...sharedRules,
+        camelcase: 0,
+        'lines-between-class-members': 0,
+        '@typescript-eslint/explicit-module-boundary-types': 0,
+        'no-useless-constructor': 0,
       },
     },
   ],
