@@ -1,11 +1,18 @@
 import Url from 'url';
 import qs from 'qs';
 
+import StreamClient from './client';
 import errors from './errors';
 import utils from './utils';
 import signing from './signing';
 
-export default function createRedirectUrl(targetUrl, userId, events) {
+// TODO: userId is skipped here
+export default function createRedirectUrl(
+  this: StreamClient,
+  targetUrl: string,
+  userId: string,
+  events: unknown[],
+): string {
   /**
    * Creates a redirect url for tracking the given events in the context of
    * an email using Stream's analytics platform. Learn more at
@@ -19,11 +26,11 @@ export default function createRedirectUrl(targetUrl, userId, events) {
    */
   const uri = Url.parse(targetUrl);
 
-  if (!(uri.host || (uri.hostname && uri.port)) && !uri.isUnix) {
+  if (!(uri.host || (uri.hostname && uri.port))) {
     throw new errors.MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
   }
 
-  const authToken = signing.JWTScopeToken(this.apiSecret, 'redirect_and_track', '*', {
+  const authToken = signing.JWTScopeToken(this.apiSecret as string, 'redirect_and_track', '*', {
     userId: '*',
     expireTokens: this.expireTokens,
   });
@@ -36,7 +43,7 @@ export default function createRedirectUrl(targetUrl, userId, events) {
     events: JSON.stringify(events),
   };
 
-  const qString = utils.rfc3986(qs.stringify(kwargs, null, null, {}));
+  const qString = utils.rfc3986(qs.stringify(kwargs));
 
   return `${analyticsUrl}?${qString}`;
 }

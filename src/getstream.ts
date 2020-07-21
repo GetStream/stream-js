@@ -3,11 +3,11 @@
  * @author Thierry Schellenbach
  * BSD License
  */
-import Client from './lib/client';
+import StreamClient, { ClientOptions } from './lib/client';
 import errors from './lib/errors';
 import signing from './lib/signing';
 
-function connect(apiKey, apiSecret, appId, options) {
+function connect(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions): StreamClient {
   /**
    * Create StreamClient
    * @method connect
@@ -27,7 +27,7 @@ function connect(apiKey, apiSecret, appId, options) {
    * "https://thierry:pass@gestream.io/?app=1"
    */
   if (process && process.env && process.env.STREAM_URL && !apiKey) {
-    const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL);
+    const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     const location = parts[3];
@@ -41,10 +41,10 @@ function connect(apiKey, apiSecret, appId, options) {
     }
   }
 
-  return new Client(apiKey, apiSecret, appId, options);
+  return new StreamClient(apiKey, apiSecret, appId, options);
 }
 
-export { connect, errors, signing, Client };
+export { connect, errors, signing, StreamClient as Client };
 
 /* deprecated default export */
-export default { connect, errors, signing, Client };
+export default { connect, errors, signing, Client: StreamClient };

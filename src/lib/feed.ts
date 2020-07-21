@@ -1,6 +1,24 @@
+import * as Faye from 'faye';
+import StreamClient, { APIResponse, Activity, EnrichOptions } from './client';
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
+
+type FeedOptions = {
+  id_lt?: string;
+  id_lte?: string;
+  id_gt?: string;
+  id_gte?: string;
+  limit?: number;
+  offset?: number;
+  ranking?: string;
+};
+
+type GetFollowOptions = {
+  limit?: number;
+  offset?: number;
+  filter?: string[];
+};
 
 /**
  * Manage api calls for specific feeds
@@ -8,7 +26,18 @@ import utils from './utils';
  * @class StreamFeed
  */
 export default class StreamFeed {
-  constructor(client, feedSlug, userId, token) {
+  client: StreamClient;
+  token: string;
+  id: string;
+  slug: string;
+  userId: string;
+  feedUrl: string;
+  feedTogether: string;
+  signature: string;
+  notificationChannel: string;
+  enrichByDefault: boolean;
+
+  constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
     /**
      * Initialize a feed object
      * @method constructor
@@ -51,7 +80,7 @@ export default class StreamFeed {
     this.enrichByDefault = false;
   }
 
-  addActivity(activity) {
+  addActivity<T extends { actor?: string }>(activity: T): Promise<Activity<T>> {
     /**
      * Adds the given activity to the feed
      * @method addActivity
@@ -65,14 +94,14 @@ export default class StreamFeed {
       activity.actor = this.client.currentUser.ref();
     }
 
-    return this.client.post({
+    return this.client.post<Activity<T>>({
       url: `feed/${this.feedUrl}/`,
       body: activity,
       signature: this.signature,
     });
   }
 
-  removeActivity(activityId) {
+  removeActivity(activityId: string | { foreignId: string }): Promise<APIResponse> {
     /**
      * Removes the activity by activityId
      * @method removeActivity
@@ -84,14 +113,14 @@ export default class StreamFeed {
      * @example
      * feed.removeActivity({'foreignId': foreignId});
      */
-    return this.client.delete({
-      url: `feed/${this.feedUrl}/${activityId.foreignId || activityId}/`,
-      qs: activityId.foreignId ? { foreign_id: '1' } : {},
+    return this.client.delete<APIResponse>({
+      url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
+      qs: (activityId as { foreignId: string }).foreignId ? { foreign_id: '1' } : {},
       signature: this.signature,
     });
   }
 
-  addActivities(activities) {
+  addActivities<T>(activities: T[]): Promise<unknown> {
     /**
      * Adds the given activities to the feed
      * @method addActivities
@@ -99,14 +128,18 @@ export default class StreamFeed {
      * @param  {Array}   activities Array of activities to add
      * @return {Promise}               XHR request object
      */
-    return this.client.post({
+    return this.client.post<unknown>({
       url: `feed/${this.feedUrl}/`,
       body: { activities: utils.replaceStreamObjects(activities) },
       signature: this.signature,
     });
   }
 
-  follow(targetSlug, targetUserId, options = {}) {
+  follow(
+    targetSlug: string,
+    targetUserId: string | { id: string },
+    options: { limit?: number } = {},
+  ): Promise<unknown> {
     /**
      * Follows the given target feed
      * @method follow
@@ -114,7 +147,7 @@ export default class StreamFeed {
      * @param  {string}   targetSlug   Slug of the target feed
      * @param  {string}   targetUserId User identifier of the target feed
      * @param  {object}   options      Additional options
-     * @param  {number}   options.activityCopyLimit Limit the amount of activities copied over on follow
+     * @param  {number}   options.limit Limit the amount of activities copied over on follow
      * @return {Promise}  Promise object
      * @example feed.follow('user', '1');
      * @example feed.follow('user', '1');
@@ -124,9 +157,9 @@ export default class StreamFeed {
       targetUserId = targetUserId.id;
     }
     utils.validateFeedSlug(targetSlug);
-    utils.validateUserId(targetUserId);
+    utils.validateUserId(targetUserId as string);
 
-    const body = { target: `${targetSlug}:${targetUserId}` };
+    const body: { target: string; activity_copy_limit?: number } = { target: `${targetSlug}:${targetUserId}` };
     if (typeof options.limit === 'number') body.activity_copy_limit = options.limit;
 
     return this.client.post({
@@ -136,7 +169,7 @@ export default class StreamFeed {
     });
   }
 
-  unfollow(targetSlug, targetUserId, options = {}) {
+  unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}): Promise<unknown> {
     /**
      * Unfollow the given feed
      * @method unfollow
@@ -149,7 +182,7 @@ export default class StreamFeed {
      * @return {object}                XHR request object
      * @example feed.unfollow('user', '2');
      */
-    const qs = {};
+    const qs: { keep_history?: string } = {};
     if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
 
     utils.validateFeedSlug(targetSlug);
@@ -162,7 +195,7 @@ export default class StreamFeed {
     });
   }
 
-  following(options = {}) {
+  following(options: GetFollowOptions = {}): Promise<unknown> {
     /**
      * List which feeds this feed is following
      * @method following
@@ -172,18 +205,17 @@ export default class StreamFeed {
      * @return {Promise} Promise object
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
      */
-    if (options.filter) {
-      options.filter = options.filter.join(',');
-    }
+    const extraOptions: { filter?: string } = {};
+    if (options.filter) extraOptions.filter = options.filter.join(',');
 
-    return this.client.get({
+    return this.client.get<unknown>({
       url: `feed/${this.feedUrl}/following/`,
-      qs: options,
+      qs: { ...options, ...extraOptions },
       signature: this.signature,
     });
   }
 
-  followers(options = {}) {
+  followers(options: GetFollowOptions = {}): Promise<unknown> {
     /**
      * List the followers of this feed
      * @method followers
@@ -194,18 +226,19 @@ export default class StreamFeed {
      * @example
      * feed.followers({limit:10, filter: ['user:1', 'user:2']});
      */
-    if (options.filter) {
-      options.filter = options.filter.join(',');
-    }
+    const extraOptions: { filter?: string } = {};
+    if (options.filter) extraOptions.filter = options.filter.join(',');
 
-    return this.client.get({
+    return this.client.get<unknown>({
       url: `feed/${this.feedUrl}/followers/`,
-      qs: options,
+      qs: { ...options, ...extraOptions },
       signature: this.signature,
     });
   }
 
-  get(options = {}) {
+  get(
+    options: EnrichOptions & FeedOptions & { mark_read?: boolean | string[]; mark_seen?: boolean | string[] } = {},
+  ): Promise<unknown> {
     /**
      * Reads the feed
      * @method get
@@ -216,26 +249,28 @@ export default class StreamFeed {
      * @example feed.get({limit: 10, mark_seen: true})
      */
 
-    if (options.mark_read && options.mark_read.join) {
-      options.mark_read = options.mark_read.join(',');
+    const extraOptions: { mark_read?: boolean | string; mark_seen?: boolean | string } = {};
+
+    if (options.mark_read && (options.mark_read as string[]).join) {
+      extraOptions.mark_read = (options.mark_read as string[]).join(',');
     }
 
-    if (options.mark_seen && options.mark_seen.join) {
-      options.mark_seen = options.mark_seen.join(',');
+    if (options.mark_seen && (options.mark_seen as string[]).join) {
+      extraOptions.mark_seen = (options.mark_seen as string[]).join(',');
     }
 
     this.client.replaceReactionOptions(options);
 
     const path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
 
-    return this.client.get({
+    return this.client.get<unknown>({
       url: `${path}${this.feedUrl}/`,
-      qs: options,
+      qs: { ...options, ...extraOptions },
       signature: this.signature,
     });
   }
 
-  getActivityDetail(activityId, options) {
+  getActivityDetail(activityId: string, options: EnrichOptions): Promise<unknown> {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
@@ -251,7 +286,7 @@ export default class StreamFeed {
     return this.get({ id_lte: activityId, id_gte: activityId, limit: 1, ...(options || {}) });
   }
 
-  getFayeClient() {
+  getFayeClient(): Faye.Client {
     /**
      * Returns the current faye client object
      * @method getFayeClient
@@ -262,7 +297,7 @@ export default class StreamFeed {
     return this.client.getFayeClient();
   }
 
-  subscribe(callback) {
+  subscribe(callback: Faye.Callback): Faye.Subscription {
     /**
      * Subscribes to any changes in the feed, return a promise
      * @method subscribe
@@ -290,7 +325,7 @@ export default class StreamFeed {
     return subscription;
   }
 
-  unsubscribe() {
+  unsubscribe(): void {
     /**
      * Cancel updates created via feed.subscribe()
      * @return void
@@ -302,7 +337,13 @@ export default class StreamFeed {
     }
   }
 
-  updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
+  updateActivityToTargets(
+    foreignId: string,
+    time: string,
+    newTargets?: string[],
+    addedTargets?: string[],
+    removedTargets?: string[],
+  ): Promise<unknown> {
     /**
      * Updates an activity's "to" fields
      * @since 3.10.0
@@ -313,11 +354,8 @@ export default class StreamFeed {
      * @param {array} removedTargets Remove these targets from the activity
      */
 
-    if (!foreignId) {
-      throw new Error('Missing `foreign_id` parameter!');
-    } else if (!time) {
-      throw new Error('Missing `time` parameter!');
-    }
+    if (!foreignId) throw new Error('Missing `foreign_id` parameter!');
+    if (!time) throw new Error('Missing `time` parameter!');
 
     if (!newTargets && !addedTargets && !removedTargets) {
       throw new Error(
@@ -340,12 +378,18 @@ export default class StreamFeed {
       });
     }
 
-    const body = { foreign_id: foreignId, time };
+    const body: {
+      foreign_id: string;
+      time: string;
+      new_targets?: string[];
+      added_targets?: string[];
+      removed_targets?: string[];
+    } = { foreign_id: foreignId, time };
     if (newTargets) body.new_targets = newTargets;
     if (addedTargets) body.added_targets = addedTargets;
     if (removedTargets) body.removed_targets = removedTargets;
 
-    return this.client.post({
+    return this.client.post<unknown>({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,
       signature: this.signature,
       body,

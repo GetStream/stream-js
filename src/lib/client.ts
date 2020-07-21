@@ -1,7 +1,7 @@
-import axios from 'axios';
+import * as axios from 'axios';
 import http from 'http';
 import https from 'https';
-import Faye from 'faye';
+import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
 import Personalization from './personalization';
@@ -18,12 +18,173 @@ import errors from './errors';
 import utils from './utils';
 import pkg from '../../package.json';
 
+export type APIResponse = {
+  duration?: string;
+  [key: string]: unknown;
+};
+
+export type FileUploadAPIResponse = APIResponse & {
+  file: string;
+};
+
+export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
+
+type ActivityPartialChanges = {
+  id?: string;
+  foreignID?: string;
+  time?: string | Date;
+  set?: Record<string, unknown>;
+  unset?: string[];
+};
+
+type BaseActivity = {
+  id: string;
+  actor: string;
+  verb: string;
+  object: string;
+  time: string | Date;
+  foreign_id: string;
+  to?: string[];
+};
+
+export type Activity<T = Record<string, unknown>> = BaseActivity & T;
+
+type GetActivitiesAPIResponse<T> = APIResponse & { results: Activity<T>[] };
+
+type PartialUpdateActivityAPIResponse<T> = APIResponse & { activities: Activity<T>[] };
+
+export type FollowRelation = {
+  source: string;
+  target: string;
+};
+
+export type ClientOptions = {
+  location?: string | undefined;
+  expireTokens?: boolean;
+  version?: string;
+  group?: string;
+  keepAlive?: boolean;
+  timeout?: number;
+  browser?: boolean;
+  fayeUrl?: string;
+  protocol?: string;
+  local?: boolean;
+  urlOverride?: { [key: string]: string };
+};
+
+export type EnrichOptions = {
+  enrich?: boolean;
+  withOwnReactions?: boolean;
+  withOwnChildren?: boolean;
+  ownReactions?: boolean;
+  withReactionCounts?: boolean;
+  withRecentReactions?: boolean;
+  recentReactionsLimit?: number;
+};
+
+type OGResource = {
+  url?: string;
+  secure_url?: string;
+  type?: string;
+};
+
+type OGAudio = OGResource & {
+  audio?: string;
+};
+
+type OGImage = OGResource & {
+  image?: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+};
+
+type OGVideo = OGResource & {
+  video?: string;
+  width?: number;
+  height?: number;
+};
+
+type OGAPIResponse = APIResponse & {
+  title?: string;
+  type?: string;
+  url?: string;
+  site?: string;
+  site_name?: string;
+  description?: string;
+  favicon?: string;
+  determiner?: string;
+  locale?: string;
+  audios?: OGAudio[];
+  images?: OGImage[];
+  videos?: OGVideo[];
+};
+
+type AxiosConfig = {
+  signature: string;
+  url: string;
+  serviceName?: string;
+  body?: unknown;
+  qs?: { [key: string]: unknown };
+  headers?: { [key: string]: string };
+  axiosOptions?: axios.AxiosRequestConfig;
+};
+
+type HandlerCallback = (...args: unknown[]) => unknown;
+
 /**
  * Client to connect to Stream api
  * @class StreamClient
  */
-class StreamClient {
-  constructor(apiKey, apiSecretOrToken, appId, options = {}) {
+class StreamClient<U = unknown> {
+  baseUrl: string;
+  baseAnalyticsUrl: string;
+  apiKey: string;
+  appId: string | undefined;
+  usingApiSecret: boolean;
+  apiSecret: string | null;
+  userToken: string | null;
+  enrichByDefault: boolean;
+  options: ClientOptions;
+  userId: undefined | string;
+  authPayload: undefined | unknown;
+  version: string;
+  fayeUrl: string;
+  group: string;
+  expireTokens: boolean;
+  location: string;
+  fayeClient: Faye.Client | null;
+  browser: boolean;
+  node: boolean;
+  nodeOptions: undefined | { httpAgent: http.Agent; httpsAgent: https.Agent };
+
+  request: axios.AxiosInstance;
+  subscriptions: {
+    [key: string]: {
+      userId: string;
+      token: string;
+      fayeSubscription: Faye.Subscription;
+    };
+  };
+  handlers: { [key: string]: HandlerCallback };
+
+  currentUser: StreamUser<U> | undefined;
+  personalization: Personalization;
+  collections: Collections;
+  files: StreamFileStore;
+  images: StreamImageStore;
+  reactions: StreamReaction;
+
+  private _personalizationToken: string | undefined;
+  private _collectionsToken: string | undefined;
+  private _getOrCreateToken: string | undefined;
+
+  addToMany?: <T>(this: StreamClient, activity: T, feeds: string[]) => Promise<APIResponse>;
+  followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
+  unfollowMany?: (this: StreamClient, unfollows: FollowRelation[]) => Promise<APIResponse>;
+  createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
+
+  constructor(apiKey: string, apiSecretOrToken: string | null, appId?: string, options: ClientOptions = {}) {
     /**
      * Initialize a client
      * @method initialize
@@ -49,7 +210,7 @@ class StreamClient {
     this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
-      const jwtBody = jwtDecode(this.userToken);
+      const jwtBody: { user_id?: string } = jwtDecode(this.userToken);
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
       }
@@ -69,16 +230,11 @@ class StreamClient {
     this.subscriptions = {};
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
-    this.location = this.options.location;
+    this.location = this.options.location as string;
     this.baseUrl = this.getBaseUrl();
 
-    if (typeof process !== 'undefined' && process.env.LOCAL_FAYE) {
-      this.fayeUrl = 'http://localhost:9999/faye/';
-    }
-
-    if (typeof process !== 'undefined' && process.env.STREAM_ANALYTICS_BASE_URL) {
-      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
-    }
+    if (process?.env?.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
+    if (process?.env?.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
 
     this.handlers = {};
     this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
@@ -92,7 +248,7 @@ class StreamClient {
       };
     }
 
-    this.request = axios.create({
+    this.request = axios.default.create({
       timeout: this.options.timeout || 10 * 1000, // 10 seconds
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
@@ -109,9 +265,17 @@ class StreamClient {
     this.files = new StreamFileStore(this, this.getOrCreateToken());
     this.images = new StreamImageStore(this, this.getOrCreateToken());
     this.reactions = new StreamReaction(this, this.getOrCreateToken());
+
+    // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
+    if (BatchOperations && createRedirectUrl) {
+      this.addToMany = BatchOperations.addToMany;
+      this.followMany = BatchOperations.followMany;
+      this.unfollowMany = BatchOperations.unfollowMany;
+      this.createRedirectUrl = createRedirectUrl;
+    }
   }
 
-  _throwMissingApiSecret() {
+  _throwMissingApiSecret(): void | never {
     if (!this.usingApiSecret) {
       throw new errors.SiteError(
         'This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);',
@@ -119,12 +283,12 @@ class StreamClient {
     }
   }
 
-  getPersonalizationToken() {
+  getPersonalizationToken(): string {
     if (this._personalizationToken) return this._personalizationToken;
 
     this._throwMissingApiSecret();
 
-    this._personalizationToken = signing.JWTScopeToken(this.apiSecret, 'personalization', '*', {
+    this._personalizationToken = signing.JWTScopeToken(this.apiSecret as string, 'personalization', '*', {
       userId: '*',
       feedId: '*',
       expireTokens: this.expireTokens,
@@ -132,37 +296,36 @@ class StreamClient {
     return this._personalizationToken;
   }
 
-  getCollectionsToken() {
+  getCollectionsToken(): string {
     if (this._collectionsToken) return this._collectionsToken;
 
     this._throwMissingApiSecret();
 
-    this._collectionsToken = signing.JWTScopeToken(this.apiSecret, 'collections', '*', {
+    this._collectionsToken = signing.JWTScopeToken(this.apiSecret as string, 'collections', '*', {
       feedId: '*',
       expireTokens: this.expireTokens,
     });
     return this._collectionsToken;
   }
 
-  getAnalyticsToken() {
+  getAnalyticsToken(): string {
     this._throwMissingApiSecret();
 
-    return signing.JWTScopeToken(this.apiSecret, 'analytics', '*', {
+    return signing.JWTScopeToken(this.apiSecret as string, 'analytics', '*', {
       userId: '*',
       expireTokens: this.expireTokens,
     });
   }
 
-  getBaseUrl(serviceName) {
+  getBaseUrl(serviceName?: string): string {
     if (!serviceName) serviceName = 'api';
 
     if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
 
     const urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : `STREAM_${serviceName.toUpperCase()}_URL`;
-    if (typeof process !== 'undefined' && process.env[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
+    if (process?.env?.[urlEnvironmentKey]) return process.env[urlEnvironmentKey] as string;
 
-    if ((typeof process !== 'undefined' && process.env.LOCAL) || this.options.local)
-      return `http://localhost:8000/${serviceName}/`;
+    if (process?.env?.LOCAL || this.options.local) return `http://localhost:8000/${serviceName}/`;
 
     if (this.location) {
       const protocol = this.options.protocol || 'https';
@@ -174,7 +337,7 @@ class StreamClient {
     return this.baseUrl;
   }
 
-  on(event, callback) {
+  on(event: string, callback: HandlerCallback): void {
     /**
      * Support for global event callbacks
      * This is useful for generic error and loading handling
@@ -189,7 +352,7 @@ class StreamClient {
     this.handlers[event] = callback;
   }
 
-  off(key) {
+  off(key?: string): void {
     /**
      * Remove one or more event handlers
      * @method off
@@ -206,7 +369,7 @@ class StreamClient {
     }
   }
 
-  send(key, ...args) {
+  send(key: string, ...args: unknown[]): void {
     /**
      * Call the given handler with the arguments
      * @method send
@@ -216,7 +379,7 @@ class StreamClient {
     if (this.handlers[key]) this.handlers[key].apply(this, args);
   }
 
-  userAgent() {
+  userAgent(): string {
     /**
      * Get the current user agent
      * @method userAgent
@@ -226,7 +389,7 @@ class StreamClient {
     return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${pkg.version}`;
   }
 
-  getReadOnlyToken(feedSlug, userId) {
+  getReadOnlyToken(feedSlug: string, userId: string): string {
     /**
      * Returns a token that allows only read operations
      *
@@ -241,13 +404,13 @@ class StreamClient {
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
-    return signing.JWTScopeToken(this.apiSecret, '*', 'read', {
+    return signing.JWTScopeToken(this.apiSecret as string, '*', 'read', {
       feedId: `${feedSlug}${userId}`,
       expireTokens: this.expireTokens,
     });
   }
 
-  getReadWriteToken(feedSlug, userId) {
+  getReadWriteToken(feedSlug: string, userId: string): string {
     /**
      * Returns a token that allows read and write operations
      *
@@ -262,13 +425,13 @@ class StreamClient {
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
-    return signing.JWTScopeToken(this.apiSecret, '*', '*', {
+    return signing.JWTScopeToken(this.apiSecret as string, '*', '*', {
       feedId: `${feedSlug}${userId}`,
       expireTokens: this.expireTokens,
     });
   }
 
-  feed(feedSlug, userId = this.userId, token) {
+  feed(feedSlug: string, userId?: string | StreamUser, token?: string): StreamFeed {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
@@ -284,16 +447,16 @@ class StreamClient {
 
     if (token === undefined) {
       if (this.usingApiSecret) {
-        token = signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: `${feedSlug}${userId}` });
+        token = signing.JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: `${feedSlug}${userId}` });
       } else {
-        token = this.userToken;
+        token = this.userToken as string;
       }
     }
 
-    return new StreamFeed(this, feedSlug, userId, token);
+    return new StreamFeed(this, feedSlug, userId || (this.userId as string), token);
   }
 
-  enrichUrl(relativeUrl, serviceName) {
+  enrichUrl(relativeUrl: string, serviceName?: string): string {
     /**
      * Combines the base url with version and the relative url
      * @method enrichUrl
@@ -304,9 +467,15 @@ class StreamClient {
     return `${this.getBaseUrl(serviceName)}${this.version}/${relativeUrl}`;
   }
 
-  replaceReactionOptions = (options = {}) => {
+  replaceReactionOptions = (options: {
+    reactions?: Record<string, boolean>;
+    withOwnReactions?: boolean;
+    withRecentReactions?: boolean;
+    withReactionCounts?: boolean;
+    withOwnChildren?: boolean;
+  }): void => {
     // Shortcut options for reaction enrichment
-    if (options.reactions) {
+    if (options?.reactions) {
       if (options.reactions.own != null) {
         options.withOwnReactions = options.reactions.own;
       }
@@ -323,7 +492,15 @@ class StreamClient {
     }
   };
 
-  shouldUseEnrichEndpoint(options = {}) {
+  shouldUseEnrichEndpoint(
+    options: {
+      enrich?: boolean;
+      ownReactions?: boolean;
+      withRecentReactions?: boolean;
+      withReactionCounts?: boolean;
+      withOwnChildren?: boolean;
+    } = {},
+  ): boolean {
     if (options.enrich) {
       const result = options.enrich;
       delete options.enrich;
@@ -339,7 +516,7 @@ class StreamClient {
     );
   }
 
-  enrichKwargs({ method, ...kwargs }) {
+  enrichKwargs({ method, signature, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
     /**
      * Adds the API key and the signature
      * @method enrichKwargs
@@ -347,7 +524,6 @@ class StreamClient {
      * @param {object} kwargs
      * @private
      */
-    const signature = kwargs.signature || this.signature;
     const isJWT = signing.isJWTSignature(signature);
 
     return {
@@ -369,7 +545,7 @@ class StreamClient {
     };
   }
 
-  getFayeAuthorization() {
+  getFayeAuthorization(): Faye.Middleware {
     /**
      * Get the authorization middleware to use Faye with getstream.io
      * @method getFayeAuthorization
@@ -378,8 +554,8 @@ class StreamClient {
      * @return {object} Faye authorization middleware
      */
     return {
-      incoming: (message, callback) => callback(message),
-      outgoing: (message, callback) => {
+      incoming: (message: Faye.Message, callback: Faye.Callback) => callback(message),
+      outgoing: (message: Faye.Message, callback: Faye.Callback) => {
         if (message.subscription && this.subscriptions[message.subscription]) {
           const subscription = this.subscriptions[message.subscription];
 
@@ -395,7 +571,7 @@ class StreamClient {
     };
   }
 
-  getFayeClient(timeout = 10) {
+  getFayeClient(timeout = 10): Faye.Client {
     /**
      * Returns this client's current Faye client
      * @method getFayeClient
@@ -412,7 +588,7 @@ class StreamClient {
     return this.fayeClient;
   }
 
-  handleResponse = (response) => {
+  handleResponse = <T>(response: axios.AxiosResponse<T>): T => {
     if (/^2/.test(`${response.status}`)) {
       this.send('response', null, response, response.data);
       return response.data;
@@ -425,7 +601,7 @@ class StreamClient {
     );
   };
 
-  doAxiosRequest = async (method, options) => {
+  doAxiosRequest = async <T>(method: axios.Method, options: AxiosConfig): Promise<T> => {
     this.send('request', method, options);
 
     try {
@@ -437,9 +613,15 @@ class StreamClient {
     }
   };
 
-  upload(url, uri, name, contentType, onUploadProgress) {
+  upload(
+    url: string,
+    uri: string | File | NodeJS.ReadStream,
+    name?: string,
+    contentType?: string,
+    onUploadProgress?: OnUploadProgress,
+  ): Promise<FileUploadAPIResponse> {
     const fd = utils.addFileToFormData(uri, name, contentType);
-    return this.doAxiosRequest('POST', {
+    return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
       url,
       body: fd,
       headers: fd.getHeaders ? fd.getHeaders() : {}, // node vs browser
@@ -447,13 +629,12 @@ class StreamClient {
       axiosOptions: {
         timeout: 0,
         maxContentLength: Infinity,
-        maxBodyLength: Infinity,
         onUploadProgress,
       },
     });
   }
 
-  get(kwargs) {
+  get<T>(kwargs: AxiosConfig): Promise<T> {
     /**
      * Shorthand function for get request
      * @method get
@@ -465,7 +646,7 @@ class StreamClient {
     return this.doAxiosRequest('GET', kwargs);
   }
 
-  post(kwargs) {
+  post<T>(kwargs: AxiosConfig): Promise<T> {
     /**
      * Shorthand function for post request
      * @method post
@@ -477,7 +658,7 @@ class StreamClient {
     return this.doAxiosRequest('POST', kwargs);
   }
 
-  delete(kwargs) {
+  delete<T>(kwargs: AxiosConfig): Promise<T> {
     /**
      * Shorthand function for delete request
      * @method delete
@@ -489,7 +670,7 @@ class StreamClient {
     return this.doAxiosRequest('DELETE', kwargs);
   }
 
-  put(kwargs) {
+  put<T>(kwargs: AxiosConfig): Promise<T> {
     /**
      * Shorthand function for put request
      * @method put
@@ -505,15 +686,15 @@ class StreamClient {
    * @param {string} userId
    * @param {object} extraData
    */
-  createUserToken(userId, extraData = {}) {
+  createUserToken(userId: string, extraData = {}): string {
     this._throwMissingApiSecret();
 
-    return signing.JWTUserSessionToken(this.apiSecret, userId, extraData, {
+    return signing.JWTUserSessionToken(this.apiSecret as string, userId, extraData, {
       noTimestamp: !this.expireTokens,
     });
   }
 
-  updateActivities(activities) {
+  updateActivities<T>(activities: Activity<T>[]): Promise<unknown> {
     /**
      * Updates all supplied activities on the getstream-io api
      * @since  3.1.0
@@ -526,19 +707,19 @@ class StreamClient {
       throw new TypeError('The activities argument should be an Array');
     }
 
-    const authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+    const authToken = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
       feedId: '*',
       expireTokens: this.expireTokens,
     });
 
-    return this.post({
+    return this.post<unknown>({
       url: 'activities/',
       body: { activities },
       signature: authToken,
     });
   }
 
-  updateActivity(activity) {
+  updateActivity<T>(activity: Activity<T>): Promise<unknown> {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
@@ -547,27 +728,38 @@ class StreamClient {
      */
     this._throwMissingApiSecret();
 
-    return this.updateActivities([activity]);
+    return this.updateActivities<T>([activity]);
   }
 
-  getActivities({ ids, foreignIDTimes, ...params }) {
+  getActivities<T>({
+    ids,
+    foreignIDTimes,
+    ...params
+  }: EnrichOptions & {
+    ids?: string[];
+    foreignIDTimes?: { foreignID: string; time: string | Date }[];
+
+    reactions?: Record<string, boolean>;
+  }): Promise<GetActivitiesAPIResponse<T>> {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise}
      */
+    const extraParams: { ids?: string; foreign_ids?: string; timestamps?: string } = {};
+
     if (ids) {
       if (!(ids instanceof Array)) {
         throw new TypeError('The ids argument should be an Array');
       }
-      params.ids = ids.join(',');
+      extraParams.ids = ids.join(',');
     } else if (foreignIDTimes) {
       if (!(foreignIDTimes instanceof Array)) {
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
-      const foreignIDs = [];
-      const timestamps = [];
+      const foreignIDs: string[] = [];
+      const timestamps: (string | Date)[] = [];
       foreignIDTimes.forEach((fidTime) => {
         if (!(fidTime instanceof Object)) {
           throw new TypeError('foreignIDTimes elements should be Objects');
@@ -576,15 +768,15 @@ class StreamClient {
         timestamps.push(fidTime.time);
       });
 
-      params.foreign_ids = foreignIDs.join(',');
-      params.timestamps = timestamps.join(',');
+      extraParams.foreign_ids = foreignIDs.join(',');
+      extraParams.timestamps = timestamps.join(',');
     } else {
       throw new TypeError('Missing ids or foreignIDTimes params');
     }
 
-    let token = this.userToken;
+    let token = this.userToken as string;
     if (this.usingApiSecret) {
-      token = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+      token = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens,
       });
@@ -593,41 +785,43 @@ class StreamClient {
     this.replaceReactionOptions(params);
     const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
-    return this.get({
+    return this.get<GetActivitiesAPIResponse<T>>({
       url: path,
-      qs: params,
+      qs: { ...params, ...extraParams },
       signature: token,
     });
   }
 
-  getOrCreateToken() {
+  getOrCreateToken(): string {
     if (!this._getOrCreateToken) {
       this._getOrCreateToken = this.usingApiSecret
-        ? signing.JWTScopeToken(this.apiSecret, '*', '*', { feedId: '*' })
-        : this.userToken;
+        ? signing.JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: '*' })
+        : (this.userToken as string);
     }
     return this._getOrCreateToken;
   }
 
-  user(userId) {
-    return new StreamUser(this, userId, this.getOrCreateToken());
+  user(userId: string): StreamUser<U> {
+    return new StreamUser<U>(this, userId, this.getOrCreateToken());
   }
 
-  async setUser(data) {
+  async setUser(data: U): Promise<StreamUser<U>> {
     if (this.usingApiSecret) {
       throw new errors.SiteError('This method can only be used client-side using a user token');
     }
 
     const body = { ...data };
-    delete body.id;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete body?.id;
 
-    const user = await this.currentUser.getOrCreate(body);
+    const user = await (this.currentUser as StreamUser<U>).getOrCreate(body);
     this.currentUser = user;
     return user;
   }
 
-  og(url) {
-    return this.get({
+  og(url: string): Promise<OGAPIResponse> {
+    return this.get<OGAPIResponse>({
       url: 'og/',
       qs: { url },
       signature: this.getOrCreateToken(),
@@ -642,7 +836,7 @@ class StreamClient {
     });
   }
 
-  async activityPartialUpdate(data) {
+  async activityPartialUpdate<T>(data: ActivityPartialChanges): Promise<APIResponse & Activity<T>> {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
@@ -675,13 +869,13 @@ class StreamClient {
      *   ]
      * })
      */
-    const response = await this.activitiesPartialUpdate([data]);
+    const response = await this.activitiesPartialUpdate<T>([data]);
     const activity = response.activities[0];
     delete response.activities;
     return { ...activity, ...response };
   }
 
-  activitiesPartialUpdate(changes) {
+  activitiesPartialUpdate<T>(changes: ActivityPartialChanges[]): Promise<PartialUpdateActivityAPIResponse<T>> {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0
@@ -739,7 +933,7 @@ class StreamClient {
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
-    changes.forEach(function (item) {
+    changes.forEach(function (item: ActivityPartialChanges & { foreign_id?: string }) {
       if (!(item instanceof Object)) {
         throw new TypeError(`changeset should be and Object`);
       }
@@ -757,15 +951,15 @@ class StreamClient {
       }
     });
 
-    let authToken = this.userToken;
+    let authToken = this.userToken as string;
     if (this.usingApiSecret) {
-      authToken = signing.JWTScopeToken(this.apiSecret, 'activities', '*', {
+      authToken = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens,
       });
     }
 
-    return this.post({
+    return this.post<PartialUpdateActivityAPIResponse<T>>({
       url: 'activity/',
       body: {
         changes,
@@ -773,20 +967,6 @@ class StreamClient {
       signature: authToken,
     });
   }
-}
-
-// If we are in a node environment and batchOperations is available add the methods to the prototype of StreamClient
-if (BatchOperations) {
-  Object.keys(BatchOperations).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(BatchOperations, key)) {
-      StreamClient.prototype[key] = BatchOperations[key];
-    }
-  });
-}
-
-// If we are in a node environment and redirectUrl is available add the methods to the prototype of StreamClient
-if (createRedirectUrl) {
-  StreamClient.prototype.createRedirectUrl = createRedirectUrl;
 }
 
 export default StreamClient;

@@ -5,7 +5,7 @@ import errors from './errors';
 const validFeedSlugRe = /^[\w]+$/;
 const validUserIdRe = /^[\w-]+$/;
 
-function validateFeedSlug(feedSlug) {
+function validateFeedSlug(feedSlug: string): string {
   /*
    * Validate that the feedSlug matches \w
    */
@@ -16,7 +16,7 @@ function validateFeedSlug(feedSlug) {
   return feedSlug;
 }
 
-function validateUserId(userId) {
+function validateUserId(userId: string): string {
   /*
    * Validate the userId matches \w
    */
@@ -27,15 +27,15 @@ function validateUserId(userId) {
   return userId;
 }
 
-function rfc3986(str) {
+function rfc3986(str: string): string {
   return str.replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
 }
 
-function isReadableStream(obj) {
-  return obj && typeof obj === 'object' && typeof obj._read === 'function' && typeof obj._readableState === 'object';
+function isReadableStream(obj: NodeJS.ReadStream): obj is NodeJS.ReadStream {
+  return obj !== null && typeof obj === 'object' && typeof (obj as NodeJS.ReadStream)._read === 'function';
 }
 
-function validateFeedId(feedId) {
+function validateFeedId(feedId: string): string {
   /*
    * Validate that the feedId matches the spec user:1
    */
@@ -50,14 +50,17 @@ function validateFeedId(feedId) {
   return feedId;
 }
 
-function addFileToFormData(uri, name, contentType) {
+function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string, contentType?: string): FormData {
   const data = new FormData();
 
-  let fileField;
-  if (isReadableStream(uri) || (uri && uri.toString && uri.toString() === '[object File]')) {
-    fileField = uri;
+  let fileField: File | NodeJS.ReadStream | { uri: string; name: string; type?: string };
+
+  if (isReadableStream(uri as NodeJS.ReadStream)) {
+    fileField = uri as NodeJS.ReadStream;
+  } else if (uri && uri.toString && uri.toString() === '[object File]') {
+    fileField = uri as File;
   } else {
-    fileField = { uri, name: name || uri.split('/').reverse()[0] };
+    fileField = { uri: uri as string, name: name || (uri as string).split('/').reverse()[0] };
     if (contentType != null) fileField.type = contentType;
   }
 
@@ -65,15 +68,28 @@ function addFileToFormData(uri, name, contentType) {
   return data;
 }
 
-function replaceStreamObjects(obj) {
+function replaceStreamObjects<T, V>(obj: T): V {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   if (Array.isArray(obj)) return obj.map((v) => replaceStreamObjects(v));
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   if (Object.prototype.toString.call(obj) !== '[object Object]') return obj;
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   if (typeof obj.ref === 'function') return obj.ref();
 
   const cloned = {};
   Object.keys(obj).forEach((k) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     cloned[k] = replaceStreamObjects(obj[k]);
   });
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return cloned;
 }
 

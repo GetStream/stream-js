@@ -1,3 +1,5 @@
+import StreamClient, { APIResponse } from './client';
+
 /**
  * Manage api calls for personalization
  * The collection object contains convenience functions such as  get, post, delete
@@ -5,7 +7,9 @@
  */
 
 export default class Personalization {
-  constructor(client) {
+  client: StreamClient;
+
+  constructor(client: StreamClient) {
     /**
      * Initialize the Personalization class
      *
@@ -16,18 +20,18 @@ export default class Personalization {
     this.client = client;
   }
 
-  get(resource, options = {}) {
+  get(resource: string, options: { token?: string } & { [key: string]: string } = {}): Promise<APIResponse> {
     /**
      * Get personalized activities for this feed
      *
      * @method get
      * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options  Additional options
      * @return {Promise} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.get({
+    return this.client.get<APIResponse>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
@@ -35,19 +39,23 @@ export default class Personalization {
     });
   }
 
-  post(resource, options = {}, data = {}) {
+  post(
+    resource: string,
+    options: { [key: string]: string } = {},
+    data: { [key: string]: unknown } = {},
+  ): Promise<APIResponse> {
     /**
      * Post data to personalization endpoint
      *
      * @method post
      * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options - Additional options
      * @param {object} data - Data to send in the payload
      * @return {Promise} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.post({
+    return this.client.post<APIResponse>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
@@ -56,7 +64,7 @@ export default class Personalization {
     });
   }
 
-  delete(resource, options = {}) {
+  delete(resource: string, options: { [key: string]: string } = {}): Promise<APIResponse> {
     /**
      * Delete metadata or activities
      *
@@ -67,7 +75,7 @@ export default class Personalization {
      * @return {Promise} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.delete({
+    return this.client.delete<APIResponse>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,

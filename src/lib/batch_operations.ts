@@ -1,6 +1,7 @@
+import StreamClient, { APIResponse, FollowRelation } from './client';
 import utils from './utils';
 
-function addToMany(activity, feeds) {
+function addToMany<T>(this: StreamClient, activity: T, feeds: string[]): Promise<APIResponse> {
   /**
    * Add one activity to many feeds
    * @method addToMany
@@ -12,7 +13,7 @@ function addToMany(activity, feeds) {
    */
   this._throwMissingApiSecret();
 
-  return this.post({
+  return this.post<APIResponse>({
     url: 'feed/add_to_many/',
     body: {
       activity: utils.replaceStreamObjects(activity),
@@ -22,7 +23,7 @@ function addToMany(activity, feeds) {
   });
 }
 
-function followMany(follows, activityCopyLimit) {
+function followMany(this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number): Promise<APIResponse> {
   /**
    * Follow multiple feeds with one API call
    * @method followMany
@@ -34,10 +35,10 @@ function followMany(follows, activityCopyLimit) {
    */
   this._throwMissingApiSecret();
 
-  const qs = {};
+  const qs: { activity_copy_limit?: number } = {};
   if (typeof activityCopyLimit === 'number') qs.activity_copy_limit = activityCopyLimit;
 
-  return this.post({
+  return this.post<APIResponse>({
     url: 'follow_many/',
     body: follows,
     qs,
@@ -45,7 +46,7 @@ function followMany(follows, activityCopyLimit) {
   });
 }
 
-function unfollowMany(unfollows) {
+function unfollowMany(this: StreamClient, unfollows: FollowRelation[]): Promise<APIResponse> {
   /**
    * Unfollow multiple feeds with one API call
    * @method unfollowMany
@@ -56,7 +57,7 @@ function unfollowMany(unfollows) {
    */
   this._throwMissingApiSecret();
 
-  return this.post({
+  return this.post<APIResponse>({
     url: 'unfollow_many/',
     body: unfollows,
     signature: this.getOrCreateToken(),

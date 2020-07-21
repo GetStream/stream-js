@@ -1,5 +1,23 @@
-export default class StreamUser {
-  constructor(client, userId, userAuthToken) {
+import StreamClient, { APIResponse } from './client';
+
+type UserAPIResponse<T> = APIResponse & {
+  id: string;
+  data: T;
+  created_at: Date;
+  updated_at: Date;
+  followers_count?: number;
+  following_count?: number;
+};
+
+export default class StreamUser<T = unknown> {
+  client: StreamClient;
+  token: string;
+  id: string;
+  data: undefined | T;
+  full: undefined | UserAPIResponse<T>;
+  private url: string;
+
+  constructor(client: StreamClient, userId: string, userAuthToken: string) {
     /**
      * Initialize a user session object
      * @method constructor
@@ -17,19 +35,19 @@ export default class StreamUser {
     this.url = `user/${this.id}/`;
   }
 
-  ref() {
+  ref(): string {
     return `SU:${this.id}`;
   }
 
-  delete() {
+  delete(): Promise<APIResponse> {
     return this.client.delete({
       url: this.url,
       signature: this.token,
     });
   }
 
-  async get(options) {
-    const response = await this.client.get({
+  async get(options: { with_follow_counts?: boolean }): Promise<StreamUser<T>> {
+    const response = await this.client.get<UserAPIResponse<T>>({
       url: this.url,
       signature: this.token,
       qs: options,
@@ -41,8 +59,8 @@ export default class StreamUser {
     return this;
   }
 
-  async create(data, options) {
-    const response = await this.client.post({
+  async create(data: T, options: { get_or_create?: boolean }): Promise<StreamUser<T>> {
+    const response = await this.client.post<UserAPIResponse<T>>({
       url: 'user/',
       body: {
         id: this.id,
@@ -58,8 +76,8 @@ export default class StreamUser {
     return this;
   }
 
-  async update(data) {
-    const response = await this.client.put({
+  async update(data?: { [key: string]: unknown }): Promise<StreamUser<T>> {
+    const response = await this.client.put<UserAPIResponse<T>>({
       url: this.url,
       body: {
         data: data || this.data || {},
@@ -73,11 +91,11 @@ export default class StreamUser {
     return this;
   }
 
-  getOrCreate(data) {
+  getOrCreate(data: T): Promise<StreamUser<T>> {
     return this.create(data, { get_or_create: true });
   }
 
-  profile() {
+  profile(): Promise<StreamUser<T>> {
     return this.get({ with_follow_counts: true });
   }
 }

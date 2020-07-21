@@ -1,12 +1,22 @@
+import StreamClient, { APIResponse, FileUploadAPIResponse, OnUploadProgress } from './client';
+
 export default class StreamFileStore {
-  constructor(client, token) {
+  client: StreamClient;
+  token: string;
+
+  constructor(client: StreamClient, token: string) {
     this.client = client;
     this.token = token;
   }
 
   // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
-  upload(uri, name, contentType, onUploadProgress) {
+  upload(
+    uri: string | File | NodeJS.ReadStream,
+    name?: string,
+    contentType?: string,
+    onUploadProgress?: OnUploadProgress,
+  ): Promise<FileUploadAPIResponse> {
     /**
      * upload a File instance or a readable stream of data
      * @param {File|Buffer|string} uri - File object or Buffer or URI
@@ -18,8 +28,8 @@ export default class StreamFileStore {
     return this.client.upload('files/', uri, name, contentType, onUploadProgress);
   }
 
-  delete(uri) {
-    return this.client.delete({
+  delete(uri: string): Promise<APIResponse> {
+    return this.client.delete<APIResponse>({
       url: `files/`,
       qs: { url: uri },
       signature: this.token,

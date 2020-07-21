@@ -1,7 +1,66 @@
+import StreamClient, { APIResponse } from './client';
+import StreamFeed from './feed';
 import errors from './errors';
 
+type Activity<T = Record<string, unknown>> = T & {
+  id: string;
+};
+
+type Reaction<T = Record<string, unknown>> = T & {
+  id: string;
+};
+
+type TargetFeeds = (string | StreamFeed)[];
+
+type TargetFeed = string | StreamFeed;
+
+type TargetFeedsExtraData = {
+  [key: string]: unknown;
+};
+
+type ReactionBody<T> = {
+  id?: string;
+  activity_id?: string | { id: string };
+  parent?: string | { id: string };
+  kind?: string;
+  data?: T | Record<string, unknown>;
+  target_feeds?: TargetFeeds;
+  user_id?: string;
+  target_feeds_extra_data?: TargetFeedsExtraData;
+};
+
+type ReactionAPIResponse<T> = APIResponse & {
+  id: string;
+  kind: string;
+  activity_id: string;
+  user_id: string;
+  data: T;
+  created_at: Date;
+  updated_at: Date;
+  user?: unknown;
+  latest_children?: {
+    [key: string]: unknown;
+  };
+  children_counts?: {
+    [key: string]: number;
+  };
+};
+
+type ChildReactionAPIResponse<T> = ReactionAPIResponse<T> & {
+  parent: string;
+};
+
+type ReactionFilterAPIResponse<T, A> = APIResponse & {
+  results: ReactionAPIResponse<T>[] | ChildReactionAPIResponse<T>[];
+  activity: A;
+  next: string;
+};
+
 export default class StreamReaction {
-  constructor(client, token) {
+  client: StreamClient;
+  token: string;
+
+  constructor(client: StreamClient, token: string) {
     /**
      * Initialize a reaction object
      * @method constructor
@@ -12,14 +71,13 @@ export default class StreamReaction {
      */
     this.client = client;
     this.token = token;
-    this.signature = token;
   }
 
-  buildURL = (...args) => {
+  buildURL = (...args: string[]): string => {
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  all(options = {}) {
+  all(options = {}): Promise<unknown> {
     /**
      * get all reactions
      * @method all
@@ -31,16 +89,26 @@ export default class StreamReaction {
      */
     return this.client.get({
       url: this.buildURL(),
-      signature: this.signature,
+      signature: this.token,
       qs: options,
     });
   }
 
-  _convertTargetFeeds = (targetFeeds = []) => {
-    return targetFeeds.map((elem) => (typeof elem === 'string' ? elem : elem.id));
+  _convertTargetFeeds = (targetFeeds: TargetFeeds = []): string[] => {
+    return targetFeeds.map((elem: TargetFeed) => (typeof elem === 'string' ? elem : (elem as StreamFeed).id));
   };
 
-  add(kind, activity, data = {}, { id, targetFeeds = [], userId, targetFeedsExtraData } = {}) {
+  add<T>(
+    kind: string,
+    activity: string | Activity,
+    data: T,
+    {
+      id,
+      targetFeeds = [],
+      userId,
+      targetFeedsExtraData,
+    }: { id?: string; targetFeeds?: TargetFeeds; userId?: string; targetFeedsExtraData?: TargetFeedsExtraData } = {},
+  ): Promise<ReactionAPIResponse<T>> {
     /**
      * add reaction
      * @method add
@@ -53,25 +121,38 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    const body = {
+    const body: ReactionBody<T> = {
       id,
-      activity_id: activity instanceof Object ? activity.id : activity,
+      activity_id: activity instanceof Object ? (activity as Activity).id : activity,
       kind,
-      data,
+      data: data || {},
       target_feeds: this._convertTargetFeeds(targetFeeds),
       user_id: userId,
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post({
+    return this.client.post<ReactionAPIResponse<T>>({
       url: this.buildURL(),
       body,
-      signature: this.signature,
+      signature: this.token,
     });
   }
 
-  addChild(kind, reaction, data = {}, { targetFeeds = [], userId, targetFeedsExtraData } = {}) {
+  addChild<T>(
+    kind: string,
+    reaction: string | Reaction,
+    data = {},
+    {
+      targetFeeds = [],
+      userId,
+      targetFeedsExtraData,
+    }: {
+      targetFeeds?: TargetFeeds;
+      userId?: string;
+      targetFeedsExtraData?: TargetFeedsExtraData;
+    } = {},
+  ): Promise<ChildReactionAPIResponse<T>> {
     /**
      * add reaction
      * @method add
@@ -84,8 +165,8 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    const body = {
-      parent: reaction instanceof Object ? reaction.id : reaction,
+    const body: ReactionBody<T> = {
+      parent: reaction instanceof Object ? (reaction as Reaction).id : reaction,
       kind,
       data,
       target_feeds: this._convertTargetFeeds(targetFeeds),
@@ -94,14 +175,14 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post({
+    return this.client.post<ChildReactionAPIResponse<T>>({
       url: this.buildURL(),
       body,
-      signature: this.signature,
+      signature: this.token,
     });
   }
 
-  get(id) {
+  get<T>(id: string): Promise<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>> {
     /**
      * get reaction
      * @method add
@@ -110,13 +191,24 @@ export default class StreamReaction {
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get({
+    return this.client.get<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>>({
       url: this.buildURL(id),
-      signature: this.signature,
+      signature: this.token,
     });
   }
 
-  filter(conditions) {
+  filter<T, A>(conditions: {
+    kind?: string;
+    user_id?: string;
+    activity_id?: string;
+    reaction_id?: string;
+    id_lt?: string;
+    id_lte?: string;
+    id_gt?: string;
+    id_gte?: string;
+    limit?: number;
+    with_activity_data?: boolean;
+  }): Promise<ReactionFilterAPIResponse<T, A>> {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -124,12 +216,12 @@ export default class StreamReaction {
      * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
      * the reaction with ID equal to the value provided is included.
      * results are limited to 25 at most and are ordered newest to oldest by default.
-     * @method lookup
+     * @method filter
      * @memberof StreamReaction.prototype
-     * @param  {object}   conditions Reaction Id {activity_id|user_id|foreign_id:string, kind:string, next:string, previous:string, limit:integer}
+     * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
      * @return {Promise} Promise object
-     * @example reactions.lookup({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
-     * @example reactions.lookup({user_id: "john", kinds:"like"})
+     * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.filter({user_id: "john", kinds:"like"})
      */
 
     const { user_id: userId, activity_id: activityId, reaction_id: reactionId, ...qs } = conditions;
@@ -146,16 +238,25 @@ export default class StreamReaction {
     const lookupType = (userId && 'user_id') || (activityId && 'activity_id') || (reactionId && 'reaction_id');
     const value = userId || activityId || reactionId;
 
-    const url = conditions.kind ? this.buildURL(lookupType, value, conditions.kind) : this.buildURL(lookupType, value);
+    const url = conditions.kind
+      ? this.buildURL(lookupType as string, value as string, conditions.kind)
+      : this.buildURL(lookupType as string, value as string);
 
-    return this.client.get({
+    return this.client.get<ReactionFilterAPIResponse<T, A>>({
       url,
-      qs,
-      signature: this.signature,
+      qs: qs as { [key: string]: unknown },
+      signature: this.token,
     });
   }
 
-  update(id, data, { targetFeeds = [], targetFeedsExtraData } = {}) {
+  update<T>(
+    id: string,
+    data: T,
+    {
+      targetFeeds = [],
+      targetFeedsExtraData,
+    }: { targetFeeds?: string[] | StreamFeed[]; targetFeedsExtraData?: TargetFeedsExtraData } = {},
+  ): Promise<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>> {
     /**
      * update reaction
      * @method add
@@ -167,21 +268,21 @@ export default class StreamReaction {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
-    const body = {
+    const body: ReactionBody<T> = {
       data,
       target_feeds: this._convertTargetFeeds(targetFeeds),
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.put({
+    return this.client.put<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>>({
       url: this.buildURL(id),
       body,
-      signature: this.signature,
+      signature: this.token,
     });
   }
 
-  delete(id) {
+  delete(id: string): Promise<APIResponse> {
     /**
      * delete reaction
      * @method delete
@@ -190,9 +291,9 @@ export default class StreamReaction {
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.delete({
+    return this.client.delete<APIResponse>({
       url: this.buildURL(id),
-      signature: this.signature,
+      signature: this.token,
     });
   }
 }
