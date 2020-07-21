@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "outDir": "types",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
