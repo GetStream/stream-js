@@ -14,7 +14,7 @@
   "version": "5.0.2",
   "scripts": {
     "transpile": "rm -rf lib && babel src --out-dir lib --extensions '.js,.ts'",
-    "types": "tsc --outFile lib/index --declaration true --declarationMap true --emitDeclarationOnly true",
+    "types": "tsc --outFile lib/index --emitDeclarationOnly",
     "build": "yarn transpile && yarn types",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
