@@ -6,7 +6,7 @@ import StreamClient, { APIResponse } from './client';
  * @class Personalization
  */
 
-export default class Personalization {
+export default class Personalization<PersonalizationType> {
   client: StreamClient;
 
   constructor(client: StreamClient) {

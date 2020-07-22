@@ -1,20 +1,20 @@
 import StreamClient, { APIResponse } from './client';
 
-type UserAPIResponse<T> = APIResponse & {
+type UserAPIResponse<UserType> = APIResponse & {
   id: string;
-  data: T;
+  data: UserType;
   created_at: Date;
   updated_at: Date;
   followers_count?: number;
   following_count?: number;
 };
 
-export default class StreamUser<T = unknown> {
+export default class StreamUser<UserType> {
   client: StreamClient;
   token: string;
   id: string;
-  data: undefined | T;
-  full: undefined | UserAPIResponse<T>;
+  data: undefined | UserType;
+  full: undefined | UserAPIResponse<UserType>;
   private url: string;
 
   constructor(client: StreamClient, userId: string, userAuthToken: string) {
@@ -40,14 +40,14 @@ export default class StreamUser<T = unknown> {
   }
 
   delete(): Promise<APIResponse> {
-    return this.client.delete({
+    return this.client.delete<APIResponse>({
       url: this.url,
       signature: this.token,
     });
   }
 
-  async get(options: { with_follow_counts?: boolean }): Promise<StreamUser<T>> {
-    const response = await this.client.get<UserAPIResponse<T>>({
+  async get(options: { with_follow_counts?: boolean }): Promise<StreamUser<UserType>> {
+    const response = await this.client.get<UserAPIResponse<UserType>>({
       url: this.url,
       signature: this.token,
       qs: options,
@@ -59,8 +59,8 @@ export default class StreamUser<T = unknown> {
     return this;
   }
 
-  async create(data: T, options: { get_or_create?: boolean }): Promise<StreamUser<T>> {
-    const response = await this.client.post<UserAPIResponse<T>>({
+  async create(data: UserType, options: { get_or_create?: boolean }): Promise<StreamUser<UserType>> {
+    const response = await this.client.post<UserAPIResponse<UserType>>({
       url: 'user/',
       body: {
         id: this.id,
@@ -76,8 +76,8 @@ export default class StreamUser<T = unknown> {
     return this;
   }
 
-  async update(data?: { [key: string]: unknown }): Promise<StreamUser<T>> {
-    const response = await this.client.put<UserAPIResponse<T>>({
+  async update(data?: { [key: string]: unknown }): Promise<StreamUser<UserType>> {
+    const response = await this.client.put<UserAPIResponse<UserType>>({
       url: this.url,
       body: {
         data: data || this.data || {},
@@ -91,11 +91,11 @@ export default class StreamUser<T = unknown> {
     return this;
   }
 
-  getOrCreate(data: T): Promise<StreamUser<T>> {
+  getOrCreate(data: UserType): Promise<StreamUser<UserType>> {
     return this.create(data, { get_or_create: true });
   }
 
-  profile(): Promise<StreamUser<T>> {
+  profile(): Promise<StreamUser<UserType>> {
     return this.get({ with_follow_counts: true });
   }
 }

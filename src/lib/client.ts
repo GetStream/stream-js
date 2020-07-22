@@ -47,7 +47,7 @@ type BaseActivity = {
   to?: string[];
 };
 
-export type Activity<T = Record<string, unknown>> = BaseActivity & T;
+export type Activity<ActivityType = Record<string, unknown>> = BaseActivity & ActivityType;
 
 type GetActivitiesAPIResponse<T> = APIResponse & { results: Activity<T>[] };
 
@@ -136,7 +136,14 @@ type HandlerCallback = (...args: unknown[]) => unknown;
  * Client to connect to Stream api
  * @class StreamClient
  */
-class StreamClient<U = unknown> {
+class StreamClient<
+  UserType = unknown,
+  CollectionType = unknown,
+  ActivityType = unknown,
+  ReactionType = unknown,
+  ChildReactionType = unknown,
+  PersonalizationType = unknown
+> {
   baseUrl: string;
   baseAnalyticsUrl: string;
   apiKey: string;
@@ -168,18 +175,18 @@ class StreamClient<U = unknown> {
   };
   handlers: { [key: string]: HandlerCallback };
 
-  currentUser: StreamUser<U> | undefined;
-  personalization: Personalization;
-  collections: Collections;
+  currentUser: StreamUser<UserType> | undefined;
+  personalization: Personalization<PersonalizationType>;
+  collections: Collections<CollectionType>;
   files: StreamFileStore;
   images: StreamImageStore;
-  reactions: StreamReaction;
+  reactions: StreamReaction<ReactionType, ChildReactionType, ActivityType>;
 
   private _personalizationToken: string | undefined;
   private _collectionsToken: string | undefined;
   private _getOrCreateToken: string | undefined;
 
-  addToMany?: <T>(this: StreamClient, activity: T, feeds: string[]) => Promise<APIResponse>;
+  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
   unfollowMany?: (this: StreamClient, unfollows: FollowRelation[]) => Promise<APIResponse>;
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
@@ -254,17 +261,17 @@ class StreamClient<U = unknown> {
       ...(this.nodeOptions || {}),
     });
 
-    this.personalization = new Personalization(this);
+    this.personalization = new Personalization<PersonalizationType>(this);
 
     if (this.browser && this.usingApiSecret) {
       throw new errors.FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
-    this.collections = new Collections(this, this.getOrCreateToken());
+    this.collections = new Collections<CollectionType>(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this, this.getOrCreateToken());
     this.images = new StreamImageStore(this, this.getOrCreateToken());
-    this.reactions = new StreamReaction(this, this.getOrCreateToken());
+    this.reactions = new StreamReaction<ReactionType, ChildReactionType, ActivityType>(this, this.getOrCreateToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && createRedirectUrl) {
@@ -431,7 +438,11 @@ class StreamClient<U = unknown> {
     });
   }
 
-  feed(feedSlug: string, userId?: string | StreamUser, token?: string): StreamFeed {
+  feed(
+    feedSlug: string,
+    userId?: string | StreamUser<UserType>,
+    token?: string,
+  ): StreamFeed<ActivityType, UserType, ReactionType, ChildReactionType> {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
@@ -453,7 +464,12 @@ class StreamClient<U = unknown> {
       }
     }
 
-    return new StreamFeed(this, feedSlug, userId || (this.userId as string), token);
+    return new StreamFeed<ActivityType, UserType, ReactionType, ChildReactionType>(
+      this,
+      feedSlug,
+      userId || (this.userId as string),
+      token,
+    );
   }
 
   enrichUrl(relativeUrl: string, serviceName?: string): string {
@@ -694,7 +710,7 @@ class StreamClient<U = unknown> {
     });
   }
 
-  updateActivities<T>(activities: Activity<T>[]): Promise<unknown> {
+  updateActivities(activities: Activity<ActivityType>[]): Promise<unknown> {
     /**
      * Updates all supplied activities on the getstream-io api
      * @since  3.1.0
@@ -719,7 +735,7 @@ class StreamClient<U = unknown> {
     });
   }
 
-  updateActivity<T>(activity: Activity<T>): Promise<unknown> {
+  updateActivity(activity: Activity<ActivityType>): Promise<unknown> {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
@@ -728,19 +744,18 @@ class StreamClient<U = unknown> {
      */
     this._throwMissingApiSecret();
 
-    return this.updateActivities<T>([activity]);
+    return this.updateActivities([activity]);
   }
 
-  getActivities<T>({
+  getActivities({
     ids,
     foreignIDTimes,
     ...params
   }: EnrichOptions & {
     ids?: string[];
     foreignIDTimes?: { foreignID: string; time: string | Date }[];
-
     reactions?: Record<string, boolean>;
-  }): Promise<GetActivitiesAPIResponse<T>> {
+  }): Promise<GetActivitiesAPIResponse<ActivityType>> {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
@@ -785,7 +800,7 @@ class StreamClient<U = unknown> {
     this.replaceReactionOptions(params);
     const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
-    return this.get<GetActivitiesAPIResponse<T>>({
+    return this.get<GetActivitiesAPIResponse<ActivityType>>({
       url: path,
       qs: { ...params, ...extraParams },
       signature: token,
@@ -801,21 +816,20 @@ class StreamClient<U = unknown> {
     return this._getOrCreateToken;
   }
 
-  user(userId: string): StreamUser<U> {
-    return new StreamUser<U>(this, userId, this.getOrCreateToken());
+  user(userId: string): StreamUser<UserType> {
+    return new StreamUser<UserType>(this, userId, this.getOrCreateToken());
   }
 
-  async setUser(data: U): Promise<StreamUser<U>> {
+  async setUser(data: UserType): Promise<StreamUser<UserType>> {
     if (this.usingApiSecret) {
       throw new errors.SiteError('This method can only be used client-side using a user token');
     }
 
     const body = { ...data };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     delete body?.id;
 
-    const user = await (this.currentUser as StreamUser<U>).getOrCreate(body);
+    const user = await (this.currentUser as StreamUser<UserType>).getOrCreate(body);
     this.currentUser = user;
     return user;
   }
@@ -836,7 +850,7 @@ class StreamClient<U = unknown> {
     });
   }
 
-  async activityPartialUpdate<T>(data: ActivityPartialChanges): Promise<APIResponse & Activity<T>> {
+  async activityPartialUpdate(data: ActivityPartialChanges): Promise<APIResponse & Activity<ActivityType>> {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
@@ -869,13 +883,13 @@ class StreamClient<U = unknown> {
      *   ]
      * })
      */
-    const response = await this.activitiesPartialUpdate<T>([data]);
+    const response = await this.activitiesPartialUpdate([data]);
     const activity = response.activities[0];
     delete response.activities;
     return { ...activity, ...response };
   }
 
-  activitiesPartialUpdate<T>(changes: ActivityPartialChanges[]): Promise<PartialUpdateActivityAPIResponse<T>> {
+  activitiesPartialUpdate(changes: ActivityPartialChanges[]): Promise<PartialUpdateActivityAPIResponse<ActivityType>> {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0
@@ -959,7 +973,7 @@ class StreamClient<U = unknown> {
       });
     }
 
-    return this.post<PartialUpdateActivityAPIResponse<T>>({
+    return this.post<PartialUpdateActivityAPIResponse<ActivityType>>({
       url: 'activity/',
       body: {
         changes,

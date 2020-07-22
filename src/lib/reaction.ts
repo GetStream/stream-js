@@ -2,14 +2,6 @@ import StreamClient, { APIResponse } from './client';
 import StreamFeed from './feed';
 import errors from './errors';
 
-type Activity<T = Record<string, unknown>> = T & {
-  id: string;
-};
-
-type Reaction<T = Record<string, unknown>> = T & {
-  id: string;
-};
-
 type TargetFeeds = (string | StreamFeed)[];
 
 type TargetFeed = string | StreamFeed;
@@ -29,12 +21,12 @@ type ReactionBody<T> = {
   target_feeds_extra_data?: TargetFeedsExtraData;
 };
 
-type ReactionAPIResponse<T> = APIResponse & {
+type ReactionAPIResponse<ReactionType> = APIResponse & {
   id: string;
   kind: string;
   activity_id: string;
   user_id: string;
-  data: T;
+  data: ReactionType;
   created_at: Date;
   updated_at: Date;
   user?: unknown;
@@ -46,17 +38,17 @@ type ReactionAPIResponse<T> = APIResponse & {
   };
 };
 
-type ChildReactionAPIResponse<T> = ReactionAPIResponse<T> & {
+type ChildReactionAPIResponse<ChildReactionType> = ReactionAPIResponse<ChildReactionType> & {
   parent: string;
 };
 
-type ReactionFilterAPIResponse<T, A> = APIResponse & {
-  results: ReactionAPIResponse<T>[] | ChildReactionAPIResponse<T>[];
-  activity: A;
+type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType> = APIResponse & {
+  results: ReactionAPIResponse<ReactionType>[] | ChildReactionAPIResponse<ChildReactionType>[];
+  activity: ActivityType;
   next: string;
 };
 
-export default class StreamReaction {
+export default class StreamReaction<ReactionType, ChildReactionType, ActivityType> {
   client: StreamClient;
   token: string;
 
@@ -98,17 +90,17 @@ export default class StreamReaction {
     return targetFeeds.map((elem: TargetFeed) => (typeof elem === 'string' ? elem : (elem as StreamFeed).id));
   };
 
-  add<T>(
+  add(
     kind: string,
-    activity: string | Activity,
-    data: T,
+    activity: string | { id: string },
+    data: ReactionType,
     {
       id,
       targetFeeds = [],
       userId,
       targetFeedsExtraData,
     }: { id?: string; targetFeeds?: TargetFeeds; userId?: string; targetFeedsExtraData?: TargetFeedsExtraData } = {},
-  ): Promise<ReactionAPIResponse<T>> {
+  ): Promise<ReactionAPIResponse<ReactionType>> {
     /**
      * add reaction
      * @method add
@@ -121,9 +113,9 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    const body: ReactionBody<T> = {
+    const body: ReactionBody<ReactionType> = {
       id,
-      activity_id: activity instanceof Object ? (activity as Activity).id : activity,
+      activity_id: activity instanceof Object ? (activity as { id: string }).id : activity,
       kind,
       data: data || {},
       target_feeds: this._convertTargetFeeds(targetFeeds),
@@ -132,16 +124,16 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post<ReactionAPIResponse<T>>({
+    return this.client.post<ReactionAPIResponse<ReactionType>>({
       url: this.buildURL(),
       body,
       signature: this.token,
     });
   }
 
-  addChild<T>(
+  addChild(
     kind: string,
-    reaction: string | Reaction,
+    reaction: string | { id: string },
     data = {},
     {
       targetFeeds = [],
@@ -152,7 +144,7 @@ export default class StreamReaction {
       userId?: string;
       targetFeedsExtraData?: TargetFeedsExtraData;
     } = {},
-  ): Promise<ChildReactionAPIResponse<T>> {
+  ): Promise<ChildReactionAPIResponse<ChildReactionType>> {
     /**
      * add reaction
      * @method add
@@ -165,8 +157,8 @@ export default class StreamReaction {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
-    const body: ReactionBody<T> = {
-      parent: reaction instanceof Object ? (reaction as Reaction).id : reaction,
+    const body: ReactionBody<ChildReactionType> = {
+      parent: reaction instanceof Object ? (reaction as { id: string }).id : reaction,
       kind,
       data,
       target_feeds: this._convertTargetFeeds(targetFeeds),
@@ -175,14 +167,14 @@ export default class StreamReaction {
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post<ChildReactionAPIResponse<T>>({
+    return this.client.post<ChildReactionAPIResponse<ChildReactionType>>({
       url: this.buildURL(),
       body,
       signature: this.token,
     });
   }
 
-  get<T>(id: string): Promise<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>> {
+  get(id: string): Promise<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>> {
     /**
      * get reaction
      * @method add
@@ -191,13 +183,13 @@ export default class StreamReaction {
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>>({
+    return this.client.get<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>>({
       url: this.buildURL(id),
       signature: this.token,
     });
   }
 
-  filter<T, A>(conditions: {
+  filter(conditions: {
     kind?: string;
     user_id?: string;
     activity_id?: string;
@@ -208,7 +200,7 @@ export default class StreamReaction {
     id_gte?: string;
     limit?: number;
     with_activity_data?: boolean;
-  }): Promise<ReactionFilterAPIResponse<T, A>> {
+  }): Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType>> {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -242,21 +234,21 @@ export default class StreamReaction {
       ? this.buildURL(lookupType as string, value as string, conditions.kind)
       : this.buildURL(lookupType as string, value as string);
 
-    return this.client.get<ReactionFilterAPIResponse<T, A>>({
+    return this.client.get<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType>>({
       url,
       qs: qs as { [key: string]: unknown },
       signature: this.token,
     });
   }
 
-  update<T>(
+  update(
     id: string,
-    data: T,
+    data: ReactionType | ChildReactionType,
     {
       targetFeeds = [],
       targetFeedsExtraData,
     }: { targetFeeds?: string[] | StreamFeed[]; targetFeedsExtraData?: TargetFeedsExtraData } = {},
-  ): Promise<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>> {
+  ): Promise<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>> {
     /**
      * update reaction
      * @method add
@@ -268,14 +260,14 @@ export default class StreamReaction {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
-    const body: ReactionBody<T> = {
+    const body: ReactionBody<ReactionType | ChildReactionType> = {
       data,
       target_feeds: this._convertTargetFeeds(targetFeeds),
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.put<ReactionAPIResponse<T> | ChildReactionAPIResponse<T>>({
+    return this.client.put<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>>({
       url: this.buildURL(id),
       body,
       signature: this.token,

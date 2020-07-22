@@ -20,12 +20,27 @@ type GetFollowOptions = {
   filter?: string[];
 };
 
+type NewActivity = {
+  actor: string;
+  verb: string;
+  object: string | unknown;
+  to?: string[];
+  target?: string;
+  time?: string;
+  foreign_id?: string;
+};
+
 /**
  * Manage api calls for specific feeds
  * The feed object contains convenience functions such add activity, remove activity etc
  * @class StreamFeed
  */
-export default class StreamFeed {
+export default class StreamFeed<
+  ActivityType = unknown,
+  UserType = unknown,
+  ReactionType = unknown,
+  ChildReactionType = unknown
+> {
   client: StreamClient;
   token: string;
   id: string;
@@ -35,7 +50,6 @@ export default class StreamFeed {
   feedTogether: string;
   signature: string;
   notificationChannel: string;
-  enrichByDefault: boolean;
 
   constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
     /**
@@ -76,11 +90,9 @@ export default class StreamFeed {
 
     // faye setup
     this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
-
-    this.enrichByDefault = false;
   }
 
-  addActivity<T extends { actor?: string }>(activity: T): Promise<Activity<T>> {
+  addActivity(activity: NewActivity & ActivityType): Promise<Activity<ActivityType>> {
     /**
      * Adds the given activity to the feed
      * @method addActivity
@@ -94,7 +106,7 @@ export default class StreamFeed {
       activity.actor = this.client.currentUser.ref();
     }
 
-    return this.client.post<Activity<T>>({
+    return this.client.post<Activity<ActivityType>>({
       url: `feed/${this.feedUrl}/`,
       body: activity,
       signature: this.signature,
@@ -120,7 +132,7 @@ export default class StreamFeed {
     });
   }
 
-  addActivities<T>(activities: T[]): Promise<unknown> {
+  addActivities(activities: (NewActivity & ActivityType)[]): Promise<unknown> {
     /**
      * Adds the given activities to the feed
      * @method addActivities

@@ -1,7 +1,7 @@
 import StreamClient, { APIResponse, FollowRelation } from './client';
 import utils from './utils';
 
-function addToMany<T>(this: StreamClient, activity: T, feeds: string[]): Promise<APIResponse> {
+function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]): Promise<APIResponse> {
   /**
    * Add one activity to many feeds
    * @method addToMany

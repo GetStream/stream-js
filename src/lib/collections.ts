@@ -1,41 +1,41 @@
 import StreamClient, { APIResponse } from './client';
 import errors from './errors';
 
-type CollectionResponse<T> = {
+type CollectionResponse<CollectionType> = {
   collection: string;
   id: string;
-  data: T;
+  data: CollectionType;
   foregin_id: string;
   created_at: Date;
   updated_at: Date;
   user_id?: string;
 };
 
-type CollectionAPIResponse<T> = APIResponse & CollectionResponse<T>;
+type CollectionAPIResponse<CollectionType> = APIResponse & CollectionResponse<CollectionType>;
 
-type SelectCollectionAPIResponse<T> = APIResponse & {
+type SelectCollectionAPIResponse<CollectionType> = APIResponse & {
   response: {
-    data: CollectionResponse<T>[];
+    data: CollectionResponse<CollectionType>[];
   };
 };
 
-type UpsertCollectionAPIResponse<T> = APIResponse & {
+type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
   data: {
     [key: string]: {
       id: string;
-      data: T;
+      data: CollectionType;
     }[];
   };
 };
 
-class CollectionEntry<T> {
+class CollectionEntry<CollectionType> {
   id: string;
   collection: string;
-  store: Collections;
-  data: T | null;
+  store: Collections<CollectionType>;
+  data: CollectionType | null;
   full: unknown;
 
-  constructor(store: Collections, collection: string, id: string, data: T) {
+  constructor(store: Collections<CollectionType>, collection: string, id: string, data: CollectionType) {
     this.collection = collection;
     this.store = store;
     this.id = id;
@@ -46,7 +46,7 @@ class CollectionEntry<T> {
     return `SO:${this.collection}:${this.id}`;
   }
 
-  async get(): Promise<CollectionEntry<T>> {
+  async get(): Promise<CollectionEntry<CollectionType>> {
     /**
      * get item from collection and sync data
      * @method get
@@ -54,13 +54,13 @@ class CollectionEntry<T> {
      * @return {Promise} Promise object
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
-    const response = await this.store.get<T>(this.collection, this.id);
+    const response = await this.store.get(this.collection, this.id);
     this.data = response.data;
     this.full = response;
     return response;
   }
 
-  async add(): Promise<CollectionEntry<T>> {
+  async add(): Promise<CollectionEntry<CollectionType>> {
     /**
      * Add item to collection
      * @method add
@@ -68,13 +68,13 @@ class CollectionEntry<T> {
      * @return {Promise} Promise object
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    const response = await this.store.add<T>(this.collection, this.id, this.data as T);
+    const response = await this.store.add(this.collection, this.id, this.data as CollectionType);
     this.data = response.data;
     this.full = response;
     return response;
   }
 
-  async update(): Promise<CollectionEntry<T>> {
+  async update(): Promise<CollectionEntry<CollectionType>> {
     /**
      * Update item in the object storage
      * @method update
@@ -83,7 +83,7 @@ class CollectionEntry<T> {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    const response = await this.store.update<T>(this.collection, this.id, this.data as T);
+    const response = await this.store.update(this.collection, this.id, this.data as CollectionType);
     this.data = response.data;
     this.full = response;
     return response;
@@ -104,7 +104,7 @@ class CollectionEntry<T> {
   }
 }
 
-export default class Collections {
+export default class Collections<CollectionType> {
   client: StreamClient;
   token: string;
 
@@ -125,11 +125,11 @@ export default class Collections {
     return itemId === undefined ? url : `${url}${itemId}/`;
   };
 
-  entry<T>(collection: string, itemId: string, itemData: T): CollectionEntry<T> {
-    return new CollectionEntry<T>(this, collection, itemId, itemData);
+  entry(collection: string, itemId: string, itemData: CollectionType): CollectionEntry<CollectionType> {
+    return new CollectionEntry<CollectionType>(this, collection, itemId, itemData);
   }
 
-  async get<T>(collection: string, itemId: string): Promise<CollectionEntry<T>> {
+  async get(collection: string, itemId: string): Promise<CollectionEntry<CollectionType>> {
     /**
      * get item from collection
      * @method get
@@ -139,17 +139,17 @@ export default class Collections {
      * @return {Promise} Promise object
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
-    const response = await this.client.get<CollectionAPIResponse<T>>({
+    const response = await this.client.get<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection, itemId),
       signature: this.token,
     });
 
-    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    const entry = this.entry(response.collection, response.id, response.data);
     entry.full = response;
     return entry;
   }
 
-  async add<T>(collection: string, itemId: string, itemData: T): Promise<CollectionEntry<T>> {
+  async add(collection: string, itemId: string, itemData: CollectionType): Promise<CollectionEntry<CollectionType>> {
     /**
      * Add item to collection
      * @method add
@@ -160,7 +160,7 @@ export default class Collections {
      * @return {Promise} Promise object
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    const response = await this.client.post<CollectionAPIResponse<T>>({
+    const response = await this.client.post<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection),
       body: {
         id: itemId === null ? undefined : itemId,
@@ -169,12 +169,12 @@ export default class Collections {
       signature: this.token,
     });
 
-    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    const entry = this.entry(response.collection, response.id, response.data);
     entry.full = response;
     return entry;
   }
 
-  async update<T>(collection: string, entryId: string, data: T): Promise<CollectionEntry<T>> {
+  async update(collection: string, entryId: string, data: CollectionType): Promise<CollectionEntry<CollectionType>> {
     /**
      * Update entry in the collection
      * @method update
@@ -186,13 +186,13 @@ export default class Collections {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
-    const response = await this.client.put<CollectionAPIResponse<T>>({
+    const response = await this.client.put<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection, entryId),
       body: { data },
       signature: this.token,
     });
 
-    const entry = this.client.collections.entry(response.collection, response.id, response.data);
+    const entry = this.entry(response.collection, response.id, response.data);
     entry.full = response;
     return entry;
   }
@@ -212,7 +212,10 @@ export default class Collections {
     });
   }
 
-  upsert<T>(collection: string, data: T | T[]): Promise<UpsertCollectionAPIResponse<T>> {
+  upsert(
+    collection: string,
+    data: CollectionType | CollectionType[],
+  ): Promise<UpsertCollectionAPIResponse<CollectionType>> {
     /**
      * Upsert one or more items within a collection.
      *
@@ -227,7 +230,7 @@ export default class Collections {
 
     if (!Array.isArray(data)) data = [data];
 
-    return this.client.post<UpsertCollectionAPIResponse<T>>({
+    return this.client.post<UpsertCollectionAPIResponse<CollectionType>>({
       url: 'collections/',
       serviceName: 'api',
       body: { data: { [collection]: data } },
@@ -235,7 +238,7 @@ export default class Collections {
     });
   }
 
-  select<T>(collection: string, ids: string | string[]): Promise<SelectCollectionAPIResponse<T>> {
+  select(collection: string, ids: string | string[]): Promise<SelectCollectionAPIResponse<CollectionType>> {
     /**
      * Select all objects with ids from the collection.
      *
@@ -250,7 +253,7 @@ export default class Collections {
 
     if (!Array.isArray(ids)) ids = [ids];
 
-    return this.client.get<SelectCollectionAPIResponse<T>>({
+    return this.client.get<SelectCollectionAPIResponse<CollectionType>>({
       url: 'collections/',
       serviceName: 'api',
       qs: { foreign_ids: ids.map((id) => `${collection}:${id}`).join(',') },
