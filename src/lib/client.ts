@@ -16,7 +16,10 @@ import createRedirectUrl from './redirect_url';
 import signing from './signing';
 import errors from './errors';
 import utils from './utils';
-import pkg from '../../package.json';
+
+// no import since typescript json loader shifts the final output structure
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pkg = require('../../package.json');
 
 export type APIResponse = {
   duration?: string;

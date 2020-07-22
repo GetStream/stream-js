@@ -7,14 +7,15 @@
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
   "main": "./lib/getstream.js",
   "module": "./lib/getstream.js",
-  "types": "./types/index.d.ts",
+  "types": "./lib/index.d.ts",
   "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
   "version": "5.0.2",
   "scripts": {
-    "types": "tsc --outFile types/index --declaration true --declarationMap true --emitDeclarationOnly true",
-    "build": "babel src --out-dir lib --extensions '.js,.ts'",
+    "transpile": "rm -rf lib && babel src --out-dir lib --extensions '.js,.ts'",
+    "types": "tsc --outFile lib/index --declaration true --declarationMap true --emitDeclarationOnly true",
+    "build": "yarn transpile && yarn types",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
     "lint": "yarn run prettier && yarn run eslint",
@@ -119,8 +120,7 @@
   },
   "files": [
     "dist",
-    "lib",
-    "types"
+    "lib"
   ],
   "engines": {
     "node": "10 || 12 || >=14"
