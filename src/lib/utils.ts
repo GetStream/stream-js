@@ -68,28 +68,24 @@ function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string
   return data;
 }
 
+// TODO: refactor and add proper types
 function replaceStreamObjects<T, V>(obj: T): V {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   if (Array.isArray(obj)) return obj.map((v) => replaceStreamObjects(v));
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   if (Object.prototype.toString.call(obj) !== '[object Object]') return obj;
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof obj.ref === 'function') return obj.ref();
 
   const cloned = {};
   Object.keys(obj).forEach((k) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     cloned[k] = replaceStreamObjects(obj[k]);
   });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error
   return cloned;
 }
 
