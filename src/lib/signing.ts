@@ -75,7 +75,7 @@ function JWTScopeToken(
 function JWTUserSessionToken(
   apiSecret: string,
   userId: string,
-  extraData: { [key: string]: unknown } = {},
+  extraData: Record<string, unknown> = {},
   jwtOptions: jwt.SignOptions = {},
 ): string {
   /**

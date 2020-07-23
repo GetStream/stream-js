@@ -6,9 +6,7 @@ type TargetFeeds = (string | StreamFeed)[];
 
 type TargetFeed = string | StreamFeed;
 
-type TargetFeedsExtraData = {
-  [key: string]: unknown;
-};
+type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
   id?: string;
@@ -30,12 +28,8 @@ type ReactionAPIResponse<ReactionType> = APIResponse & {
   created_at: Date;
   updated_at: Date;
   user?: unknown;
-  latest_children?: {
-    [key: string]: unknown;
-  };
-  children_counts?: {
-    [key: string]: number;
-  };
+  latest_children?: Record<string, unknown>;
+  children_counts?: Record<string, number>;
 };
 
 type ChildReactionAPIResponse<ChildReactionType> = ReactionAPIResponse<ChildReactionType> & {

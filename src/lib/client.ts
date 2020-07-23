@@ -7,7 +7,7 @@ import jwtDecode from 'jwt-decode';
 import Personalization from './personalization';
 import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
 import Collections from './collections';
-import StreamFeed, { Activity } from './feed';
+import StreamFeed, { Activity, EnrichOptions } from './feed';
 import StreamFileStore from './files';
 import StreamImageStore from './images';
 import StreamReaction from './reaction';
@@ -21,14 +21,9 @@ import utils from './utils';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../../package.json');
 
-export type APIResponse = {
-  duration?: string;
-  [key: string]: unknown;
-};
+export type APIResponse = Record<string, unknown> & { duration?: string };
 
-export type FileUploadAPIResponse = APIResponse & {
-  file: string;
-};
+export type FileUploadAPIResponse = APIResponse & { file: string };
 
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
 
@@ -43,17 +38,7 @@ export type ClientOptions = {
   fayeUrl?: string;
   protocol?: string;
   local?: boolean;
-  urlOverride?: { [key: string]: string };
-};
-
-export type EnrichOptions = {
-  enrich?: boolean;
-  withOwnReactions?: boolean;
-  withOwnChildren?: boolean;
-  ownReactions?: boolean;
-  withReactionCounts?: boolean;
-  withRecentReactions?: boolean;
-  recentReactionsLimit?: number;
+  urlOverride?: Record<string, string>;
 };
 
 type OGResource = {
@@ -99,8 +84,8 @@ type AxiosConfig = {
   url: string;
   serviceName?: string;
   body?: unknown;
-  qs?: { [key: string]: unknown };
-  headers?: { [key: string]: string };
+  qs?: Record<string, unknown>;
+  headers?: Record<string, unknown>;
   axiosOptions?: axios.AxiosRequestConfig;
 };
 
@@ -152,14 +137,8 @@ class StreamClient<
   nodeOptions: undefined | { httpAgent: http.Agent; httpsAgent: https.Agent };
 
   request: axios.AxiosInstance;
-  subscriptions: {
-    [key: string]: {
-      userId: string;
-      token: string;
-      fayeSubscription: Faye.Subscription;
-    };
-  };
-  handlers: { [key: string]: HandlerCallback };
+  subscriptions: Record<string, { userId: string; token: string; fayeSubscription: Faye.Subscription }>;
+  handlers: Record<string, HandlerCallback>;
 
   currentUser: StreamUser<UserType> | undefined;
   personalization: Personalization<PersonalizationType>;

@@ -76,7 +76,7 @@ export default class StreamUser<UserType> {
     return this;
   }
 
-  async update(data?: { [key: string]: unknown }): Promise<StreamUser<UserType>> {
+  async update(data?: Record<string, unknown>): Promise<StreamUser<UserType>> {
     const response = await this.client.put<UserAPIResponse<UserType>>({
       url: this.url,
       body: {

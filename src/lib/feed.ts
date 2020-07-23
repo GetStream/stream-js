@@ -1,8 +1,18 @@
 import * as Faye from 'faye';
-import StreamClient, { APIResponse, EnrichOptions } from './client';
+import StreamClient, { APIResponse } from './client';
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
+
+export type EnrichOptions = {
+  enrich?: boolean;
+  withOwnReactions?: boolean;
+  withOwnChildren?: boolean;
+  ownReactions?: boolean;
+  withReactionCounts?: boolean;
+  withRecentReactions?: boolean;
+  recentReactionsLimit?: number;
+};
 
 type FeedOptions = {
   id_lt?: string;

@@ -20,7 +20,7 @@ export default class Personalization<PersonalizationType> {
     this.client = client;
   }
 
-  get(resource: string, options: { token?: string } & { [key: string]: string } = {}): Promise<APIResponse> {
+  get(resource: string, options: Record<string, string> & { token?: string } = {}): Promise<APIResponse> {
     /**
      * Get personalized activities for this feed
      *
@@ -41,8 +41,8 @@ export default class Personalization<PersonalizationType> {
 
   post(
     resource: string,
-    options: { [key: string]: string } = {},
-    data: { [key: string]: unknown } = {},
+    options: Record<string, string> = {},
+    data: Record<string, unknown> = {},
   ): Promise<APIResponse> {
     /**
      * Post data to personalization endpoint
@@ -64,7 +64,7 @@ export default class Personalization<PersonalizationType> {
     });
   }
 
-  delete(resource: string, options: { [key: string]: string } = {}): Promise<APIResponse> {
+  delete(resource: string, options: Record<string, string> = {}): Promise<APIResponse> {
     /**
      * Delete metadata or activities
      *
