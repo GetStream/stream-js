@@ -13,7 +13,7 @@
   "license": "BSD-3-Clause",
   "version": "5.0.2",
   "scripts": {
-    "transpile": "rm -rf lib && babel src --out-dir lib --extensions '.js,.ts'",
+    "transpile": "rm -rf lib && babel src --out-dir lib --extensions '.ts'",
     "types": "tsc --outFile lib/index --emitDeclarationOnly",
     "build": "yarn transpile && yarn types",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
