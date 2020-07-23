@@ -5,6 +5,4 @@ test/integration/utils/kjur.js
 /bin/
 /.git/
 /docs/
-/types/
-
 **/*.sh
