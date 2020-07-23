@@ -1,5 +1,18 @@
-import StreamClient, { APIResponse, FollowRelation, UnfollowRelation } from './client';
+import StreamClient, { APIResponse } from './client';
 import utils from './utils';
+
+type BaseFollowRelation = {
+  source: string;
+  target: string;
+};
+
+export type FollowRelation = BaseFollowRelation & {
+  activity_copy_limit?: number;
+};
+
+export type UnfollowRelation = BaseFollowRelation & {
+  keep_history?: boolean;
+};
 
 function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]): Promise<APIResponse> {
   /**

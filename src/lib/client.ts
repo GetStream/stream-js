@@ -5,7 +5,7 @@ import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
 import Personalization from './personalization';
-import BatchOperations from './batch_operations';
+import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
 import Collections from './collections';
 import StreamFeed, { Activity } from './feed';
 import StreamFileStore from './files';
@@ -31,31 +31,6 @@ export type FileUploadAPIResponse = APIResponse & {
 };
 
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
-
-type ActivityPartialChanges = {
-  id?: string;
-  foreignID?: string;
-  time?: string | Date;
-  set?: Record<string, unknown>;
-  unset?: string[];
-};
-
-type GetActivitiesAPIResponse<ActivityType> = APIResponse & { results: Activity<ActivityType>[] };
-
-type PartialUpdateActivityAPIResponse<ActivityType> = APIResponse & { activities: Activity<ActivityType>[] };
-
-type BaseFollowRelation = {
-  source: string;
-  target: string;
-};
-
-export type FollowRelation = BaseFollowRelation & {
-  activity_copy_limit?: number;
-};
-
-export type UnfollowRelation = BaseFollowRelation & {
-  keep_history?: boolean;
-};
 
 export type ClientOptions = {
   location?: string | undefined;
@@ -130,6 +105,18 @@ type AxiosConfig = {
 };
 
 type HandlerCallback = (...args: unknown[]) => unknown;
+
+type ActivityPartialChanges = {
+  id?: string;
+  foreignID?: string;
+  time?: string | Date;
+  set?: Record<string, unknown>;
+  unset?: string[];
+};
+
+type GetActivitiesAPIResponse<ActivityType> = APIResponse & { results: Activity<ActivityType>[] };
+
+type PartialUpdateActivityAPIResponse<ActivityType> = APIResponse & { activities: Activity<ActivityType>[] };
 
 /**
  * Client to connect to Stream api
