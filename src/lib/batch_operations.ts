@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, FollowRelation } from './client';
+import StreamClient, { APIResponse, FollowRelation, UnfollowRelation } from './client';
 import utils from './utils';
 
 function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]): Promise<APIResponse> {
@@ -46,7 +46,7 @@ function followMany(this: StreamClient, follows: FollowRelation[], activityCopyL
   });
 }
 
-function unfollowMany(this: StreamClient, unfollows: FollowRelation[]): Promise<APIResponse> {
+function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]): Promise<APIResponse> {
   /**
    * Unfollow multiple feeds with one API call
    * @method unfollowMany

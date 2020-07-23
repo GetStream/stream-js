@@ -56,9 +56,17 @@ type GetActivitiesAPIResponse<T> = APIResponse & { results: Activity<T>[] };
 
 type PartialUpdateActivityAPIResponse<T> = APIResponse & { activities: Activity<T>[] };
 
-export type FollowRelation = {
+type BaseFollowRelation = {
   source: string;
   target: string;
+};
+
+export type FollowRelation = BaseFollowRelation & {
+  activity_copy_limit?: number;
+};
+
+export type UnfollowRelation = BaseFollowRelation & {
+  keep_history?: boolean;
 };
 
 export type ClientOptions = {
@@ -191,7 +199,7 @@ class StreamClient<
 
   addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
-  unfollowMany?: (this: StreamClient, unfollows: FollowRelation[]) => Promise<APIResponse>;
+  unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>;
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
 
   constructor(apiKey: string, apiSecretOrToken: string | null, appId?: string, options: ClientOptions = {}) {
