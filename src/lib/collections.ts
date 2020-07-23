@@ -1,13 +1,19 @@
 import StreamClient, { APIResponse } from './client';
 import errors from './errors';
 
-type CollectionResponse<CollectionType> = {
+type BaseCollection<CollectionType> = {
   collection: string;
   id: string;
   data: CollectionType;
+};
+
+type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
   foregin_id: string;
   created_at: Date;
   updated_at: Date;
+};
+
+type NewCollectionEntry<CollectionType> = BaseCollection<CollectionType> & {
   user_id?: string;
 };
 
@@ -214,7 +220,7 @@ export default class Collections<CollectionType> {
 
   upsert(
     collection: string,
-    data: CollectionType | CollectionType[],
+    data: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[],
   ): Promise<UpsertCollectionAPIResponse<CollectionType>> {
     /**
      * Upsert one or more items within a collection.
