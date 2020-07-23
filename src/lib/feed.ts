@@ -1,5 +1,5 @@
 import * as Faye from 'faye';
-import StreamClient, { APIResponse, Activity, EnrichOptions } from './client';
+import StreamClient, { APIResponse, EnrichOptions } from './client';
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
@@ -30,6 +30,97 @@ type NewActivity = {
   foreign_id?: string;
 };
 
+type BaseActivity = {
+  id: string;
+  actor: string;
+  verb: string;
+  object: string;
+  time: string | Date;
+  foreign_id: string;
+  to?: string[];
+};
+
+export type Activity<ActivityType> = BaseActivity & ActivityType;
+
+type BaseReaction<UserType> = {
+  id: string;
+  user_id: string;
+  activity_id: string;
+  kind: string;
+  created_at: Date;
+  updated_at: Date;
+  user?: UserType;
+};
+
+type ChildReaction<ChildReactionType, UserType> = BaseReaction<UserType> & {
+  parent: string;
+  data?: ChildReactionType;
+};
+
+type ChildReactions<ChildReactionType, UserType> = Record<string, ChildReaction<ChildReactionType, UserType>[]>;
+
+type Reaction<ReactionType, ChildReactionType, UserType> = BaseReaction<UserType> & {
+  data?: ReactionType;
+  latest_children?: ChildReactions<ChildReactionType, UserType>;
+  own_children?: ChildReactions<ChildReactionType, UserType>;
+  children_counts?: Record<string, number>;
+};
+
+type Reactions<ReactionType, ChildReactionType, UserType> = Record<
+  string,
+  Reaction<ReactionType, ChildReactionType, UserType>[]
+>;
+
+type EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType> = Activity<ActivityType> & {
+  actor: UserType | string;
+  object: string | ActivityType;
+
+  // ranked feeds
+  score?: number;
+  analytics?: Record<string, number>;
+
+  // enriched reactions
+  reaction_counts?: Record<string, number>;
+  latest_reactions?: Reactions<ReactionType, ChildReactionType, UserType>;
+  latest_reactions_extra?: Record<string, { next?: string }>;
+  own_reactions?: Reactions<ReactionType, ChildReactionType, UserType>[];
+  own_reactions_extra?: Record<string, { next?: string }>;
+
+  // Reactions posted to feed
+  reaction?: Reaction<ReactionType, ChildReactionType, UserType>;
+  activity_id?: string;
+  origin?: string;
+
+  // TODO: unknown!
+  // site_id?: string;
+  // target?: string;
+  // is_read?: unknown;
+  // is_seen?: unknown;
+  // extra_context?: unknown;
+};
+
+type GroupedActivity<ActivityType, UserType, ReactionType, ChildReactionType> = {
+  id: string;
+  verb: string;
+  group: string;
+  activity_count: number;
+  actor_count: number;
+  is_read: boolean;
+  is_seen: boolean;
+  updated_at: Date;
+  created_at: Date;
+
+  // TODO: unknown
+  activities: Activity<ActivityType>[] | EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType>[];
+};
+
+type FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType> = APIResponse & {
+  results:
+    | Activity<ActivityType>[]
+    | EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType>[]
+    | GroupedActivity<ActivityType, UserType, ReactionType, ChildReactionType>;
+  next: string;
+};
 /**
  * Manage api calls for specific feeds
  * The feed object contains convenience functions such add activity, remove activity etc
@@ -250,7 +341,7 @@ export default class StreamFeed<
 
   get(
     options: EnrichOptions & FeedOptions & { mark_read?: boolean | string[]; mark_seen?: boolean | string[] } = {},
-  ): Promise<unknown> {
+  ): Promise<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>> {
     /**
      * Reads the feed
      * @method get
@@ -275,14 +366,17 @@ export default class StreamFeed<
 
     const path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
 
-    return this.client.get<unknown>({
+    return this.client.get<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>>({
       url: `${path}${this.feedUrl}/`,
       qs: { ...options, ...extraOptions },
       signature: this.signature,
     });
   }
 
-  getActivityDetail(activityId: string, options: EnrichOptions): Promise<unknown> {
+  getActivityDetail(
+    activityId: string,
+    options: EnrichOptions,
+  ): Promise<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>> {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
@@ -295,7 +389,12 @@ export default class StreamFeed<
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
      * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
-    return this.get({ id_lte: activityId, id_gte: activityId, limit: 1, ...(options || {}) });
+    return this.get({
+      id_lte: activityId,
+      id_gte: activityId,
+      limit: 1,
+      ...(options || {}),
+    });
   }
 
   getFayeClient(): Faye.Client {

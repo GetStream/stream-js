@@ -7,7 +7,7 @@ import jwtDecode from 'jwt-decode';
 import Personalization from './personalization';
 import BatchOperations from './batch_operations';
 import Collections from './collections';
-import StreamFeed from './feed';
+import StreamFeed, { Activity } from './feed';
 import StreamFileStore from './files';
 import StreamImageStore from './images';
 import StreamReaction from './reaction';
@@ -40,21 +40,9 @@ type ActivityPartialChanges = {
   unset?: string[];
 };
 
-type BaseActivity = {
-  id: string;
-  actor: string;
-  verb: string;
-  object: string;
-  time: string | Date;
-  foreign_id: string;
-  to?: string[];
-};
+type GetActivitiesAPIResponse<ActivityType> = APIResponse & { results: Activity<ActivityType>[] };
 
-export type Activity<ActivityType = Record<string, unknown>> = BaseActivity & ActivityType;
-
-type GetActivitiesAPIResponse<T> = APIResponse & { results: Activity<T>[] };
-
-type PartialUpdateActivityAPIResponse<T> = APIResponse & { activities: Activity<T>[] };
+type PartialUpdateActivityAPIResponse<ActivityType> = APIResponse & { activities: Activity<ActivityType>[] };
 
 type BaseFollowRelation = {
   source: string;
