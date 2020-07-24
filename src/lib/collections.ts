@@ -7,7 +7,7 @@ type BaseCollection<CollectionType> = {
   data: CollectionType;
 };
 
-type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
+export type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
   foregin_id: string;
   created_at: Date;
   updated_at: Date;
@@ -39,7 +39,7 @@ class CollectionEntry<CollectionType> {
   collection: string;
   store: Collections<CollectionType>;
   data: CollectionType | null;
-  full: unknown;
+  full?: unknown;
 
   constructor(store: Collections<CollectionType>, collection: string, id: string, data: CollectionType) {
     this.collection = collection;

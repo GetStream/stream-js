@@ -52,7 +52,7 @@ type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, Us
     | EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>[];
 };
 
-export default class StreamReaction<ReactionType, ChildReactionType, ActivityType, UserType> {
+export default class StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
   client: StreamClient;
   token: string;
 

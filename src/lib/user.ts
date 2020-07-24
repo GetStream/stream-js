@@ -13,8 +13,8 @@ export default class StreamUser<UserType> {
   client: StreamClient;
   token: string;
   id: string;
-  data: undefined | UserType;
-  full: undefined | UserAPIResponse<UserType>;
+  data?: UserType;
+  full?: UserAPIResponse<UserType>;
   private url: string;
 
   constructor(client: StreamClient, userId: string, userAuthToken: string) {

@@ -5,9 +5,7 @@ import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
 import Personalization from './personalization';
-import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
 import Collections from './collections';
-import StreamFeed, { Activity, EnrichOptions } from './feed';
 import StreamFileStore from './files';
 import StreamImageStore from './images';
 import StreamReaction from './reaction';
@@ -16,6 +14,15 @@ import createRedirectUrl from './redirect_url';
 import signing from './signing';
 import errors from './errors';
 import utils from './utils';
+import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
+import StreamFeed, {
+  UpdateActivity,
+  Activity,
+  EnrichOptions,
+  PersonalizationFeedAPIResponse,
+  GetActivitiesAPIResponse,
+  GetFeedOptions,
+} from './feed';
 
 // no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -28,7 +35,7 @@ export type FileUploadAPIResponse = APIResponse & { file: string };
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
 
 export type ClientOptions = {
-  location?: string | undefined;
+  location?: string;
   expireTokens?: boolean;
   version?: string;
   group?: string;
@@ -94,14 +101,10 @@ type HandlerCallback = (...args: unknown[]) => unknown;
 type ActivityPartialChanges = {
   id?: string;
   foreignID?: string;
-  time?: string | Date;
+  time?: Date;
   set?: Record<string, unknown>;
   unset?: string[];
 };
-
-type GetActivitiesAPIResponse<ActivityType> = APIResponse & { results: Activity<ActivityType>[] };
-
-type PartialUpdateActivityAPIResponse<ActivityType> = APIResponse & { activities: Activity<ActivityType>[] };
 
 /**
  * Client to connect to Stream api
@@ -109,8 +112,8 @@ type PartialUpdateActivityAPIResponse<ActivityType> = APIResponse & { activities
  */
 class StreamClient<
   UserType = unknown,
-  CollectionType = unknown,
   ActivityType = unknown,
+  CollectionType = unknown,
   ReactionType = unknown,
   ChildReactionType = unknown,
   PersonalizationType = unknown
@@ -118,14 +121,14 @@ class StreamClient<
   baseUrl: string;
   baseAnalyticsUrl: string;
   apiKey: string;
-  appId: string | undefined;
+  appId?: string;
   usingApiSecret: boolean;
   apiSecret: string | null;
   userToken: string | null;
   enrichByDefault: boolean;
   options: ClientOptions;
-  userId: undefined | string;
-  authPayload: undefined | unknown;
+  userId?: string;
+  authPayload?: unknown;
   version: string;
   fayeUrl: string;
   group: string;
@@ -134,22 +137,22 @@ class StreamClient<
   fayeClient: Faye.Client | null;
   browser: boolean;
   node: boolean;
-  nodeOptions: undefined | { httpAgent: http.Agent; httpsAgent: https.Agent };
+  nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
 
   request: axios.AxiosInstance;
   subscriptions: Record<string, { userId: string; token: string; fayeSubscription: Faye.Subscription }>;
   handlers: Record<string, HandlerCallback>;
 
-  currentUser: StreamUser<UserType> | undefined;
+  currentUser?: StreamUser<UserType>;
   personalization: Personalization<PersonalizationType>;
   collections: Collections<CollectionType>;
   files: StreamFileStore;
   images: StreamImageStore;
-  reactions: StreamReaction<ReactionType, ChildReactionType, ActivityType>;
+  reactions: StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
-  private _personalizationToken: string | undefined;
-  private _collectionsToken: string | undefined;
-  private _getOrCreateToken: string | undefined;
+  private _personalizationToken?: string;
+  private _collectionsToken?: string;
+  private _getOrCreateToken?: string;
 
   addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
@@ -236,7 +239,10 @@ class StreamClient<
     this.collections = new Collections<CollectionType>(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this, this.getOrCreateToken());
     this.images = new StreamImageStore(this, this.getOrCreateToken());
-    this.reactions = new StreamReaction<ReactionType, ChildReactionType, ActivityType>(this, this.getOrCreateToken());
+    this.reactions = new StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
+      this,
+      this.getOrCreateToken(),
+    );
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && createRedirectUrl) {
@@ -407,7 +413,7 @@ class StreamClient<
     feedSlug: string,
     userId?: string | StreamUser<UserType>,
     token?: string,
-  ): StreamFeed<ActivityType, UserType, ReactionType, ChildReactionType> {
+  ): StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
     /**
      * Returns a feed object for the given feed id and token
      * @method feed
@@ -429,7 +435,7 @@ class StreamClient<
       }
     }
 
-    return new StreamFeed<ActivityType, UserType, ReactionType, ChildReactionType>(
+    return new StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
       this,
       feedSlug,
       userId || (this.userId as string),
@@ -675,7 +681,7 @@ class StreamClient<
     });
   }
 
-  updateActivities(activities: Activity<ActivityType>[]): Promise<unknown> {
+  updateActivities(activities: UpdateActivity<ActivityType>[]): Promise<APIResponse> {
     /**
      * Updates all supplied activities on the getstream-io api
      * @since  3.1.0
@@ -693,14 +699,14 @@ class StreamClient<
       expireTokens: this.expireTokens,
     });
 
-    return this.post<unknown>({
+    return this.post<APIResponse>({
       url: 'activities/',
       body: { activities },
       signature: authToken,
     });
   }
 
-  updateActivity(activity: Activity<ActivityType>): Promise<unknown> {
+  updateActivity(activity: UpdateActivity<ActivityType>): Promise<APIResponse> {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
@@ -718,9 +724,9 @@ class StreamClient<
     ...params
   }: EnrichOptions & {
     ids?: string[];
-    foreignIDTimes?: { foreignID: string; time: string | Date }[];
+    foreignIDTimes?: { foreignID: string; time: Date }[];
     reactions?: Record<string, boolean>;
-  }): Promise<GetActivitiesAPIResponse<ActivityType>> {
+  }): Promise<GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
@@ -739,7 +745,7 @@ class StreamClient<
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
       const foreignIDs: string[] = [];
-      const timestamps: (string | Date)[] = [];
+      const timestamps: Date[] = [];
       foreignIDTimes.forEach((fidTime) => {
         if (!(fidTime instanceof Object)) {
           throw new TypeError('foreignIDTimes elements should be Objects');
@@ -765,7 +771,7 @@ class StreamClient<
     this.replaceReactionOptions(params);
     const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
-    return this.get<GetActivitiesAPIResponse<ActivityType>>({
+    return this.get<GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>>({
       url: path,
       qs: { ...params, ...extraParams },
       signature: token,
@@ -807,8 +813,12 @@ class StreamClient<
     });
   }
 
-  personalizedFeed(options = {}) {
-    return this.get({
+  personalizedFeed(
+    options: GetFeedOptions = {},
+  ): Promise<PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
+    return this.get<
+      PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
+    >({
       url: 'enrich/personalization/feed/',
       qs: options,
       signature: this.getOrCreateToken(),
@@ -854,13 +864,15 @@ class StreamClient<
     return { ...activity, ...response };
   }
 
-  activitiesPartialUpdate(changes: ActivityPartialChanges[]): Promise<PartialUpdateActivityAPIResponse<ActivityType>> {
+  activitiesPartialUpdate(
+    changes: ActivityPartialChanges[],
+  ): Promise<APIResponse & { activities: Activity<ActivityType>[] }> {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0
      * @param {array} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
      * @return {Promise}
-     * @xample
+     * @example
      * client.activitiesPartialUpdate([
      *   {
      *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
@@ -938,7 +950,7 @@ class StreamClient<
       });
     }
 
-    return this.post<PartialUpdateActivityAPIResponse<ActivityType>>({
+    return this.post<APIResponse & { activities: Activity<ActivityType>[] }>({
       url: 'activity/',
       body: {
         changes,

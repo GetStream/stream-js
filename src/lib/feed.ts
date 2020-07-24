@@ -3,25 +3,39 @@ import StreamClient, { APIResponse } from './client';
 import StreamUser from './user';
 import errors from './errors';
 import utils from './utils';
+import { EnrichedReaction } from './reaction';
+import { CollectionResponse } from './collections';
 
 export type EnrichOptions = {
   enrich?: boolean;
   withOwnReactions?: boolean;
   withOwnChildren?: boolean;
-  ownReactions?: boolean;
+  ownReactions?: boolean; // best not to use it, will removed by clinet.replaceReactionOptions()
   withReactionCounts?: boolean;
   withRecentReactions?: boolean;
   recentReactionsLimit?: number;
+  reactionKindsFilter?: string; // TODO: add support for array sample: kind,kind,kind
 };
 
-type FeedOptions = {
+type FeedPaginationOptions = {
   id_lt?: string;
   id_lte?: string;
   id_gt?: string;
   id_gte?: string;
   limit?: number;
+};
+
+type RankedFeedOptions = {
   offset?: number;
   ranking?: string;
+  session?: string;
+};
+
+export type GetFeedOptions = FeedPaginationOptions & EnrichOptions & RankedFeedOptions;
+
+type NotificationFeedOptions = {
+  mark_read?: boolean | 'current' | string[];
+  mark_seen?: boolean | 'current' | string[];
 };
 
 type GetFollowOptions = {
@@ -30,115 +44,157 @@ type GetFollowOptions = {
   filter?: string[];
 };
 
-type NewActivity = {
+type GetFollowAPIResponse = APIResponse & {
+  results: { feed_id: string; target_id: string; created_at: Date; updated_at: Date }[];
+};
+
+type BaseActivity<ActivityType> = ActivityType & {
   actor: string;
   verb: string;
   object: string | unknown;
   to?: string[];
   target?: string;
-  time?: string;
-  foreign_id?: string;
 };
 
-type BaseActivity = {
+type NewActivity<ActivityType> = BaseActivity<ActivityType> & { time?: string; foreign_id?: string };
+
+export type UpdateActivity<ActivityType> = BaseActivity<ActivityType> & { time: string; foreign_id: string };
+
+export type Activity<ActivityType> = BaseActivity<ActivityType> & {
   id: string;
-  actor: string;
-  verb: string;
-  object: string;
-  time: string | Date;
+  time: Date;
   foreign_id: string;
-  to?: string[];
-};
-
-export type Activity<ActivityType> = BaseActivity & ActivityType;
-
-type BaseReaction<UserType> = {
-  id: string;
-  user_id: string;
-  activity_id: string;
-  kind: string;
-  created_at: Date;
-  updated_at: Date;
-  user?: UserType;
-};
-
-type ChildReaction<ChildReactionType, UserType> = BaseReaction<UserType> & {
-  parent: string;
-  data?: ChildReactionType;
-};
-
-type ChildReactions<ChildReactionType, UserType> = Record<string, ChildReaction<ChildReactionType, UserType>[]>;
-
-type Reaction<ReactionType, ChildReactionType, UserType> = BaseReaction<UserType> & {
-  data?: ReactionType;
-  latest_children?: ChildReactions<ChildReactionType, UserType>;
-  own_children?: ChildReactions<ChildReactionType, UserType>;
-  children_counts?: Record<string, number>;
-};
-
-type Reactions<ReactionType, ChildReactionType, UserType> = Record<
-  string,
-  Reaction<ReactionType, ChildReactionType, UserType>[]
->;
-
-type EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType> = Activity<ActivityType> & {
-  actor: UserType | string;
-  object: string | ActivityType;
+  origin?: string;
+  extra_context?: Record<string, unknown>;
 
   // ranked feeds
   score?: number;
   analytics?: Record<string, number>;
+};
+
+type ReactionsRecords<ReactionType, ChildReactionType, UserType> = Record<
+  string,
+  EnrichedReaction<ReactionType, ChildReactionType, UserType>[]
+>;
+
+type EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = Activity<
+  ActivityType
+> & {
+  actor: UserType | string;
+  object:
+    | string
+    | unknown
+    | EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
+    | EnrichedReaction<ReactionType, ChildReactionType, UserType>
+    | CollectionResponse<CollectionType>;
 
   // enriched reactions
   reaction_counts?: Record<string, number>;
-  latest_reactions?: Reactions<ReactionType, ChildReactionType, UserType>;
+  latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
+  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>[];
   latest_reactions_extra?: Record<string, { next?: string }>;
-  own_reactions?: Reactions<ReactionType, ChildReactionType, UserType>[];
   own_reactions_extra?: Record<string, { next?: string }>;
-
-  // Reactions posted to feed
-  reaction?: Reaction<ReactionType, ChildReactionType, UserType>;
-  activity_id?: string;
-  origin?: string;
-
-  // TODO: unknown!
-  // site_id?: string;
-  // target?: string;
-  // is_read?: unknown;
-  // is_seen?: unknown;
-  // extra_context?: unknown;
+  // Reaction posted to feed
+  reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 };
 
-type GroupedActivity<ActivityType, UserType, ReactionType, ChildReactionType> = {
+type FlatActivity<ActivityType> = Activity<ActivityType>;
+
+type FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = EnrichedActivity<
+  UserType,
+  ActivityType,
+  CollectionType,
+  ReactionType,
+  ChildReactionType
+>;
+
+type BaseAggregatedActivity = {
   id: string;
   verb: string;
   group: string;
   activity_count: number;
   actor_count: number;
-  is_read: boolean;
-  is_seen: boolean;
   updated_at: Date;
   created_at: Date;
-
-  // TODO: unknown
-  activities: Activity<ActivityType>[] | EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType>[];
+  score?: number;
 };
 
-type FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType> = APIResponse & {
-  results:
-    | Activity<ActivityType>[]
-    | EnrichedActivity<ActivityType, UserType, ReactionType, ChildReactionType>[]
-    | GroupedActivity<ActivityType, UserType, ReactionType, ChildReactionType>;
+type AggregatedActivity<ActivityType> = BaseAggregatedActivity & {
+  activities: Activity<ActivityType>[];
+};
+
+type AggregatedActivityEnriched<
+  UserType,
+  ActivityType,
+  CollectionType,
+  ReactionType,
+  ChildReactionType
+> = BaseAggregatedActivity & {
+  activities: EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
+};
+
+type BaseNotificationActivity = { is_read: boolean; is_seen: boolean };
+type NotificationActivity<ActivityType> = AggregatedActivity<ActivityType> & BaseNotificationActivity;
+
+type NotificationActivityEnriched<
+  UserType,
+  ActivityType,
+  CollectionType,
+  ReactionType,
+  ChildReactionType
+> = BaseNotificationActivity &
+  AggregatedActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
+
+type FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = APIResponse & {
   next: string;
+  results:
+    | FlatActivity<ActivityType>[]
+    | FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[]
+    | AggregatedActivity<ActivityType>[]
+    | AggregatedActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[]
+    | NotificationActivity<ActivityType>[]
+    | NotificationActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
+
+  // Notification Feed only
+  unread?: number;
+  unseen?: number;
 };
+
+export type PersonalizationFeedAPIResponse<
+  UserType,
+  ActivityType,
+  CollectionType,
+  ReactionType,
+  ChildReactionType
+> = APIResponse & {
+  next: string;
+  limit: number;
+  offset: number;
+  version: string;
+  results: FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
+};
+
+export type GetActivitiesAPIResponse<
+  UserType,
+  ActivityType,
+  CollectionType,
+  ReactionType,
+  ChildReactionType
+> = APIResponse & {
+  results:
+    | FlatActivity<ActivityType>[]
+    | FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
+};
+
 /**
  * Manage api calls for specific feeds
  * The feed object contains convenience functions such add activity, remove activity etc
  * @class StreamFeed
  */
 export default class StreamFeed<
-  ActivityType = unknown,
   UserType = unknown,
+  ActivityType = unknown,
+  CollectionType = unknown,
   ReactionType = unknown,
   ChildReactionType = unknown
 > {
@@ -193,7 +249,7 @@ export default class StreamFeed<
     this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
   }
 
-  addActivity(activity: NewActivity & ActivityType): Promise<Activity<ActivityType>> {
+  addActivity(activity: NewActivity<ActivityType>): Promise<Activity<ActivityType>> {
     /**
      * Adds the given activity to the feed
      * @method addActivity
@@ -214,7 +270,7 @@ export default class StreamFeed<
     });
   }
 
-  removeActivity(activityId: string | { foreignId: string }): Promise<APIResponse> {
+  removeActivity(activityId: string | { foreignId: string }): Promise<APIResponse & { removed: string }> {
     /**
      * Removes the activity by activityId
      * @method removeActivity
@@ -226,14 +282,14 @@ export default class StreamFeed<
      * @example
      * feed.removeActivity({'foreignId': foreignId});
      */
-    return this.client.delete<APIResponse>({
+    return this.client.delete<APIResponse & { removed: string }>({
       url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
       qs: (activityId as { foreignId: string }).foreignId ? { foreign_id: '1' } : {},
       signature: this.signature,
     });
   }
 
-  addActivities(activities: (NewActivity & ActivityType)[]): Promise<unknown> {
+  addActivities(activities: NewActivity<ActivityType>[]): Promise<Activity<ActivityType>[]> {
     /**
      * Adds the given activities to the feed
      * @method addActivities
@@ -241,7 +297,7 @@ export default class StreamFeed<
      * @param  {Array}   activities Array of activities to add
      * @return {Promise}               XHR request object
      */
-    return this.client.post<unknown>({
+    return this.client.post<Activity<ActivityType>[]>({
       url: `feed/${this.feedUrl}/`,
       body: { activities: utils.replaceStreamObjects(activities) },
       signature: this.signature,
@@ -252,7 +308,7 @@ export default class StreamFeed<
     targetSlug: string,
     targetUserId: string | { id: string },
     options: { limit?: number } = {},
-  ): Promise<unknown> {
+  ): Promise<APIResponse> {
     /**
      * Follows the given target feed
      * @method follow
@@ -275,14 +331,14 @@ export default class StreamFeed<
     const body: { target: string; activity_copy_limit?: number } = { target: `${targetSlug}:${targetUserId}` };
     if (typeof options.limit === 'number') body.activity_copy_limit = options.limit;
 
-    return this.client.post({
+    return this.client.post<APIResponse>({
       url: `feed/${this.feedUrl}/following/`,
       body,
       signature: this.signature,
     });
   }
 
-  unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}): Promise<unknown> {
+  unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}): Promise<APIResponse> {
     /**
      * Unfollow the given feed
      * @method unfollow
@@ -301,14 +357,14 @@ export default class StreamFeed<
     utils.validateFeedSlug(targetSlug);
     utils.validateUserId(targetUserId);
     const targetFeedId = `${targetSlug}:${targetUserId}`;
-    return this.client.delete({
+    return this.client.delete<APIResponse>({
       url: `feed/${this.feedUrl}/following/${targetFeedId}/`,
       qs,
       signature: this.signature,
     });
   }
 
-  following(options: GetFollowOptions = {}): Promise<unknown> {
+  following(options: GetFollowOptions = {}): Promise<GetFollowAPIResponse> {
     /**
      * List which feeds this feed is following
      * @method following
@@ -321,14 +377,14 @@ export default class StreamFeed<
     const extraOptions: { filter?: string } = {};
     if (options.filter) extraOptions.filter = options.filter.join(',');
 
-    return this.client.get<unknown>({
+    return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/following/`,
       qs: { ...options, ...extraOptions },
       signature: this.signature,
     });
   }
 
-  followers(options: GetFollowOptions = {}): Promise<unknown> {
+  followers(options: GetFollowOptions = {}): Promise<GetFollowAPIResponse> {
     /**
      * List the followers of this feed
      * @method followers
@@ -342,7 +398,7 @@ export default class StreamFeed<
     const extraOptions: { filter?: string } = {};
     if (options.filter) extraOptions.filter = options.filter.join(',');
 
-    return this.client.get<unknown>({
+    return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/followers/`,
       qs: { ...options, ...extraOptions },
       signature: this.signature,
@@ -350,8 +406,8 @@ export default class StreamFeed<
   }
 
   get(
-    options: EnrichOptions & FeedOptions & { mark_read?: boolean | string[]; mark_seen?: boolean | string[] } = {},
-  ): Promise<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>> {
+    options: GetFeedOptions & NotificationFeedOptions = {},
+  ): Promise<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
     /**
      * Reads the feed
      * @method get
@@ -376,7 +432,7 @@ export default class StreamFeed<
 
     const path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
 
-    return this.client.get<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>>({
+    return this.client.get<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>>({
       url: `${path}${this.feedUrl}/`,
       qs: { ...options, ...extraOptions },
       signature: this.signature,
@@ -386,7 +442,7 @@ export default class StreamFeed<
   getActivityDetail(
     activityId: string,
     options: EnrichOptions,
-  ): Promise<FeedAPIResponse<ActivityType, UserType, ReactionType, ChildReactionType>> {
+  ): Promise<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
@@ -464,7 +520,7 @@ export default class StreamFeed<
     newTargets?: string[],
     addedTargets?: string[],
     removedTargets?: string[],
-  ): Promise<unknown> {
+  ): Promise<APIResponse & Activity<ActivityType> & { added?: string[]; removed?: string[] }> {
     /**
      * Updates an activity's "to" fields
      * @since 3.10.0
@@ -510,7 +566,7 @@ export default class StreamFeed<
     if (addedTargets) body.added_targets = addedTargets;
     if (removedTargets) body.removed_targets = removedTargets;
 
-    return this.client.post<unknown>({
+    return this.client.post<APIResponse & Activity<ActivityType> & { added?: string[]; removed?: string[] }>({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,
       signature: this.signature,
       body,
