@@ -73,7 +73,8 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  all(options = {}): Promise<unknown> {
+  // DEPRECATED
+  all(options = {}) {
     /**
      * get all reactions
      * @method all
@@ -83,6 +84,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
      * @example reactions.all()
      * @example reactions.all({limit:100})
      */
+    console.warn('Deprecated function, please use reactions.filter()'); // eslint-disable-line
     return this.client.get({
       url: this.buildURL(),
       signature: this.token,
