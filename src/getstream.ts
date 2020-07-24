@@ -7,19 +7,12 @@ import StreamClient, { ClientOptions } from './lib/client';
 import errors from './lib/errors';
 import signing from './lib/signing';
 
-function connect<
-  UserType = unknown,
-  CollectionType = unknown,
-  ActivityType = unknown,
-  ReactionType = unknown,
-  ChildReactionType = unknown,
-  PersonalizationType = unknown
->(
+function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
   apiKey: string,
   apiSecret: string | null,
   appId?: string,
   options?: ClientOptions,
-): StreamClient<UserType, CollectionType, ActivityType, ReactionType, ChildReactionType, PersonalizationType> {
+): StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType> {
   /**
    * Create StreamClient
    * @method connect
@@ -53,7 +46,7 @@ function connect<
     }
   }
 
-  return new StreamClient<UserType, CollectionType, ActivityType, ReactionType, ChildReactionType, PersonalizationType>(
+  return new StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
     apiKey,
     apiSecret,
     appId,
