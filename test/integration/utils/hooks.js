@@ -1,4 +1,4 @@
-const stream = require('../../../src/getstream').default;
+const stream = require('../../../src').default;
 const config = require('./config');
 
 // this function can only be run in browser context

@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import { connect } from '../../../src/getstream';
+import { connect } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream client (Heroku)', function () {

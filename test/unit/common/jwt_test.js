@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import signing from '../../../src/lib/signing';
+import signing from '../../../src/signing';
 
 describe('[UNIT] Json web token validation', function () {
   const validSignature =

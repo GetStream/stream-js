@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 
-import errors from '../../../src/lib/errors';
-import utils from '../../../src/lib/utils';
+import errors from '../../../src/errors';
+import utils from '../../../src/utils';
 import { init } from '../utils/hooks';
 
 describe('[UNIT] Utility functions', function () {

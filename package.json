@@ -5,8 +5,8 @@
   },
   "name": "getstream",
   "description": "The official low-level GetStream.io client for Node.js and the browser.",
-  "main": "./lib/getstream.js",
-  "module": "./lib/getstream.js",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
@@ -41,7 +41,7 @@
   "browser": {
     "crypto": false,
     "jsonwebtoken": false,
-    "./lib/lib/batch_operations.js": false,
+    "./lib/batch_operations.js": false,
     "qs": false,
     "url": false,
     "http": false,
@@ -50,7 +50,7 @@
   "react-native": {
     "crypto": false,
     "jsonwebtoken": false,
-    "./lib/lib/batch_operations.js": false,
+    "./lib/batch_operations.js": false,
     "qs": false,
     "url": false
   },

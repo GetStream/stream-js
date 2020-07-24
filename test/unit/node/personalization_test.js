@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import StreamClient from '../../../src/lib/client';
-import errors from '../../../src/lib/errors';
+import StreamClient from '../../../src/client';
+import errors from '../../../src/errors';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Personalization (node)', function () {

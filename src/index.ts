@@ -3,9 +3,9 @@
  * @author Thierry Schellenbach
  * BSD License
  */
-import StreamClient, { ClientOptions } from './lib/client';
-import errors from './lib/errors';
-import signing from './lib/signing';
+import StreamClient, { ClientOptions } from './client';
+import errors from './errors';
+import signing from './signing';
 
 function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
   apiKey: string,
