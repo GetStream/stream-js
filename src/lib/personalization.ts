@@ -6,9 +6,9 @@ import StreamClient, { APIResponse } from './client';
  * @class Personalization
  */
 
-type BasePersonalizationAPIResponse = APIResponse & {
+type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
   app_id: string;
-  results: unknown[];
+  results: PersonalizationType[];
   next: string;
   offset?: number;
   limit?: number;
@@ -32,7 +32,7 @@ export default class Personalization<PersonalizationType> {
   get(
     resource: string,
     options: Record<string, string> & { token?: string } = {},
-  ): Promise<BasePersonalizationAPIResponse> {
+  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
     /**
      * Get personalized activities for this feed
      *
@@ -43,7 +43,7 @@ export default class Personalization<PersonalizationType> {
      * @return {Promise} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.get<BasePersonalizationAPIResponse>({
+    return this.client.get<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
@@ -55,7 +55,7 @@ export default class Personalization<PersonalizationType> {
     resource: string,
     options: Record<string, string> = {},
     data: Record<string, unknown> = {},
-  ): Promise<BasePersonalizationAPIResponse> {
+  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
     /**
      * Post data to personalization endpoint
      *
@@ -67,7 +67,7 @@ export default class Personalization<PersonalizationType> {
      * @return {Promise} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.post<BasePersonalizationAPIResponse>({
+    return this.client.post<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
@@ -76,7 +76,10 @@ export default class Personalization<PersonalizationType> {
     });
   }
 
-  delete(resource: string, options: Record<string, string> = {}): Promise<BasePersonalizationAPIResponse> {
+  delete(
+    resource: string,
+    options: Record<string, string> = {},
+  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
     /**
      * Delete metadata or activities
      *
@@ -87,7 +90,7 @@ export default class Personalization<PersonalizationType> {
      * @return {Promise} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
-    return this.client.delete<BasePersonalizationAPIResponse>({
+    return this.client.delete<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
