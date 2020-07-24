@@ -9,40 +9,50 @@ type TargetFeed = string | StreamFeed;
 type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
-  id?: string;
-  activity_id?: string | { id: string };
-  parent?: string | { id: string };
-  kind?: string;
+  id?: string; // api will generate an id if it's missing
+  kind?: string; // required only for add/addChile, not update
+  user_id?: string; // optional when using client tokens
+  activity_id?: string; // only required for reactions
+  parent?: string; // only required for child reactions
   data?: T | Record<string, unknown>;
-  target_feeds?: TargetFeeds;
-  user_id?: string;
+  target_feeds?: string[];
   target_feeds_extra_data?: TargetFeedsExtraData;
 };
 
-type ReactionAPIResponse<ReactionType> = APIResponse & {
+export type Reaction<T> = {
   id: string;
   kind: string;
   activity_id: string;
   user_id: string;
-  data: ReactionType;
+  data: T;
   created_at: Date;
   updated_at: Date;
-  user?: unknown;
-  latest_children?: Record<string, unknown>;
-  children_counts?: Record<string, number>;
-};
-
-type ChildReactionAPIResponse<ChildReactionType> = ReactionAPIResponse<ChildReactionType> & {
+  target_feeds?: string[];
+  target_feeds_extra_data?: TargetFeedsExtraData;
   parent: string;
 };
 
-type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType> = APIResponse & {
-  results: ReactionAPIResponse<ReactionType>[] | ChildReactionAPIResponse<ChildReactionType>[];
-  activity: ActivityType;
-  next: string;
+type ReactionAPIResponse<T> = APIResponse & Reaction<T>;
+
+export type EnrichedReaction<ReactionType, ChildReactionType, UserType> = Reaction<ReactionType | ChildReactionType> & {
+  children_counts: Record<string, number>;
+  latest_children: Record<string, ChildReactionType>;
+  own_children?: Record<string, ChildReactionType>;
+  user?: UserType;
 };
 
-export default class StreamReaction<ReactionType, ChildReactionType, ActivityType> {
+type EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType> = APIResponse &
+  EnrichedReaction<ReactionType, ChildReactionType, UserType>;
+
+type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType> = APIResponse & {
+  activity?: ActivityType;
+  next: string;
+  results:
+    | ReactionAPIResponse<ReactionType | ChildReactionType>[]
+    | EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>[];
+};
+
+export default class StreamReaction<ReactionType, ChildReactionType, ActivityType, UserType> {
   client: StreamClient;
   token: string;
 
@@ -138,7 +148,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
       userId?: string;
       targetFeedsExtraData?: TargetFeedsExtraData;
     } = {},
-  ): Promise<ChildReactionAPIResponse<ChildReactionType>> {
+  ): Promise<ReactionAPIResponse<ChildReactionType>> {
     /**
      * add reaction
      * @method add
@@ -161,14 +171,14 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post<ChildReactionAPIResponse<ChildReactionType>>({
+    return this.client.post<ReactionAPIResponse<ChildReactionType>>({
       url: this.buildURL(),
       body,
       signature: this.token,
     });
   }
 
-  get(id: string): Promise<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>> {
+  get(id: string): Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>> {
     /**
      * get reaction
      * @method add
@@ -177,7 +187,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
      * @return {Promise} Promise object
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.get<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>>({
+    return this.client.get<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>({
       url: this.buildURL(id),
       signature: this.token,
     });
@@ -194,7 +204,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
     id_gte?: string;
     limit?: number;
     with_activity_data?: boolean;
-  }): Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType>> {
+  }): Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>> {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -228,7 +238,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
       ? this.buildURL(lookupType as string, value as string, conditions.kind)
       : this.buildURL(lookupType as string, value as string);
 
-    return this.client.get<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType>>({
+    return this.client.get<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>({
       url,
       qs: qs as { [key: string]: unknown },
       signature: this.token,
@@ -242,7 +252,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
       targetFeeds = [],
       targetFeedsExtraData,
     }: { targetFeeds?: string[] | StreamFeed[]; targetFeedsExtraData?: TargetFeedsExtraData } = {},
-  ): Promise<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>> {
+  ): Promise<ReactionAPIResponse<ReactionType | ChildReactionType>> {
     /**
      * update reaction
      * @method add
@@ -261,7 +271,7 @@ export default class StreamReaction<ReactionType, ChildReactionType, ActivityTyp
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.put<ReactionAPIResponse<ReactionType> | ChildReactionAPIResponse<ChildReactionType>>({
+    return this.client.put<ReactionAPIResponse<ReactionType | ChildReactionType>>({
       url: this.buildURL(id),
       body,
       signature: this.token,
