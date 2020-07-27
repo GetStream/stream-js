@@ -2,6 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "baseUrl": "src",
+    "outDir": "lib",
     "declaration": true,
     "declarationMap": true,
     "module": "commonjs",
