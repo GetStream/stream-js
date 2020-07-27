@@ -1,5 +1,5 @@
 import StreamClient, { APIResponse } from './client';
-import errors from './errors';
+import * as errors from './errors';
 
 type BaseCollection<CollectionType> = {
   collection: string;

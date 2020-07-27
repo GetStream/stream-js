@@ -2,7 +2,7 @@ import Url from 'url';
 import qs from 'qs';
 
 import StreamClient from './client';
-import errors from './errors';
+import * as errors from './errors';
 import utils from './utils';
 import signing from './signing';
 

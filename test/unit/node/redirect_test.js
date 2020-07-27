@@ -5,7 +5,7 @@ import qs from 'qs';
 import request from 'request';
 
 import StreamClient from '../../../src/client';
-import errors from '../../../src/errors';
+import * as errors from '../../../src/errors';
 import config from '../utils/config';
 
 describe("[UNIT] Redirect URL's", function () {

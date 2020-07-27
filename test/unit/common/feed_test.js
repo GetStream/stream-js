@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import td from 'testdouble';
 
 import StreamFeed from '../../../src/feed';
-import errors from '../../../src/errors';
+import * as errors from '../../../src/errors';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Feed (Common)', function () {

@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import errors from '../../../src/errors';
+import * as errors from '../../../src/errors';
 import utils from '../../../src/utils';
 import { init } from '../utils/hooks';
 

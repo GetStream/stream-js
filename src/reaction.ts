@@ -1,6 +1,6 @@
 import StreamClient, { APIResponse } from './client';
 import StreamFeed from './feed';
-import errors from './errors';
+import * as errors from './errors';
 
 type TargetFeeds = (string | StreamFeed)[];
 

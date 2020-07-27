@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 
 import { connect } from '../../../src';
-import errors from '../../../src/errors';
+import * as errors from '../../../src/errors';
 
 import { init, beforeEachFn } from '../utils/hooks';
 

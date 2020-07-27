@@ -12,7 +12,7 @@ import StreamReaction from './reaction';
 import StreamUser from './user';
 import createRedirectUrl from './redirect_url';
 import signing from './signing';
-import errors from './errors';
+import * as errors from './errors';
 import utils from './utils';
 import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
 import StreamFeed, {

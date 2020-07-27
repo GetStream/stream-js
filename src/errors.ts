@@ -78,10 +78,3 @@ export class StreamApiError extends ErrorAbstract {
     this.response = response;
   }
 }
-
-export default {
-  FeedError,
-  SiteError,
-  MissingSchemaError,
-  StreamApiError,
-};

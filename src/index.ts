@@ -4,7 +4,7 @@
  * BSD License
  */
 import StreamClient, { ClientOptions } from './client';
-import errors from './errors';
+import * as errors from './errors';
 import signing from './signing';
 
 function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(

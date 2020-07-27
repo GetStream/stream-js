@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import td from 'testdouble';
 
 import StreamClient from '../../../src/client';
-import errors from '../../../src/errors';
+import * as errors from '../../../src/errors';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Collections (node)', function () {

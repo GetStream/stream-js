@@ -1,6 +1,6 @@
 import FormData from 'form-data';
 
-import errors from './errors';
+import * as errors from './errors';
 
 const validFeedSlugRe = /^[\w]+$/;
 const validUserIdRe = /^[\w-]+$/;

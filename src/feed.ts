@@ -1,7 +1,7 @@
 import * as Faye from 'faye';
 import StreamClient, { APIResponse } from './client';
 import StreamUser from './user';
-import errors from './errors';
+import * as errors from './errors';
 import utils from './utils';
 import { EnrichedReaction } from './reaction';
 import { CollectionResponse } from './collections';
