@@ -1,7 +1,7 @@
 import FormData from 'form-data';
 import expect from 'expect.js';
 
-import utils from '../../../src/lib/utils';
+import utils from '../../../src/utils';
 import { init } from '../utils/hooks';
 
 function mockedFile(size = 1024, name = 'mockfile.txt', mimeType = 'plain/txt') {

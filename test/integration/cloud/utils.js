@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 
-import { connect, errors } from '../../../src/getstream';
+import { connect, errors } from '../../../src';
 import config from '../utils/config';
 import { randUserId } from '../utils/hooks';
 

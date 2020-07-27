@@ -26,7 +26,7 @@ import StreamFeed, {
 
 // no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const pkg = require('../../package.json');
+const pkg = require('../package.json');
 
 export type APIResponse = Record<string, unknown> & { duration?: string };
 

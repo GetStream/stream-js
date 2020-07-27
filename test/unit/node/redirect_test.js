@@ -4,8 +4,8 @@ import url from 'url';
 import qs from 'qs';
 import request from 'request';
 
-import StreamClient from '../../../src/lib/client';
-import errors from '../../../src/lib/errors';
+import StreamClient from '../../../src/client';
+import errors from '../../../src/errors';
 import config from '../utils/config';
 
 describe("[UNIT] Redirect URL's", function () {

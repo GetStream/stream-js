@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 
 import pkg from '../../../package.json';
-import StreamFeed from '../../../src/lib/feed';
-import { connect, errors } from '../../../src/getstream';
+import StreamFeed from '../../../src/feed';
+import { connect, errors } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client (browser)', function () {
