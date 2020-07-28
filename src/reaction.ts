@@ -69,7 +69,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     this.token = token;
   }
 
-  buildURL = (...args: string[]): string => {
+  buildURL = (...args: string[]) => {
     return `${['reaction', ...args].join('/')}/`;
   };
 
@@ -92,7 +92,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     });
   }
 
-  _convertTargetFeeds = (targetFeeds: TargetFeeds = []): string[] => {
+  _convertTargetFeeds = (targetFeeds: TargetFeeds = []) => {
     return targetFeeds.map((elem: TargetFeed) => (typeof elem === 'string' ? elem : (elem as StreamFeed).id));
   };
 
@@ -106,7 +106,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
       userId,
       targetFeedsExtraData,
     }: { id?: string; targetFeeds?: TargetFeeds; userId?: string; targetFeedsExtraData?: TargetFeedsExtraData } = {},
-  ): Promise<ReactionAPIResponse<ReactionType>> {
+  ) {
     /**
      * add reaction
      * @method add
@@ -150,7 +150,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
       userId?: string;
       targetFeedsExtraData?: TargetFeedsExtraData;
     } = {},
-  ): Promise<ReactionAPIResponse<ChildReactionType>> {
+  ) {
     /**
      * add reaction
      * @method add
@@ -180,7 +180,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     });
   }
 
-  get(id: string): Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>> {
+  get(id: string) {
     /**
      * get reaction
      * @method add
@@ -206,7 +206,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     id_gte?: string;
     limit?: number;
     with_activity_data?: boolean;
-  }): Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>> {
+  }) {
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -254,7 +254,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
       targetFeeds = [],
       targetFeedsExtraData,
     }: { targetFeeds?: string[] | StreamFeed[]; targetFeedsExtraData?: TargetFeedsExtraData } = {},
-  ): Promise<ReactionAPIResponse<ReactionType | ChildReactionType>> {
+  ) {
     /**
      * update reaction
      * @method add
@@ -280,7 +280,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     });
   }
 
-  delete(id: string): Promise<APIResponse> {
+  delete(id: string) {
     /**
      * delete reaction
      * @method delete
@@ -289,7 +289,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
      * @return {Promise} Promise object
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
-    return this.client.delete<APIResponse>({
+    return this.client.delete({
       url: this.buildURL(id),
       signature: this.token,
     });

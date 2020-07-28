@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, FileUploadAPIResponse, OnUploadProgress } from './client';
+import StreamClient, { FileUploadAPIResponse, OnUploadProgress } from './client';
 
 export type ImageProcessOptions = {
   w?: number | string;
@@ -24,7 +24,7 @@ export default class StreamImageStore {
     name?: string,
     contentType?: string,
     onUploadProgress?: OnUploadProgress,
-  ): Promise<FileUploadAPIResponse> {
+  ) {
     /**
      * upload an Image File instance or a readable stream of data
      * @param {File|Buffer|string} uri - File object or Buffer or URI
@@ -36,15 +36,15 @@ export default class StreamImageStore {
     return this.client.upload('images/', uri, name, contentType, onUploadProgress);
   }
 
-  delete(uri: string): Promise<APIResponse> {
-    return this.client.delete<APIResponse>({
+  delete(uri: string) {
+    return this.client.delete({
       url: `images/`,
       qs: { url: uri },
       signature: this.token,
     });
   }
 
-  process(uri: string, options: ImageProcessOptions): Promise<FileUploadAPIResponse> {
+  process(uri: string, options: ImageProcessOptions) {
     const params = Object.assign(options, { url: uri });
     if (Array.isArray(params.crop)) {
       params.crop = params.crop.join(',');
@@ -62,7 +62,7 @@ export default class StreamImageStore {
     w: number | string,
     h: number | string,
     { crop, resize } = { crop: 'center', resize: 'clip' },
-  ): Promise<FileUploadAPIResponse> {
+  ) {
     return this.process(uri, { w, h, crop, resize });
   }
 }

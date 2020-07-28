@@ -7,12 +7,7 @@ import utils from './utils';
 import signing from './signing';
 
 // TODO: userId is skipped here
-export default function createRedirectUrl(
-  this: StreamClient,
-  targetUrl: string,
-  userId: string,
-  events: unknown[],
-): string {
+export default function createRedirectUrl(this: StreamClient, targetUrl: string, userId: string, events: unknown[]) {
   /**
    * Creates a redirect url for tracking the given events in the context of
    * an email using Stream's analytics platform. Learn more at

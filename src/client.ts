@@ -28,7 +28,7 @@ import StreamFeed, {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-export type APIResponse = Record<string, unknown> & { duration?: string };
+export type APIResponse = { duration?: string };
 
 export type FileUploadAPIResponse = APIResponse & { file: string };
 
@@ -253,7 +253,7 @@ class StreamClient<
     }
   }
 
-  _throwMissingApiSecret(): void | never {
+  _throwMissingApiSecret() {
     if (!this.usingApiSecret) {
       throw new errors.SiteError(
         'This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);',
@@ -261,7 +261,7 @@ class StreamClient<
     }
   }
 
-  getPersonalizationToken(): string {
+  getPersonalizationToken() {
     if (this._personalizationToken) return this._personalizationToken;
 
     this._throwMissingApiSecret();
@@ -274,7 +274,7 @@ class StreamClient<
     return this._personalizationToken;
   }
 
-  getCollectionsToken(): string {
+  getCollectionsToken() {
     if (this._collectionsToken) return this._collectionsToken;
 
     this._throwMissingApiSecret();
@@ -286,7 +286,7 @@ class StreamClient<
     return this._collectionsToken;
   }
 
-  getAnalyticsToken(): string {
+  getAnalyticsToken() {
     this._throwMissingApiSecret();
 
     return signing.JWTScopeToken(this.apiSecret as string, 'analytics', '*', {
@@ -295,7 +295,7 @@ class StreamClient<
     });
   }
 
-  getBaseUrl(serviceName?: string): string {
+  getBaseUrl(serviceName?: string) {
     if (!serviceName) serviceName = 'api';
 
     if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
@@ -315,7 +315,7 @@ class StreamClient<
     return this.baseUrl;
   }
 
-  on(event: string, callback: HandlerCallback): void {
+  on(event: string, callback: HandlerCallback) {
     /**
      * Support for global event callbacks
      * This is useful for generic error and loading handling
@@ -330,7 +330,7 @@ class StreamClient<
     this.handlers[event] = callback;
   }
 
-  off(key?: string): void {
+  off(key?: string) {
     /**
      * Remove one or more event handlers
      * @method off
@@ -347,7 +347,7 @@ class StreamClient<
     }
   }
 
-  send(key: string, ...args: unknown[]): void {
+  send(key: string, ...args: unknown[]) {
     /**
      * Call the given handler with the arguments
      * @method send
@@ -357,7 +357,7 @@ class StreamClient<
     if (this.handlers[key]) this.handlers[key].apply(this, args);
   }
 
-  userAgent(): string {
+  userAgent() {
     /**
      * Get the current user agent
      * @method userAgent
@@ -367,7 +367,7 @@ class StreamClient<
     return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${pkg.version}`;
   }
 
-  getReadOnlyToken(feedSlug: string, userId: string): string {
+  getReadOnlyToken(feedSlug: string, userId: string) {
     /**
      * Returns a token that allows only read operations
      *
@@ -388,7 +388,7 @@ class StreamClient<
     });
   }
 
-  getReadWriteToken(feedSlug: string, userId: string): string {
+  getReadWriteToken(feedSlug: string, userId: string) {
     /**
      * Returns a token that allows read and write operations
      *
@@ -443,7 +443,7 @@ class StreamClient<
     );
   }
 
-  enrichUrl(relativeUrl: string, serviceName?: string): string {
+  enrichUrl(relativeUrl: string, serviceName?: string) {
     /**
      * Combines the base url with version and the relative url
      * @method enrichUrl
@@ -460,7 +460,7 @@ class StreamClient<
     withRecentReactions?: boolean;
     withReactionCounts?: boolean;
     withOwnChildren?: boolean;
-  }): void => {
+  }) => {
     // Shortcut options for reaction enrichment
     if (options?.reactions) {
       if (options.reactions.own != null) {
@@ -487,7 +487,7 @@ class StreamClient<
       withReactionCounts?: boolean;
       withOwnChildren?: boolean;
     } = {},
-  ): boolean {
+  ) {
     if (options.enrich) {
       const result = options.enrich;
       delete options.enrich;
@@ -558,7 +558,7 @@ class StreamClient<
     };
   }
 
-  getFayeClient(timeout = 10): Faye.Client {
+  getFayeClient(timeout = 10) {
     /**
      * Returns this client's current Faye client
      * @method getFayeClient
@@ -606,7 +606,7 @@ class StreamClient<
     name?: string,
     contentType?: string,
     onUploadProgress?: OnUploadProgress,
-  ): Promise<FileUploadAPIResponse> {
+  ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
       url,
@@ -621,7 +621,7 @@ class StreamClient<
     });
   }
 
-  get<T>(kwargs: AxiosConfig): Promise<T> {
+  get<T>(kwargs: AxiosConfig) {
     /**
      * Shorthand function for get request
      * @method get
@@ -630,10 +630,10 @@ class StreamClient<
      * @param  {object}    kwargs
      * @return {Promise}   Promise object
      */
-    return this.doAxiosRequest('GET', kwargs);
+    return this.doAxiosRequest<T>('GET', kwargs);
   }
 
-  post<T>(kwargs: AxiosConfig): Promise<T> {
+  post<T>(kwargs: AxiosConfig) {
     /**
      * Shorthand function for post request
      * @method post
@@ -642,10 +642,10 @@ class StreamClient<
      * @param  {object}    kwargs
      * @return {Promise}   Promise object
      */
-    return this.doAxiosRequest('POST', kwargs);
+    return this.doAxiosRequest<T>('POST', kwargs);
   }
 
-  delete<T>(kwargs: AxiosConfig): Promise<T> {
+  delete<T = APIResponse>(kwargs: AxiosConfig) {
     /**
      * Shorthand function for delete request
      * @method delete
@@ -654,10 +654,10 @@ class StreamClient<
      * @param  {object}    kwargs
      * @return {Promise}   Promise object
      */
-    return this.doAxiosRequest('DELETE', kwargs);
+    return this.doAxiosRequest<T>('DELETE', kwargs);
   }
 
-  put<T>(kwargs: AxiosConfig): Promise<T> {
+  put<T>(kwargs: AxiosConfig) {
     /**
      * Shorthand function for put request
      * @method put
@@ -666,14 +666,14 @@ class StreamClient<
      * @param  {object}    kwargs
      * @return {Promise}   Promise object
      */
-    return this.doAxiosRequest('PUT', kwargs);
+    return this.doAxiosRequest<T>('PUT', kwargs);
   }
 
   /**
    * @param {string} userId
    * @param {object} extraData
    */
-  createUserToken(userId: string, extraData = {}): string {
+  createUserToken(userId: string, extraData = {}) {
     this._throwMissingApiSecret();
 
     return signing.JWTUserSessionToken(this.apiSecret as string, userId, extraData, {
@@ -681,7 +681,7 @@ class StreamClient<
     });
   }
 
-  updateActivities(activities: UpdateActivity<ActivityType>[]): Promise<APIResponse> {
+  updateActivities(activities: UpdateActivity<ActivityType>[]) {
     /**
      * Updates all supplied activities on the getstream-io api
      * @since  3.1.0
@@ -706,7 +706,7 @@ class StreamClient<
     });
   }
 
-  updateActivity(activity: UpdateActivity<ActivityType>): Promise<APIResponse> {
+  updateActivity(activity: UpdateActivity<ActivityType>) {
     /**
      * Updates one activity on the getstream-io api
      * @since  3.1.0
@@ -726,7 +726,7 @@ class StreamClient<
     ids?: string[];
     foreignIDTimes?: { foreignID: string; time: Date }[];
     reactions?: Record<string, boolean>;
-  }): Promise<GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
+  }) {
     /**
      * Retrieve activities by ID or foreign ID and time
      * @since  3.19.0
@@ -778,7 +778,7 @@ class StreamClient<
     });
   }
 
-  getOrCreateToken(): string {
+  getOrCreateToken() {
     if (!this._getOrCreateToken) {
       this._getOrCreateToken = this.usingApiSecret
         ? signing.JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: '*' })
@@ -791,7 +791,7 @@ class StreamClient<
     return new StreamUser<UserType>(this, userId, this.getOrCreateToken());
   }
 
-  async setUser(data: UserType): Promise<StreamUser<UserType>> {
+  async setUser(data: UserType) {
     if (this.usingApiSecret) {
       throw new errors.SiteError('This method can only be used client-side using a user token');
     }
@@ -805,7 +805,7 @@ class StreamClient<
     return user;
   }
 
-  og(url: string): Promise<OGAPIResponse> {
+  og(url: string) {
     return this.get<OGAPIResponse>({
       url: 'og/',
       qs: { url },
@@ -813,9 +813,7 @@ class StreamClient<
     });
   }
 
-  personalizedFeed(
-    options: GetFeedOptions = {},
-  ): Promise<PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
+  personalizedFeed(options: GetFeedOptions = {}) {
     return this.get<
       PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
     >({
@@ -864,9 +862,7 @@ class StreamClient<
     return { ...activity, ...response };
   }
 
-  activitiesPartialUpdate(
-    changes: ActivityPartialChanges[],
-  ): Promise<APIResponse & { activities: Activity<ActivityType>[] }> {
+  activitiesPartialUpdate(changes: ActivityPartialChanges[]) {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0

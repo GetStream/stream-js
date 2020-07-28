@@ -48,11 +48,11 @@ class CollectionEntry<CollectionType> {
     this.data = data;
   }
 
-  ref(): string {
+  ref() {
     return `SO:${this.collection}:${this.id}`;
   }
 
-  async get(): Promise<CollectionEntry<CollectionType>> {
+  async get() {
     /**
      * get item from collection and sync data
      * @method get
@@ -66,7 +66,7 @@ class CollectionEntry<CollectionType> {
     return response;
   }
 
-  async add(): Promise<CollectionEntry<CollectionType>> {
+  async add() {
     /**
      * Add item to collection
      * @method add
@@ -80,7 +80,7 @@ class CollectionEntry<CollectionType> {
     return response;
   }
 
-  async update(): Promise<CollectionEntry<CollectionType>> {
+  async update() {
     /**
      * Update item in the object storage
      * @method update
@@ -95,7 +95,7 @@ class CollectionEntry<CollectionType> {
     return response;
   }
 
-  async delete(): Promise<APIResponse> {
+  async delete() {
     /**
      * Delete item from collection
      * @method delete
@@ -126,16 +126,16 @@ export default class Collections<CollectionType> {
     this.token = token;
   }
 
-  buildURL = (collection: string, itemId?: string): string => {
+  buildURL = (collection: string, itemId?: string) => {
     const url = `collections/${collection}/`;
     return itemId === undefined ? url : `${url}${itemId}/`;
   };
 
-  entry(collection: string, itemId: string, itemData: CollectionType): CollectionEntry<CollectionType> {
+  entry(collection: string, itemId: string, itemData: CollectionType) {
     return new CollectionEntry<CollectionType>(this, collection, itemId, itemData);
   }
 
-  async get(collection: string, itemId: string): Promise<CollectionEntry<CollectionType>> {
+  async get(collection: string, itemId: string) {
     /**
      * get item from collection
      * @method get
@@ -155,7 +155,7 @@ export default class Collections<CollectionType> {
     return entry;
   }
 
-  async add(collection: string, itemId: string, itemData: CollectionType): Promise<CollectionEntry<CollectionType>> {
+  async add(collection: string, itemId: string, itemData: CollectionType) {
     /**
      * Add item to collection
      * @method add
@@ -180,7 +180,7 @@ export default class Collections<CollectionType> {
     return entry;
   }
 
-  async update(collection: string, entryId: string, data: CollectionType): Promise<CollectionEntry<CollectionType>> {
+  async update(collection: string, entryId: string, data: CollectionType) {
     /**
      * Update entry in the collection
      * @method update
@@ -203,7 +203,7 @@ export default class Collections<CollectionType> {
     return entry;
   }
 
-  delete(collection: string, entryId: string): Promise<APIResponse> {
+  delete(collection: string, entryId: string) {
     /**
      * Delete entry from collection
      * @method delete
@@ -212,16 +212,13 @@ export default class Collections<CollectionType> {
      * @return {Promise} Promise object
      * @example collection.delete("food", "cheese101")
      */
-    return this.client.delete<APIResponse>({
+    return this.client.delete({
       url: this.buildURL(collection, entryId),
       signature: this.token,
     });
   }
 
-  upsert(
-    collection: string,
-    data: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[],
-  ): Promise<UpsertCollectionAPIResponse<CollectionType>> {
+  upsert(collection: string, data: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]) {
     /**
      * Upsert one or more items within a collection.
      *
@@ -244,7 +241,7 @@ export default class Collections<CollectionType> {
     });
   }
 
-  select(collection: string, ids: string | string[]): Promise<SelectCollectionAPIResponse<CollectionType>> {
+  select(collection: string, ids: string | string[]) {
     /**
      * Select all objects with ids from the collection.
      *
@@ -267,7 +264,7 @@ export default class Collections<CollectionType> {
     });
   }
 
-  deleteMany(collection: string, ids: string | string[]): Promise<APIResponse> {
+  deleteMany(collection: string, ids: string | string[]) {
     /**
      * Remove all objects by id from the collection.
      *
@@ -287,7 +284,7 @@ export default class Collections<CollectionType> {
       ids: ids.map((id) => id.toString()).join(','),
     };
 
-    return this.client.delete<APIResponse>({
+    return this.client.delete({
       url: 'collections/',
       serviceName: 'api',
       qs: params,

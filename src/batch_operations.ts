@@ -14,7 +14,7 @@ export type UnfollowRelation = BaseFollowRelation & {
   keep_history?: boolean;
 };
 
-function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]): Promise<APIResponse> {
+function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) {
   /**
    * Add one activity to many feeds
    * @method addToMany
@@ -36,7 +36,7 @@ function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, fee
   });
 }
 
-function followMany(this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number): Promise<APIResponse> {
+function followMany(this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) {
   /**
    * Follow multiple feeds with one API call
    * @method followMany
@@ -59,7 +59,7 @@ function followMany(this: StreamClient, follows: FollowRelation[], activityCopyL
   });
 }
 
-function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]): Promise<APIResponse> {
+function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]) {
   /**
    * Unfollow multiple feeds with one API call
    * @method unfollowMany

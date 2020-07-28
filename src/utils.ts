@@ -5,7 +5,7 @@ import * as errors from './errors';
 const validFeedSlugRe = /^[\w]+$/;
 const validUserIdRe = /^[\w-]+$/;
 
-function validateFeedSlug(feedSlug: string): string {
+function validateFeedSlug(feedSlug: string) {
   /*
    * Validate that the feedSlug matches \w
    */
@@ -16,7 +16,7 @@ function validateFeedSlug(feedSlug: string): string {
   return feedSlug;
 }
 
-function validateUserId(userId: string): string {
+function validateUserId(userId: string) {
   /*
    * Validate the userId matches \w
    */
@@ -27,7 +27,7 @@ function validateUserId(userId: string): string {
   return userId;
 }
 
-function rfc3986(str: string): string {
+function rfc3986(str: string) {
   return str.replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
 }
 
@@ -35,7 +35,7 @@ function isReadableStream(obj: NodeJS.ReadStream): obj is NodeJS.ReadStream {
   return obj !== null && typeof obj === 'object' && typeof (obj as NodeJS.ReadStream)._read === 'function';
 }
 
-function validateFeedId(feedId: string): string {
+function validateFeedId(feedId: string) {
   /*
    * Validate that the feedId matches the spec user:1
    */
@@ -50,7 +50,7 @@ function validateFeedId(feedId: string): string {
   return feedId;
 }
 
-function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string, contentType?: string): FormData {
+function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string, contentType?: string) {
   const data = new FormData();
 
   let fileField: File | NodeJS.ReadStream | { uri: string; name: string; type?: string };

@@ -29,10 +29,7 @@ export default class Personalization<PersonalizationType> {
     this.client = client;
   }
 
-  get(
-    resource: string,
-    options: Record<string, string> & { token?: string } = {},
-  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
+  get(resource: string, options: Record<string, string> & { token?: string } = {}) {
     /**
      * Get personalized activities for this feed
      *
@@ -51,11 +48,7 @@ export default class Personalization<PersonalizationType> {
     });
   }
 
-  post(
-    resource: string,
-    options: Record<string, string> = {},
-    data: Record<string, unknown> = {},
-  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
+  post(resource: string, options: Record<string, string> = {}, data: Record<string, unknown> = {}) {
     /**
      * Post data to personalization endpoint
      *
@@ -76,10 +69,7 @@ export default class Personalization<PersonalizationType> {
     });
   }
 
-  delete(
-    resource: string,
-    options: Record<string, string> = {},
-  ): Promise<PersonalizationAPIResponse<PersonalizationType>> {
+  delete(resource: string, options: Record<string, string> = {}) {
     /**
      * Delete metadata or activities
      *

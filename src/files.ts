@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, FileUploadAPIResponse, OnUploadProgress } from './client';
+import StreamClient, { OnUploadProgress } from './client';
 
 export default class StreamFileStore {
   client: StreamClient;
@@ -16,7 +16,7 @@ export default class StreamFileStore {
     name?: string,
     contentType?: string,
     onUploadProgress?: OnUploadProgress,
-  ): Promise<FileUploadAPIResponse> {
+  ) {
     /**
      * upload a File instance or a readable stream of data
      * @param {File|Buffer|string} uri - File object or Buffer or URI
@@ -28,8 +28,8 @@ export default class StreamFileStore {
     return this.client.upload('files/', uri, name, contentType, onUploadProgress);
   }
 
-  delete(uri: string): Promise<APIResponse> {
-    return this.client.delete<APIResponse>({
+  delete(uri: string) {
+    return this.client.delete({
       url: `files/`,
       qs: { url: uri },
       signature: this.token,

@@ -3,7 +3,7 @@ import Base64 from 'Base64';
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
 
-function safeJsonParse(thing: unknown): unknown {
+function safeJsonParse<T>(thing: T | string): T | undefined {
   if (typeof thing === 'object') return thing;
   try {
     return JSON.parse(thing as string);
@@ -12,7 +12,7 @@ function safeJsonParse(thing: unknown): unknown {
   }
 }
 
-function padString(string: string): string {
+function padString(string: string) {
   const segmentLength = 4;
   const diff = string.length % segmentLength;
   if (!diff) return string;
@@ -23,7 +23,7 @@ function padString(string: string): string {
   return string;
 }
 
-function toBase64(base64UrlString: string): string {
+function toBase64(base64UrlString: string) {
   return padString(base64UrlString)
     .replace(/\-/g, '+') // eslint-disable-line no-useless-escape
     .replace(/_/g, '/');
@@ -40,7 +40,7 @@ function decodeBase64Url(base64UrlString: string) {
   }
 }
 
-function headerFromJWS(jwsSig: string): unknown {
+function headerFromJWS(jwsSig: string) {
   const encodedHeader = jwsSig.split('.', 1)[0];
   return safeJsonParse(decodeBase64Url(encodedHeader));
 }
@@ -77,7 +77,7 @@ function JWTUserSessionToken(
   userId: string,
   extraData: Record<string, unknown> = {},
   jwtOptions: jwt.SignOptions = {},
-): string {
+) {
   /**
    * Creates the JWT token that can be used for a UserSession
    * @method JWTUserSessionToken
@@ -99,7 +99,7 @@ function JWTUserSessionToken(
   return jwt.sign(payload, apiSecret, opts);
 }
 
-function isJWTSignature(signature: string | null): boolean {
+function isJWTSignature(signature: string | null) {
   /**
    * check if token is a valid JWT token
    * @method isJWTSignature

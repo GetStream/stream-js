@@ -35,18 +35,18 @@ export default class StreamUser<UserType> {
     this.url = `user/${this.id}/`;
   }
 
-  ref(): string {
+  ref() {
     return `SU:${this.id}`;
   }
 
-  delete(): Promise<APIResponse> {
-    return this.client.delete<APIResponse>({
+  delete() {
+    return this.client.delete({
       url: this.url,
       signature: this.token,
     });
   }
 
-  async get(options: { with_follow_counts?: boolean }): Promise<StreamUser<UserType>> {
+  async get(options: { with_follow_counts?: boolean }) {
     const response = await this.client.get<UserAPIResponse<UserType>>({
       url: this.url,
       signature: this.token,
@@ -59,7 +59,7 @@ export default class StreamUser<UserType> {
     return this;
   }
 
-  async create(data: UserType, options: { get_or_create?: boolean }): Promise<StreamUser<UserType>> {
+  async create(data: UserType, options: { get_or_create?: boolean }) {
     const response = await this.client.post<UserAPIResponse<UserType>>({
       url: 'user/',
       body: {
@@ -76,7 +76,7 @@ export default class StreamUser<UserType> {
     return this;
   }
 
-  async update(data?: Record<string, unknown>): Promise<StreamUser<UserType>> {
+  async update(data?: Partial<UserType>) {
     const response = await this.client.put<UserAPIResponse<UserType>>({
       url: this.url,
       body: {
@@ -91,11 +91,11 @@ export default class StreamUser<UserType> {
     return this;
   }
 
-  getOrCreate(data: UserType): Promise<StreamUser<UserType>> {
+  getOrCreate(data: UserType) {
     return this.create(data, { get_or_create: true });
   }
 
-  profile(): Promise<StreamUser<UserType>> {
+  profile() {
     return this.get({ with_follow_counts: true });
   }
 }

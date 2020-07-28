@@ -249,7 +249,7 @@ export default class StreamFeed<
     this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
   }
 
-  addActivity(activity: NewActivity<ActivityType>): Promise<Activity<ActivityType>> {
+  addActivity(activity: NewActivity<ActivityType>) {
     /**
      * Adds the given activity to the feed
      * @method addActivity
@@ -270,7 +270,7 @@ export default class StreamFeed<
     });
   }
 
-  removeActivity(activityId: string | { foreignId: string }): Promise<APIResponse & { removed: string }> {
+  removeActivity(activityId: string | { foreignId: string }) {
     /**
      * Removes the activity by activityId
      * @method removeActivity
@@ -289,7 +289,7 @@ export default class StreamFeed<
     });
   }
 
-  addActivities(activities: NewActivity<ActivityType>[]): Promise<Activity<ActivityType>[]> {
+  addActivities(activities: NewActivity<ActivityType>[]) {
     /**
      * Adds the given activities to the feed
      * @method addActivities
@@ -304,11 +304,7 @@ export default class StreamFeed<
     });
   }
 
-  follow(
-    targetSlug: string,
-    targetUserId: string | { id: string },
-    options: { limit?: number } = {},
-  ): Promise<APIResponse> {
+  follow(targetSlug: string, targetUserId: string | { id: string }, options: { limit?: number } = {}) {
     /**
      * Follows the given target feed
      * @method follow
@@ -338,7 +334,7 @@ export default class StreamFeed<
     });
   }
 
-  unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}): Promise<APIResponse> {
+  unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}) {
     /**
      * Unfollow the given feed
      * @method unfollow
@@ -364,7 +360,7 @@ export default class StreamFeed<
     });
   }
 
-  following(options: GetFollowOptions = {}): Promise<GetFollowAPIResponse> {
+  following(options: GetFollowOptions = {}) {
     /**
      * List which feeds this feed is following
      * @method following
@@ -384,7 +380,7 @@ export default class StreamFeed<
     });
   }
 
-  followers(options: GetFollowOptions = {}): Promise<GetFollowAPIResponse> {
+  followers(options: GetFollowOptions = {}) {
     /**
      * List the followers of this feed
      * @method followers
@@ -405,9 +401,7 @@ export default class StreamFeed<
     });
   }
 
-  get(
-    options: GetFeedOptions & NotificationFeedOptions = {},
-  ): Promise<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
+  get(options: GetFeedOptions & NotificationFeedOptions = {}) {
     /**
      * Reads the feed
      * @method get
@@ -439,10 +433,7 @@ export default class StreamFeed<
     });
   }
 
-  getActivityDetail(
-    activityId: string,
-    options: EnrichOptions,
-  ): Promise<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>> {
+  getActivityDetail(activityId: string, options: EnrichOptions) {
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @method getActivityDetail
@@ -463,7 +454,7 @@ export default class StreamFeed<
     });
   }
 
-  getFayeClient(): Faye.Client {
+  getFayeClient() {
     /**
      * Returns the current faye client object
      * @method getFayeClient
@@ -474,7 +465,7 @@ export default class StreamFeed<
     return this.client.getFayeClient();
   }
 
-  subscribe(callback: Faye.Callback): Faye.Subscription {
+  subscribe(callback: Faye.Callback) {
     /**
      * Subscribes to any changes in the feed, return a promise
      * @method subscribe
@@ -502,7 +493,7 @@ export default class StreamFeed<
     return subscription;
   }
 
-  unsubscribe(): void {
+  unsubscribe() {
     /**
      * Cancel updates created via feed.subscribe()
      * @return void
@@ -520,7 +511,7 @@ export default class StreamFeed<
     newTargets?: string[],
     addedTargets?: string[],
     removedTargets?: string[],
-  ): Promise<APIResponse & Activity<ActivityType> & { added?: string[]; removed?: string[] }> {
+  ) {
     /**
      * Updates an activity's "to" fields
      * @since 3.10.0
