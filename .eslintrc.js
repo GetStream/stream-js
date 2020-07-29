@@ -45,7 +45,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.ts'],
-      plugins: ['prettier', '@typescript-eslint'],
+      plugins: ['prettier', '@typescript-eslint', 'typescript-sort-keys'],
       extends: [
         'airbnb-base',
         'eslint:recommended',
@@ -63,6 +63,12 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 0,
         '@typescript-eslint/ban-ts-comment': 0,
         'no-useless-constructor': 0,
+        'typescript-sort-keys/interface': [
+          'error',
+          'asc',
+          { caseSensitive: false, natural: true, requiredFirst: true },
+        ],
+        'typescript-sort-keys/string-enum': ['error', 'asc', { caseSensitive: false, natural: true }],
       },
     },
   ],
