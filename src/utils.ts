@@ -53,7 +53,7 @@ function validateFeedId(feedId: string) {
 function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string, contentType?: string) {
   const data = new FormData();
 
-  let fileField: File | NodeJS.ReadStream | { uri: string; name: string; type?: string };
+  let fileField: File | NodeJS.ReadStream | { name: string; uri: string; type?: string };
 
   if (isReadableStream(uri as NodeJS.ReadStream)) {
     fileField = uri as NodeJS.ReadStream;

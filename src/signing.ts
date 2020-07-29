@@ -49,7 +49,7 @@ function JWTScopeToken(
   apiSecret: string,
   resource: string,
   action: string,
-  options: { feedId?: string; userId?: string; expireTokens?: boolean } = {},
+  options: { expireTokens?: boolean; feedId?: string; userId?: string } = {},
 ) {
   /**
    * Creates the JWT token for feedId, resource and action using the apiSecret
@@ -66,7 +66,7 @@ function JWTScopeToken(
    * @return {string} JWT Token
    */
   const noTimestamp = options.expireTokens ? !options.expireTokens : true;
-  const payload: { resource: string; action: string; feed_id?: string; user_id?: string } = { resource, action };
+  const payload: { action: string; resource: string; feed_id?: string; user_id?: string } = { resource, action };
   if (options.feedId) payload.feed_id = options.feedId;
   if (options.userId) payload.user_id = options.userId;
 

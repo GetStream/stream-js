@@ -1,10 +1,10 @@
 import StreamClient, { FileUploadAPIResponse, OnUploadProgress } from './client';
 
 export type ImageProcessOptions = {
-  w?: number | string;
+  crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
   h?: number | string;
   resize?: string | 'clip' | 'crop' | 'scale' | 'fill';
-  crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
+  w?: number | string;
 };
 
 export default class StreamImageStore {

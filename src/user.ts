@@ -1,9 +1,9 @@
 import StreamClient, { APIResponse } from './client';
 
 export type UserAPIResponse<UserType> = APIResponse & {
-  id: string;
-  data: UserType;
   created_at: Date;
+  data: UserType;
+  id: string;
   updated_at: Date;
   followers_count?: number;
   following_count?: number;

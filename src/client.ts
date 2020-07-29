@@ -37,23 +37,23 @@ export type FileUploadAPIResponse = APIResponse & { file: string };
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
 
 export type ClientOptions = {
-  location?: string;
+  browser?: boolean;
   expireTokens?: boolean;
-  version?: string;
+  fayeUrl?: string;
   group?: string;
   keepAlive?: boolean;
-  timeout?: number;
-  browser?: boolean;
-  fayeUrl?: string;
-  protocol?: string;
   local?: boolean;
+  location?: string;
+  protocol?: string;
+  timeout?: number;
   urlOverride?: Record<string, string>;
+  version?: string;
 };
 
 type OGResource = {
-  url?: string;
   secure_url?: string;
   type?: string;
+  url?: string;
 };
 
 type OGAudio = OGResource & {
@@ -61,50 +61,50 @@ type OGAudio = OGResource & {
 };
 
 type OGImage = OGResource & {
+  alt?: string;
+  height?: number;
   image?: string;
   width?: number;
-  height?: number;
-  alt?: string;
 };
 
 type OGVideo = OGResource & {
+  height?: number;
   video?: string;
   width?: number;
-  height?: number;
 };
 
 export type OGAPIResponse = APIResponse & {
+  audios?: OGAudio[];
+  description?: string;
+  determiner?: string;
+  favicon?: string;
+  images?: OGImage[];
+  locale?: string;
+  site?: string;
+  site_name?: string;
   title?: string;
   type?: string;
   url?: string;
-  site?: string;
-  site_name?: string;
-  description?: string;
-  favicon?: string;
-  determiner?: string;
-  locale?: string;
-  audios?: OGAudio[];
-  images?: OGImage[];
   videos?: OGVideo[];
 };
 
 type AxiosConfig = {
   signature: string;
   url: string;
-  serviceName?: string;
-  body?: unknown;
-  qs?: Record<string, unknown>;
-  headers?: Record<string, unknown>;
   axiosOptions?: axios.AxiosRequestConfig;
+  body?: unknown;
+  headers?: Record<string, unknown>;
+  qs?: Record<string, unknown>;
+  serviceName?: string;
 };
 
 export type HandlerCallback = (...args: unknown[]) => unknown;
 
 export type ActivityPartialChanges = {
-  id?: string;
   foreignID?: string;
-  time?: Date;
+  id?: string;
   set?: Record<string, unknown>;
+  time?: Date;
   unset?: string[];
 };
 
@@ -144,7 +144,7 @@ export default class StreamClient<
   request: axios.AxiosInstance;
   subscriptions: Record<
     string,
-    { userId: string; token: string; fayeSubscription: Faye.Subscription | Promise<Faye.Subscription> }
+    { fayeSubscription: Faye.Subscription | Promise<Faye.Subscription>; token: string; userId: string }
   >;
   handlers: Record<string, HandlerCallback>;
 
@@ -463,10 +463,10 @@ export default class StreamClient<
 
   replaceReactionOptions = (options: {
     reactions?: Record<string, boolean>;
-    withOwnReactions?: boolean;
-    withRecentReactions?: boolean;
-    withReactionCounts?: boolean;
     withOwnChildren?: boolean;
+    withOwnReactions?: boolean;
+    withReactionCounts?: boolean;
+    withRecentReactions?: boolean;
   }) => {
     // Shortcut options for reaction enrichment
     if (options?.reactions) {
@@ -490,9 +490,9 @@ export default class StreamClient<
     options: {
       enrich?: boolean;
       ownReactions?: boolean;
-      withRecentReactions?: boolean;
-      withReactionCounts?: boolean;
       withOwnChildren?: boolean;
+      withReactionCounts?: boolean;
+      withRecentReactions?: boolean;
     } = {},
   ) {
     if (options.enrich) {
@@ -733,8 +733,8 @@ export default class StreamClient<
     foreignIDTimes,
     ...params
   }: EnrichOptions & {
-    ids?: string[];
     foreignIDTimes?: { foreignID: string; time: Date }[];
+    ids?: string[];
     reactions?: Record<string, boolean>;
   }) {
     /**
@@ -743,7 +743,7 @@ export default class StreamClient<
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise<GetActivitiesAPIResponse>}
      */
-    const extraParams: { ids?: string; foreign_ids?: string; timestamps?: string } = {};
+    const extraParams: { foreign_ids?: string; ids?: string; timestamps?: string } = {};
 
     if (ids) {
       if (!(ids instanceof Array)) {

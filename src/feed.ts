@@ -8,20 +8,20 @@ import { CollectionResponse } from './collections';
 
 export type EnrichOptions = {
   enrich?: boolean;
-  withOwnReactions?: boolean;
-  withOwnChildren?: boolean;
   ownReactions?: boolean; // best not to use it, will removed by clinet.replaceReactionOptions()
+  reactionKindsFilter?: string; // TODO: add support for array sample: kind,kind,kind
+  recentReactionsLimit?: number;
+  withOwnChildren?: boolean;
+  withOwnReactions?: boolean;
   withReactionCounts?: boolean;
   withRecentReactions?: boolean;
-  recentReactionsLimit?: number;
-  reactionKindsFilter?: string; // TODO: add support for array sample: kind,kind,kind
 };
 
 export type FeedPaginationOptions = {
-  id_lt?: string;
-  id_lte?: string;
   id_gt?: string;
   id_gte?: string;
+  id_lt?: string;
+  id_lte?: string;
   limit?: number;
 };
 
@@ -39,37 +39,35 @@ export type NotificationFeedOptions = {
 };
 
 export type GetFollowOptions = {
+  filter?: string[];
   limit?: number;
   offset?: number;
-  filter?: string[];
 };
 
 export type GetFollowAPIResponse = APIResponse & {
-  results: { feed_id: string; target_id: string; created_at: Date; updated_at: Date }[];
+  results: { created_at: Date; feed_id: string; target_id: string; updated_at: Date }[];
 };
 
 type BaseActivity<ActivityType> = ActivityType & {
   actor: string;
-  verb: string;
   object: string | unknown;
-  to?: string[];
+  verb: string;
   target?: string;
+  to?: string[];
 };
 
-export type NewActivity<ActivityType> = BaseActivity<ActivityType> & { time?: string; foreign_id?: string };
+export type NewActivity<ActivityType> = BaseActivity<ActivityType> & { foreign_id?: string; time?: string };
 
-export type UpdateActivity<ActivityType> = BaseActivity<ActivityType> & { time: string; foreign_id: string };
+export type UpdateActivity<ActivityType> = BaseActivity<ActivityType> & { foreign_id: string; time: string };
 
 export type Activity<ActivityType> = BaseActivity<ActivityType> & {
+  foreign_id: string;
   id: string;
   time: Date;
-  foreign_id: string;
-  origin?: string;
+  analytics?: Record<string, number>; // ranked feeds only
   extra_context?: Record<string, unknown>;
-
-  // ranked feeds
-  score?: number;
-  analytics?: Record<string, number>;
+  origin?: string;
+  score?: number; // ranked feeds only
 };
 
 export type ReactionsRecords<ReactionType, ChildReactionType, UserType> = Record<
@@ -88,14 +86,14 @@ export type EnrichedActivity<UserType, ActivityType, CollectionType, ReactionTyp
     | EnrichedReaction<ReactionType, ChildReactionType, UserType>
     | CollectionResponse<CollectionType>;
 
-  // enriched reactions
-  reaction_counts?: Record<string, number>;
   latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
-  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>[];
   latest_reactions_extra?: Record<string, { next?: string }>;
+  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>[];
   own_reactions_extra?: Record<string, { next?: string }>;
   // Reaction posted to feed
   reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
+  // enriched reactions
+  reaction_counts?: Record<string, number>;
 };
 
 export type FlatActivity<ActivityType> = Activity<ActivityType>;
@@ -109,13 +107,13 @@ export type FlatActivityEnriched<
 > = EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
 type BaseAggregatedActivity = {
-  id: string;
-  verb: string;
-  group: string;
   activity_count: number;
   actor_count: number;
-  updated_at: Date;
   created_at: Date;
+  group: string;
+  id: string;
+  updated_at: Date;
+  verb: string;
   score?: number;
 };
 
@@ -167,11 +165,11 @@ export type PersonalizationFeedAPIResponse<
   ReactionType,
   ChildReactionType
 > = APIResponse & {
-  next: string;
   limit: number;
+  next: string;
   offset: number;
-  version: string;
   results: FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
+  version: string;
 };
 
 export type GetActivitiesAPIResponse<
@@ -550,8 +548,8 @@ export default class StreamFeed<
     const body: {
       foreign_id: string;
       time: string;
-      new_targets?: string[];
       added_targets?: string[];
+      new_targets?: string[];
       removed_targets?: string[];
     } = { foreign_id: foreignId, time };
     if (newTargets) body.new_targets = newTargets;

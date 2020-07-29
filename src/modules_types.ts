@@ -1,8 +1,8 @@
 declare module 'faye' {
   type Message = {
-    subscription?: string;
     // TODO: generalize
     [key: string]: unknown;
+    subscription?: string;
   };
 
   type Subscription = {

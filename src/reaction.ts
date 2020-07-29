@@ -9,27 +9,27 @@ export type TargetFeed = string | StreamFeed;
 export type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
+  activity_id?: string; // only required for reactions
+  data?: T | Record<string, unknown>;
   id?: string; // api will generate an id if it's missing
   kind?: string; // required only for add/addChile, not update
-  user_id?: string; // optional when using client tokens
-  activity_id?: string; // only required for reactions
   parent?: string; // only required for child reactions
-  data?: T | Record<string, unknown>;
   target_feeds?: string[];
   target_feeds_extra_data?: TargetFeedsExtraData;
+  user_id?: string; // optional when using client tokens
 };
 
 export type Reaction<T> = {
+  activity_id: string;
+  created_at: Date;
+  data: T;
   id: string;
   kind: string;
-  activity_id: string;
-  user_id: string;
-  data: T;
-  created_at: Date;
+  parent: string;
   updated_at: Date;
+  user_id: string;
   target_feeds?: string[];
   target_feeds_extra_data?: TargetFeedsExtraData;
-  parent: string;
 };
 
 export type ReactionAPIResponse<T> = APIResponse & Reaction<T>;
@@ -45,11 +45,11 @@ export type EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserTyp
   EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 
 export type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType> = APIResponse & {
-  activity?: ActivityType;
   next: string;
   results:
     | ReactionAPIResponse<ReactionType | ChildReactionType>[]
     | EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>[];
+  activity?: ActivityType;
 };
 
 export default class StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
@@ -105,7 +105,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
       targetFeeds = [],
       userId,
       targetFeedsExtraData,
-    }: { id?: string; targetFeeds?: TargetFeeds; userId?: string; targetFeedsExtraData?: TargetFeedsExtraData } = {},
+    }: { id?: string; targetFeeds?: TargetFeeds; targetFeedsExtraData?: TargetFeedsExtraData; userId?: string } = {},
   ) {
     /**
      * add reaction
@@ -151,8 +151,8 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
       targetFeedsExtraData,
     }: {
       targetFeeds?: TargetFeeds;
-      userId?: string;
       targetFeedsExtraData?: TargetFeedsExtraData;
+      userId?: string;
     } = {},
   ) {
     /**
@@ -203,15 +203,15 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
   }
 
   filter(conditions: {
-    kind?: string;
-    user_id?: string;
     activity_id?: string;
-    reaction_id?: string;
-    id_lt?: string;
-    id_lte?: string;
     id_gt?: string;
     id_gte?: string;
+    id_lt?: string;
+    id_lte?: string;
+    kind?: string;
     limit?: number;
+    reaction_id?: string;
+    user_id?: string;
     with_activity_data?: boolean;
   }) {
     /**

@@ -3,13 +3,13 @@ import * as errors from './errors';
 
 type BaseCollection<CollectionType> = {
   collection: string;
-  id: string;
   data: CollectionType;
+  id: string;
 };
 
 export type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
-  foregin_id: string;
   created_at: Date;
+  foregin_id: string;
   updated_at: Date;
 };
 
@@ -28,8 +28,8 @@ export type SelectCollectionAPIResponse<CollectionType> = APIResponse & {
 export type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
   data: {
     [key: string]: {
-      id: string;
       data: CollectionType;
+      id: string;
     }[];
   };
 };

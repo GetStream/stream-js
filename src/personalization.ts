@@ -8,10 +8,10 @@ import StreamClient, { APIResponse } from './client';
 
 export type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
   app_id: string;
-  results: PersonalizationType[];
   next: string;
-  offset?: number;
+  results: PersonalizationType[];
   limit?: number;
+  offset?: number;
   version?: string;
 };
 
