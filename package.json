@@ -119,6 +119,7 @@
     "url": "git://github.com/GetStream/stream-js.git"
   },
   "files": [
+    "src",
     "dist",
     "lib"
   ],
