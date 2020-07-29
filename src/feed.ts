@@ -45,7 +45,7 @@ export type GetFollowOptions = {
 };
 
 export type GetFollowAPIResponse = APIResponse & {
-  results: { created_at: Date; feed_id: string; target_id: string; updated_at: Date }[];
+  results: { created_at: string; feed_id: string; target_id: string; updated_at: string }[];
 };
 
 type BaseActivity<ActivityType> = ActivityType & {
@@ -63,7 +63,7 @@ export type UpdateActivity<ActivityType> = BaseActivity<ActivityType> & { foreig
 export type Activity<ActivityType> = BaseActivity<ActivityType> & {
   foreign_id: string;
   id: string;
-  time: Date;
+  time: string;
   analytics?: Record<string, number>; // ranked feeds only
   extra_context?: Record<string, unknown>;
   origin?: string;
@@ -109,10 +109,10 @@ export type FlatActivityEnriched<
 type BaseAggregatedActivity = {
   activity_count: number;
   actor_count: number;
-  created_at: Date;
+  created_at: string;
   group: string;
   id: string;
-  updated_at: Date;
+  updated_at: string;
   verb: string;
   score?: number;
 };

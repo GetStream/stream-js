@@ -21,12 +21,12 @@ type ReactionBody<T> = {
 
 export type Reaction<T> = {
   activity_id: string;
-  created_at: Date;
+  created_at: string;
   data: T;
   id: string;
   kind: string;
   parent: string;
-  updated_at: Date;
+  updated_at: string;
   user_id: string;
   target_feeds?: string[];
   target_feeds_extra_data?: TargetFeedsExtraData;

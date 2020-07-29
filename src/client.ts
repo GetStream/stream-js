@@ -104,7 +104,7 @@ export type ActivityPartialChanges = {
   foreignID?: string;
   id?: string;
   set?: Record<string, unknown>;
-  time?: Date;
+  time?: Date | string;
   unset?: string[];
 };
 
@@ -733,7 +733,7 @@ export default class StreamClient<
     foreignIDTimes,
     ...params
   }: EnrichOptions & {
-    foreignIDTimes?: { foreignID: string; time: Date }[];
+    foreignIDTimes?: { foreignID: string; time: Date | string }[];
     ids?: string[];
     reactions?: Record<string, boolean>;
   }) {
@@ -755,7 +755,7 @@ export default class StreamClient<
         throw new TypeError('The foreignIDTimes argument should be an Array');
       }
       const foreignIDs: string[] = [];
-      const timestamps: Date[] = [];
+      const timestamps: (Date | string)[] = [];
       foreignIDTimes.forEach((fidTime) => {
         if (!(fidTime instanceof Object)) {
           throw new TypeError('foreignIDTimes elements should be Objects');

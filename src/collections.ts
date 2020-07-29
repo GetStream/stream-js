@@ -8,9 +8,9 @@ type BaseCollection<CollectionType> = {
 };
 
 export type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
-  created_at: Date;
+  created_at: string;
   foregin_id: string;
-  updated_at: Date;
+  updated_at: string;
 };
 
 export type NewCollectionEntry<CollectionType> = BaseCollection<CollectionType> & {
