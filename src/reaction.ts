@@ -113,9 +113,13 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
      * @param  {string}   activity Activity or an ActivityID
-     * @param  {object}   data  data related to reaction
-     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @return {Promise} Promise object
+     * @param  {ReactionType}   data  data related to reaction
+     * @param  {object} [options]
+     * @param  {string} [options.id] id associated with reaction
+     * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
+     * @param  {string} [options.userId] useful for adding reaction with server token
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ReactionType>>}
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
@@ -140,7 +144,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
   addChild(
     kind: string,
     reaction: string | { id: string },
-    data = {},
+    data: ChildReactionType,
     {
       targetFeeds = [],
       userId,
@@ -152,21 +156,24 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
     } = {},
   ) {
     /**
-     * add reaction
-     * @method add
+     * add child reaction
+     * @method addChild
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
      * @param  {string}   reaction Reaction or a ReactionID
-     * @param  {object}   data  data related to reaction
-     * @param  {array}    targetFeeds  an array of feeds to which to send an activity with the reaction
-     * @return {Promise} Promise object
+     * @param  {ChildReactionType}   data  data related to reaction
+     * @param  {object} [options]
+     * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
+     * @param  {string} [options.userId] useful for adding reaction with server token
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ChildReactionType>>}
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
     const body: ReactionBody<ChildReactionType> = {
       parent: reaction instanceof Object ? (reaction as { id: string }).id : reaction,
       kind,
-      data,
+      data: data || {},
       target_feeds: this._convertTargetFeeds(targetFeeds),
       user_id: userId,
     };
@@ -183,10 +190,10 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
   get(id: string) {
     /**
      * get reaction
-     * @method add
+     * @method get
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @return {Promise} Promise object
+     * @return {Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>}
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
     return this.client.get<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>({
@@ -217,7 +224,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
      * @method filter
      * @memberof StreamReaction.prototype
      * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
-     * @return {Promise} Promise object
+     * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
      * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
      * @example reactions.filter({user_id: "john", kinds:"like"})
      */
@@ -257,12 +264,14 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
   ) {
     /**
      * update reaction
-     * @method add
+     * @method update
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @param  {object}   data  Data associated to reaction
-     * @param  {array}   targetFeeds  Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
-     * @return {Promise} Promise object
+     * @param  {ReactionType | ChildReactionType}   data  Data associated to reaction or childReaction
+     * @param  {object} [options]
+     * @param  {string[]} [options.targetFeeds] Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ReactionType | ChildReactionType>>}
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
@@ -286,7 +295,7 @@ export default class StreamReaction<UserType, ActivityType, CollectionType, Reac
      * @method delete
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @return {Promise} Promise object
+     * @return {Promise<APIResponse>}
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
     return this.client.delete({

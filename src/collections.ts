@@ -57,7 +57,7 @@ class CollectionEntry<CollectionType> {
      * get item from collection and sync data
      * @method get
      * @memberof CollectionEntry.prototype
-     * @return {Promise} Promise object
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
     const response = await this.store.get(this.collection, this.id);
@@ -71,7 +71,7 @@ class CollectionEntry<CollectionType> {
      * Add item to collection
      * @method add
      * @memberof CollectionEntry.prototype
-     * @return {Promise} Promise object
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     const response = await this.store.add(this.collection, this.id, this.data as CollectionType);
@@ -85,7 +85,7 @@ class CollectionEntry<CollectionType> {
      * Update item in the object storage
      * @method update
      * @memberof CollectionEntry.prototype
-     * @return {Promise} Promise object
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
@@ -100,7 +100,7 @@ class CollectionEntry<CollectionType> {
      * Delete item from collection
      * @method delete
      * @memberof CollectionEntry.prototype
-     * @return {Promise} Promise object
+     * @return {Promise<APIResponse>}
      * @example collection.delete("cheese101")
      */
     const response = await this.store.delete(this.collection, this.id);
@@ -141,8 +141,8 @@ export default class Collections<CollectionType> {
      * @method get
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
-     * @param  {object}   itemId  id for this entry
-     * @return {Promise} Promise object
+     * @param  {string}   itemId  id for this entry
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
     const response = await this.client.get<CollectionAPIResponse<CollectionType>>({
@@ -162,8 +162,8 @@ export default class Collections<CollectionType> {
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
      * @param  {string}   itemId  entry id
-     * @param  {object}   itemData  ObjectStore data
-     * @return {Promise} Promise object
+     * @param  {CollectionType}   itemData  ObjectStore data
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
     const response = await this.client.post<CollectionAPIResponse<CollectionType>>({
@@ -186,9 +186,9 @@ export default class Collections<CollectionType> {
      * @method update
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
-     * @param  {object}   entryId  Collection object id
-     * @param  {object}   data  ObjectStore data
-     * @return {Promise} Promise object
+     * @param  {string}   entryId  Collection object id
+     * @param  {CollectionType}   data  ObjectStore data
+     * @return {Promise<CollectionEntry<CollectionType>>}
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
@@ -208,8 +208,9 @@ export default class Collections<CollectionType> {
      * Delete entry from collection
      * @method delete
      * @memberof Collections.prototype
-     * @param  {object}   entryId  Collection entry id
-     * @return {Promise} Promise object
+     * @param  {string}   collection  collection name
+     * @param  {string}   entryId  Collection entry id
+     * @return {Promise<APIResponse>} Promise object
      * @example collection.delete("food", "cheese101")
      */
     return this.client.delete({
@@ -224,8 +225,9 @@ export default class Collections<CollectionType> {
      *
      * @method upsert
      * @memberof Collections.prototype
-     * @param {object|array} data - A single json object or an array of objects
-     * @return {Promise} Promise object.
+     * @param  {string}   collection  collection name
+     * @param {NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]} data - A single json object or an array of objects
+     * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
      */
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
@@ -247,8 +249,9 @@ export default class Collections<CollectionType> {
      *
      * @method select
      * @memberof Collections.prototype
-     * @param {object|array} ids - A single json object or an array of objects
-     * @return {Promise} Promise object.
+     * @param {string} collection  collection name
+     * @param {string | string[]} ids - A single object id or an array of ids
+     * @return {Promise<SelectCollectionAPIResponse<CollectionType>>}
      */
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');
@@ -270,8 +273,9 @@ export default class Collections<CollectionType> {
      *
      * @method delete
      * @memberof Collections.prototype
-     * @param {object|array} ids - A single json object or an array of objects
-     * @return {Promise} Promise object.
+     * @param {string} collection  collection name
+     * @param {string | string[]} ids - A single object id or an array of ids
+     * @return {Promise<APIResponse>}
      */
     if (!this.client.usingApiSecret) {
       throw new errors.SiteError('This method can only be used server-side using your API Secret');

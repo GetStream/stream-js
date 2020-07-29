@@ -62,6 +62,7 @@ function JWTScopeToken(
    * @param {object} [options] - Optional additional options
    * @param {string} [options.feedId] - JWT payload feed identifier
    * @param {string} [options.userId] - JWT payload user identifier
+   * @param {boolean} [options.expireTokens] - JWT noTimestamp
    * @return {string} JWT Token
    */
   const noTimestamp = options.expireTokens ? !options.expireTokens : true;

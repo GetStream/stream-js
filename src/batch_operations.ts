@@ -20,9 +20,9 @@ function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, fee
    * @method addToMany
    * @memberof StreamClient.prototype
    * @since 2.3.0
-   * @param  {object}   activity The activity to add
-   * @param  {Array}   feeds    Array of objects describing the feeds to add to
-   * @return {Promise}           Promise object
+   * @param {ActivityType}  activity The activity to add
+   * @param {string[]}  feeds    Array of feed id in form of `${feedSlug}:${feedId}`
+   * @return {Promise<APIResponse>}
    */
   this._throwMissingApiSecret();
 
@@ -42,9 +42,9 @@ function followMany(this: StreamClient, follows: FollowRelation[], activityCopyL
    * @method followMany
    * @memberof StreamClient.prototype
    * @since 2.3.0
-   * @param  {Array}   follows  The follow relations to create
-   * @param  {number}  [activityCopyLimit] How many activities should be copied from the target feed
-   * @return {Promise}           Promise object
+   * @param {FollowRelation[]} follows  The follow relations to create: [{ source: string; target: string }]
+   * @param {number}  [activityCopyLimit] How many activities should be copied from the target feed
+   * @return {Promise<APIResponse>}
    */
   this._throwMissingApiSecret();
 
@@ -65,8 +65,8 @@ function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]) {
    * @method unfollowMany
    * @memberof StreamClient.prototype
    * @since 3.15.0
-   * @param  {Array}   unfollows  The follow relations to remove
-   * @return {Promise}           Promise object
+   * @param {UnfollowRelation[]}  unfollows The follow relations to remove: [{ source: string; target: string }]
+   * @return {Promise<APIResponse>}
    */
   this._throwMissingApiSecret();
 

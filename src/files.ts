@@ -19,11 +19,11 @@ export default class StreamFileStore {
   ) {
     /**
      * upload a File instance or a readable stream of data
-     * @param {File|Buffer|string} uri - File object or Buffer or URI
+     * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
      * @param {string} [name] - file name
      * @param {string} [contentType] - mime-type
      * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
-     * @return {Promise}
+     * @return {Promise<FileUploadAPIResponse>}
      */
     return this.client.upload('files/', uri, name, contentType, onUploadProgress);
   }

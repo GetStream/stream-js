@@ -254,8 +254,8 @@ export default class StreamFeed<
      * Adds the given activity to the feed
      * @method addActivity
      * @memberof StreamFeed.prototype
-     * @param {object} activity - The activity to add
-     * @return {Promise} Promise object
+     * @param {NewActivity<ActivityType>} activity - The activity to add
+     * @return {Promise<Activity<ActivityType>>}
      */
 
     activity = utils.replaceStreamObjects(activity);
@@ -272,15 +272,13 @@ export default class StreamFeed<
 
   removeActivity(activityId: string | { foreignId: string }) {
     /**
-     * Removes the activity by activityId
+     * Removes the activity by activityId or foreignId
      * @method removeActivity
      * @memberof StreamFeed.prototype
      * @param  {string}   activityId Identifier of activity to remove
-     * @return {Promise} Promise object
-     * @example
-     * feed.removeActivity(activityId);
-     * @example
-     * feed.removeActivity({'foreignId': foreignId});
+     * @return {Promise<APIResponse & { removed: string }>}
+     * @example feed.removeActivity(activityId);
+     * @example feed.removeActivity({'foreignId': foreignId});
      */
     return this.client.delete<APIResponse & { removed: string }>({
       url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
@@ -294,8 +292,8 @@ export default class StreamFeed<
      * Adds the given activities to the feed
      * @method addActivities
      * @memberof StreamFeed.prototype
-     * @param  {Array}   activities Array of activities to add
-     * @return {Promise}               XHR request object
+     * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
+     * @return {Promise<Activity<ActivityType>[]>}
      */
     return this.client.post<Activity<ActivityType>[]>({
       url: `feed/${this.feedUrl}/`,
@@ -311,9 +309,9 @@ export default class StreamFeed<
      * @memberof StreamFeed.prototype
      * @param  {string}   targetSlug   Slug of the target feed
      * @param  {string}   targetUserId User identifier of the target feed
-     * @param  {object}   options      Additional options
-     * @param  {number}   options.limit Limit the amount of activities copied over on follow
-     * @return {Promise}  Promise object
+     * @param  {object}   [options]      Additional options
+     * @param  {number}   [options.limit] Limit the amount of activities copied over on follow
+     * @return {Promise<APIResponse>}
      * @example feed.follow('user', '1');
      * @example feed.follow('user', '1');
      * @example feed.follow('user', '1', options);
@@ -340,11 +338,11 @@ export default class StreamFeed<
      * @method unfollow
      * @memberof StreamFeed.prototype
      * @param  {string}   targetSlug   Slug of the target feed
-     * @param  {string}   targetUserId [description]
-     * @param  {object} options
-     * @param  {boolean}  options.keepHistory when provided the activities from target
+     * @param  {string}   targetUserId User identifier of the target feed
+     * @param  {object} [options]
+     * @param  {boolean} [options.keepHistory] when provided the activities from target
      *                                                 feed will not be kept in the feed
-     * @return {object}                XHR request object
+     * @return {Promise<APIResponse>}
      * @example feed.unfollow('user', '2');
      */
     const qs: { keep_history?: string } = {};
@@ -365,9 +363,11 @@ export default class StreamFeed<
      * List which feeds this feed is following
      * @method following
      * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @param  {string}   options.filter Filter to apply on search operation
-     * @return {Promise} Promise object
+     * @param  {GetFollowOptions}   [options]  Additional options
+     * @param  {string[]}   options.filter array of feed id to filter on
+     * @param  {number}   options.limit pagination
+     * @param  {number}   options.offset pagination
+     * @return {Promise<GetFollowAPIResponse>}
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
      */
     const extraOptions: { filter?: string } = {};
@@ -385,11 +385,12 @@ export default class StreamFeed<
      * List the followers of this feed
      * @method followers
      * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @param  {string}   options.filter Filter to apply on search operation
-     * @return {Promise} Promise object
-     * @example
-     * feed.followers({limit:10, filter: ['user:1', 'user:2']});
+     * @param  {GetFollowOptions}   [options]  Additional options
+     * @param  {string[]}   options.filter array of feed id to filter on
+     * @param  {number}   options.limit pagination
+     * @param  {number}   options.offset pagination
+     * @return {Promise<GetFollowAPIResponse>}
+     * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
      */
     const extraOptions: { filter?: string } = {};
     if (options.filter) extraOptions.filter = options.filter.join(',');
@@ -406,8 +407,8 @@ export default class StreamFeed<
      * Reads the feed
      * @method get
      * @memberof StreamFeed.prototype
-     * @param  {object}   options  Additional options
-     * @return {Promise} Promise object
+     * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
+     * @return {Promise<FeedAPIResponse>}
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
@@ -439,8 +440,8 @@ export default class StreamFeed<
      * @method getActivityDetail
      * @memberof StreamFeed.prototype
      * @param  {string}   activityId Identifier of activity to retrieve
-     * @param  {object}   options  Additional options
-     * @return {Promise} Promise object
+     * @param  {EnrichOptions}   options  Additional options
+     * @return {Promise<FeedAPIResponse>}
      * @example feed.getActivityDetail(activityId)
      * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
@@ -460,7 +461,7 @@ export default class StreamFeed<
      * @method getFayeClient
      * @memberof StreamFeed.prototype
      * @access private
-     * @return {object} Faye client
+     * @return {Faye.Client} Faye client
      */
     return this.client.getFayeClient();
   }
@@ -471,7 +472,7 @@ export default class StreamFeed<
      * @method subscribe
      * @memberof StreamFeed.prototype
      * @param  {function} callback Callback to call on completion
-     * @return {Promise}           Promise object
+     * @return {Promise<Faye.Subscription>}
      * @example
      * feed.subscribe(callback).then(function(){
      * 		console.log('we are now listening to changes');
@@ -517,9 +518,9 @@ export default class StreamFeed<
      * @since 3.10.0
      * @param {string} foreignId The foreign_id of the activity to update
      * @param {string} time The time of the activity to update
-     * @param {array} newTargets Set the new "to" targets for the activity - will remove old targets
-     * @param {array} added_targets Add these new targets to the activity
-     * @param {array} removedTargets Remove these targets from the activity
+     * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
+     * @param {string[]} added_targets Add these new targets to the activity
+     * @param {string[]} removedTargets Remove these targets from the activity
      */
 
     if (!foreignId) throw new Error('Missing `foreign_id` parameter!');

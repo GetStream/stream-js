@@ -14,8 +14,12 @@ export function connect<
    * @param  {string} apiKey    API key
    * @param  {string} [apiSecret] API secret (only use this on the server)
    * @param  {string} [appId]     Application identifier
-   * @param  {object} [options]   Additional options
-   * @param  {string} [options.location] Datacenter location
+   * @param {ClientOptions} [options] - additional options
+   * @param {string} [options.location] - which data center to use
+   * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
+   * @param {string} [options.version] - advanced usage, custom api version
+   * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
+   * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
    * @return {StreamClient}     StreamClient
    * @example <caption>Basic usage</caption>
    * stream.connect(apiKey, apiSecret);

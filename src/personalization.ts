@@ -37,7 +37,7 @@ export default class Personalization<PersonalizationType> {
      * @memberof Personalization.prototype
      * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options  Additional options
-     * @return {Promise} Promise object. Personalized feed
+     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
      * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
     return this.client.get<PersonalizationAPIResponse<PersonalizationType>>({
@@ -57,7 +57,7 @@ export default class Personalization<PersonalizationType> {
      * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options - Additional options
      * @param {object} data - Data to send in the payload
-     * @return {Promise} Promise object. Data that was posted if successful, or an error.
+     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
     return this.client.post<PersonalizationAPIResponse<PersonalizationType>>({
@@ -77,7 +77,7 @@ export default class Personalization<PersonalizationType> {
      * @memberof Personalization.prototype
      * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options - Additional options
-     * @return {Promise} Promise object. Data that was deleted if successful, or an error.
+     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
     return this.client.delete<PersonalizationAPIResponse<PersonalizationType>>({

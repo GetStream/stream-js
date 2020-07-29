@@ -24,7 +24,7 @@ export default class StreamUser<UserType> {
      * @memberof StreamUser.prototype
      * @param {StreamClient} client Stream client this collection is constructed from
      * @param {string} userId The ID of the user
-     * @param {string} token JWT token
+     * @param {string} userAuthToken JWT token
      * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
      */
     this.client = client;
