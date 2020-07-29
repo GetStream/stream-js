@@ -1,11 +1,13 @@
-import StreamClient, { ClientOptions } from './client';
+import StreamClient, { UnknownType, ClientOptions } from './client';
 
-export function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
-  apiKey: string,
-  apiSecret: string | null,
-  appId?: string,
-  options?: ClientOptions,
-) {
+export function connect<
+  UserType extends UnknownType = UnknownType,
+  ActivityType extends UnknownType = UnknownType,
+  CollectionType extends UnknownType = UnknownType,
+  ReactionType extends UnknownType = UnknownType,
+  ChildReactionType extends UnknownType = UnknownType,
+  PersonalizationType extends UnknownType = UnknownType
+>(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions) {
   /**
    * Create StreamClient
    * @method connect
