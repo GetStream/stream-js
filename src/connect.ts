@@ -1,6 +1,6 @@
 import StreamClient, { ClientOptions } from './client';
 
-function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
+export function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
   apiKey: string,
   apiSecret: string | null,
   appId?: string,
@@ -46,5 +46,3 @@ function connect<UserType, ActivityType, CollectionType, ReactionType, ChildReac
     options,
   );
 }
-
-export { connect };

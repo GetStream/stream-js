@@ -12,3 +12,16 @@ export { connect, errors, signing, StreamClient as Client };
 
 /* deprecated default export */
 export default { connect, errors, signing, Client: StreamClient };
+
+/*
+ * typescript does not export the default exports here
+ * useful for exposing exported internal types
+ */
+export * from './client';
+export * from './collections';
+export * from './feed';
+export * from './files';
+export * from './images';
+export * from './personalization';
+export * from './reaction';
+export * from './user';

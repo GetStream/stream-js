@@ -2,11 +2,11 @@ import StreamClient, { APIResponse } from './client';
 import StreamFeed from './feed';
 import * as errors from './errors';
 
-type TargetFeeds = (string | StreamFeed)[];
+export type TargetFeeds = (string | StreamFeed)[];
 
-type TargetFeed = string | StreamFeed;
+export type TargetFeed = string | StreamFeed;
 
-type TargetFeedsExtraData = Record<string, unknown>;
+export type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
   id?: string; // api will generate an id if it's missing
@@ -32,7 +32,7 @@ export type Reaction<T> = {
   parent: string;
 };
 
-type ReactionAPIResponse<T> = APIResponse & Reaction<T>;
+export type ReactionAPIResponse<T> = APIResponse & Reaction<T>;
 
 export type EnrichedReaction<ReactionType, ChildReactionType, UserType> = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
@@ -41,10 +41,10 @@ export type EnrichedReaction<ReactionType, ChildReactionType, UserType> = Reacti
   user?: UserType;
 };
 
-type EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType> = APIResponse &
+export type EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType> = APIResponse &
   EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 
-type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType> = APIResponse & {
+export type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType> = APIResponse & {
   activity?: ActivityType;
   next: string;
   results:

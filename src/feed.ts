@@ -17,7 +17,7 @@ export type EnrichOptions = {
   reactionKindsFilter?: string; // TODO: add support for array sample: kind,kind,kind
 };
 
-type FeedPaginationOptions = {
+export type FeedPaginationOptions = {
   id_lt?: string;
   id_lte?: string;
   id_gt?: string;
@@ -25,7 +25,7 @@ type FeedPaginationOptions = {
   limit?: number;
 };
 
-type RankedFeedOptions = {
+export type RankedFeedOptions = {
   offset?: number;
   ranking?: string;
   session?: string;
@@ -33,18 +33,18 @@ type RankedFeedOptions = {
 
 export type GetFeedOptions = FeedPaginationOptions & EnrichOptions & RankedFeedOptions;
 
-type NotificationFeedOptions = {
+export type NotificationFeedOptions = {
   mark_read?: boolean | 'current' | string[];
   mark_seen?: boolean | 'current' | string[];
 };
 
-type GetFollowOptions = {
+export type GetFollowOptions = {
   limit?: number;
   offset?: number;
   filter?: string[];
 };
 
-type GetFollowAPIResponse = APIResponse & {
+export type GetFollowAPIResponse = APIResponse & {
   results: { feed_id: string; target_id: string; created_at: Date; updated_at: Date }[];
 };
 
@@ -56,7 +56,7 @@ type BaseActivity<ActivityType> = ActivityType & {
   target?: string;
 };
 
-type NewActivity<ActivityType> = BaseActivity<ActivityType> & { time?: string; foreign_id?: string };
+export type NewActivity<ActivityType> = BaseActivity<ActivityType> & { time?: string; foreign_id?: string };
 
 export type UpdateActivity<ActivityType> = BaseActivity<ActivityType> & { time: string; foreign_id: string };
 
@@ -72,12 +72,12 @@ export type Activity<ActivityType> = BaseActivity<ActivityType> & {
   analytics?: Record<string, number>;
 };
 
-type ReactionsRecords<ReactionType, ChildReactionType, UserType> = Record<
+export type ReactionsRecords<ReactionType, ChildReactionType, UserType> = Record<
   string,
   EnrichedReaction<ReactionType, ChildReactionType, UserType>[]
 >;
 
-type EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = Activity<
+export type EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = Activity<
   ActivityType
 > & {
   actor: UserType | string;
@@ -98,15 +98,15 @@ type EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, Chil
   reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 };
 
-type FlatActivity<ActivityType> = Activity<ActivityType>;
+export type FlatActivity<ActivityType> = Activity<ActivityType>;
 
-type FlatActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = EnrichedActivity<
+export type FlatActivityEnriched<
   UserType,
   ActivityType,
   CollectionType,
   ReactionType,
   ChildReactionType
->;
+> = EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
 type BaseAggregatedActivity = {
   id: string;
@@ -119,11 +119,11 @@ type BaseAggregatedActivity = {
   score?: number;
 };
 
-type AggregatedActivity<ActivityType> = BaseAggregatedActivity & {
+export type AggregatedActivity<ActivityType> = BaseAggregatedActivity & {
   activities: Activity<ActivityType>[];
 };
 
-type AggregatedActivityEnriched<
+export type AggregatedActivityEnriched<
   UserType,
   ActivityType,
   CollectionType,
@@ -134,9 +134,9 @@ type AggregatedActivityEnriched<
 };
 
 type BaseNotificationActivity = { is_read: boolean; is_seen: boolean };
-type NotificationActivity<ActivityType> = AggregatedActivity<ActivityType> & BaseNotificationActivity;
+export type NotificationActivity<ActivityType> = AggregatedActivity<ActivityType> & BaseNotificationActivity;
 
-type NotificationActivityEnriched<
+export type NotificationActivityEnriched<
   UserType,
   ActivityType,
   CollectionType,
@@ -145,7 +145,7 @@ type NotificationActivityEnriched<
 > = BaseNotificationActivity &
   AggregatedActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
-type FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = APIResponse & {
+export type FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = APIResponse & {
   next: string;
   results:
     | FlatActivity<ActivityType>[]

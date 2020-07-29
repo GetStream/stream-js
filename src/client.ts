@@ -71,7 +71,7 @@ type OGVideo = OGResource & {
   height?: number;
 };
 
-type OGAPIResponse = APIResponse & {
+export type OGAPIResponse = APIResponse & {
   title?: string;
   type?: string;
   url?: string;
@@ -96,9 +96,9 @@ type AxiosConfig = {
   axiosOptions?: axios.AxiosRequestConfig;
 };
 
-type HandlerCallback = (...args: unknown[]) => unknown;
+export type HandlerCallback = (...args: unknown[]) => unknown;
 
-type ActivityPartialChanges = {
+export type ActivityPartialChanges = {
   id?: string;
   foreignID?: string;
   time?: Date;
@@ -110,7 +110,7 @@ type ActivityPartialChanges = {
  * Client to connect to Stream api
  * @class StreamClient
  */
-class StreamClient<
+export default class StreamClient<
   UserType = unknown,
   ActivityType = unknown,
   CollectionType = unknown,
@@ -955,5 +955,3 @@ class StreamClient<
     });
   }
 }
-
-export default StreamClient;

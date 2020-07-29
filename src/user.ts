@@ -1,6 +1,6 @@
 import StreamClient, { APIResponse } from './client';
 
-type UserAPIResponse<UserType> = APIResponse & {
+export type UserAPIResponse<UserType> = APIResponse & {
   id: string;
   data: UserType;
   created_at: Date;

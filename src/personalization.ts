@@ -6,7 +6,7 @@ import StreamClient, { APIResponse } from './client';
  * @class Personalization
  */
 
-type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
+export type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
   app_id: string;
   results: PersonalizationType[];
   next: string;

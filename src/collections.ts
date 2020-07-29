@@ -13,19 +13,19 @@ export type CollectionResponse<CollectionType> = BaseCollection<CollectionType> 
   updated_at: Date;
 };
 
-type NewCollectionEntry<CollectionType> = BaseCollection<CollectionType> & {
+export type NewCollectionEntry<CollectionType> = BaseCollection<CollectionType> & {
   user_id?: string;
 };
 
-type CollectionAPIResponse<CollectionType> = APIResponse & CollectionResponse<CollectionType>;
+export type CollectionAPIResponse<CollectionType> = APIResponse & CollectionResponse<CollectionType>;
 
-type SelectCollectionAPIResponse<CollectionType> = APIResponse & {
+export type SelectCollectionAPIResponse<CollectionType> = APIResponse & {
   response: {
     data: CollectionResponse<CollectionType>[];
   };
 };
 
-type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
+export type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
   data: {
     [key: string]: {
       id: string;
