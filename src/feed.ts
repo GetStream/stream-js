@@ -501,7 +501,7 @@ export default class StreamFeed<
     const streamSubscription = this.client.subscriptions[`/${this.notificationChannel}`];
     if (streamSubscription) {
       delete this.client.subscriptions[`/${this.notificationChannel}`];
-      streamSubscription.fayeSubscription.cancel();
+      (streamSubscription.fayeSubscription as Faye.Subscription).cancel();
     }
   }
 

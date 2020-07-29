@@ -142,7 +142,10 @@ export default class StreamClient<
   nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
 
   request: axios.AxiosInstance;
-  subscriptions: Record<string, { userId: string; token: string; fayeSubscription: Faye.Subscription }>;
+  subscriptions: Record<
+    string,
+    { userId: string; token: string; fayeSubscription: Faye.Subscription | Promise<Faye.Subscription> }
+  >;
   handlers: Record<string, HandlerCallback>;
 
   currentUser?: StreamUser<UserType>;
