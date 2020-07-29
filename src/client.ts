@@ -799,8 +799,7 @@ export default class StreamClient<
     }
 
     const body = { ...data };
-    // @ts-expect-error
-    delete body?.id;
+    delete body.id;
 
     const user = await (this.currentUser as StreamUser<UserType>).getOrCreate(body);
     this.currentUser = user;
