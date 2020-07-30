@@ -63,6 +63,7 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 0,
         '@typescript-eslint/ban-ts-comment': 0,
         'no-useless-constructor': 0,
+        '@typescript-eslint/triple-slash-reference': 0,
         'typescript-sort-keys/interface': [
           'error',
           'asc',

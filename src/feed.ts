@@ -1,3 +1,5 @@
+/// <reference path="../types/modules.d.ts" />
+
 import * as Faye from 'faye';
 import StreamClient, { APIResponse } from './client';
 import StreamUser from './user';

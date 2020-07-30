@@ -1,3 +1,5 @@
+/// <reference path="../types/modules.d.ts" />
+
 import * as axios from 'axios';
 import http from 'http';
 import https from 'https';
