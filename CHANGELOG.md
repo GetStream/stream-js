@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.4 - 2020-07-30
+
+- Elliptic security upgrade
+
 ## 5.0.3 - 2020-07-30
 
 - Fix undefined `process` in Angular
