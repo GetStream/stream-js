@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, UnknownType } from './client';
+import StreamClient, { APIResponse, UnknownRecord } from './client';
 import StreamFeed from './feed';
 import * as errors from './errors';
 
@@ -10,7 +10,7 @@ export type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
   activity_id?: string; // only required for reactions
-  data?: T | UnknownType;
+  data?: T | UnknownRecord;
   id?: string; // api will generate an id if it's missing
   kind?: string; // required only for add/addChile, not update
   parent?: string; // only required for child reactions
@@ -19,7 +19,7 @@ type ReactionBody<T> = {
   user_id?: string; // optional when using client tokens
 };
 
-export type Reaction<T = UnknownType> = {
+export type Reaction<T = UnknownRecord> = {
   activity_id: string;
   created_at: string;
   data: T;

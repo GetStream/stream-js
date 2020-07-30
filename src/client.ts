@@ -28,7 +28,7 @@ import StreamFeed, {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-export type UnknownType = Record<string, unknown>;
+export type UnknownRecord = Record<string, unknown>;
 
 export type APIResponse = { duration?: string };
 
@@ -113,12 +113,12 @@ export type ActivityPartialChanges = {
  * @class StreamClient
  */
 export default class StreamClient<
-  UserType extends UnknownType = UnknownType,
-  ActivityType extends UnknownType = UnknownType,
-  CollectionType extends UnknownType = UnknownType,
-  ReactionType extends UnknownType = UnknownType,
-  ChildReactionType extends UnknownType = UnknownType,
-  PersonalizationType extends UnknownType = UnknownType
+  UserType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord,
+  CollectionType extends UnknownRecord = UnknownRecord,
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  PersonalizationType extends UnknownRecord = UnknownRecord
 > {
   baseUrl: string;
   baseAnalyticsUrl: string;

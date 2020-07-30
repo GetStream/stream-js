@@ -1,12 +1,12 @@
-import StreamClient, { UnknownType, ClientOptions } from './client';
+import StreamClient, { UnknownRecord, ClientOptions } from './client';
 
 export function connect<
-  UserType extends UnknownType = UnknownType,
-  ActivityType extends UnknownType = UnknownType,
-  CollectionType extends UnknownType = UnknownType,
-  ReactionType extends UnknownType = UnknownType,
-  ChildReactionType extends UnknownType = UnknownType,
-  PersonalizationType extends UnknownType = UnknownType
+  UserType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord,
+  CollectionType extends UnknownRecord = UnknownRecord,
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  PersonalizationType extends UnknownRecord = UnknownRecord
 >(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions) {
   /**
    * Create StreamClient
