@@ -132,6 +132,7 @@ export type AggregatedActivityEnriched<
 };
 
 type BaseNotificationActivity = { is_read: boolean; is_seen: boolean };
+
 export type NotificationActivity<ActivityType> = AggregatedActivity<ActivityType> & BaseNotificationActivity;
 
 export type NotificationActivityEnriched<
