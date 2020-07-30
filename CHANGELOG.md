@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.3 - 2020-07-30
+
+- Fix undefined `process` in Angular
+
 ## 5.0.2 - 2020-07-20
 
 - Lodash security upgrade
