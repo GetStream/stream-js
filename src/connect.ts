@@ -30,7 +30,7 @@ export function connect<
    * @example <caption>where streamURL looks like</caption>
    * "https://thierry:pass@gestream.io/?app=1"
    */
-  if (process && process.env && process.env.STREAM_URL && !apiKey) {
+  if (typeof process !== 'undefined' && process.env && process.env.STREAM_URL && !apiKey) {
     const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
