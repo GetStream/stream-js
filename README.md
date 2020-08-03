@@ -258,6 +258,72 @@ client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp,
 client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, null, null, ['feed:1234']);
 ```
 
+### Typescript
+
+```typescript
+import { connect, EnrichedActivity, NotificationActivity } from getstream;
+
+type User1Type = { name: string; username: string; image?: string };
+type User2Type = { name: string; avatar?: string };
+type ActivityType = { attachments: string[]; text: string };
+type Collection1Type = { cid: string; rating?: number };
+type Collection2Type = { branch: number; location: string };
+
+type ReactionType = { text: string };
+type ChildReactionType = { text?: string };
+
+const client = connect<
+  User1Type | User2Type,
+  ActivityType,
+  Collection1Type | Collection2Type,
+  ReactionType,
+  ChildReactionType
+>('api_key', 'secret!', 'app_id');
+
+// if you have different union types like "User1Type | User2Type" you can use type guards as follow:
+// https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
+function isUser1Type(user: User1Type | User2Type): user is User1Type {
+  return (user as User1Type).username !== undefined;
+}
+
+client
+  .user('user_id')
+  .get()
+  .then((user) => {
+    const { data, id } = user;
+    if (isUser1Type(data)) return data.username;
+    return id;
+  });
+
+// notification: StreamFeed<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+const timeline = client.feed('timeline', 'feed_id');
+timeline.get({ withOwnChildren: true, withOwnReactions: true }).then((response) => {
+  // response: FeedAPIResponse<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+  if (response.next !== '') return response.next;
+
+  return (response.results as EnrichedActivity<User2Type, ActivityType>[]).map((activity) => {
+    return activity.id + activity.text + (activity.actor as User2Type).name;
+  });
+});
+
+// notification: StreamFeed<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+const notification = client.feed('notification', 'feed_id');
+notification.get({ mark_read: true, mark_seen: true }).then((response) => {
+  // response: FeedAPIResponse<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+  if (response.unread || response.unseen) return response.next;
+
+  return (response.results as NotificationActivity<ActivityType>[]).map((activityGroup) => {
+    const { activities, id, verb, activity_count, actor_count } = activityGroup;
+    return activities[0].text + id + actor_count + activity_count + verb;
+  });
+});
+
+client.collections.get('collection_1', 'taco').then((item: CollectionEntry<Collection1Type>) => {
+  if (item.data.rating) return { [item.data.cid]: item.data.rating };
+  return item.id;
+});
+```
+
 ### Realtime (Faye)
 
 Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick guide to subscribing to feed changes
