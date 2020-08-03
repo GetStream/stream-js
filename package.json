@@ -15,7 +15,8 @@
   "scripts": {
     "transpile": "babel src --out-dir lib --extensions '.ts'",
     "types": "tsc --emitDeclarationOnly",
-    "build": "rm -rf lib && yarn transpile && yarn types",
+    "build": "rm -rf lib && yarn run transpile && yarn run types",
+    "dist": "webpack && webpack --minify",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
     "lint": "yarn run prettier && yarn run eslint",
@@ -28,10 +29,10 @@
     "test-browser": "karma start karma.config.js",
     "generate-docs": "jsdoc -c .jsdoc",
     "coverage": "nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe",
+    "prepare": "yarn run build",
     "preversion": "yarn run test-unit-node",
-    "dist": "webpack && webpack --minify",
     "version": "yarn run dist && yarn run build && git add dist",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags && npm publish"
   },
   "husky": {
     "hooks": {
