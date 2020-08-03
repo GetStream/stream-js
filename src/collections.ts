@@ -39,7 +39,7 @@ export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = U
   };
 };
 
-class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> {
+export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> {
   id: string;
   collection: string;
   store: Collections<CollectionType>;
