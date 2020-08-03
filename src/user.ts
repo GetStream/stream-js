@@ -1,6 +1,6 @@
-import StreamClient, { APIResponse } from './client';
+import StreamClient, { APIResponse, UnknownRecord } from './client';
 
-export type UserAPIResponse<UserType> = APIResponse & {
+export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = APIResponse & {
   created_at: string;
   data: UserType;
   id: string;
@@ -9,7 +9,7 @@ export type UserAPIResponse<UserType> = APIResponse & {
   following_count?: number;
 };
 
-export default class StreamUser<UserType> {
+export default class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
   token: string;
   id: string;

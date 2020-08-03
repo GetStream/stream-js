@@ -95,8 +95,8 @@ type AxiosConfig = {
   url: string;
   axiosOptions?: axios.AxiosRequestConfig;
   body?: unknown;
-  headers?: Record<string, unknown>;
-  qs?: Record<string, unknown>;
+  headers?: UnknownRecord;
+  qs?: UnknownRecord;
   serviceName?: string;
 };
 
@@ -105,7 +105,7 @@ export type HandlerCallback = (...args: unknown[]) => unknown;
 export type ActivityPartialChanges = {
   foreignID?: string;
   id?: string;
-  set?: Record<string, unknown>;
+  set?: UnknownRecord;
   time?: Date | string;
   unset?: string[];
 };
@@ -161,7 +161,11 @@ export default class StreamClient<
   private _collectionsToken?: string;
   private _getOrCreateToken?: string;
 
-  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
+  addToMany?: <ActivityType extends UnknownRecord = UnknownRecord>(
+    this: StreamClient,
+    activity: ActivityType,
+    feeds: string[],
+  ) => Promise<APIResponse>;
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>;
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;

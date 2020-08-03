@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse } from './client';
+import StreamClient, { APIResponse, UnknownRecord } from './client';
 import utils from './utils';
 
 type BaseFollowRelation = {
@@ -14,7 +14,11 @@ export type UnfollowRelation = BaseFollowRelation & {
   keep_history?: boolean;
 };
 
-function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) {
+function addToMany<ActivityType extends UnknownRecord = UnknownRecord>(
+  this: StreamClient,
+  activity: ActivityType,
+  feeds: string[],
+) {
   /**
    * Add one activity to many feeds
    * @method addToMany

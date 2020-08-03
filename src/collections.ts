@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse } from './client';
+import StreamClient, { APIResponse, UnknownRecord } from './client';
 import * as errors from './errors';
 
 type BaseCollection<CollectionType> = {
@@ -7,25 +7,30 @@ type BaseCollection<CollectionType> = {
   id: string;
 };
 
-export type CollectionResponse<CollectionType> = BaseCollection<CollectionType> & {
+export type CollectionResponse<CollectionType extends UnknownRecord = UnknownRecord> = BaseCollection<
+  CollectionType
+> & {
   created_at: string;
   foregin_id: string;
   updated_at: string;
 };
 
-export type NewCollectionEntry<CollectionType> = BaseCollection<CollectionType> & {
+export type NewCollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> = BaseCollection<
+  CollectionType
+> & {
   user_id?: string;
 };
 
-export type CollectionAPIResponse<CollectionType> = APIResponse & CollectionResponse<CollectionType>;
+export type CollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse &
+  CollectionResponse<CollectionType>;
 
-export type SelectCollectionAPIResponse<CollectionType> = APIResponse & {
+export type SelectCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
   response: {
     data: CollectionResponse<CollectionType>[];
   };
 };
 
-export type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
+export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
   data: {
     [key: string]: {
       data: CollectionType;
@@ -34,7 +39,7 @@ export type UpsertCollectionAPIResponse<CollectionType> = APIResponse & {
   };
 };
 
-class CollectionEntry<CollectionType> {
+class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> {
   id: string;
   collection: string;
   store: Collections<CollectionType>;
@@ -110,7 +115,7 @@ class CollectionEntry<CollectionType> {
   }
 }
 
-export default class Collections<CollectionType> {
+export default class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
   token: string;
 

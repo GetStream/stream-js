@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse } from './client';
+import StreamClient, { APIResponse, UnknownRecord } from './client';
 
 /**
  * Manage api calls for personalization
@@ -6,7 +6,7 @@ import StreamClient, { APIResponse } from './client';
  * @class Personalization
  */
 
-export type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
+export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord = UnknownRecord> = APIResponse & {
   app_id: string;
   next: string;
   results: PersonalizationType[];
@@ -15,7 +15,7 @@ export type PersonalizationAPIResponse<PersonalizationType> = APIResponse & {
   version?: string;
 };
 
-export default class Personalization<PersonalizationType> {
+export default class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
 
   constructor(client: StreamClient) {
@@ -48,7 +48,7 @@ export default class Personalization<PersonalizationType> {
     });
   }
 
-  post(resource: string, options: Record<string, string> = {}, data: Record<string, unknown> = {}) {
+  post(resource: string, options: Record<string, string> = {}, data: UnknownRecord = {}) {
     /**
      * Post data to personalization endpoint
      *

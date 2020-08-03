@@ -19,7 +19,7 @@ type ReactionBody<T> = {
   user_id?: string; // optional when using client tokens
 };
 
-export type Reaction<T = UnknownRecord> = {
+export type Reaction<T extends UnknownRecord = UnknownRecord> = {
   activity_id: string;
   created_at: string;
   data: T;
@@ -32,19 +32,31 @@ export type Reaction<T = UnknownRecord> = {
   target_feeds_extra_data?: TargetFeedsExtraData;
 };
 
-export type ReactionAPIResponse<T> = APIResponse & Reaction<T>;
+export type ReactionAPIResponse<T extends UnknownRecord = UnknownRecord> = APIResponse & Reaction<T>;
 
-export type EnrichedReaction<ReactionType, ChildReactionType, UserType> = Reaction<ReactionType | ChildReactionType> & {
+export type EnrichedReaction<
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  UserType extends UnknownRecord = UnknownRecord
+> = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
   latest_children: Record<string, ChildReactionType>;
   own_children?: Record<string, ChildReactionType>;
   user?: UserType;
 };
 
-export type EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType> = APIResponse &
-  EnrichedReaction<ReactionType, ChildReactionType, UserType>;
+export type EnrichedReactionAPIResponse<
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  UserType extends UnknownRecord = UnknownRecord
+> = APIResponse & EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 
-export type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType> = APIResponse & {
+export type ReactionFilterAPIResponse<
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord,
+  UserType extends UnknownRecord = UnknownRecord
+> = APIResponse & {
   next: string;
   results:
     | ReactionAPIResponse<ReactionType | ChildReactionType>[]
@@ -52,7 +64,13 @@ export type ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityT
   activity?: ActivityType;
 };
 
-export default class StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
+export default class StreamReaction<
+  UserType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord,
+  CollectionType extends UnknownRecord = UnknownRecord,
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord
+> {
   client: StreamClient;
   token: string;
 
