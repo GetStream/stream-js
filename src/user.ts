@@ -46,7 +46,7 @@ export default class StreamUser<UserType extends UnknownRecord = UnknownRecord> 
     });
   }
 
-  async get(options: { with_follow_counts?: boolean }) {
+  async get(options?: { with_follow_counts?: boolean }) {
     const response = await this.client.get<UserAPIResponse<UserType>>({
       url: this.url,
       signature: this.token,
@@ -59,7 +59,7 @@ export default class StreamUser<UserType extends UnknownRecord = UnknownRecord> 
     return this;
   }
 
-  async create(data: UserType, options: { get_or_create?: boolean }) {
+  async create(data?: UserType, options?: { get_or_create?: boolean }) {
     const response = await this.client.post<UserAPIResponse<UserType>>({
       url: 'user/',
       body: {
