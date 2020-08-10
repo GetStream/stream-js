@@ -22,6 +22,7 @@
     "lint": "yarn run prettier && yarn run eslint",
     "lint-fix": "prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'",
     "test": "yarn run test-unit-node",
+    "test-types": "tsc --esModuleInterop true --noEmit true test/typescript/*.ts",
     "test-unit-node": "mocha --require ./babel-register.js test/unit/common test/unit/node",
     "test-integration-node": "mocha --require ./babel-register.js test/integration/common test/integration/node --exit",
     "test-cloud": "mocha --require ./babel-register.js test/integration/cloud --timeout 40000",
