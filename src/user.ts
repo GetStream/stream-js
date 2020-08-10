@@ -5,6 +5,7 @@ export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = AP
   data: UserType;
   id: string;
   updated_at: string;
+  // present only in profile response
   followers_count?: number;
   following_count?: number;
 };

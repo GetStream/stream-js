@@ -41,6 +41,7 @@ export type EnrichedReaction<
 > = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
   latest_children: Record<string, ChildReactionType>;
+  latest_children_extra?: Record<string, { next?: string }>;
   own_children?: Record<string, ChildReactionType>;
   user?: UserType;
 };
