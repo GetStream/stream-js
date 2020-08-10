@@ -102,12 +102,12 @@ type AxiosConfig = {
 
 export type HandlerCallback = (...args: unknown[]) => unknown;
 
-export type ActivityPartialChanges = {
-  foreignID?: string;
+export type ForeignIDTimes = { foreignID: string; time: Date | string };
+
+export type ActivityPartialChanges<ActivityType extends UnknownRecord = UnknownRecord> = Partial<ForeignIDTimes> & {
   id?: string;
-  set?: UnknownRecord;
-  time?: Date | string;
-  unset?: string[];
+  set?: Partial<ActivityType>;
+  unset?: Array<Extract<keyof ActivityType, string>>;
 };
 
 /**
@@ -739,7 +739,7 @@ export default class StreamClient<
     foreignIDTimes,
     ...params
   }: EnrichOptions & {
-    foreignIDTimes?: { foreignID: string; time: Date | string }[];
+    foreignIDTimes?: ForeignIDTimes[];
     ids?: string[];
     reactions?: Record<string, boolean>;
   }) {
@@ -838,11 +838,13 @@ export default class StreamClient<
     });
   }
 
-  async activityPartialUpdate(data: ActivityPartialChanges): Promise<APIResponse & Activity<ActivityType>> {
+  async activityPartialUpdate(
+    data: ActivityPartialChanges<ActivityType>,
+  ): Promise<APIResponse & Activity<ActivityType>> {
     /**
      * Update a single activity with partial operations.
      * @since 3.20.0
-     * @param {ActivityPartialChanges} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
      * @return {Promise<Activity<ActivityType>>}
      * @example
      * client.activityPartialUpdate({
@@ -877,11 +879,11 @@ export default class StreamClient<
     return { ...activity, ...response };
   }
 
-  activitiesPartialUpdate(changes: ActivityPartialChanges[]) {
+  activitiesPartialUpdate(changes: ActivityPartialChanges<ActivityType>[]) {
     /**
      * Update multiple activities with partial operations.
      * @since v3.20.0
-     * @param {ActivityPartialChanges[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+     * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
      * @return {Promise<{ activities: Activity<ActivityType>[] }>}
      * @example
      * client.activitiesPartialUpdate([
@@ -935,7 +937,7 @@ export default class StreamClient<
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
-    changes.forEach(function (item: ActivityPartialChanges & { foreign_id?: string }) {
+    changes.forEach(function (item: ActivityPartialChanges<ActivityType> & { foreign_id?: string }) {
       if (!(item instanceof Object)) {
         throw new TypeError(`changeset should be and Object`);
       }
