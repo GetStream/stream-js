@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import errors from '../../../src/lib/errors';
+import * as errors from '../../../src/errors';
 import { init, beforeEachFn } from '../utils/hooks';
 
 function mockedFile(size = 1024, name = 'file.txt', mimeType = 'plain/txt') {

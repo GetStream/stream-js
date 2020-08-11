@@ -2,7 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = (env, argv = []) => ({
-  entry: ['./src/getstream.js'],
+  entry: ['./src/index.ts'],
 
   mode: 'production',
 
@@ -13,11 +13,15 @@ module.exports = (env, argv = []) => ({
         use: 'null-loader',
       },
       {
-        test: /\.js$/,
-        exclude: /(node_modules|bower_components)/,
+        test: /\.(js|ts)$/,
         use: 'babel-loader',
+        exclude: /node_modules/,
       },
     ],
+  },
+
+  resolve: {
+    extensions: ['.js', '.ts'],
   },
 
   node: {

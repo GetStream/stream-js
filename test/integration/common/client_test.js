@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import errors from '../../../src/lib/errors';
+import * as errors from '../../../src/errors';
 import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
 

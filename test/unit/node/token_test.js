@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import signing from '../../../src/lib/signing';
+import signing from '../../../src/signing';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Creating tokens', function () {

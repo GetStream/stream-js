@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import utils from '../../../src/lib/utils';
-import errors from '../../../src/lib/errors';
+import utils from '../../../src/utils';
+import * as errors from '../../../src/errors';
 import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
 
@@ -352,7 +352,6 @@ describe('[UNIT] Stream Client (Common)', function () {
           axiosOptions: {
             timeout: 0,
             maxContentLength: Infinity,
-            maxBodyLength: Infinity,
             onUploadProgress,
           },
         }),

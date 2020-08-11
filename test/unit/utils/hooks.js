@@ -1,5 +1,5 @@
 const td = require('testdouble');
-const StreamClient = require('../../../src/lib/client').default;
+const StreamClient = require('../../../src/client').default;
 const config = require('./config');
 
 function init() {
