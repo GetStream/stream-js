@@ -26,7 +26,7 @@ import StreamFeed, {
   GetFeedOptions,
 } from './feed';
 
-// no import since typescript json loader shifts the final output structure
+// TODO: no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
