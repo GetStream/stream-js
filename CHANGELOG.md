@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.5 - 2020-08-02
+
+- re-release 5.0.2, 5.0.3, 5.0.4 to fix the bad build
+
 ## 5.0.4 - 2020-07-30
 
 - Elliptic security upgrade

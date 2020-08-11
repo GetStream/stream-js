@@ -18,16 +18,16 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
   full?: UserAPIResponse<UserType>;
   private url: string;
 
+  /**
+   * Initialize a user session object
+   * @method constructor
+   * @memberof StreamUser.prototype
+   * @param {StreamClient} client Stream client this collection is constructed from
+   * @param {string} userId The ID of the user
+   * @param {string} userAuthToken JWT token
+   * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
+   */
   constructor(client: StreamClient, userId: string, userAuthToken: string) {
-    /**
-     * Initialize a user session object
-     * @method constructor
-     * @memberof StreamUser.prototype
-     * @param {StreamClient} client Stream client this collection is constructed from
-     * @param {string} userId The ID of the user
-     * @param {string} userAuthToken JWT token
-     * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
-     */
     this.client = client;
     this.id = userId;
     this.data = undefined;

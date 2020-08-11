@@ -229,17 +229,16 @@ export class StreamFeed<
   signature: string;
   notificationChannel: string;
 
+  /**
+   * Initialize a feed object
+   * @method constructor
+   * @memberof StreamFeed.prototype
+   * @param {StreamClient} client - The stream client this feed is constructed from
+   * @param {string} feedSlug - The feed slug
+   * @param {string} userId - The user id
+   * @param {string} [token] - The authentication token
+   */
   constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
-    /**
-     * Initialize a feed object
-     * @method constructor
-     * @memberof StreamFeed.prototype
-     * @param {StreamClient} client - The stream client this feed is constructed from
-     * @param {string} feedSlug - The feed slug
-     * @param {string} userId - The user id
-     * @param {string} [token] - The authentication token
-     */
-
     if (!feedSlug || !userId) {
       throw new FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
@@ -270,15 +269,14 @@ export class StreamFeed<
     this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
   }
 
+  /**
+   * Adds the given activity to the feed
+   * @method addActivity
+   * @memberof StreamFeed.prototype
+   * @param {NewActivity<ActivityType>} activity - The activity to add
+   * @return {Promise<Activity<ActivityType>>}
+   */
   addActivity(activity: NewActivity<ActivityType>) {
-    /**
-     * Adds the given activity to the feed
-     * @method addActivity
-     * @memberof StreamFeed.prototype
-     * @param {NewActivity<ActivityType>} activity - The activity to add
-     * @return {Promise<Activity<ActivityType>>}
-     */
-
     activity = utils.replaceStreamObjects(activity);
     if (!activity.actor && this.client.currentUser) {
       activity.actor = this.client.currentUser.ref();
@@ -291,16 +289,16 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Removes the activity by activityId or foreignId
+   * @method removeActivity
+   * @memberof StreamFeed.prototype
+   * @param  {string}   activityId Identifier of activity to remove
+   * @return {Promise<APIResponse & { removed: string }>}
+   * @example feed.removeActivity(activityId);
+   * @example feed.removeActivity({'foreignId': foreignId});
+   */
   removeActivity(activityId: string | { foreignId: string }) {
-    /**
-     * Removes the activity by activityId or foreignId
-     * @method removeActivity
-     * @memberof StreamFeed.prototype
-     * @param  {string}   activityId Identifier of activity to remove
-     * @return {Promise<APIResponse & { removed: string }>}
-     * @example feed.removeActivity(activityId);
-     * @example feed.removeActivity({'foreignId': foreignId});
-     */
     return this.client.delete<APIResponse & { removed: string }>({
       url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
       qs: (activityId as { foreignId: string }).foreignId ? { foreign_id: '1' } : {},
@@ -308,14 +306,14 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Adds the given activities to the feed
+   * @method addActivities
+   * @memberof StreamFeed.prototype
+   * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
+   * @return {Promise<Activity<ActivityType>[]>}
+   */
   addActivities(activities: NewActivity<ActivityType>[]) {
-    /**
-     * Adds the given activities to the feed
-     * @method addActivities
-     * @memberof StreamFeed.prototype
-     * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
-     * @return {Promise<Activity<ActivityType>[]>}
-     */
     return this.client.post<Activity<ActivityType>[]>({
       url: `feed/${this.feedUrl}/`,
       body: { activities: utils.replaceStreamObjects(activities) },
@@ -323,20 +321,20 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Follows the given target feed
+   * @method follow
+   * @memberof StreamFeed.prototype
+   * @param  {string}   targetSlug   Slug of the target feed
+   * @param  {string}   targetUserId User identifier of the target feed
+   * @param  {object}   [options]      Additional options
+   * @param  {number}   [options.limit] Limit the amount of activities copied over on follow
+   * @return {Promise<APIResponse>}
+   * @example feed.follow('user', '1');
+   * @example feed.follow('user', '1');
+   * @example feed.follow('user', '1', options);
+   */
   follow(targetSlug: string, targetUserId: string | { id: string }, options: { limit?: number } = {}) {
-    /**
-     * Follows the given target feed
-     * @method follow
-     * @memberof StreamFeed.prototype
-     * @param  {string}   targetSlug   Slug of the target feed
-     * @param  {string}   targetUserId User identifier of the target feed
-     * @param  {object}   [options]      Additional options
-     * @param  {number}   [options.limit] Limit the amount of activities copied over on follow
-     * @return {Promise<APIResponse>}
-     * @example feed.follow('user', '1');
-     * @example feed.follow('user', '1');
-     * @example feed.follow('user', '1', options);
-     */
     if (targetUserId instanceof StreamUser) {
       targetUserId = targetUserId.id;
     }
@@ -353,19 +351,19 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Unfollow the given feed
+   * @method unfollow
+   * @memberof StreamFeed.prototype
+   * @param  {string}   targetSlug   Slug of the target feed
+   * @param  {string}   targetUserId User identifier of the target feed
+   * @param  {object} [options]
+   * @param  {boolean} [options.keepHistory] when provided the activities from target
+   *                                                 feed will not be kept in the feed
+   * @return {Promise<APIResponse>}
+   * @example feed.unfollow('user', '2');
+   */
   unfollow(targetSlug: string, targetUserId: string, options: { keepHistory?: boolean } = {}) {
-    /**
-     * Unfollow the given feed
-     * @method unfollow
-     * @memberof StreamFeed.prototype
-     * @param  {string}   targetSlug   Slug of the target feed
-     * @param  {string}   targetUserId User identifier of the target feed
-     * @param  {object} [options]
-     * @param  {boolean} [options.keepHistory] when provided the activities from target
-     *                                                 feed will not be kept in the feed
-     * @return {Promise<APIResponse>}
-     * @example feed.unfollow('user', '2');
-     */
     const qs: { keep_history?: string } = {};
     if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
 
@@ -379,18 +377,18 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * List which feeds this feed is following
+   * @method following
+   * @memberof StreamFeed.prototype
+   * @param  {GetFollowOptions}   [options]  Additional options
+   * @param  {string[]}   options.filter array of feed id to filter on
+   * @param  {number}   options.limit pagination
+   * @param  {number}   options.offset pagination
+   * @return {Promise<GetFollowAPIResponse>}
+   * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
+   */
   following(options: GetFollowOptions = {}) {
-    /**
-     * List which feeds this feed is following
-     * @method following
-     * @memberof StreamFeed.prototype
-     * @param  {GetFollowOptions}   [options]  Additional options
-     * @param  {string[]}   options.filter array of feed id to filter on
-     * @param  {number}   options.limit pagination
-     * @param  {number}   options.offset pagination
-     * @return {Promise<GetFollowAPIResponse>}
-     * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
-     */
     const extraOptions: { filter?: string } = {};
     if (options.filter) extraOptions.filter = options.filter.join(',');
 
@@ -401,18 +399,18 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * List the followers of this feed
+   * @method followers
+   * @memberof StreamFeed.prototype
+   * @param  {GetFollowOptions}   [options]  Additional options
+   * @param  {string[]}   options.filter array of feed id to filter on
+   * @param  {number}   options.limit pagination
+   * @param  {number}   options.offset pagination
+   * @return {Promise<GetFollowAPIResponse>}
+   * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
+   */
   followers(options: GetFollowOptions = {}) {
-    /**
-     * List the followers of this feed
-     * @method followers
-     * @memberof StreamFeed.prototype
-     * @param  {GetFollowOptions}   [options]  Additional options
-     * @param  {string[]}   options.filter array of feed id to filter on
-     * @param  {number}   options.limit pagination
-     * @param  {number}   options.offset pagination
-     * @return {Promise<GetFollowAPIResponse>}
-     * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
-     */
     const extraOptions: { filter?: string } = {};
     if (options.filter) extraOptions.filter = options.filter.join(',');
 
@@ -423,17 +421,16 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Reads the feed
+   * @method get
+   * @memberof StreamFeed.prototype
+   * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
+   * @return {Promise<FeedAPIResponse>}
+   * @example feed.get({limit: 10, id_lte: 'activity-id'})
+   * @example feed.get({limit: 10, mark_seen: true})
+   */
   get(options: GetFeedOptions & NotificationFeedOptions = {}) {
-    /**
-     * Reads the feed
-     * @method get
-     * @memberof StreamFeed.prototype
-     * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
-     * @return {Promise<FeedAPIResponse>}
-     * @example feed.get({limit: 10, id_lte: 'activity-id'})
-     * @example feed.get({limit: 10, mark_seen: true})
-     */
-
     const extraOptions: { mark_read?: boolean | string; mark_seen?: boolean | string } = {};
 
     if (options.mark_read && (options.mark_read as string[]).join) {
@@ -455,19 +452,19 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Retrieves one activity from a feed and adds enrichment
+   * @method getActivityDetail
+   * @memberof StreamFeed.prototype
+   * @param  {string}   activityId Identifier of activity to retrieve
+   * @param  {EnrichOptions}   options  Additional options
+   * @return {Promise<FeedAPIResponse>}
+   * @example feed.getActivityDetail(activityId)
+   * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
+   * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+   * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
+   */
   getActivityDetail(activityId: string, options: EnrichOptions) {
-    /**
-     * Retrieves one activity from a feed and adds enrichment
-     * @method getActivityDetail
-     * @memberof StreamFeed.prototype
-     * @param  {string}   activityId Identifier of activity to retrieve
-     * @param  {EnrichOptions}   options  Additional options
-     * @return {Promise<FeedAPIResponse>}
-     * @example feed.getActivityDetail(activityId)
-     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
-     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
-     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
-     */
     return this.get({
       id_lte: activityId,
       id_gte: activityId,
@@ -476,29 +473,29 @@ export class StreamFeed<
     });
   }
 
+  /**
+   * Returns the current faye client object
+   * @method getFayeClient
+   * @memberof StreamFeed.prototype
+   * @access private
+   * @return {Faye.Client} Faye client
+   */
   getFayeClient() {
-    /**
-     * Returns the current faye client object
-     * @method getFayeClient
-     * @memberof StreamFeed.prototype
-     * @access private
-     * @return {Faye.Client} Faye client
-     */
     return this.client.getFayeClient();
   }
 
+  /**
+   * Subscribes to any changes in the feed, return a promise
+   * @method subscribe
+   * @memberof StreamFeed.prototype
+   * @param  {function} callback Callback to call on completion
+   * @return {Promise<Faye.Subscription>}
+   * @example
+   * feed.subscribe(callback).then(function(){
+   * 		console.log('we are now listening to changes');
+   * });
+   */
   subscribe(callback: Faye.Callback) {
-    /**
-     * Subscribes to any changes in the feed, return a promise
-     * @method subscribe
-     * @memberof StreamFeed.prototype
-     * @param  {function} callback Callback to call on completion
-     * @return {Promise<Faye.Subscription>}
-     * @example
-     * feed.subscribe(callback).then(function(){
-     * 		console.log('we are now listening to changes');
-     * });
-     */
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
@@ -515,11 +512,11 @@ export class StreamFeed<
     return subscription;
   }
 
+  /**
+   * Cancel updates created via feed.subscribe()
+   * @return void
+   */
   unsubscribe() {
-    /**
-     * Cancel updates created via feed.subscribe()
-     * @return void
-     */
     const streamSubscription = this.client.subscriptions[`/${this.notificationChannel}`];
     if (streamSubscription) {
       delete this.client.subscriptions[`/${this.notificationChannel}`];
@@ -527,6 +524,15 @@ export class StreamFeed<
     }
   }
 
+  /**
+   * Updates an activity's "to" fields
+   * @since 3.10.0
+   * @param {string} foreignId The foreign_id of the activity to update
+   * @param {string} time The time of the activity to update
+   * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
+   * @param {string[]} added_targets Add these new targets to the activity
+   * @param {string[]} removedTargets Remove these targets from the activity
+   */
   updateActivityToTargets(
     foreignId: string,
     time: string,
@@ -534,16 +540,6 @@ export class StreamFeed<
     addedTargets?: string[],
     removedTargets?: string[],
   ) {
-    /**
-     * Updates an activity's "to" fields
-     * @since 3.10.0
-     * @param {string} foreignId The foreign_id of the activity to update
-     * @param {string} time The time of the activity to update
-     * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-     * @param {string[]} added_targets Add these new targets to the activity
-     * @param {string[]} removedTargets Remove these targets from the activity
-     */
-
     if (!foreignId) throw new Error('Missing `foreign_id` parameter!');
     if (!time) throw new Error('Missing `time` parameter!');
 

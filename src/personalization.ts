@@ -18,28 +18,28 @@ export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord
 export class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
 
+  /**
+   * Initialize the Personalization class
+   *
+   * @method constructor
+   * @memberof Personalization.prototype
+   * @param {StreamClient} client - The stream client
+   */
   constructor(client: StreamClient) {
-    /**
-     * Initialize the Personalization class
-     *
-     * @method constructor
-     * @memberof Personalization.prototype
-     * @param {StreamClient} client - The stream client
-     */
     this.client = client;
   }
 
+  /**
+   * Get personalized activities for this feed
+   *
+   * @method get
+   * @memberof Personalization.prototype
+   * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
+   * @param {object} options  Additional options
+   * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
+   * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
+   */
   get(resource: string, options: Record<string, string> & { token?: string } = {}) {
-    /**
-     * Get personalized activities for this feed
-     *
-     * @method get
-     * @memberof Personalization.prototype
-     * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options  Additional options
-     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
-     * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
-     */
     return this.client.get<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
@@ -48,18 +48,18 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
     });
   }
 
+  /**
+   * Post data to personalization endpoint
+   *
+   * @method post
+   * @memberof Personalization.prototype
+   * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
+   * @param {object} options - Additional options
+   * @param {object} data - Data to send in the payload
+   * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
+   * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
+   */
   post(resource: string, options: Record<string, string> = {}, data: UnknownRecord = {}) {
-    /**
-     * Post data to personalization endpoint
-     *
-     * @method post
-     * @memberof Personalization.prototype
-     * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options - Additional options
-     * @param {object} data - Data to send in the payload
-     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
-     * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
-     */
     return this.client.post<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
@@ -69,17 +69,17 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
     });
   }
 
+  /**
+   * Delete metadata or activities
+   *
+   * @method delete
+   * @memberof Personalization.prototype
+   * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+   * @param {object} options - Additional options
+   * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
+   * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
+   */
   delete(resource: string, options: Record<string, string> = {}) {
-    /**
-     * Delete metadata or activities
-     *
-     * @method delete
-     * @memberof Personalization.prototype
-     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-     * @param {object} options - Additional options
-     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
-     * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
-     */
     return this.client.delete<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
