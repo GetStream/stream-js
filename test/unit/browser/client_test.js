@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 
 import pkg from '../../../package.json';
-import StreamFeed from '../../../src/feed';
-import { connect, errors } from '../../../src';
+import { connect, FeedError, StreamFeed } from '../../../src';
+
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client (browser)', function () {
@@ -16,7 +16,7 @@ describe('[UNIT] Stream Client (browser)', function () {
     }
 
     expect(createFn).to.throwException(function (e) {
-      expect(e).to.be.a(errors.FeedError);
+      expect(e).to.be.a(FeedError);
     });
   });
 
@@ -55,7 +55,7 @@ describe('[UNIT] Stream Client (browser)', function () {
     }
 
     expect(toThrow).to.throwException(function (e) {
-      expect(e).to.be.a(errors.FeedError);
+      expect(e).to.be.a(FeedError);
     });
   });
 

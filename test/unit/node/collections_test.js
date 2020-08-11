@@ -1,8 +1,7 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import StreamClient from '../../../src/client';
-import * as errors from '../../../src/errors';
+import { StreamClient, SiteError } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Collections (node)', function () {
@@ -184,21 +183,21 @@ describe('[UNIT] Stream Collections (node)', function () {
         expect(function () {
           client.collections.upsert(collectionName, data);
         }).to.throwException(function (e) {
-          expect(e).to.be.a(errors.SiteError);
+          expect(e).to.be.a(SiteError);
         });
 
         // select
         expect(function () {
           client.collections.select(collectionName, ids);
         }).to.throwException(function (e) {
-          expect(e).to.be.a(errors.SiteError);
+          expect(e).to.be.a(SiteError);
         });
 
         // delete
         expect(function () {
           client.collections.deleteMany(collectionName, ids);
         }).to.throwException(function (e) {
-          expect(e).to.be.a(errors.SiteError);
+          expect(e).to.be.a(SiteError);
         });
       });
     });

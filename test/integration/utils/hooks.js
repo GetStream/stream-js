@@ -1,4 +1,4 @@
-const stream = require('../../../src').default;
+const { connect } = require('../../../src');
 const config = require('./config');
 
 // this function can only be run in browser context
@@ -48,7 +48,7 @@ function initBrowser() {
 }
 
 function beforeEachNode() {
-  this.client = stream.connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
+  this.client = connect(config.API_KEY, config.API_SECRET, config.APP_ID, {
     group: 'testCycle',
     location: 'qa',
     protocol: 'https',
@@ -69,13 +69,13 @@ function beforeEachNode() {
 }
 
 function beforeEachBrowser() {
-  this.client = stream.connect(config.API_KEY, null, config.APP_ID, {
+  this.client = connect(config.API_KEY, null, config.APP_ID, {
     group: 'browserTestCycle',
     location: 'qa',
     protocol: 'https',
   });
 
-  this.browserClient = stream.connect(config.API_KEY, jwt(undefined, undefined, { userId: '123' }), config.APP_ID, {
+  this.browserClient = connect(config.API_KEY, jwt(undefined, undefined, { userId: '123' }), config.APP_ID, {
     group: 'browserTestCycle',
     location: 'qa',
   });
