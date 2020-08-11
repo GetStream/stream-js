@@ -1,8 +1,7 @@
 import expect from 'expect.js';
 import td from 'testdouble';
 
-import StreamFeed from '../../../src/feed';
-import * as errors from '../../../src/errors';
+import { StreamFeed, SiteError } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Feed (Common)', function () {
@@ -282,7 +281,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
       }
 
       expect(throws).to.throwException(function (err) {
-        expect(err).to.be.a(errors.SiteError);
+        expect(err).to.be.a(SiteError);
       });
     });
 

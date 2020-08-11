@@ -1,5 +1,5 @@
-import StreamClient, { APIResponse, UnknownRecord } from './client';
-import * as errors from './errors';
+import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { SiteError } from './errors';
 
 type BaseCollection<CollectionType> = {
   collection: string;
@@ -115,7 +115,7 @@ export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecor
   }
 }
 
-export default class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
+export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
   token: string;
 
@@ -235,7 +235,7 @@ export default class Collections<CollectionType extends UnknownRecord = UnknownR
    */
   upsert(collection: string, data: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]) {
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+      throw new SiteError('This method can only be used server-side using your API Secret');
     }
 
     if (!Array.isArray(data)) data = [data];
@@ -259,7 +259,7 @@ export default class Collections<CollectionType extends UnknownRecord = UnknownR
    */
   select(collection: string, ids: string | string[]) {
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+      throw new SiteError('This method can only be used server-side using your API Secret');
     }
 
     if (!Array.isArray(ids)) ids = [ids];
@@ -283,7 +283,7 @@ export default class Collections<CollectionType extends UnknownRecord = UnknownR
    */
   deleteMany(collection: string, ids: string | string[]) {
     if (!this.client.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used server-side using your API Secret');
+      throw new SiteError('This method can only be used server-side using your API Secret');
     }
 
     if (!Array.isArray(ids)) ids = [ids];

@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UnknownRecord } from './client';
 import utils from './utils';
 
 type BaseFollowRelation = {

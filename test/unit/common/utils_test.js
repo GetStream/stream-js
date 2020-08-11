@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import * as errors from '../../../src/errors';
+import { FeedError } from '../../../src/errors';
 import utils from '../../../src/utils';
 import { init } from '../utils/hooks';
 
@@ -15,7 +15,7 @@ describe('[UNIT] Utility functions', function () {
     expect(function () {
       utils.validateFeedId('b134u92fval');
     }).to.throwError(function (e) {
-      expect(e).to.be.a(errors.FeedError);
+      expect(e).to.be.a(FeedError);
     });
   });
 

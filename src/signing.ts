@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import Base64 from 'Base64';
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
@@ -59,7 +59,7 @@ function headerFromJWS(jwsSig: string) {
  * @param {boolean} [options.expireTokens] - JWT noTimestamp
  * @return {string} JWT Token
  */
-function JWTScopeToken(
+export function JWTScopeToken(
   apiSecret: string,
   resource: string,
   action: string,
@@ -84,11 +84,11 @@ function JWTScopeToken(
  * @param {object} [jwtOptions] - Options that can be past to jwt.sign
  * @return {string} JWT Token
  */
-function JWTUserSessionToken(
+export function JWTUserSessionToken(
   apiSecret: string,
   userId: string,
   extraData: Record<string, unknown> = {},
-  jwtOptions: jwt.SignOptions = {},
+  jwtOptions: SignOptions = {},
 ) {
   if (typeof userId !== 'string') {
     throw new TypeError('userId should be a string');
@@ -96,7 +96,7 @@ function JWTUserSessionToken(
 
   const payload = { user_id: userId, ...extraData };
 
-  const opts: jwt.SignOptions = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
+  const opts: SignOptions = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
   return jwt.sign(payload, apiSecret, opts);
 }
 
@@ -108,18 +108,10 @@ function JWTUserSessionToken(
  * @param {string} signature - Signature to check
  * @return {boolean}
  */
-function isJWTSignature(signature: string | null) {
+export function isJWTSignature(signature: string | null) {
   if (signature == null || signature.length === 0) {
     return false;
   }
   const token = signature.split(' ')[1] || signature;
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
 }
-
-export default {
-  JWTScopeToken,
-  headerFromJWS,
-  JWTUserSessionToken,
-  isJWTSignature,
-  isJWT: isJWTSignature,
-};

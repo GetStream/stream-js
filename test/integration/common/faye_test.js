@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 
-import { connect } from '../../../src';
-import * as errors from '../../../src/errors';
+import { connect, SiteError } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Faye)', function () {
@@ -135,7 +134,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
       user1.subscribe();
     }
     expect(sub).to.throwException(function (e) {
-      expect(e).to.be.a(errors.SiteError);
+      expect(e).to.be.a(SiteError);
     });
     done();
   });

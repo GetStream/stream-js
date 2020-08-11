@@ -4,8 +4,7 @@ import url from 'url';
 import qs from 'qs';
 import request from 'request';
 
-import StreamClient from '../../../src/client';
-import * as errors from '../../../src/errors';
+import { StreamClient, MissingSchemaError } from '../../../src';
 import config from '../utils/config';
 
 describe("[UNIT] Redirect URL's", function () {
@@ -137,6 +136,6 @@ describe("[UNIT] Redirect URL's", function () {
     const self = this;
     expect(function () {
       self.client.createRedirectUrl('google.com', 'tommaso', []);
-    }).to.throwException(new errors.MissingSchemaError());
+    }).to.throwException(new MissingSchemaError());
   });
 });
