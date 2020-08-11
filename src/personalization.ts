@@ -1,4 +1,4 @@
-import StreamClient, { APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UnknownRecord } from './client';
 
 /**
  * Manage api calls for personalization
@@ -15,7 +15,7 @@ export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord
   version?: string;
 };
 
-export default class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
+export class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
   client: StreamClient;
 
   constructor(client: StreamClient) {

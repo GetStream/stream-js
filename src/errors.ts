@@ -1,4 +1,4 @@
-import * as axios from 'axios';
+import { AxiosResponse } from 'axios';
 
 const canCapture = typeof Error.captureStackTrace === 'function';
 const canStack = !!new Error().stack;
@@ -69,9 +69,9 @@ export class MissingSchemaError extends ErrorAbstract {}
  */
 export class StreamApiError extends ErrorAbstract {
   error: unknown;
-  response: axios.AxiosResponse;
+  response: AxiosResponse;
 
-  constructor(msg: string, data: unknown, response: axios.AxiosResponse) {
+  constructor(msg: string, data: unknown, response: AxiosResponse) {
     super(msg);
 
     this.error = data;

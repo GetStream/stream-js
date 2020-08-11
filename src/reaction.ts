@@ -1,6 +1,6 @@
-import StreamClient, { APIResponse, UnknownRecord } from './client';
-import StreamFeed from './feed';
-import * as errors from './errors';
+import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamFeed } from './feed';
+import { SiteError } from './errors';
 
 export type TargetFeeds = (string | StreamFeed)[];
 
@@ -65,7 +65,7 @@ export type ReactionFilterAPIResponse<
   activity?: ActivityType;
 };
 
-export default class StreamReaction<
+export class StreamReaction<
   UserType extends UnknownRecord = UnknownRecord,
   ActivityType extends UnknownRecord = UnknownRecord,
   CollectionType extends UnknownRecord = UnknownRecord,
@@ -254,9 +254,7 @@ export default class StreamReaction<
     }
 
     if ((userId ? 1 : 0) + (activityId ? 1 : 0) + (reactionId ? 1 : 0) !== 1) {
-      throw new errors.SiteError(
-        'Must provide exactly one value for one of these params: user_id, activity_id, reaction_id',
-      );
+      throw new SiteError('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
     }
 
     const lookupType = (userId && 'user_id') || (activityId && 'activity_id') || (reactionId && 'reaction_id');

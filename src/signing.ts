@@ -1,4 +1,4 @@
-import * as jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import Base64 from 'Base64';
 
 const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
@@ -45,7 +45,7 @@ function headerFromJWS(jwsSig: string) {
   return safeJsonParse(decodeBase64Url(encodedHeader));
 }
 
-function JWTScopeToken(
+export function JWTScopeToken(
   apiSecret: string,
   resource: string,
   action: string,
@@ -73,11 +73,11 @@ function JWTScopeToken(
   return jwt.sign(payload, apiSecret, { algorithm: 'HS256', noTimestamp });
 }
 
-function JWTUserSessionToken(
+export function JWTUserSessionToken(
   apiSecret: string,
   userId: string,
   extraData: Record<string, unknown> = {},
-  jwtOptions: jwt.SignOptions = {},
+  jwtOptions: SignOptions = {},
 ) {
   /**
    * Creates the JWT token that can be used for a UserSession
@@ -96,11 +96,11 @@ function JWTUserSessionToken(
 
   const payload = { user_id: userId, ...extraData };
 
-  const opts: jwt.SignOptions = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
+  const opts: SignOptions = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
   return jwt.sign(payload, apiSecret, opts);
 }
 
-function isJWTSignature(signature: string | null) {
+export function isJWTSignature(signature: string | null) {
   /**
    * check if token is a valid JWT token
    * @method isJWTSignature
@@ -115,11 +115,3 @@ function isJWTSignature(signature: string | null) {
   const token = signature.split(' ')[1] || signature;
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
 }
-
-export default {
-  JWTScopeToken,
-  headerFromJWS,
-  JWTUserSessionToken,
-  isJWTSignature,
-  isJWT: isJWTSignature,
-};

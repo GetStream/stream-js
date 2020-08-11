@@ -1,6 +1,6 @@
-import StreamClient, { OnUploadProgress } from './client';
+import { StreamClient, OnUploadProgress } from './client';
 
-export default class StreamFileStore {
+export class StreamFileStore {
   client: StreamClient;
   token: string;
 
