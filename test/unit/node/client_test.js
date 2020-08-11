@@ -3,9 +3,7 @@ import td from 'testdouble';
 import jwtDecode from 'jwt-decode';
 
 import pkg from '../../../package.json';
-import { connect } from '../../../src';
-import StreamClient from '../../../src/client';
-import StreamFeed from '../../../src/feed';
+import { connect, StreamClient, StreamFeed } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Client instantiation (Node)', function () {

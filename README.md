@@ -78,9 +78,9 @@ import { connect } from 'getstream';
 const { connect } = require('getstream');
 
 // Instantiate a new client (server side)
-const client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET');
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET');
 // Optionally supply the app identifier and an options object specifying the data center to use and timeout for requests (15s)
-const client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-east', timeout: 15000 });
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: 'us-east', timeout: 15000 });
 // Create a token for user with id "the-user-id"
 const userToken = client.createUserToken('the-user-id');
 ```
@@ -92,7 +92,7 @@ import { connect } from 'getstream';
 // or if you are on commonjs
 const { connect } = require('getstream');
 // Instantiate new client with a user token
-const client = stream.connect('apikey', userToken, 'appid');
+const client = connect('apikey', userToken, 'appid');
 ```
 
 #### Examples

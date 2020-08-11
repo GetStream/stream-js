@@ -2,7 +2,7 @@
 import * as Faye from 'faye';
 import {
   connect,
-  Client,
+  StreamClient,
   EnrichedActivity,
   NotificationActivity,
   APIResponse,
@@ -12,9 +12,11 @@ import {
   PersonalizationFeedAPIResponse,
   Activity,
   CollectionEntry,
-} from '../../lib';
-import StreamUser from '../../lib/user';
-import StreamFeed, { FeedAPIResponse, FlatActivity } from '../../lib/feed';
+  StreamUser,
+  StreamFeed,
+  FeedAPIResponse,
+  FlatActivity,
+} from '../..';
 
 type UserType = { name: string; image?: string };
 type ActivityType = { aText: string; attachments?: string[] };
@@ -27,7 +29,7 @@ let voidReturn: void;
 let voidPromise: Promise<void>;
 let emptyAPIPromise: Promise<APIResponse>;
 
-let client: Client<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = connect<
+let client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = connect<
   UserType,
   ActivityType,
   CollectionType,
@@ -35,7 +37,7 @@ let client: Client<UserType, ActivityType, CollectionType, ReactionType, ChildRe
   ChildReactionType
 >('api_key', 'secret!', 'app_id');
 
-client = new Client<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
+client = new StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
   'api_key',
   'secret!',
   'app_id',
@@ -45,18 +47,18 @@ connect('', null);
 connect('', null, '', {});
 connect('', null, '', { timeout: 3000, keepAlive: true, expireTokens: false });
 
-new Client('', null);
-new Client('', null, '', {});
-new Client('', null, '', { timeout: 3000, keepAlive: true, expireTokens: false });
+new StreamClient('', null);
+new StreamClient('', null, '', {});
+new StreamClient('', null, '', { timeout: 3000, keepAlive: true, expireTokens: false });
 
 // @ts-expect-error
 connect('', null, true, {});
 // @ts-expect-error
 connect('', null, '', { missingOption: '' });
 // @ts-expect-error
-new Client('', '', true, {});
+new StreamClient('', '', true, {});
 // @ts-expect-error
-new Client('', '', '', { missingOption: '' });
+new StreamClient('', '', '', { missingOption: '' });
 
 const agent: string = client.userAgent();
 

@@ -1,4 +1,4 @@
-import StreamClient, { FileUploadAPIResponse, OnUploadProgress } from './client';
+import { StreamClient, FileUploadAPIResponse, OnUploadProgress } from './client';
 
 export type ImageProcessOptions = {
   crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
@@ -7,7 +7,7 @@ export type ImageProcessOptions = {
   w?: number | string;
 };
 
-export default class StreamImageStore {
+export class StreamImageStore {
   client: StreamClient;
 
   token: string;

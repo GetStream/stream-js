@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import signing from '../../../src/signing';
+import { JWTScopeToken } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Creating tokens', function () {
@@ -12,7 +12,7 @@ describe('[UNIT] Creating tokens', function () {
     expect(token).not.to.be(undefined);
 
     const feedId = 'usertest';
-    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', 'read', {
+    const expected = JWTScopeToken(this.client.apiSecret, '*', 'read', {
       feedId,
       expireTokens: this.client.expireTokens,
     });
@@ -26,7 +26,7 @@ describe('[UNIT] Creating tokens', function () {
     expect(token).not.to.be(undefined);
 
     const feedId = 'usertest';
-    const expected = signing.JWTScopeToken(this.client.apiSecret, '*', '*', {
+    const expected = JWTScopeToken(this.client.apiSecret, '*', '*', {
       feedId,
       expireTokens: this.client.expireTokens,
     });

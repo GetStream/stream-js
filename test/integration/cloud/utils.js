@@ -1,6 +1,6 @@
 import chai, { expect } from 'chai';
 
-import { connect, errors } from '../../../src';
+import { connect, StreamApiError } from '../../../src';
 import config from '../utils/config';
 import { randUserId } from '../utils/hooks';
 
@@ -159,7 +159,7 @@ export class CloudContext {
         await fn();
         expect.fail(null, null, 'request should not succeed');
       } catch (e) {
-        if (!(e instanceof errors.StreamApiError)) {
+        if (!(e instanceof StreamApiError)) {
           throw e;
         }
         if (e.response.status !== status) {

@@ -1,6 +1,6 @@
 import FormData from 'form-data';
 
-import * as errors from './errors';
+import { FeedError } from './errors';
 
 const validFeedSlugRe = /^[\w]+$/;
 const validUserIdRe = /^[\w-]+$/;
@@ -10,7 +10,7 @@ const validUserIdRe = /^[\w-]+$/;
  */
 function validateFeedSlug(feedSlug: string) {
   if (!validFeedSlugRe.test(feedSlug)) {
-    throw new errors.FeedError(`Invalid feedSlug, please use letters, numbers or _: ${feedSlug}`);
+    throw new FeedError(`Invalid feedSlug, please use letters, numbers or _: ${feedSlug}`);
   }
 
   return feedSlug;
@@ -21,7 +21,7 @@ function validateFeedSlug(feedSlug: string) {
  */
 function validateUserId(userId: string) {
   if (!validUserIdRe.test(userId)) {
-    throw new errors.FeedError(`Invalid userId, please use letters, numbers, - or _: ${userId}`);
+    throw new FeedError(`Invalid userId, please use letters, numbers, - or _: ${userId}`);
   }
 
   return userId;
@@ -41,7 +41,7 @@ function isReadableStream(obj: NodeJS.ReadStream): obj is NodeJS.ReadStream {
 function validateFeedId(feedId: string) {
   const parts = feedId.split(':');
   if (parts.length !== 2) {
-    throw new errors.FeedError(`Invalid feedId, expected something like user:1 got ${feedId}`);
+    throw new FeedError(`Invalid feedId, expected something like user:1 got ${feedId}`);
   }
 
   const [feedSlug, userId] = parts;

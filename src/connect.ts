@@ -1,4 +1,4 @@
-import StreamClient, { UnknownRecord, ClientOptions } from './client';
+import { StreamClient, UnknownRecord, ClientOptions } from './client';
 
 /**
  * Create StreamClient

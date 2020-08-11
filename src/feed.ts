@@ -1,9 +1,9 @@
 /// <reference path="../types/modules.d.ts" />
 
 import * as Faye from 'faye';
-import StreamClient, { APIResponse, UnknownRecord } from './client';
-import StreamUser from './user';
-import * as errors from './errors';
+import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamUser } from './user';
+import { FeedError, SiteError } from './errors';
 import utils from './utils';
 import { EnrichedReaction } from './reaction';
 import { CollectionResponse } from './collections';
@@ -212,7 +212,7 @@ export type GetActivitiesAPIResponse<
  * The feed object contains convenience functions such add activity, remove activity etc
  * @class StreamFeed
  */
-export default class StreamFeed<
+export class StreamFeed<
   UserType extends UnknownRecord = UnknownRecord,
   ActivityType extends UnknownRecord = UnknownRecord,
   CollectionType extends UnknownRecord = UnknownRecord,
@@ -240,11 +240,11 @@ export default class StreamFeed<
    */
   constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
     if (!feedSlug || !userId) {
-      throw new errors.FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
+      throw new FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
 
     if (feedSlug.indexOf(':') !== -1) {
-      throw new errors.FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+      throw new FeedError('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
 
     utils.validateFeedSlug(feedSlug);
@@ -252,7 +252,7 @@ export default class StreamFeed<
 
     // raise an error if there is no token
     if (!token) {
-      throw new errors.FeedError('Missing token, in client side mode please provide a feed secret');
+      throw new FeedError('Missing token, in client side mode please provide a feed secret');
     }
 
     this.client = client;
@@ -497,7 +497,7 @@ export default class StreamFeed<
    */
   subscribe(callback: Faye.Callback) {
     if (!this.client.appId) {
-      throw new errors.SiteError(
+      throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
       );
     }

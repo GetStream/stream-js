@@ -1,10 +1,10 @@
 import Url from 'url';
 import qs from 'qs';
 
-import StreamClient from './client';
-import * as errors from './errors';
+import { StreamClient } from './client';
+import { MissingSchemaError } from './errors';
 import utils from './utils';
-import signing from './signing';
+import { JWTScopeToken } from './signing';
 
 // TODO: userId is skipped here
 /**
@@ -22,10 +22,10 @@ export default function createRedirectUrl(this: StreamClient, targetUrl: string,
   const uri = Url.parse(targetUrl);
 
   if (!(uri.host || (uri.hostname && uri.port))) {
-    throw new errors.MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
+    throw new MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
   }
 
-  const authToken = signing.JWTScopeToken(this.apiSecret as string, 'redirect_and_track', '*', {
+  const authToken = JWTScopeToken(this.apiSecret as string, 'redirect_and_track', '*', {
     userId: '*',
     expireTokens: this.expireTokens,
   });

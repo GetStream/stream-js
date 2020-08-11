@@ -1,23 +1,24 @@
 /// <reference path="../types/modules.d.ts" />
 
 import * as axios from 'axios';
+import * as Faye from 'faye';
 import http from 'http';
 import https from 'https';
-import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
-import Personalization from './personalization';
-import Collections from './collections';
-import StreamFileStore from './files';
-import StreamImageStore from './images';
-import StreamReaction from './reaction';
-import StreamUser from './user';
-import createRedirectUrl from './redirect_url';
-import signing from './signing';
-import * as errors from './errors';
+import { Personalization } from './personalization';
+import { Collections } from './collections';
+import { StreamFileStore } from './files';
+import { StreamImageStore } from './images';
+import { StreamReaction } from './reaction';
+import { StreamUser } from './user';
+import { JWTScopeToken, isJWTSignature, JWTUserSessionToken } from './signing';
+import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
 import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
-import StreamFeed, {
+import createRedirectUrl from './redirect_url';
+import {
+  StreamFeed,
   UpdateActivity,
   Activity,
   EnrichOptions,
@@ -114,7 +115,7 @@ export type ActivityPartialChanges<ActivityType extends UnknownRecord = UnknownR
  * Client to connect to Stream api
  * @class StreamClient
  */
-export default class StreamClient<
+export class StreamClient<
   UserType extends UnknownRecord = UnknownRecord,
   ActivityType extends UnknownRecord = UnknownRecord,
   CollectionType extends UnknownRecord = UnknownRecord,
@@ -192,7 +193,7 @@ export default class StreamClient<
     this.baseUrl = 'https://api.stream-io-api.com/api/';
     this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
     this.apiKey = apiKey;
-    this.usingApiSecret = apiSecretOrToken != null && !signing.isJWT(apiSecretOrToken);
+    this.usingApiSecret = apiSecretOrToken != null && !isJWTSignature(apiSecretOrToken);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
     this.enrichByDefault = !this.usingApiSecret;
@@ -245,7 +246,7 @@ export default class StreamClient<
     this.personalization = new Personalization<PersonalizationType>(this);
 
     if (this.browser && this.usingApiSecret) {
-      throw new errors.FeedError(
+      throw new FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
@@ -268,7 +269,7 @@ export default class StreamClient<
 
   _throwMissingApiSecret() {
     if (!this.usingApiSecret) {
-      throw new errors.SiteError(
+      throw new SiteError(
         'This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);',
       );
     }
@@ -279,7 +280,7 @@ export default class StreamClient<
 
     this._throwMissingApiSecret();
 
-    this._personalizationToken = signing.JWTScopeToken(this.apiSecret as string, 'personalization', '*', {
+    this._personalizationToken = JWTScopeToken(this.apiSecret as string, 'personalization', '*', {
       userId: '*',
       feedId: '*',
       expireTokens: this.expireTokens,
@@ -292,7 +293,7 @@ export default class StreamClient<
 
     this._throwMissingApiSecret();
 
-    this._collectionsToken = signing.JWTScopeToken(this.apiSecret as string, 'collections', '*', {
+    this._collectionsToken = JWTScopeToken(this.apiSecret as string, 'collections', '*', {
       feedId: '*',
       expireTokens: this.expireTokens,
     });
@@ -302,7 +303,7 @@ export default class StreamClient<
   getAnalyticsToken() {
     this._throwMissingApiSecret();
 
-    return signing.JWTScopeToken(this.apiSecret as string, 'analytics', '*', {
+    return JWTScopeToken(this.apiSecret as string, 'analytics', '*', {
       userId: '*',
       expireTokens: this.expireTokens,
     });
@@ -394,7 +395,7 @@ export default class StreamClient<
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
-    return signing.JWTScopeToken(this.apiSecret as string, '*', 'read', {
+    return JWTScopeToken(this.apiSecret as string, '*', 'read', {
       feedId: `${feedSlug}${userId}`,
       expireTokens: this.expireTokens,
     });
@@ -414,7 +415,7 @@ export default class StreamClient<
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
-    return signing.JWTScopeToken(this.apiSecret as string, '*', '*', {
+    return JWTScopeToken(this.apiSecret as string, '*', '*', {
       feedId: `${feedSlug}${userId}`,
       expireTokens: this.expireTokens,
     });
@@ -439,7 +440,7 @@ export default class StreamClient<
 
     if (token === undefined) {
       if (this.usingApiSecret) {
-        token = signing.JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: `${feedSlug}${userId}` });
+        token = JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: `${feedSlug}${userId}` });
       } else {
         token = this.userToken as string;
       }
@@ -524,7 +525,15 @@ export default class StreamClient<
    * @return {axios.AxiosRequestConfig}
    */
   enrichKwargs({ method, signature, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
-    const isJWT = signing.isJWTSignature(signature);
+    /**
+     * Adds the API key and the signature
+     * @method enrichKwargs
+     * @private
+     * @memberof StreamClient.prototype
+     * @param {AxiosConfig} kwargs
+     * @return {axios.AxiosRequestConfig}
+     */
+    const isJWT = isJWTSignature(signature);
 
     return {
       method,
@@ -595,7 +604,7 @@ export default class StreamClient<
       return response.data;
     }
 
-    throw new errors.StreamApiError(
+    throw new StreamApiError(
       `${JSON.stringify(response.data)} with HTTP status code ${response.status}`,
       response.data,
       response,
@@ -610,7 +619,7 @@ export default class StreamClient<
       return this.handleResponse(response);
     } catch (error) {
       if (error.response) return this.handleResponse(error.response);
-      throw new errors.SiteError(error.message);
+      throw new SiteError(error.message);
     }
   };
 
@@ -691,7 +700,7 @@ export default class StreamClient<
   createUserToken(userId: string, extraData = {}) {
     this._throwMissingApiSecret();
 
-    return signing.JWTUserSessionToken(this.apiSecret as string, userId, extraData, {
+    return JWTUserSessionToken(this.apiSecret as string, userId, extraData, {
       noTimestamp: !this.expireTokens,
     });
   }
@@ -709,7 +718,7 @@ export default class StreamClient<
       throw new TypeError('The activities argument should be an Array');
     }
 
-    const authToken = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
+    const authToken = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
       feedId: '*',
       expireTokens: this.expireTokens,
     });
@@ -777,7 +786,7 @@ export default class StreamClient<
 
     let token = this.userToken as string;
     if (this.usingApiSecret) {
-      token = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
+      token = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens,
       });
@@ -796,7 +805,7 @@ export default class StreamClient<
   getOrCreateToken() {
     if (!this._getOrCreateToken) {
       this._getOrCreateToken = this.usingApiSecret
-        ? signing.JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: '*' })
+        ? JWTScopeToken(this.apiSecret as string, '*', '*', { feedId: '*' })
         : (this.userToken as string);
     }
     return this._getOrCreateToken;
@@ -808,7 +817,7 @@ export default class StreamClient<
 
   async setUser(data: UserType) {
     if (this.usingApiSecret) {
-      throw new errors.SiteError('This method can only be used client-side using a user token');
+      throw new SiteError('This method can only be used client-side using a user token');
     }
 
     const body = { ...data };
@@ -956,7 +965,7 @@ export default class StreamClient<
 
     let authToken = this.userToken as string;
     if (this.usingApiSecret) {
-      authToken = signing.JWTScopeToken(this.apiSecret as string, 'activities', '*', {
+      authToken = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens,
       });
