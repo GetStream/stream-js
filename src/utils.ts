@@ -5,10 +5,10 @@ import * as errors from './errors';
 const validFeedSlugRe = /^[\w]+$/;
 const validUserIdRe = /^[\w-]+$/;
 
+/*
+ * Validate that the feedSlug matches \w
+ */
 function validateFeedSlug(feedSlug: string) {
-  /*
-   * Validate that the feedSlug matches \w
-   */
   if (!validFeedSlugRe.test(feedSlug)) {
     throw new errors.FeedError(`Invalid feedSlug, please use letters, numbers or _: ${feedSlug}`);
   }
@@ -16,10 +16,10 @@ function validateFeedSlug(feedSlug: string) {
   return feedSlug;
 }
 
+/*
+ * Validate the userId matches \w
+ */
 function validateUserId(userId: string) {
-  /*
-   * Validate the userId matches \w
-   */
   if (!validUserIdRe.test(userId)) {
     throw new errors.FeedError(`Invalid userId, please use letters, numbers, - or _: ${userId}`);
   }
@@ -35,10 +35,10 @@ function isReadableStream(obj: NodeJS.ReadStream): obj is NodeJS.ReadStream {
   return obj !== null && typeof obj === 'object' && typeof (obj as NodeJS.ReadStream)._read === 'function';
 }
 
+/*
+ * Validate that the feedId matches the spec user:1
+ */
 function validateFeedId(feedId: string) {
-  /*
-   * Validate that the feedId matches the spec user:1
-   */
   const parts = feedId.split(':');
   if (parts.length !== 2) {
     throw new errors.FeedError(`Invalid feedId, expected something like user:1 got ${feedId}`);

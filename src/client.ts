@@ -26,7 +26,7 @@ import StreamFeed, {
   GetFeedOptions,
 } from './feed';
 
-// no import since typescript json loader shifts the final output structure
+// TODO: no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
@@ -170,26 +170,25 @@ export default class StreamClient<
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>;
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
 
+  /**
+   * Initialize a client
+   * @method initialize
+   * @memberof StreamClient.prototype
+   * @param {string} apiKey - the api key
+   * @param {string} [apiSecret] - the api secret
+   * @param {string} [appId] - id of the app
+   * @param {ClientOptions} [options] - additional options
+   * @param {string} [options.location] - which data center to use
+   * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
+   * @param {string} [options.version] - advanced usage, custom api version
+   * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
+   * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
+   * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
+   * stream.connect(apiKey, apiSecret)
+   * @example <caption>secret is optional and only used in server side mode</caption>
+   * stream.connect(apiKey, null, appId);
+   */
   constructor(apiKey: string, apiSecretOrToken: string | null, appId?: string, options: ClientOptions = {}) {
-    /**
-     * Initialize a client
-     * @method initialize
-     * @memberof StreamClient.prototype
-     * @param {string} apiKey - the api key
-     * @param {string} [apiSecret] - the api secret
-     * @param {string} [appId] - id of the app
-     * @param {ClientOptions} [options] - additional options
-     * @param {string} [options.location] - which data center to use
-     * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
-     * @param {string} [options.version] - advanced usage, custom api version
-     * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
-     * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
-     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
-     * stream.connect(apiKey, apiSecret)
-     * @example <caption>secret is optional and only used in server side mode</caption>
-     * stream.connect(apiKey, null, appId);
-     */
-
     this.baseUrl = 'https://api.stream-io-api.com/api/';
     this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
     this.apiKey = apiKey;
@@ -329,31 +328,31 @@ export default class StreamClient<
     return this.baseUrl;
   }
 
+  /**
+   * Support for global event callbacks
+   * This is useful for generic error and loading handling
+   * @method on
+   * @memberof StreamClient.prototype
+   * @param {string} event - Name of the event
+   * @param {function} callback - Function that is called when the event fires
+   * @example
+   * client.on('request', callback);
+   * client.on('response', callback);
+   */
   on(event: string, callback: HandlerCallback) {
-    /**
-     * Support for global event callbacks
-     * This is useful for generic error and loading handling
-     * @method on
-     * @memberof StreamClient.prototype
-     * @param {string} event - Name of the event
-     * @param {function} callback - Function that is called when the event fires
-     * @example
-     * client.on('request', callback);
-     * client.on('response', callback);
-     */
     this.handlers[event] = callback;
   }
 
+  /**
+   * Remove one or more event handlers
+   * @method off
+   * @memberof StreamClient.prototype
+   * @param {string} [key] - Name of the handler
+   * @example
+   * client.off() removes all handlers
+   * client.off(name) removes the specified handler
+   */
   off(key?: string) {
-    /**
-     * Remove one or more event handlers
-     * @method off
-     * @memberof StreamClient.prototype
-     * @param {string} [key] - Name of the handler
-     * @example
-     * client.off() removes all handlers
-     * client.off(name) removes the specified handler
-     */
     if (key === undefined) {
       this.handlers = {};
     } else {
@@ -361,37 +360,37 @@ export default class StreamClient<
     }
   }
 
+  /**
+   * Call the given handler with the arguments
+   * @method send
+   * @memberof StreamClient.prototype
+   * @access private
+   */
   send(key: string, ...args: unknown[]) {
-    /**
-     * Call the given handler with the arguments
-     * @method send
-     * @memberof StreamClient.prototype
-     * @access private
-     */
     if (this.handlers[key]) this.handlers[key].apply(this, args);
   }
 
+  /**
+   * Get the current user agent
+   * @method userAgent
+   * @memberof StreamClient.prototype
+   * @return {string} current user agent
+   */
   userAgent() {
-    /**
-     * Get the current user agent
-     * @method userAgent
-     * @memberof StreamClient.prototype
-     * @return {string} current user agent
-     */
     return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${pkg.version}`;
   }
 
+  /**
+   * Returns a token that allows only read operations
+   *
+   * @method getReadOnlyToken
+   * @memberof StreamClient.prototype
+   * @param {string} feedSlug - The feed slug to get a read only token for
+   * @param {string} userId - The user identifier
+   * @return {string} token
+   * @example client.getReadOnlyToken('user', '1');
+   */
   getReadOnlyToken(feedSlug: string, userId: string) {
-    /**
-     * Returns a token that allows only read operations
-     *
-     * @method getReadOnlyToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example client.getReadOnlyToken('user', '1');
-     */
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
@@ -401,17 +400,17 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Returns a token that allows read and write operations
+   *
+   * @method getReadWriteToken
+   * @memberof StreamClient.prototype
+   * @param {string} feedSlug - The feed slug to get a read only token for
+   * @param {string} userId - The user identifier
+   * @return {string} token
+   * @example client.getReadWriteToken('user', '1');
+   */
   getReadWriteToken(feedSlug: string, userId: string) {
-    /**
-     * Returns a token that allows read and write operations
-     *
-     * @method getReadWriteToken
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug to get a read only token for
-     * @param {string} userId - The user identifier
-     * @return {string} token
-     * @example client.getReadWriteToken('user', '1');
-     */
     utils.validateFeedSlug(feedSlug);
     utils.validateUserId(userId);
 
@@ -421,21 +420,21 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Returns a feed object for the given feed id and token
+   * @method feed
+   * @memberof StreamClient.prototype
+   * @param {string} feedSlug - The feed slug
+   * @param {string} [userId] - The user identifier
+   * @param {string} [token] - The token
+   * @return {StreamFeed}
+   * @example  client.feed('user', '1');
+   */
   feed(
     feedSlug: string,
     userId?: string | StreamUser<UserType>,
     token?: string,
   ): StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
-    /**
-     * Returns a feed object for the given feed id and token
-     * @method feed
-     * @memberof StreamClient.prototype
-     * @param {string} feedSlug - The feed slug
-     * @param {string} [userId] - The user identifier
-     * @param {string} [token] - The token
-     * @return {StreamFeed}
-     * @example  client.feed('user', '1');
-     */
     if (userId instanceof StreamUser) userId = userId.id;
 
     if (token === undefined) {
@@ -454,16 +453,16 @@ export default class StreamClient<
     );
   }
 
+  /**
+   * Combines the base url with version and the relative url
+   * @method enrichUrl
+   * @memberof StreamClient.prototype
+   * @private
+   * @param {string} relativeUrl
+   * @param {string} [serviceName]
+   * @return {string}
+   */
   enrichUrl(relativeUrl: string, serviceName?: string) {
-    /**
-     * Combines the base url with version and the relative url
-     * @method enrichUrl
-     * @memberof StreamClient.prototype
-     * @private
-     * @param {string} relativeUrl
-     * @param {string} [serviceName]
-     * @return {string}
-     */
     return `${this.getBaseUrl(serviceName)}${this.version}/${relativeUrl}`;
   }
 
@@ -516,15 +515,15 @@ export default class StreamClient<
     );
   }
 
+  /**
+   * Adds the API key and the signature
+   * @method enrichKwargs
+   * @private
+   * @memberof StreamClient.prototype
+   * @param {AxiosConfig} kwargs
+   * @return {axios.AxiosRequestConfig}
+   */
   enrichKwargs({ method, signature, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
-    /**
-     * Adds the API key and the signature
-     * @method enrichKwargs
-     * @private
-     * @memberof StreamClient.prototype
-     * @param {AxiosConfig} kwargs
-     * @return {axios.AxiosRequestConfig}
-     */
     const isJWT = signing.isJWTSignature(signature);
 
     return {
@@ -546,14 +545,14 @@ export default class StreamClient<
     };
   }
 
+  /**
+   * Get the authorization middleware to use Faye with getstream.io
+   * @method getFayeAuthorization
+   * @memberof StreamClient.prototype
+   * @private
+   * @return {Faye.Middleware} Faye authorization middleware
+   */
   getFayeAuthorization(): Faye.Middleware {
-    /**
-     * Get the authorization middleware to use Faye with getstream.io
-     * @method getFayeAuthorization
-     * @memberof StreamClient.prototype
-     * @private
-     * @return {Faye.Middleware} Faye authorization middleware
-     */
     return {
       incoming: (message: Faye.Message, callback: Faye.Callback) => callback(message),
       outgoing: (message: Faye.Message, callback: Faye.Callback) => {
@@ -572,15 +571,15 @@ export default class StreamClient<
     };
   }
 
+  /**
+   * Returns this client's current Faye client
+   * @method getFayeClient
+   * @memberof StreamClient.prototype
+   * @private
+   * @param {number} timeout
+   * @return {Faye.Client} Faye client
+   */
   getFayeClient(timeout = 10) {
-    /**
-     * Returns this client's current Faye client
-     * @method getFayeClient
-     * @memberof StreamClient.prototype
-     * @private
-     * @param {number} timeout
-     * @return {Faye.Client} Faye client
-     */
     if (this.fayeClient === null) {
       this.fayeClient = new Faye.Client(this.fayeUrl, { timeout });
       const authExtension = this.getFayeAuthorization();
@@ -636,60 +635,60 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Shorthand function for get request
+   * @method get
+   * @memberof StreamClient.prototype
+   * @private
+   * @param  {AxiosConfig}    kwargs
+   * @return {Promise}   Promise object
+   */
   get<T>(kwargs: AxiosConfig) {
-    /**
-     * Shorthand function for get request
-     * @method get
-     * @memberof StreamClient.prototype
-     * @private
-     * @param  {AxiosConfig}    kwargs
-     * @return {Promise}   Promise object
-     */
     return this.doAxiosRequest<T>('GET', kwargs);
   }
 
+  /**
+   * Shorthand function for post request
+   * @method post
+   * @memberof StreamClient.prototype
+   * @private
+   * @param  {AxiosConfig}    kwargs
+   * @return {Promise}   Promise object
+   */
   post<T>(kwargs: AxiosConfig) {
-    /**
-     * Shorthand function for post request
-     * @method post
-     * @memberof StreamClient.prototype
-     * @private
-     * @param  {AxiosConfig}    kwargs
-     * @return {Promise}   Promise object
-     */
     return this.doAxiosRequest<T>('POST', kwargs);
   }
 
+  /**
+   * Shorthand function for delete request
+   * @method delete
+   * @memberof StreamClient.prototype
+   * @private
+   * @param  {AxiosConfig}    kwargs
+   * @return {Promise}   Promise object
+   */
   delete<T = APIResponse>(kwargs: AxiosConfig) {
-    /**
-     * Shorthand function for delete request
-     * @method delete
-     * @memberof StreamClient.prototype
-     * @private
-     * @param  {AxiosConfig}    kwargs
-     * @return {Promise}   Promise object
-     */
     return this.doAxiosRequest<T>('DELETE', kwargs);
   }
 
+  /**
+   * Shorthand function for put request
+   * @method put
+   * @memberof StreamClient.prototype
+   * @private
+   * @param  {AxiosConfig}    kwargs
+   * @return {Promise}   Promise object
+   */
   put<T>(kwargs: AxiosConfig) {
-    /**
-     * Shorthand function for put request
-     * @method put
-     * @memberof StreamClient.prototype
-     * @private
-     * @param  {AxiosConfig}    kwargs
-     * @return {Promise}   Promise object
-     */
     return this.doAxiosRequest<T>('PUT', kwargs);
   }
 
+  /**
+   * @param {string} userId
+   * @param {object} extraData
+   * @return {string}
+   */
   createUserToken(userId: string, extraData = {}) {
-    /**
-     * @param {string} userId
-     * @param {object} extraData
-     * @return {string}
-     */
     this._throwMissingApiSecret();
 
     return signing.JWTUserSessionToken(this.apiSecret as string, userId, extraData, {
@@ -697,13 +696,13 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Updates all supplied activities on the getstream-io api
+   * @since  3.1.0
+   * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
+   * @return {Promise<APIResponse>}
+   */
   updateActivities(activities: UpdateActivity<ActivityType>[]) {
-    /**
-     * Updates all supplied activities on the getstream-io api
-     * @since  3.1.0
-     * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
-     * @return {Promise<APIResponse>}
-     */
     this._throwMissingApiSecret();
 
     if (!(activities instanceof Array)) {
@@ -722,18 +721,24 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Updates one activity on the getstream-io api
+   * @since  3.1.0
+   * @param  {UpdateActivity<ActivityType>} activity The activity to update
+   * @return {Promise<APIResponse>}
+   */
   updateActivity(activity: UpdateActivity<ActivityType>) {
-    /**
-     * Updates one activity on the getstream-io api
-     * @since  3.1.0
-     * @param  {UpdateActivity<ActivityType>} activity The activity to update
-     * @return {Promise<APIResponse>}
-     */
     this._throwMissingApiSecret();
 
     return this.updateActivities([activity]);
   }
 
+  /**
+   * Retrieve activities by ID or foreign ID and time
+   * @since  3.19.0
+   * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
+   * @return {Promise<GetActivitiesAPIResponse>}
+   */
   getActivities({
     ids,
     foreignIDTimes,
@@ -743,12 +748,6 @@ export default class StreamClient<
     ids?: string[];
     reactions?: Record<string, boolean>;
   }) {
-    /**
-     * Retrieve activities by ID or foreign ID and time
-     * @since  3.19.0
-     * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
-     * @return {Promise<GetActivitiesAPIResponse>}
-     */
     const extraParams: { foreign_ids?: string; ids?: string; timestamps?: string } = {};
 
     if (ids) {
@@ -838,102 +837,102 @@ export default class StreamClient<
     });
   }
 
+  /**
+   * Update a single activity with partial operations.
+   * @since 3.20.0
+   * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+   * @return {Promise<Activity<ActivityType>>}
+   * @example
+   * client.activityPartialUpdate({
+   *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+   *   set: {
+   *     "product.price": 19.99,
+   *     "shares": {
+   *       "facebook": "...",
+   *       "twitter": "...",
+   *     }
+   *   },
+   *   unset: [
+   *     "daily_likes",
+   *     "popularity"
+   *   ]
+   * })
+   * @example
+   * client.activityPartialUpdate({
+   *   foreignID: "product:123",
+   *   time: "2016-11-10T13:20:00.000000",
+   *   set: {
+   *     ...
+   *   },
+   *   unset: [
+   *     ...
+   *   ]
+   * })
+   */
   async activityPartialUpdate(
     data: ActivityPartialChanges<ActivityType>,
   ): Promise<APIResponse & Activity<ActivityType>> {
-    /**
-     * Update a single activity with partial operations.
-     * @since 3.20.0
-     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
-     * @return {Promise<Activity<ActivityType>>}
-     * @example
-     * client.activityPartialUpdate({
-     *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
-     *   set: {
-     *     "product.price": 19.99,
-     *     "shares": {
-     *       "facebook": "...",
-     *       "twitter": "...",
-     *     }
-     *   },
-     *   unset: [
-     *     "daily_likes",
-     *     "popularity"
-     *   ]
-     * })
-     * @example
-     * client.activityPartialUpdate({
-     *   foreignID: "product:123",
-     *   time: "2016-11-10T13:20:00.000000",
-     *   set: {
-     *     ...
-     *   },
-     *   unset: [
-     *     ...
-     *   ]
-     * })
-     */
     const response = await this.activitiesPartialUpdate([data]);
     const activity = response.activities[0];
     delete response.activities;
     return { ...activity, ...response };
   }
 
+  /**
+   * Update multiple activities with partial operations.
+   * @since v3.20.0
+   * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+   * @return {Promise<{ activities: Activity<ActivityType>[] }>}
+   * @example
+   * client.activitiesPartialUpdate([
+   *   {
+   *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
+   *     set: {
+   *       "product.price.eur": 12.99,
+   *       "colors": {
+   *         "blue": "#0000ff",
+   *         "green": "#00ff00",
+   *       },
+   *     },
+   *     unset: [ "popularity", "size.x2" ],
+   *   },
+   *   {
+   *     id: "8d2dcad8-1e34-11e9-8b10-9cb6d0925edd",
+   *     set: {
+   *       "product.price.eur": 17.99,
+   *       "colors": {
+   *         "red": "#ff0000",
+   *         "green": "#00ff00",
+   *       },
+   *     },
+   *     unset: [ "rating" ],
+   *   },
+   * ])
+   * @example
+   * client.activitiesPartialUpdate([
+   *   {
+   *     foreignID: "product:123",
+   *     time: "2016-11-10T13:20:00.000000",
+   *     set: {
+   *       ...
+   *     },
+   *     unset: [
+   *       ...
+   *     ]
+   *   },
+   *   {
+   *     foreignID: "product:321",
+   *     time: "2016-11-10T13:20:00.000000",
+   *     set: {
+   *       ...
+   *     },
+   *     unset: [
+   *       ...
+   *     ]
+   *   },
+   * ])
+   */
   activitiesPartialUpdate(changes: ActivityPartialChanges<ActivityType>[]) {
-    /**
-     * Update multiple activities with partial operations.
-     * @since v3.20.0
-     * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
-     * @return {Promise<{ activities: Activity<ActivityType>[] }>}
-     * @example
-     * client.activitiesPartialUpdate([
-     *   {
-     *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
-     *     set: {
-     *       "product.price.eur": 12.99,
-     *       "colors": {
-     *         "blue": "#0000ff",
-     *         "green": "#00ff00",
-     *       },
-     *     },
-     *     unset: [ "popularity", "size.x2" ],
-     *   },
-     *   {
-     *     id: "8d2dcad8-1e34-11e9-8b10-9cb6d0925edd",
-     *     set: {
-     *       "product.price.eur": 17.99,
-     *       "colors": {
-     *         "red": "#ff0000",
-     *         "green": "#00ff00",
-     *       },
-     *     },
-     *     unset: [ "rating" ],
-     *   },
-     * ])
-     * @example
-     * client.activitiesPartialUpdate([
-     *   {
-     *     foreignID: "product:123",
-     *     time: "2016-11-10T13:20:00.000000",
-     *     set: {
-     *       ...
-     *     },
-     *     unset: [
-     *       ...
-     *     ]
-     *   },
-     *   {
-     *     foreignID: "product:321",
-     *     time: "2016-11-10T13:20:00.000000",
-     *     set: {
-     *       ...
-     *     },
-     *     unset: [
-     *       ...
-     *     ]
-     *   },
-     * ])
-     */
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
