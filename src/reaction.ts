@@ -92,25 +92,6 @@ export class StreamReaction<
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  // DEPRECATED
-  all(options = {}) {
-    /**
-     * get all reactions
-     * @method all
-     * @memberof StreamReaction.prototype
-     * @param  {object}   options  {limit:}
-     * @return {Promise} Promise object
-     * @example reactions.all()
-     * @example reactions.all({limit:100})
-     */
-    console.warn('Deprecated function, please use reactions.filter()'); // eslint-disable-line
-    return this.client.get({
-      url: this.buildURL(),
-      signature: this.token,
-      qs: options,
-    });
-  }
-
   _convertTargetFeeds = (targetFeeds: TargetFeeds = []) => {
     return targetFeeds.map((elem: TargetFeed) => (typeof elem === 'string' ? elem : (elem as StreamFeed).id));
   };
