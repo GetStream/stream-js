@@ -210,6 +210,37 @@ describe('[UNIT] Stream Feed (Common)', function () {
     });
   });
 
+  describe('#followStats', function () {
+    it('(1) default', function () {
+      feed.followStats();
+
+      td.verify(
+        get({
+          url: 'stats/follow/',
+          qs: { followers: 'user:matthisk', following: 'user:matthisk' },
+          signature: 'usermatthisk token',
+        }),
+      );
+    });
+
+    it('(2) options', function () {
+      feed.followStats({ followingSlugs: ['user', 'timeline'], followerSlugs: ['channel'] });
+
+      td.verify(
+        get({
+          url: 'stats/follow/',
+          qs: {
+            followers: 'user:matthisk',
+            following: 'user:matthisk',
+            following_slugs: 'user,timeline',
+            followers_slugs: 'channel',
+          },
+          signature: 'usermatthisk token',
+        }),
+      );
+    });
+  });
+
   describe('#get', function () {
     it('(1) default', function () {
       feed.get({});
