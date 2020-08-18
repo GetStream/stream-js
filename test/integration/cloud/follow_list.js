@@ -86,10 +86,7 @@ describe('Follow stats', async () => {
 
   describe('When alice get the follow stats', async () => {
     ctx.requestShouldNotError(async () => {
-      // TODO: remove server token
-      ctx.response = await ctx.alice
-        .feed('timeline', ctx.alice.currentUser, ctx.serverSideClient.getOrCreateToken())
-        .followStats();
+      ctx.response = await ctx.alice.feed('timeline').followStats();
     });
 
     ctx.responseShould('should include the feed id', function () {
@@ -108,9 +105,8 @@ describe('Follow stats', async () => {
 
   describe('When alice get the follow stats for single feed slug', async () => {
     ctx.requestShouldNotError(async () => {
-      // TODO: remove server token
       ctx.response = await ctx.alice
-        .feed('timeline', ctx.alice.currentUser, ctx.serverSideClient.getOrCreateToken())
+        .feed('timeline')
         .followStats({ followerSlugs: ['timeline'], followingSlugs: ['timeline'] });
     });
 
@@ -130,9 +126,8 @@ describe('Follow stats', async () => {
 
   describe('When alice get the follow stats for multiple feed slugs', async () => {
     ctx.requestShouldNotError(async () => {
-      // TODO: remove server token
       ctx.response = await ctx.alice
-        .feed('timeline', ctx.alice.currentUser, ctx.serverSideClient.getOrCreateToken())
+        .feed('timeline')
         .followStats({ followerSlugs: ['timeline', 'user'], followingSlugs: ['timeline'] });
     });
 
@@ -144,9 +139,8 @@ describe('Follow stats', async () => {
 
   describe('When alice get the follow stats for feed slugs without follow', async () => {
     ctx.requestShouldNotError(async () => {
-      // TODO: remove server token
       ctx.response = await ctx.alice
-        .feed('timeline', ctx.alice.currentUser, ctx.serverSideClient.getOrCreateToken())
+        .feed('timeline')
         .followStats({ followerSlugs: ['news'], followingSlugs: ['news'] });
     });
 
