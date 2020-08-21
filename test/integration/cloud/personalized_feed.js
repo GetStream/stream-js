@@ -1,6 +1,6 @@
 import { CloudContext } from './utils';
 
-describe('Personalized Feed', () => {
+describe('PersonalizedFeed', () => {
   const ctx = new CloudContext();
   ctx.createUsers();
 

@@ -26,7 +26,7 @@
     "test-unit-node": "mocha --require ./babel-register.js test/unit/common test/unit/node",
     "test-integration-node": "mocha --require ./babel-register.js test/integration/common test/integration/node --exit",
     "test-cloud": "mocha --require ./babel-register.js test/integration/cloud --timeout 40000",
-    "test-cloud-local": "LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 -i --grep 'Personalized Feed|Files|Images'",
+    "test-cloud-local": "LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'",
     "test-browser": "karma start karma.config.js",
     "coverage": "nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe",
     "prepare": "yarn run build",
