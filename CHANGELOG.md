@@ -1,4 +1,26 @@
-# Changelog
+# CHANGELOG
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [6.0.0](https://github.com/GetStream/stream-js/releases/tag/6.0.0) - 2020-08-26
+
+### ⚠️ Breaking Changes
+
+- Default export `import stream from 'getstream'` or equally `const stream = require('getstream').default` is removed [#366](https://github.com/GetStream/stream-js/pull/366).
+
+- `connect` export is removed: `import { connect } from 'getstream'` or `const {connect} = require('getstream')` [#366](https://github.com/GetStream/stream-js/pull/366).
+- `Signing` export is removed: : `import { JWTUserSessionToken, JWTScopeToken } from 'getstream'` [#366](https://github.com/GetStream/stream-js/pull/366).
+- `errors` export is removed: `import { FeedError, SiteError, StreamApiError } from 'getstream'` [#366](https://github.com/GetStream/stream-js/pull/366).
+- `Client` export is removed and renamed to StreamClient: `import { StreamClient } from 'getstream'` [#366](https://github.com/GetStream/stream-js/pull/366).
+
+- `reaction.all()` is removed in favor of `reaction.filter()` [#365](https://github.com/GetStream/stream-js/pull/365).
+
+### 🔄 Changed
+
+- Entire library is re-written in typescript [#356](https://github.com/GetStream/stream-js/pull/356).
 
 ## 5.0.5 - 2020-08-02
 
