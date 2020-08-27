@@ -124,15 +124,26 @@ module.exports = __webpack_require__(71);
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+module.exports = _classCallCheck;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FeedError", function() { return FeedError; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SiteError", function() { return SiteError; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MissingSchemaError", function() { return MissingSchemaError; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StreamApiError", function() { return StreamApiError; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FeedError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return SiteError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return MissingSchemaError; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return StreamApiError; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__);
@@ -299,18 +310,6 @@ var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
 }(ErrorAbstract);
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-module.exports = _classCallCheck;
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
@@ -334,14 +333,59 @@ module.exports = _createClass;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+module.exports = _asyncToGenerator;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return JWTScopeToken; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return JWTUserSessionToken; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return isJWTSignature; });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(38);
 /* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(jsonwebtoken__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var Base64__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(65);
 /* harmony import */ var Base64__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(Base64__WEBPACK_IMPORTED_MODULE_3__);
@@ -400,24 +444,24 @@ function headerFromJWS(jwsSig) {
   var encodedHeader = jwsSig.split('.', 1)[0];
   return safeJsonParse(decodeBase64Url(encodedHeader));
 }
+/**
+ * Creates the JWT token for feedId, resource and action using the apiSecret
+ * @method JWTScopeToken
+ * @memberof signing
+ * @private
+ * @param {string} apiSecret - API Secret key
+ * @param {string} resource - JWT payload resource
+ * @param {string} action - JWT payload action
+ * @param {object} [options] - Optional additional options
+ * @param {string} [options.feedId] - JWT payload feed identifier
+ * @param {string} [options.userId] - JWT payload user identifier
+ * @param {boolean} [options.expireTokens] - JWT noTimestamp
+ * @return {string} JWT Token
+ */
+
 
 function JWTScopeToken(apiSecret, resource, action) {
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-  /**
-   * Creates the JWT token for feedId, resource and action using the apiSecret
-   * @method JWTScopeToken
-   * @memberof signing
-   * @private
-   * @param {string} apiSecret - API Secret key
-   * @param {string} resource - JWT payload resource
-   * @param {string} action - JWT payload action
-   * @param {object} [options] - Optional additional options
-   * @param {string} [options.feedId] - JWT payload feed identifier
-   * @param {string} [options.userId] - JWT payload user identifier
-   * @param {boolean} [options.expireTokens] - JWT noTimestamp
-   * @return {string} JWT Token
-   */
   var noTimestamp = options.expireTokens ? !options.expireTokens : true;
   var payload = {
     resource: resource,
@@ -425,27 +469,27 @@ function JWTScopeToken(apiSecret, resource, action) {
   };
   if (options.feedId) payload.feed_id = options.feedId;
   if (options.userId) payload.user_id = options.userId;
-  return jsonwebtoken__WEBPACK_IMPORTED_MODULE_2__["sign"](payload, apiSecret, {
+  return jsonwebtoken__WEBPACK_IMPORTED_MODULE_2___default.a.sign(payload, apiSecret, {
     algorithm: 'HS256',
     noTimestamp: noTimestamp
   });
 }
+/**
+ * Creates the JWT token that can be used for a UserSession
+ * @method JWTUserSessionToken
+ * @memberof signing
+ * @private
+ * @param {string} apiSecret - API Secret key
+ * @param {string} userId - The user_id key in the JWT payload
+ * @param {object} [extraData] - Extra that should be part of the JWT token
+ * @param {object} [jwtOptions] - Options that can be past to jwt.sign
+ * @return {string} JWT Token
+ */
 
 function JWTUserSessionToken(apiSecret, userId) {
   var extraData = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var jwtOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-  /**
-   * Creates the JWT token that can be used for a UserSession
-   * @method JWTUserSessionToken
-   * @memberof signing
-   * @private
-   * @param {string} apiSecret - API Secret key
-   * @param {string} userId - The user_id key in the JWT payload
-   * @param {object} [extraData] - Extra that should be part of the JWT token
-   * @param {object} [jwtOptions] - Options that can be past to jwt.sign
-   * @return {string} JWT Token
-   */
   if (typeof userId !== 'string') {
     throw new TypeError('userId should be a string');
   }
@@ -459,18 +503,18 @@ function JWTUserSessionToken(apiSecret, userId) {
     noTimestamp: true
   }, jwtOptions);
 
-  return jsonwebtoken__WEBPACK_IMPORTED_MODULE_2__["sign"](payload, apiSecret, opts);
+  return jsonwebtoken__WEBPACK_IMPORTED_MODULE_2___default.a.sign(payload, apiSecret, opts);
 }
+/**
+ * check if token is a valid JWT token
+ * @method isJWTSignature
+ * @memberof signing
+ * @private
+ * @param {string} signature - Signature to check
+ * @return {boolean}
+ */
 
 function isJWTSignature(signature) {
-  /**
-   * check if token is a valid JWT token
-   * @method isJWTSignature
-   * @memberof signing
-   * @private
-   * @param {string} signature - Signature to check
-   * @return {boolean}
-   */
   if (signature == null || signature.length === 0) {
     return false;
   }
@@ -478,56 +522,6 @@ function isJWTSignature(signature) {
   var token = signature.split(' ')[1] || signature;
   return JWS_REGEX.test(token) && !!headerFromJWS(token);
 }
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-  JWTScopeToken: JWTScopeToken,
-  headerFromJWS: headerFromJWS,
-  JWTUserSessionToken: JWTUserSessionToken,
-  isJWTSignature: isJWTSignature,
-  isJWT: isJWTSignature
-});
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-module.exports = _asyncToGenerator;
 
 /***/ }),
 /* 7 */
@@ -540,31 +534,32 @@ module.exports = _asyncToGenerator;
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(67);
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(form_data__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
 
 
 
 
 var validFeedSlugRe = /^[\w]+$/;
 var validUserIdRe = /^[\w-]+$/;
+/*
+ * Validate that the feedSlug matches \w
+ */
 
 function validateFeedSlug(feedSlug) {
-  /*
-   * Validate that the feedSlug matches \w
-   */
   if (!validFeedSlugRe.test(feedSlug)) {
-    throw new _errors__WEBPACK_IMPORTED_MODULE_3__["FeedError"]("Invalid feedSlug, please use letters, numbers or _: ".concat(feedSlug));
+    throw new _errors__WEBPACK_IMPORTED_MODULE_3__[/* FeedError */ "a"]("Invalid feedSlug, please use letters, numbers or _: ".concat(feedSlug));
   }
 
   return feedSlug;
 }
+/*
+ * Validate the userId matches \w
+ */
+
 
 function validateUserId(userId) {
-  /*
-   * Validate the userId matches \w
-   */
   if (!validUserIdRe.test(userId)) {
-    throw new _errors__WEBPACK_IMPORTED_MODULE_3__["FeedError"]("Invalid userId, please use letters, numbers, - or _: ".concat(userId));
+    throw new _errors__WEBPACK_IMPORTED_MODULE_3__[/* FeedError */ "a"]("Invalid userId, please use letters, numbers, - or _: ".concat(userId));
   }
 
   return userId;
@@ -579,15 +574,16 @@ function rfc3986(str) {
 function isReadableStream(obj) {
   return obj !== null && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default()(obj) === 'object' && typeof obj._read === 'function';
 }
+/*
+ * Validate that the feedId matches the spec user:1
+ */
+
 
 function validateFeedId(feedId) {
-  /*
-   * Validate that the feedId matches the spec user:1
-   */
   var parts = feedId.split(':');
 
   if (parts.length !== 2) {
-    throw new _errors__WEBPACK_IMPORTED_MODULE_3__["FeedError"]("Invalid feedId, expected something like user:1 got ".concat(feedId));
+    throw new _errors__WEBPACK_IMPORTED_MODULE_3__[/* FeedError */ "a"]("Invalid feedId, expected something like user:1 got ".concat(feedId));
   }
 
   var _parts = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(parts, 2),
@@ -1083,1051 +1079,12 @@ module.exports = g;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(process) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamClient; });
-/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
-/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(0);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(57);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(58);
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(59);
-/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var faye__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(60);
-/* harmony import */ var faye__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(faye__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(61);
-/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(26);
-/* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(27);
-/* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(28);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(29);
-/* harmony import */ var _reaction__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(30);
-/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(13);
-/* harmony import */ var _redirect_url__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(39);
-/* harmony import */ var _redirect_url__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_redirect_url__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _signing__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(5);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(2);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(7);
-/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(23);
-/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_batch_operations__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _feed__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(31);
-
-
-
-
-
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-/// <reference path="../types/modules.d.ts" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- // no import since typescript json loader shifts the final output structure
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-
-var pkg = __webpack_require__(115);
-
-/**
- * Client to connect to Stream api
- * @class StreamClient
- */
-var StreamClient = /*#__PURE__*/function () {
-  function StreamClient(apiKey, apiSecretOrToken, appId) {
-    var _this = this,
-        _process,
-        _process$env,
-        _process2,
-        _process2$env;
-
-    var _options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default()(this, StreamClient);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "baseUrl", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "baseAnalyticsUrl", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "apiKey", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "appId", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "usingApiSecret", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "apiSecret", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "userToken", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "enrichByDefault", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "options", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "userId", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "authPayload", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "version", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "fayeUrl", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "group", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "expireTokens", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "location", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "fayeClient", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "browser", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "node", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "nodeOptions", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "request", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "subscriptions", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "handlers", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "currentUser", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "personalization", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "collections", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "files", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "images", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "reactions", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_personalizationToken", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_collectionsToken", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_getOrCreateToken", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "addToMany", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "followMany", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "unfollowMany", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "createRedirectUrl", void 0);
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "replaceReactionOptions", function (options) {
-      // Shortcut options for reaction enrichment
-      if (options === null || options === void 0 ? void 0 : options.reactions) {
-        if (options.reactions.own != null) {
-          options.withOwnReactions = options.reactions.own;
-        }
-
-        if (options.reactions.recent != null) {
-          options.withRecentReactions = options.reactions.recent;
-        }
-
-        if (options.reactions.counts != null) {
-          options.withReactionCounts = options.reactions.counts;
-        }
-
-        if (options.reactions.own_children != null) {
-          options.withOwnChildren = options.reactions.own_children;
-        }
-
-        delete options.reactions;
-      }
-    });
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "handleResponse", function (response) {
-      if (/^2/.test("".concat(response.status))) {
-        _this.send('response', null, response, response.data);
-
-        return response.data;
-      }
-
-      throw new _errors__WEBPACK_IMPORTED_MODULE_19__["StreamApiError"]("".concat(JSON.stringify(response.data), " with HTTP status code ").concat(response.status), response.data, response);
-    });
-
-    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "doAxiosRequest", /*#__PURE__*/function () {
-      var _ref = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(method, options) {
-        var response;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _this.send('request', method, options);
-
-                _context.prev = 1;
-                _context.next = 4;
-                return _this.request(_this.enrichKwargs(_objectSpread({
-                  method: method
-                }, options)));
-
-              case 4:
-                response = _context.sent;
-                return _context.abrupt("return", _this.handleResponse(response));
-
-              case 8:
-                _context.prev = 8;
-                _context.t0 = _context["catch"](1);
-
-                if (!_context.t0.response) {
-                  _context.next = 12;
-                  break;
-                }
-
-                return _context.abrupt("return", _this.handleResponse(_context.t0.response));
-
-              case 12:
-                throw new _errors__WEBPACK_IMPORTED_MODULE_19__["SiteError"](_context.t0.message);
-
-              case 13:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, null, [[1, 8]]);
-      }));
-
-      return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-      };
-    }());
-
-    /**
-     * Initialize a client
-     * @method initialize
-     * @memberof StreamClient.prototype
-     * @param {string} apiKey - the api key
-     * @param {string} [apiSecret] - the api secret
-     * @param {string} [appId] - id of the app
-     * @param {ClientOptions} [options] - additional options
-     * @param {string} [options.location] - which data center to use
-     * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
-     * @param {string} [options.version] - advanced usage, custom api version
-     * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
-     * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
-     * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
-     * stream.connect(apiKey, apiSecret)
-     * @example <caption>secret is optional and only used in server side mode</caption>
-     * stream.connect(apiKey, null, appId);
-     */
-    this.baseUrl = 'https://api.stream-io-api.com/api/';
-    this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
-    this.apiKey = apiKey;
-    this.usingApiSecret = apiSecretOrToken != null && !_signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].isJWT(apiSecretOrToken);
-    this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
-    this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
-    this.enrichByDefault = !this.usingApiSecret;
-
-    if (this.userToken != null) {
-      var jwtBody = jwt_decode__WEBPACK_IMPORTED_MODULE_10___default()(this.userToken);
-
-      if (!jwtBody.user_id) {
-        throw new TypeError('user_id is missing in user token');
-      }
-
-      this.userId = jwtBody.user_id;
-      this.currentUser = this.user(this.userId);
-      this.authPayload = jwtBody;
-    }
-
-    this.appId = appId;
-    this.options = _options;
-    this.version = this.options.version || 'v1.0';
-    this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
-    this.fayeClient = null; // track a source name for the api calls, ie get started or databrowser
-
-    this.group = this.options.group || 'unspecified'; // track subscriptions made on feeds created by this client
-
-    this.subscriptions = {};
-    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false; // which data center to use
-
-    this.location = this.options.location;
-    this.baseUrl = this.getBaseUrl();
-    if ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if ((_process2 = process) === null || _process2 === void 0 ? void 0 : (_process2$env = _process2.env) === null || _process2$env === void 0 ? void 0 : _process2$env.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
-    this.handlers = {};
-    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
-    this.node = !this.browser;
-
-    if (this.node) {
-      var keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
-      this.nodeOptions = {
-        httpAgent: new http__WEBPACK_IMPORTED_MODULE_7___default.a.Agent({
-          keepAlive: keepAlive,
-          keepAliveMsecs: 3000
-        }),
-        httpsAgent: new https__WEBPACK_IMPORTED_MODULE_8___default.a.Agent({
-          keepAlive: keepAlive,
-          keepAliveMsecs: 3000
-        })
-      };
-    }
-
-    this.request = axios__WEBPACK_IMPORTED_MODULE_6___default.a.create(_objectSpread({
-      timeout: this.options.timeout || 10 * 1000,
-      // 10 seconds
-      withCredentials: false
-    }, this.nodeOptions || {}));
-    this.personalization = new _personalization__WEBPACK_IMPORTED_MODULE_11__[/* default */ "a"](this);
-
-    if (this.browser && this.usingApiSecret) {
-      throw new _errors__WEBPACK_IMPORTED_MODULE_19__["FeedError"]('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
-    }
-
-    this.collections = new _collections__WEBPACK_IMPORTED_MODULE_12__[/* default */ "b"](this, this.getOrCreateToken());
-    this.files = new _files__WEBPACK_IMPORTED_MODULE_13__[/* default */ "a"](this, this.getOrCreateToken());
-    this.images = new _images__WEBPACK_IMPORTED_MODULE_14__[/* default */ "a"](this, this.getOrCreateToken());
-    this.reactions = new _reaction__WEBPACK_IMPORTED_MODULE_15__[/* default */ "a"](this, this.getOrCreateToken()); // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
-
-    if (_batch_operations__WEBPACK_IMPORTED_MODULE_21___default.a && _redirect_url__WEBPACK_IMPORTED_MODULE_17___default.a) {
-      this.addToMany = _batch_operations__WEBPACK_IMPORTED_MODULE_21___default.a.addToMany;
-      this.followMany = _batch_operations__WEBPACK_IMPORTED_MODULE_21___default.a.followMany;
-      this.unfollowMany = _batch_operations__WEBPACK_IMPORTED_MODULE_21___default.a.unfollowMany;
-      this.createRedirectUrl = _redirect_url__WEBPACK_IMPORTED_MODULE_17___default.a;
-    }
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(StreamClient, [{
-    key: "_throwMissingApiSecret",
-    value: function _throwMissingApiSecret() {
-      if (!this.usingApiSecret) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_19__["SiteError"]('This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);');
-      }
-    }
-  }, {
-    key: "getPersonalizationToken",
-    value: function getPersonalizationToken() {
-      if (this._personalizationToken) return this._personalizationToken;
-
-      this._throwMissingApiSecret();
-
-      this._personalizationToken = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'personalization', '*', {
-        userId: '*',
-        feedId: '*',
-        expireTokens: this.expireTokens
-      });
-      return this._personalizationToken;
-    }
-  }, {
-    key: "getCollectionsToken",
-    value: function getCollectionsToken() {
-      if (this._collectionsToken) return this._collectionsToken;
-
-      this._throwMissingApiSecret();
-
-      this._collectionsToken = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'collections', '*', {
-        feedId: '*',
-        expireTokens: this.expireTokens
-      });
-      return this._collectionsToken;
-    }
-  }, {
-    key: "getAnalyticsToken",
-    value: function getAnalyticsToken() {
-      this._throwMissingApiSecret();
-
-      return _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'analytics', '*', {
-        userId: '*',
-        expireTokens: this.expireTokens
-      });
-    }
-  }, {
-    key: "getBaseUrl",
-    value: function getBaseUrl(serviceName) {
-      var _process3, _process3$env, _process4, _process4$env;
-
-      if (!serviceName) serviceName = 'api';
-      if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
-      var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if ((_process3 = process) === null || _process3 === void 0 ? void 0 : (_process3$env = _process3.env) === null || _process3$env === void 0 ? void 0 : _process3$env[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
-      if (((_process4 = process) === null || _process4 === void 0 ? void 0 : (_process4$env = _process4.env) === null || _process4$env === void 0 ? void 0 : _process4$env.LOCAL) || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
-
-      if (this.location) {
-        var protocol = this.options.protocol || 'https';
-        return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
-      }
-
-      if (serviceName !== 'api') return "https://".concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
-      return this.baseUrl;
-    }
-  }, {
-    key: "on",
-    value: function on(event, callback) {
-      /**
-       * Support for global event callbacks
-       * This is useful for generic error and loading handling
-       * @method on
-       * @memberof StreamClient.prototype
-       * @param {string} event - Name of the event
-       * @param {function} callback - Function that is called when the event fires
-       * @example
-       * client.on('request', callback);
-       * client.on('response', callback);
-       */
-      this.handlers[event] = callback;
-    }
-  }, {
-    key: "off",
-    value: function off(key) {
-      /**
-       * Remove one or more event handlers
-       * @method off
-       * @memberof StreamClient.prototype
-       * @param {string} [key] - Name of the handler
-       * @example
-       * client.off() removes all handlers
-       * client.off(name) removes the specified handler
-       */
-      if (key === undefined) {
-        this.handlers = {};
-      } else {
-        delete this.handlers[key];
-      }
-    }
-  }, {
-    key: "send",
-    value: function send(key) {
-      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      /**
-       * Call the given handler with the arguments
-       * @method send
-       * @memberof StreamClient.prototype
-       * @access private
-       */
-      if (this.handlers[key]) this.handlers[key].apply(this, args);
-    }
-  }, {
-    key: "userAgent",
-    value: function userAgent() {
-      /**
-       * Get the current user agent
-       * @method userAgent
-       * @memberof StreamClient.prototype
-       * @return {string} current user agent
-       */
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat(pkg.version);
-    }
-  }, {
-    key: "getReadOnlyToken",
-    value: function getReadOnlyToken(feedSlug, userId) {
-      /**
-       * Returns a token that allows only read operations
-       *
-       * @method getReadOnlyToken
-       * @memberof StreamClient.prototype
-       * @param {string} feedSlug - The feed slug to get a read only token for
-       * @param {string} userId - The user identifier
-       * @return {string} token
-       * @example client.getReadOnlyToken('user', '1');
-       */
-      _utils__WEBPACK_IMPORTED_MODULE_20__[/* default */ "a"].validateFeedSlug(feedSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_20__[/* default */ "a"].validateUserId(userId);
-      return _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, '*', 'read', {
-        feedId: "".concat(feedSlug).concat(userId),
-        expireTokens: this.expireTokens
-      });
-    }
-  }, {
-    key: "getReadWriteToken",
-    value: function getReadWriteToken(feedSlug, userId) {
-      /**
-       * Returns a token that allows read and write operations
-       *
-       * @method getReadWriteToken
-       * @memberof StreamClient.prototype
-       * @param {string} feedSlug - The feed slug to get a read only token for
-       * @param {string} userId - The user identifier
-       * @return {string} token
-       * @example client.getReadWriteToken('user', '1');
-       */
-      _utils__WEBPACK_IMPORTED_MODULE_20__[/* default */ "a"].validateFeedSlug(feedSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_20__[/* default */ "a"].validateUserId(userId);
-      return _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, '*', '*', {
-        feedId: "".concat(feedSlug).concat(userId),
-        expireTokens: this.expireTokens
-      });
-    }
-  }, {
-    key: "feed",
-    value: function feed(feedSlug, userId, token) {
-      /**
-       * Returns a feed object for the given feed id and token
-       * @method feed
-       * @memberof StreamClient.prototype
-       * @param {string} feedSlug - The feed slug
-       * @param {string} [userId] - The user identifier
-       * @param {string} [token] - The token
-       * @return {StreamFeed}
-       * @example  client.feed('user', '1');
-       */
-      if (userId instanceof _user__WEBPACK_IMPORTED_MODULE_16__[/* default */ "a"]) userId = userId.id;
-
-      if (token === undefined) {
-        if (this.usingApiSecret) {
-          token = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, '*', '*', {
-            feedId: "".concat(feedSlug).concat(userId)
-          });
-        } else {
-          token = this.userToken;
-        }
-      }
-
-      return new _feed__WEBPACK_IMPORTED_MODULE_22__[/* default */ "a"](this, feedSlug, userId || this.userId, token);
-    }
-  }, {
-    key: "enrichUrl",
-    value: function enrichUrl(relativeUrl, serviceName) {
-      /**
-       * Combines the base url with version and the relative url
-       * @method enrichUrl
-       * @memberof StreamClient.prototype
-       * @private
-       * @param {string} relativeUrl
-       * @param {string} [serviceName]
-       * @return {string}
-       */
-      return "".concat(this.getBaseUrl(serviceName)).concat(this.version, "/").concat(relativeUrl);
-    }
-  }, {
-    key: "shouldUseEnrichEndpoint",
-    value: function shouldUseEnrichEndpoint() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      if (options.enrich) {
-        var result = options.enrich;
-        delete options.enrich;
-        return result;
-      }
-
-      return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
-    }
-  }, {
-    key: "enrichKwargs",
-    value: function enrichKwargs(_ref2) {
-      var method = _ref2.method,
-          signature = _ref2.signature,
-          kwargs = _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_ref2, ["method", "signature"]);
-
-      /**
-       * Adds the API key and the signature
-       * @method enrichKwargs
-       * @private
-       * @memberof StreamClient.prototype
-       * @param {AxiosConfig} kwargs
-       * @return {axios.AxiosRequestConfig}
-       */
-      var isJWT = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].isJWTSignature(signature);
-      return _objectSpread({
-        method: method,
-        url: this.enrichUrl(kwargs.url, kwargs.serviceName),
-        data: kwargs.body,
-        params: _objectSpread({
-          api_key: this.apiKey,
-          location: this.group
-        }, kwargs.qs || {}),
-        headers: _objectSpread({
-          'X-Stream-Client': this.userAgent(),
-          'stream-auth-type': isJWT ? 'jwt' : 'simple',
-          Authorization: isJWT ? signature.split(' ').reverse()[0] : signature
-        }, kwargs.headers || {})
-      }, kwargs.axiosOptions || {});
-    }
-  }, {
-    key: "getFayeAuthorization",
-    value: function getFayeAuthorization() {
-      var _this2 = this;
-
-      /**
-       * Get the authorization middleware to use Faye with getstream.io
-       * @method getFayeAuthorization
-       * @memberof StreamClient.prototype
-       * @private
-       * @return {Faye.Middleware} Faye authorization middleware
-       */
-      return {
-        incoming: function incoming(message, callback) {
-          return callback(message);
-        },
-        outgoing: function outgoing(message, callback) {
-          if (message.subscription && _this2.subscriptions[message.subscription]) {
-            var subscription = _this2.subscriptions[message.subscription];
-            message.ext = {
-              user_id: subscription.userId,
-              api_key: _this2.apiKey,
-              signature: subscription.token
-            };
-          }
-
-          callback(message);
-        }
-      };
-    }
-  }, {
-    key: "getFayeClient",
-    value: function getFayeClient() {
-      var timeout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
-
-      /**
-       * Returns this client's current Faye client
-       * @method getFayeClient
-       * @memberof StreamClient.prototype
-       * @private
-       * @param {number} timeout
-       * @return {Faye.Client} Faye client
-       */
-      if (this.fayeClient === null) {
-        this.fayeClient = new faye__WEBPACK_IMPORTED_MODULE_9__["Client"](this.fayeUrl, {
-          timeout: timeout
-        });
-        var authExtension = this.getFayeAuthorization();
-        this.fayeClient.addExtension(authExtension);
-      }
-
-      return this.fayeClient;
-    }
-  }, {
-    key: "upload",
-    value: function upload(url, uri, name, contentType, onUploadProgress) {
-      var fd = _utils__WEBPACK_IMPORTED_MODULE_20__[/* default */ "a"].addFileToFormData(uri, name, contentType);
-      return this.doAxiosRequest('POST', {
-        url: url,
-        body: fd,
-        headers: fd.getHeaders ? fd.getHeaders() : {},
-        // node vs browser
-        signature: this.getOrCreateToken(),
-        axiosOptions: {
-          timeout: 0,
-          maxContentLength: Infinity,
-          onUploadProgress: onUploadProgress
-        }
-      });
-    }
-  }, {
-    key: "get",
-    value: function get(kwargs) {
-      /**
-       * Shorthand function for get request
-       * @method get
-       * @memberof StreamClient.prototype
-       * @private
-       * @param  {AxiosConfig}    kwargs
-       * @return {Promise}   Promise object
-       */
-      return this.doAxiosRequest('GET', kwargs);
-    }
-  }, {
-    key: "post",
-    value: function post(kwargs) {
-      /**
-       * Shorthand function for post request
-       * @method post
-       * @memberof StreamClient.prototype
-       * @private
-       * @param  {AxiosConfig}    kwargs
-       * @return {Promise}   Promise object
-       */
-      return this.doAxiosRequest('POST', kwargs);
-    }
-  }, {
-    key: "delete",
-    value: function _delete(kwargs) {
-      /**
-       * Shorthand function for delete request
-       * @method delete
-       * @memberof StreamClient.prototype
-       * @private
-       * @param  {AxiosConfig}    kwargs
-       * @return {Promise}   Promise object
-       */
-      return this.doAxiosRequest('DELETE', kwargs);
-    }
-  }, {
-    key: "put",
-    value: function put(kwargs) {
-      /**
-       * Shorthand function for put request
-       * @method put
-       * @memberof StreamClient.prototype
-       * @private
-       * @param  {AxiosConfig}    kwargs
-       * @return {Promise}   Promise object
-       */
-      return this.doAxiosRequest('PUT', kwargs);
-    }
-  }, {
-    key: "createUserToken",
-    value: function createUserToken(userId) {
-      var extraData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      /**
-       * @param {string} userId
-       * @param {object} extraData
-       * @return {string}
-       */
-      this._throwMissingApiSecret();
-
-      return _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTUserSessionToken(this.apiSecret, userId, extraData, {
-        noTimestamp: !this.expireTokens
-      });
-    }
-  }, {
-    key: "updateActivities",
-    value: function updateActivities(activities) {
-      /**
-       * Updates all supplied activities on the getstream-io api
-       * @since  3.1.0
-       * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
-       * @return {Promise<APIResponse>}
-       */
-      this._throwMissingApiSecret();
-
-      if (!(activities instanceof Array)) {
-        throw new TypeError('The activities argument should be an Array');
-      }
-
-      var authToken = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'activities', '*', {
-        feedId: '*',
-        expireTokens: this.expireTokens
-      });
-      return this.post({
-        url: 'activities/',
-        body: {
-          activities: activities
-        },
-        signature: authToken
-      });
-    }
-  }, {
-    key: "updateActivity",
-    value: function updateActivity(activity) {
-      /**
-       * Updates one activity on the getstream-io api
-       * @since  3.1.0
-       * @param  {UpdateActivity<ActivityType>} activity The activity to update
-       * @return {Promise<APIResponse>}
-       */
-      this._throwMissingApiSecret();
-
-      return this.updateActivities([activity]);
-    }
-  }, {
-    key: "getActivities",
-    value: function getActivities(_ref3) {
-      var ids = _ref3.ids,
-          foreignIDTimes = _ref3.foreignIDTimes,
-          params = _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_ref3, ["ids", "foreignIDTimes"]);
-
-      /**
-       * Retrieve activities by ID or foreign ID and time
-       * @since  3.19.0
-       * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
-       * @return {Promise<GetActivitiesAPIResponse>}
-       */
-      var extraParams = {};
-
-      if (ids) {
-        if (!(ids instanceof Array)) {
-          throw new TypeError('The ids argument should be an Array');
-        }
-
-        extraParams.ids = ids.join(',');
-      } else if (foreignIDTimes) {
-        if (!(foreignIDTimes instanceof Array)) {
-          throw new TypeError('The foreignIDTimes argument should be an Array');
-        }
-
-        var foreignIDs = [];
-        var timestamps = [];
-        foreignIDTimes.forEach(function (fidTime) {
-          if (!(fidTime instanceof Object)) {
-            throw new TypeError('foreignIDTimes elements should be Objects');
-          }
-
-          foreignIDs.push(fidTime.foreignID);
-          timestamps.push(fidTime.time);
-        });
-        extraParams.foreign_ids = foreignIDs.join(',');
-        extraParams.timestamps = timestamps.join(',');
-      } else {
-        throw new TypeError('Missing ids or foreignIDTimes params');
-      }
-
-      var token = this.userToken;
-
-      if (this.usingApiSecret) {
-        token = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'activities', '*', {
-          feedId: '*',
-          expireTokens: this.expireTokens
-        });
-      }
-
-      this.replaceReactionOptions(params);
-      var path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
-      return this.get({
-        url: path,
-        qs: _objectSpread(_objectSpread({}, params), extraParams),
-        signature: token
-      });
-    }
-  }, {
-    key: "getOrCreateToken",
-    value: function getOrCreateToken() {
-      if (!this._getOrCreateToken) {
-        this._getOrCreateToken = this.usingApiSecret ? _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, '*', '*', {
-          feedId: '*'
-        }) : this.userToken;
-      }
-
-      return this._getOrCreateToken;
-    }
-  }, {
-    key: "user",
-    value: function user(userId) {
-      return new _user__WEBPACK_IMPORTED_MODULE_16__[/* default */ "a"](this, userId, this.getOrCreateToken());
-    }
-  }, {
-    key: "setUser",
-    value: function () {
-      var _setUser = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee2(data) {
-        var body, user;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (!this.usingApiSecret) {
-                  _context2.next = 2;
-                  break;
-                }
-
-                throw new _errors__WEBPACK_IMPORTED_MODULE_19__["SiteError"]('This method can only be used client-side using a user token');
-
-              case 2:
-                body = _objectSpread({}, data);
-                delete body.id;
-                _context2.next = 6;
-                return this.currentUser.getOrCreate(body);
-
-              case 6:
-                user = _context2.sent;
-                this.currentUser = user;
-                return _context2.abrupt("return", user);
-
-              case 9:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function setUser(_x3) {
-        return _setUser.apply(this, arguments);
-      }
-
-      return setUser;
-    }()
-  }, {
-    key: "og",
-    value: function og(url) {
-      return this.get({
-        url: 'og/',
-        qs: {
-          url: url
-        },
-        signature: this.getOrCreateToken()
-      });
-    }
-  }, {
-    key: "personalizedFeed",
-    value: function personalizedFeed() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return this.get({
-        url: 'enrich/personalization/feed/',
-        qs: options,
-        signature: this.getOrCreateToken()
-      });
-    }
-  }, {
-    key: "activityPartialUpdate",
-    value: function () {
-      var _activityPartialUpdate = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3(data) {
-        var response, activity;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.next = 2;
-                return this.activitiesPartialUpdate([data]);
-
-              case 2:
-                response = _context3.sent;
-                activity = response.activities[0];
-                delete response.activities;
-                return _context3.abrupt("return", _objectSpread(_objectSpread({}, activity), response));
-
-              case 6:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function activityPartialUpdate(_x4) {
-        return _activityPartialUpdate.apply(this, arguments);
-      }
-
-      return activityPartialUpdate;
-    }()
-  }, {
-    key: "activitiesPartialUpdate",
-    value: function activitiesPartialUpdate(changes) {
-      /**
-       * Update multiple activities with partial operations.
-       * @since v3.20.0
-       * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
-       * @return {Promise<{ activities: Activity<ActivityType>[] }>}
-       * @example
-       * client.activitiesPartialUpdate([
-       *   {
-       *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
-       *     set: {
-       *       "product.price.eur": 12.99,
-       *       "colors": {
-       *         "blue": "#0000ff",
-       *         "green": "#00ff00",
-       *       },
-       *     },
-       *     unset: [ "popularity", "size.x2" ],
-       *   },
-       *   {
-       *     id: "8d2dcad8-1e34-11e9-8b10-9cb6d0925edd",
-       *     set: {
-       *       "product.price.eur": 17.99,
-       *       "colors": {
-       *         "red": "#ff0000",
-       *         "green": "#00ff00",
-       *       },
-       *     },
-       *     unset: [ "rating" ],
-       *   },
-       * ])
-       * @example
-       * client.activitiesPartialUpdate([
-       *   {
-       *     foreignID: "product:123",
-       *     time: "2016-11-10T13:20:00.000000",
-       *     set: {
-       *       ...
-       *     },
-       *     unset: [
-       *       ...
-       *     ]
-       *   },
-       *   {
-       *     foreignID: "product:321",
-       *     time: "2016-11-10T13:20:00.000000",
-       *     set: {
-       *       ...
-       *     },
-       *     unset: [
-       *       ...
-       *     ]
-       *   },
-       * ])
-       */
-      if (!(changes instanceof Array)) {
-        throw new TypeError('changes should be an Array');
-      }
-
-      changes.forEach(function (item) {
-        if (!(item instanceof Object)) {
-          throw new TypeError("changeset should be and Object");
-        }
-
-        if (item.foreignID) {
-          item.foreign_id = item.foreignID;
-        }
-
-        if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
-          throw new TypeError('missing id or foreign ID and time');
-        }
-
-        if (item.set && !(item.set instanceof Object)) {
-          throw new TypeError('set field should be an Object');
-        }
-
-        if (item.unset && !(item.unset instanceof Array)) {
-          throw new TypeError('unset field should be an Array');
-        }
-      });
-      var authToken = this.userToken;
-
-      if (this.usingApiSecret) {
-        authToken = _signing__WEBPACK_IMPORTED_MODULE_18__[/* default */ "a"].JWTScopeToken(this.apiSecret, 'activities', '*', {
-          feedId: '*',
-          expireTokens: this.expireTokens
-        });
-      }
-
-      return this.post({
-        url: 'activity/',
-        body: {
-          changes: changes
-        },
-        signature: authToken
-      });
-    }
-  }]);
-
-  return StreamClient;
-}();
-
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)))
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamUser; });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__);
@@ -2144,6 +1101,15 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var StreamUser = /*#__PURE__*/function () {
+  /**
+   * Initialize a user session object
+   * @method constructor
+   * @memberof StreamUser.prototype
+   * @param {StreamClient} client Stream client this collection is constructed from
+   * @param {string} userId The ID of the user
+   * @param {string} userAuthToken JWT token
+   * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
+   */
   function StreamUser(client, userId, userAuthToken) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, StreamUser);
 
@@ -2159,15 +1125,6 @@ var StreamUser = /*#__PURE__*/function () {
 
     _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default()(this, "url", void 0);
 
-    /**
-     * Initialize a user session object
-     * @method constructor
-     * @memberof StreamUser.prototype
-     * @param {StreamClient} client Stream client this collection is constructed from
-     * @param {string} userId The ID of the user
-     * @param {string} userAuthToken JWT token
-     * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
-     */
     this.client = client;
     this.id = userId;
     this.data = undefined;
@@ -2325,6 +1282,10 @@ var StreamUser = /*#__PURE__*/function () {
   return StreamUser;
 }();
 
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
 
 
 /***/ }),
@@ -2433,7 +1394,7 @@ module.exports = {
 
 var Class    = __webpack_require__(10),
     Cookie   = __webpack_require__(53).Cookie,
-    Promise  = __webpack_require__(25),
+    Promise  = __webpack_require__(24),
     array    = __webpack_require__(33),
     assign   = __webpack_require__(8),
     Logging  = __webpack_require__(18),
@@ -2647,7 +1608,7 @@ assign(Transport.prototype, Timeouts);
 
 module.exports = Transport;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
 
 /***/ }),
 /* 16 */
@@ -2763,7 +1724,7 @@ module.exports = function(object) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var Promise   = __webpack_require__(25);
+var Promise   = __webpack_require__(24);
 
 module.exports = {
   then: function(callback, errback) {
@@ -2863,12 +1824,6 @@ module.exports = _objectWithoutProperties;
 
 /***/ }),
 /* 23 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-/* 24 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -3058,7 +2013,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3237,12 +2192,1110 @@ module.exports = Promise;
 
 
 /***/ }),
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamClient; });
+/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
+/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(0);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(57);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var faye__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(58);
+/* harmony import */ var faye__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(faye__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(59);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(60);
+/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(61);
+/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(26);
+/* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(27);
+/* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(28);
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(29);
+/* harmony import */ var _reaction__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(30);
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(12);
+/* harmony import */ var _signing__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(6);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(3);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(7);
+/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(13);
+/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(_batch_operations__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var _redirect_url__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(39);
+/* harmony import */ var _redirect_url__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_redirect_url__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var _feed__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(31);
+
+
+
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+/// <reference path="../types/modules.d.ts" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // TODO: no import since typescript json loader shifts the final output structure
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+
+var pkg = __webpack_require__(115);
+
+/**
+ * Client to connect to Stream api
+ * @class StreamClient
+ */
+var StreamClient = /*#__PURE__*/function () {
+  /**
+   * Initialize a client
+   * @method initialize
+   * @memberof StreamClient.prototype
+   * @param {string} apiKey - the api key
+   * @param {string} [apiSecret] - the api secret
+   * @param {string} [appId] - id of the app
+   * @param {ClientOptions} [options] - additional options
+   * @param {string} [options.location] - which data center to use
+   * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
+   * @param {string} [options.version] - advanced usage, custom api version
+   * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
+   * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
+   * @example <caption>initialize is not directly called by via stream.connect, ie:</caption>
+   * stream.connect(apiKey, apiSecret)
+   * @example <caption>secret is optional and only used in server side mode</caption>
+   * stream.connect(apiKey, null, appId);
+   */
+  function StreamClient(apiKey, apiSecretOrToken, appId) {
+    var _this = this,
+        _process,
+        _process$env,
+        _process2,
+        _process2$env;
+
+    var _options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_3___default()(this, StreamClient);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "baseUrl", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "baseAnalyticsUrl", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "apiKey", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "appId", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "usingApiSecret", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "apiSecret", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "userToken", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "enrichByDefault", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "options", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "userId", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "authPayload", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "version", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "fayeUrl", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "group", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "expireTokens", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "location", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "fayeClient", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "browser", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "node", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "nodeOptions", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "request", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "subscriptions", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "handlers", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "currentUser", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "personalization", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "collections", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "files", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "images", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "reactions", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_personalizationToken", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_collectionsToken", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "_getOrCreateToken", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "addToMany", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "followMany", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "unfollowMany", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "createRedirectUrl", void 0);
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "replaceReactionOptions", function (options) {
+      // Shortcut options for reaction enrichment
+      if (options === null || options === void 0 ? void 0 : options.reactions) {
+        if (options.reactions.own != null) {
+          options.withOwnReactions = options.reactions.own;
+        }
+
+        if (options.reactions.recent != null) {
+          options.withRecentReactions = options.reactions.recent;
+        }
+
+        if (options.reactions.counts != null) {
+          options.withReactionCounts = options.reactions.counts;
+        }
+
+        if (options.reactions.own_children != null) {
+          options.withOwnChildren = options.reactions.own_children;
+        }
+
+        delete options.reactions;
+      }
+    });
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "handleResponse", function (response) {
+      if (/^2/.test("".concat(response.status))) {
+        _this.send('response', null, response, response.data);
+
+        return response.data;
+      }
+
+      throw new _errors__WEBPACK_IMPORTED_MODULE_18__[/* StreamApiError */ "d"]("".concat(JSON.stringify(response.data), " with HTTP status code ").concat(response.status), response.data, response);
+    });
+
+    _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_5___default()(this, "doAxiosRequest", /*#__PURE__*/function () {
+      var _ref = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee(method, options) {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this.send('request', method, options);
+
+                _context.prev = 1;
+                _context.next = 4;
+                return _this.request(_this.enrichKwargs(_objectSpread({
+                  method: method
+                }, options)));
+
+              case 4:
+                response = _context.sent;
+                return _context.abrupt("return", _this.handleResponse(response));
+
+              case 8:
+                _context.prev = 8;
+                _context.t0 = _context["catch"](1);
+
+                if (!_context.t0.response) {
+                  _context.next = 12;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.handleResponse(_context.t0.response));
+
+              case 12:
+                throw new _errors__WEBPACK_IMPORTED_MODULE_18__[/* SiteError */ "c"](_context.t0.message);
+
+              case 13:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, null, [[1, 8]]);
+      }));
+
+      return function (_x, _x2) {
+        return _ref.apply(this, arguments);
+      };
+    }());
+
+    this.baseUrl = 'https://api.stream-io-api.com/api/';
+    this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
+    this.apiKey = apiKey;
+    this.usingApiSecret = apiSecretOrToken != null && !Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* isJWTSignature */ "c"])(apiSecretOrToken);
+    this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
+    this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
+    this.enrichByDefault = !this.usingApiSecret;
+
+    if (this.userToken != null) {
+      var jwtBody = jwt_decode__WEBPACK_IMPORTED_MODULE_10___default()(this.userToken);
+
+      if (!jwtBody.user_id) {
+        throw new TypeError('user_id is missing in user token');
+      }
+
+      this.userId = jwtBody.user_id;
+      this.currentUser = this.user(this.userId);
+      this.authPayload = jwtBody;
+    }
+
+    this.appId = appId;
+    this.options = _options;
+    this.version = this.options.version || 'v1.0';
+    this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
+    this.fayeClient = null; // track a source name for the api calls, ie get started or databrowser
+
+    this.group = this.options.group || 'unspecified'; // track subscriptions made on feeds created by this client
+
+    this.subscriptions = {};
+    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false; // which data center to use
+
+    this.location = this.options.location;
+    this.baseUrl = this.getBaseUrl();
+    if ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
+    if ((_process2 = process) === null || _process2 === void 0 ? void 0 : (_process2$env = _process2.env) === null || _process2$env === void 0 ? void 0 : _process2$env.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+    this.handlers = {};
+    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
+    this.node = !this.browser;
+
+    if (this.node) {
+      var keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
+      this.nodeOptions = {
+        httpAgent: new http__WEBPACK_IMPORTED_MODULE_8___default.a.Agent({
+          keepAlive: keepAlive,
+          keepAliveMsecs: 3000
+        }),
+        httpsAgent: new https__WEBPACK_IMPORTED_MODULE_9___default.a.Agent({
+          keepAlive: keepAlive,
+          keepAliveMsecs: 3000
+        })
+      };
+    }
+
+    this.request = axios__WEBPACK_IMPORTED_MODULE_6___default.a.create(_objectSpread({
+      timeout: this.options.timeout || 10 * 1000,
+      // 10 seconds
+      withCredentials: false
+    }, this.nodeOptions || {}));
+    this.personalization = new _personalization__WEBPACK_IMPORTED_MODULE_11__[/* Personalization */ "a"](this);
+
+    if (this.browser && this.usingApiSecret) {
+      throw new _errors__WEBPACK_IMPORTED_MODULE_18__[/* FeedError */ "a"]('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
+    }
+
+    this.collections = new _collections__WEBPACK_IMPORTED_MODULE_12__[/* Collections */ "b"](this, this.getOrCreateToken());
+    this.files = new _files__WEBPACK_IMPORTED_MODULE_13__[/* StreamFileStore */ "a"](this, this.getOrCreateToken());
+    this.images = new _images__WEBPACK_IMPORTED_MODULE_14__[/* StreamImageStore */ "a"](this, this.getOrCreateToken());
+    this.reactions = new _reaction__WEBPACK_IMPORTED_MODULE_15__[/* StreamReaction */ "a"](this, this.getOrCreateToken()); // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
+
+    if (_batch_operations__WEBPACK_IMPORTED_MODULE_20___default.a && _redirect_url__WEBPACK_IMPORTED_MODULE_21___default.a) {
+      this.addToMany = _batch_operations__WEBPACK_IMPORTED_MODULE_20___default.a.addToMany;
+      this.followMany = _batch_operations__WEBPACK_IMPORTED_MODULE_20___default.a.followMany;
+      this.unfollowMany = _batch_operations__WEBPACK_IMPORTED_MODULE_20___default.a.unfollowMany;
+      this.createRedirectUrl = _redirect_url__WEBPACK_IMPORTED_MODULE_21___default.a;
+    }
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4___default()(StreamClient, [{
+    key: "_throwMissingApiSecret",
+    value: function _throwMissingApiSecret() {
+      if (!this.usingApiSecret) {
+        throw new _errors__WEBPACK_IMPORTED_MODULE_18__[/* SiteError */ "c"]('This method can only be used server-side using your API Secret, use client = stream.connect(key, secret);');
+      }
+    }
+  }, {
+    key: "getPersonalizationToken",
+    value: function getPersonalizationToken() {
+      if (this._personalizationToken) return this._personalizationToken;
+
+      this._throwMissingApiSecret();
+
+      this._personalizationToken = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'personalization', '*', {
+        userId: '*',
+        feedId: '*',
+        expireTokens: this.expireTokens
+      });
+      return this._personalizationToken;
+    }
+  }, {
+    key: "getCollectionsToken",
+    value: function getCollectionsToken() {
+      if (this._collectionsToken) return this._collectionsToken;
+
+      this._throwMissingApiSecret();
+
+      this._collectionsToken = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'collections', '*', {
+        feedId: '*',
+        expireTokens: this.expireTokens
+      });
+      return this._collectionsToken;
+    }
+  }, {
+    key: "getAnalyticsToken",
+    value: function getAnalyticsToken() {
+      this._throwMissingApiSecret();
+
+      return Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'analytics', '*', {
+        userId: '*',
+        expireTokens: this.expireTokens
+      });
+    }
+  }, {
+    key: "getBaseUrl",
+    value: function getBaseUrl(serviceName) {
+      var _process3, _process3$env, _process4, _process4$env;
+
+      if (!serviceName) serviceName = 'api';
+      if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
+      var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
+      if ((_process3 = process) === null || _process3 === void 0 ? void 0 : (_process3$env = _process3.env) === null || _process3$env === void 0 ? void 0 : _process3$env[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
+      if (((_process4 = process) === null || _process4 === void 0 ? void 0 : (_process4$env = _process4.env) === null || _process4$env === void 0 ? void 0 : _process4$env.LOCAL) || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+
+      if (this.location) {
+        var protocol = this.options.protocol || 'https';
+        return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
+      }
+
+      if (serviceName !== 'api') return "https://".concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
+      return this.baseUrl;
+    }
+    /**
+     * Support for global event callbacks
+     * This is useful for generic error and loading handling
+     * @method on
+     * @memberof StreamClient.prototype
+     * @param {string} event - Name of the event
+     * @param {function} callback - Function that is called when the event fires
+     * @example
+     * client.on('request', callback);
+     * client.on('response', callback);
+     */
+
+  }, {
+    key: "on",
+    value: function on(event, callback) {
+      this.handlers[event] = callback;
+    }
+    /**
+     * Remove one or more event handlers
+     * @method off
+     * @memberof StreamClient.prototype
+     * @param {string} [key] - Name of the handler
+     * @example
+     * client.off() removes all handlers
+     * client.off(name) removes the specified handler
+     */
+
+  }, {
+    key: "off",
+    value: function off(key) {
+      if (key === undefined) {
+        this.handlers = {};
+      } else {
+        delete this.handlers[key];
+      }
+    }
+    /**
+     * Call the given handler with the arguments
+     * @method send
+     * @memberof StreamClient.prototype
+     * @access private
+     */
+
+  }, {
+    key: "send",
+    value: function send(key) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      if (this.handlers[key]) this.handlers[key].apply(this, args);
+    }
+    /**
+     * Get the current user agent
+     * @method userAgent
+     * @memberof StreamClient.prototype
+     * @return {string} current user agent
+     */
+
+  }, {
+    key: "userAgent",
+    value: function userAgent() {
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat(pkg.version);
+    }
+    /**
+     * Returns a token that allows only read operations
+     *
+     * @method getReadOnlyToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example client.getReadOnlyToken('user', '1');
+     */
+
+  }, {
+    key: "getReadOnlyToken",
+    value: function getReadOnlyToken(feedSlug, userId) {
+      _utils__WEBPACK_IMPORTED_MODULE_19__[/* default */ "a"].validateFeedSlug(feedSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_19__[/* default */ "a"].validateUserId(userId);
+      return Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, '*', 'read', {
+        feedId: "".concat(feedSlug).concat(userId),
+        expireTokens: this.expireTokens
+      });
+    }
+    /**
+     * Returns a token that allows read and write operations
+     *
+     * @method getReadWriteToken
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug to get a read only token for
+     * @param {string} userId - The user identifier
+     * @return {string} token
+     * @example client.getReadWriteToken('user', '1');
+     */
+
+  }, {
+    key: "getReadWriteToken",
+    value: function getReadWriteToken(feedSlug, userId) {
+      _utils__WEBPACK_IMPORTED_MODULE_19__[/* default */ "a"].validateFeedSlug(feedSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_19__[/* default */ "a"].validateUserId(userId);
+      return Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, '*', '*', {
+        feedId: "".concat(feedSlug).concat(userId),
+        expireTokens: this.expireTokens
+      });
+    }
+    /**
+     * Returns a feed object for the given feed id and token
+     * @method feed
+     * @memberof StreamClient.prototype
+     * @param {string} feedSlug - The feed slug
+     * @param {string} [userId] - The user identifier
+     * @param {string} [token] - The token
+     * @return {StreamFeed}
+     * @example  client.feed('user', '1');
+     */
+
+  }, {
+    key: "feed",
+    value: function feed(feedSlug, userId, token) {
+      if (userId instanceof _user__WEBPACK_IMPORTED_MODULE_16__[/* StreamUser */ "a"]) userId = userId.id;
+
+      if (token === undefined) {
+        if (this.usingApiSecret) {
+          token = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, '*', '*', {
+            feedId: "".concat(feedSlug).concat(userId)
+          });
+        } else {
+          token = this.userToken;
+        }
+      }
+
+      return new _feed__WEBPACK_IMPORTED_MODULE_22__[/* StreamFeed */ "a"](this, feedSlug, userId || this.userId, token);
+    }
+    /**
+     * Combines the base url with version and the relative url
+     * @method enrichUrl
+     * @memberof StreamClient.prototype
+     * @private
+     * @param {string} relativeUrl
+     * @param {string} [serviceName]
+     * @return {string}
+     */
+
+  }, {
+    key: "enrichUrl",
+    value: function enrichUrl(relativeUrl, serviceName) {
+      return "".concat(this.getBaseUrl(serviceName)).concat(this.version, "/").concat(relativeUrl);
+    }
+  }, {
+    key: "shouldUseEnrichEndpoint",
+    value: function shouldUseEnrichEndpoint() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      if (options.enrich) {
+        var result = options.enrich;
+        delete options.enrich;
+        return result;
+      }
+
+      return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
+    }
+    /**
+     * Adds the API key and the signature
+     * @method enrichKwargs
+     * @private
+     * @memberof StreamClient.prototype
+     * @param {AxiosConfig} kwargs
+     * @return {axios.AxiosRequestConfig}
+     */
+
+  }, {
+    key: "enrichKwargs",
+    value: function enrichKwargs(_ref2) {
+      var method = _ref2.method,
+          signature = _ref2.signature,
+          kwargs = _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_ref2, ["method", "signature"]);
+
+      /**
+       * Adds the API key and the signature
+       * @method enrichKwargs
+       * @private
+       * @memberof StreamClient.prototype
+       * @param {AxiosConfig} kwargs
+       * @return {axios.AxiosRequestConfig}
+       */
+      var isJWT = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* isJWTSignature */ "c"])(signature);
+      return _objectSpread({
+        method: method,
+        url: this.enrichUrl(kwargs.url, kwargs.serviceName),
+        data: kwargs.body,
+        params: _objectSpread({
+          api_key: this.apiKey,
+          location: this.group
+        }, kwargs.qs || {}),
+        headers: _objectSpread({
+          'X-Stream-Client': this.userAgent(),
+          'stream-auth-type': isJWT ? 'jwt' : 'simple',
+          Authorization: isJWT ? signature.split(' ').reverse()[0] : signature
+        }, kwargs.headers || {})
+      }, kwargs.axiosOptions || {});
+    }
+    /**
+     * Get the authorization middleware to use Faye with getstream.io
+     * @method getFayeAuthorization
+     * @memberof StreamClient.prototype
+     * @private
+     * @return {Faye.Middleware} Faye authorization middleware
+     */
+
+  }, {
+    key: "getFayeAuthorization",
+    value: function getFayeAuthorization() {
+      var _this2 = this;
+
+      return {
+        incoming: function incoming(message, callback) {
+          return callback(message);
+        },
+        outgoing: function outgoing(message, callback) {
+          if (message.subscription && _this2.subscriptions[message.subscription]) {
+            var subscription = _this2.subscriptions[message.subscription];
+            message.ext = {
+              user_id: subscription.userId,
+              api_key: _this2.apiKey,
+              signature: subscription.token
+            };
+          }
+
+          callback(message);
+        }
+      };
+    }
+    /**
+     * Returns this client's current Faye client
+     * @method getFayeClient
+     * @memberof StreamClient.prototype
+     * @private
+     * @param {number} timeout
+     * @return {Faye.Client} Faye client
+     */
+
+  }, {
+    key: "getFayeClient",
+    value: function getFayeClient() {
+      var timeout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
+
+      if (this.fayeClient === null) {
+        this.fayeClient = new faye__WEBPACK_IMPORTED_MODULE_7__["Client"](this.fayeUrl, {
+          timeout: timeout
+        });
+        var authExtension = this.getFayeAuthorization();
+        this.fayeClient.addExtension(authExtension);
+      }
+
+      return this.fayeClient;
+    }
+  }, {
+    key: "upload",
+    value: function upload(url, uri, name, contentType, onUploadProgress) {
+      var fd = _utils__WEBPACK_IMPORTED_MODULE_19__[/* default */ "a"].addFileToFormData(uri, name, contentType);
+      return this.doAxiosRequest('POST', {
+        url: url,
+        body: fd,
+        headers: fd.getHeaders ? fd.getHeaders() : {},
+        // node vs browser
+        signature: this.getOrCreateToken(),
+        axiosOptions: {
+          timeout: 0,
+          maxContentLength: Infinity,
+          onUploadProgress: onUploadProgress
+        }
+      });
+    }
+    /**
+     * Shorthand function for get request
+     * @method get
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {AxiosConfig}    kwargs
+     * @return {Promise}   Promise object
+     */
+
+  }, {
+    key: "get",
+    value: function get(kwargs) {
+      return this.doAxiosRequest('GET', kwargs);
+    }
+    /**
+     * Shorthand function for post request
+     * @method post
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {AxiosConfig}    kwargs
+     * @return {Promise}   Promise object
+     */
+
+  }, {
+    key: "post",
+    value: function post(kwargs) {
+      return this.doAxiosRequest('POST', kwargs);
+    }
+    /**
+     * Shorthand function for delete request
+     * @method delete
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {AxiosConfig}    kwargs
+     * @return {Promise}   Promise object
+     */
+
+  }, {
+    key: "delete",
+    value: function _delete(kwargs) {
+      return this.doAxiosRequest('DELETE', kwargs);
+    }
+    /**
+     * Shorthand function for put request
+     * @method put
+     * @memberof StreamClient.prototype
+     * @private
+     * @param  {AxiosConfig}    kwargs
+     * @return {Promise}   Promise object
+     */
+
+  }, {
+    key: "put",
+    value: function put(kwargs) {
+      return this.doAxiosRequest('PUT', kwargs);
+    }
+    /**
+     * @param {string} userId
+     * @param {object} extraData
+     * @return {string}
+     */
+
+  }, {
+    key: "createUserToken",
+    value: function createUserToken(userId) {
+      var extraData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      this._throwMissingApiSecret();
+
+      return Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTUserSessionToken */ "b"])(this.apiSecret, userId, extraData, {
+        noTimestamp: !this.expireTokens
+      });
+    }
+    /**
+     * Updates all supplied activities on the getstream-io api
+     * @since  3.1.0
+     * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
+     * @return {Promise<APIResponse>}
+     */
+
+  }, {
+    key: "updateActivities",
+    value: function updateActivities(activities) {
+      this._throwMissingApiSecret();
+
+      if (!(activities instanceof Array)) {
+        throw new TypeError('The activities argument should be an Array');
+      }
+
+      var authToken = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'activities', '*', {
+        feedId: '*',
+        expireTokens: this.expireTokens
+      });
+      return this.post({
+        url: 'activities/',
+        body: {
+          activities: activities
+        },
+        signature: authToken
+      });
+    }
+    /**
+     * Updates one activity on the getstream-io api
+     * @since  3.1.0
+     * @param  {UpdateActivity<ActivityType>} activity The activity to update
+     * @return {Promise<APIResponse>}
+     */
+
+  }, {
+    key: "updateActivity",
+    value: function updateActivity(activity) {
+      this._throwMissingApiSecret();
+
+      return this.updateActivities([activity]);
+    }
+    /**
+     * Retrieve activities by ID or foreign ID and time
+     * @since  3.19.0
+     * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
+     * @return {Promise<GetActivitiesAPIResponse>}
+     */
+
+  }, {
+    key: "getActivities",
+    value: function getActivities(_ref3) {
+      var ids = _ref3.ids,
+          foreignIDTimes = _ref3.foreignIDTimes,
+          params = _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_ref3, ["ids", "foreignIDTimes"]);
+
+      var extraParams = {};
+
+      if (ids) {
+        if (!(ids instanceof Array)) {
+          throw new TypeError('The ids argument should be an Array');
+        }
+
+        extraParams.ids = ids.join(',');
+      } else if (foreignIDTimes) {
+        if (!(foreignIDTimes instanceof Array)) {
+          throw new TypeError('The foreignIDTimes argument should be an Array');
+        }
+
+        var foreignIDs = [];
+        var timestamps = [];
+        foreignIDTimes.forEach(function (fidTime) {
+          if (!(fidTime instanceof Object)) {
+            throw new TypeError('foreignIDTimes elements should be Objects');
+          }
+
+          foreignIDs.push(fidTime.foreignID);
+          timestamps.push(fidTime.time);
+        });
+        extraParams.foreign_ids = foreignIDs.join(',');
+        extraParams.timestamps = timestamps.join(',');
+      } else {
+        throw new TypeError('Missing ids or foreignIDTimes params');
+      }
+
+      var token = this.userToken;
+
+      if (this.usingApiSecret) {
+        token = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'activities', '*', {
+          feedId: '*',
+          expireTokens: this.expireTokens
+        });
+      }
+
+      this.replaceReactionOptions(params);
+      var path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
+      return this.get({
+        url: path,
+        qs: _objectSpread(_objectSpread({}, params), extraParams),
+        signature: token
+      });
+    }
+  }, {
+    key: "getOrCreateToken",
+    value: function getOrCreateToken() {
+      if (!this._getOrCreateToken) {
+        this._getOrCreateToken = this.usingApiSecret ? Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, '*', '*', {
+          feedId: '*'
+        }) : this.userToken;
+      }
+
+      return this._getOrCreateToken;
+    }
+  }, {
+    key: "user",
+    value: function user(userId) {
+      return new _user__WEBPACK_IMPORTED_MODULE_16__[/* StreamUser */ "a"](this, userId, this.getOrCreateToken());
+    }
+  }, {
+    key: "setUser",
+    value: function () {
+      var _setUser = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee2(data) {
+        var body, user;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!this.usingApiSecret) {
+                  _context2.next = 2;
+                  break;
+                }
+
+                throw new _errors__WEBPACK_IMPORTED_MODULE_18__[/* SiteError */ "c"]('This method can only be used client-side using a user token');
+
+              case 2:
+                body = _objectSpread({}, data);
+                delete body.id;
+                _context2.next = 6;
+                return this.currentUser.getOrCreate(body);
+
+              case 6:
+                user = _context2.sent;
+                this.currentUser = user;
+                return _context2.abrupt("return", user);
+
+              case 9:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function setUser(_x3) {
+        return _setUser.apply(this, arguments);
+      }
+
+      return setUser;
+    }()
+  }, {
+    key: "og",
+    value: function og(url) {
+      return this.get({
+        url: 'og/',
+        qs: {
+          url: url
+        },
+        signature: this.getOrCreateToken()
+      });
+    }
+  }, {
+    key: "personalizedFeed",
+    value: function personalizedFeed() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this.get({
+        url: 'enrich/personalization/feed/',
+        qs: options,
+        signature: this.getOrCreateToken()
+      });
+    }
+    /**
+     * Update a single activity with partial operations.
+     * @since 3.20.0
+     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+     * @return {Promise<Activity<ActivityType>>}
+     * @example
+     * client.activityPartialUpdate({
+     *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+     *   set: {
+     *     "product.price": 19.99,
+     *     "shares": {
+     *       "facebook": "...",
+     *       "twitter": "...",
+     *     }
+     *   },
+     *   unset: [
+     *     "daily_likes",
+     *     "popularity"
+     *   ]
+     * })
+     * @example
+     * client.activityPartialUpdate({
+     *   foreignID: "product:123",
+     *   time: "2016-11-10T13:20:00.000000",
+     *   set: {
+     *     ...
+     *   },
+     *   unset: [
+     *     ...
+     *   ]
+     * })
+     */
+
+  }, {
+    key: "activityPartialUpdate",
+    value: function () {
+      var _activityPartialUpdate = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3(data) {
+        var response, activity;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.activitiesPartialUpdate([data]);
+
+              case 2:
+                response = _context3.sent;
+                activity = response.activities[0];
+                delete response.activities;
+                return _context3.abrupt("return", _objectSpread(_objectSpread({}, activity), response));
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function activityPartialUpdate(_x4) {
+        return _activityPartialUpdate.apply(this, arguments);
+      }
+
+      return activityPartialUpdate;
+    }()
+    /**
+     * Update multiple activities with partial operations.
+     * @since v3.20.0
+     * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+     * @return {Promise<{ activities: Activity<ActivityType>[] }>}
+     * @example
+     * client.activitiesPartialUpdate([
+     *   {
+     *     id: "4b39fda2-d6e2-42c9-9abf-5301ef071b12",
+     *     set: {
+     *       "product.price.eur": 12.99,
+     *       "colors": {
+     *         "blue": "#0000ff",
+     *         "green": "#00ff00",
+     *       },
+     *     },
+     *     unset: [ "popularity", "size.x2" ],
+     *   },
+     *   {
+     *     id: "8d2dcad8-1e34-11e9-8b10-9cb6d0925edd",
+     *     set: {
+     *       "product.price.eur": 17.99,
+     *       "colors": {
+     *         "red": "#ff0000",
+     *         "green": "#00ff00",
+     *       },
+     *     },
+     *     unset: [ "rating" ],
+     *   },
+     * ])
+     * @example
+     * client.activitiesPartialUpdate([
+     *   {
+     *     foreignID: "product:123",
+     *     time: "2016-11-10T13:20:00.000000",
+     *     set: {
+     *       ...
+     *     },
+     *     unset: [
+     *       ...
+     *     ]
+     *   },
+     *   {
+     *     foreignID: "product:321",
+     *     time: "2016-11-10T13:20:00.000000",
+     *     set: {
+     *       ...
+     *     },
+     *     unset: [
+     *       ...
+     *     ]
+     *   },
+     * ])
+     */
+
+  }, {
+    key: "activitiesPartialUpdate",
+    value: function activitiesPartialUpdate(changes) {
+      if (!(changes instanceof Array)) {
+        throw new TypeError('changes should be an Array');
+      }
+
+      changes.forEach(function (item) {
+        if (!(item instanceof Object)) {
+          throw new TypeError("changeset should be and Object");
+        }
+
+        if (item.foreignID) {
+          item.foreign_id = item.foreignID;
+        }
+
+        if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
+          throw new TypeError('missing id or foreign ID and time');
+        }
+
+        if (item.set && !(item.set instanceof Object)) {
+          throw new TypeError('set field should be an Object');
+        }
+
+        if (item.unset && !(item.unset instanceof Array)) {
+          throw new TypeError('unset field should be an Array');
+        }
+      });
+      var authToken = this.userToken;
+
+      if (this.usingApiSecret) {
+        authToken = Object(_signing__WEBPACK_IMPORTED_MODULE_17__[/* JWTScopeToken */ "a"])(this.apiSecret, 'activities', '*', {
+          feedId: '*',
+          expireTokens: this.expireTokens
+        });
+      }
+
+      return this.post({
+        url: 'activity/',
+        body: {
+          changes: changes
+        },
+        signature: authToken
+      });
+    }
+  }]);
+
+  return StreamClient;
+}();
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
+
+/***/ }),
 /* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Personalization; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
@@ -3258,36 +3311,36 @@ module.exports = Promise;
  * @class Personalization
  */
 var Personalization = /*#__PURE__*/function () {
+  /**
+   * Initialize the Personalization class
+   *
+   * @method constructor
+   * @memberof Personalization.prototype
+   * @param {StreamClient} client - The stream client
+   */
   function Personalization(client) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Personalization);
 
     _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(this, "client", void 0);
 
-    /**
-     * Initialize the Personalization class
-     *
-     * @method constructor
-     * @memberof Personalization.prototype
-     * @param {StreamClient} client - The stream client
-     */
     this.client = client;
   }
+  /**
+   * Get personalized activities for this feed
+   *
+   * @method get
+   * @memberof Personalization.prototype
+   * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
+   * @param {object} options  Additional options
+   * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
+   * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
+   */
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Personalization, [{
     key: "get",
     value: function get(resource) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      /**
-       * Get personalized activities for this feed
-       *
-       * @method get
-       * @memberof Personalization.prototype
-       * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
-       * @param {object} options  Additional options
-       * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
-       * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
-       */
       return this.client.get({
         url: "".concat(resource, "/"),
         serviceName: 'personalization',
@@ -3295,23 +3348,23 @@ var Personalization = /*#__PURE__*/function () {
         signature: options.token || this.client.getPersonalizationToken()
       });
     }
+    /**
+     * Post data to personalization endpoint
+     *
+     * @method post
+     * @memberof Personalization.prototype
+     * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @param {object} data - Data to send in the payload
+     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
+     * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
+     */
+
   }, {
     key: "post",
     value: function post(resource) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-      /**
-       * Post data to personalization endpoint
-       *
-       * @method post
-       * @memberof Personalization.prototype
-       * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
-       * @param {object} options - Additional options
-       * @param {object} data - Data to send in the payload
-       * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
-       * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
-       */
       return this.client.post({
         url: "".concat(resource, "/"),
         serviceName: 'personalization',
@@ -3320,21 +3373,21 @@ var Personalization = /*#__PURE__*/function () {
         signature: this.client.getPersonalizationToken()
       });
     }
+    /**
+     * Delete metadata or activities
+     *
+     * @method delete
+     * @memberof Personalization.prototype
+     * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
+     * @param {object} options - Additional options
+     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
+     * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
+     */
+
   }, {
     key: "delete",
     value: function _delete(resource) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      /**
-       * Delete metadata or activities
-       *
-       * @method delete
-       * @memberof Personalization.prototype
-       * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
-       * @param {object} options - Additional options
-       * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
-       * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
-       */
       return this.client.delete({
         url: "".concat(resource, "/"),
         serviceName: 'personalization',
@@ -3347,8 +3400,6 @@ var Personalization = /*#__PURE__*/function () {
   return Personalization;
 }();
 
-
-
 /***/ }),
 /* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -3358,15 +3409,15 @@ var Personalization = /*#__PURE__*/function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Collections; });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3);
 
 
 
@@ -3398,6 +3449,14 @@ var CollectionEntry = /*#__PURE__*/function () {
     value: function ref() {
       return "SO:".concat(this.collection, ":").concat(this.id);
     }
+    /**
+     * get item from collection and sync data
+     * @method get
+     * @memberof CollectionEntry.prototype
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+
   }, {
     key: "get",
     value: function () {
@@ -3430,6 +3489,14 @@ var CollectionEntry = /*#__PURE__*/function () {
 
       return get;
     }()
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof CollectionEntry.prototype
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+
   }, {
     key: "add",
     value: function () {
@@ -3462,6 +3529,15 @@ var CollectionEntry = /*#__PURE__*/function () {
 
       return add;
     }()
+    /**
+     * Update item in the object storage
+     * @method update
+     * @memberof CollectionEntry.prototype
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+
   }, {
     key: "update",
     value: function () {
@@ -3494,6 +3570,14 @@ var CollectionEntry = /*#__PURE__*/function () {
 
       return update;
     }()
+    /**
+     * Delete item from collection
+     * @method delete
+     * @memberof CollectionEntry.prototype
+     * @return {Promise<APIResponse>}
+     * @example collection.delete("cheese101")
+     */
+
   }, {
     key: "delete",
     value: function () {
@@ -3530,7 +3614,6 @@ var CollectionEntry = /*#__PURE__*/function () {
 
   return CollectionEntry;
 }();
-
 var Collections = /*#__PURE__*/function () {
   /**
    * Initialize a feed object
@@ -3560,6 +3643,16 @@ var Collections = /*#__PURE__*/function () {
     value: function entry(collection, itemId, itemData) {
       return new CollectionEntry(this, collection, itemId, itemData);
     }
+    /**
+     * get item from collection
+     * @method get
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {string}   itemId  id for this entry
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     */
+
   }, {
     key: "get",
     value: function () {
@@ -3595,6 +3688,17 @@ var Collections = /*#__PURE__*/function () {
 
       return get;
     }()
+    /**
+     * Add item to collection
+     * @method add
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {string}   itemId  entry id
+     * @param  {CollectionType}   itemData  ObjectStore data
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+
   }, {
     key: "add",
     value: function () {
@@ -3634,6 +3738,18 @@ var Collections = /*#__PURE__*/function () {
 
       return add;
     }()
+    /**
+     * Update entry in the collection
+     * @method update
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {string}   entryId  Collection object id
+     * @param  {CollectionType}   data  ObjectStore data
+     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
+     * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
+     */
+
   }, {
     key: "update",
     value: function () {
@@ -3672,37 +3788,39 @@ var Collections = /*#__PURE__*/function () {
 
       return update;
     }()
+    /**
+     * Delete entry from collection
+     * @method delete
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param  {string}   entryId  Collection entry id
+     * @return {Promise<APIResponse>} Promise object
+     * @example collection.delete("food", "cheese101")
+     */
+
   }, {
     key: "delete",
     value: function _delete(collection, entryId) {
-      /**
-       * Delete entry from collection
-       * @method delete
-       * @memberof Collections.prototype
-       * @param  {string}   collection  collection name
-       * @param  {string}   entryId  Collection entry id
-       * @return {Promise<APIResponse>} Promise object
-       * @example collection.delete("food", "cheese101")
-       */
       return this.client.delete({
         url: this.buildURL(collection, entryId),
         signature: this.token
       });
     }
+    /**
+     * Upsert one or more items within a collection.
+     *
+     * @method upsert
+     * @memberof Collections.prototype
+     * @param  {string}   collection  collection name
+     * @param {NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]} data - A single json object or an array of objects
+     * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
+     */
+
   }, {
     key: "upsert",
     value: function upsert(collection, data) {
-      /**
-       * Upsert one or more items within a collection.
-       *
-       * @method upsert
-       * @memberof Collections.prototype
-       * @param  {string}   collection  collection name
-       * @param {NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]} data - A single json object or an array of objects
-       * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
-       */
       if (!this.client.usingApiSecret) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_5__["SiteError"]('This method can only be used server-side using your API Secret');
+        throw new _errors__WEBPACK_IMPORTED_MODULE_5__[/* SiteError */ "c"]('This method can only be used server-side using your API Secret');
       }
 
       if (!Array.isArray(data)) data = [data];
@@ -3715,20 +3833,21 @@ var Collections = /*#__PURE__*/function () {
         signature: this.client.getCollectionsToken()
       });
     }
+    /**
+     * Select all objects with ids from the collection.
+     *
+     * @method select
+     * @memberof Collections.prototype
+     * @param {string} collection  collection name
+     * @param {string | string[]} ids - A single object id or an array of ids
+     * @return {Promise<SelectCollectionAPIResponse<CollectionType>>}
+     */
+
   }, {
     key: "select",
     value: function select(collection, ids) {
-      /**
-       * Select all objects with ids from the collection.
-       *
-       * @method select
-       * @memberof Collections.prototype
-       * @param {string} collection  collection name
-       * @param {string | string[]} ids - A single object id or an array of ids
-       * @return {Promise<SelectCollectionAPIResponse<CollectionType>>}
-       */
       if (!this.client.usingApiSecret) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_5__["SiteError"]('This method can only be used server-side using your API Secret');
+        throw new _errors__WEBPACK_IMPORTED_MODULE_5__[/* SiteError */ "c"]('This method can only be used server-side using your API Secret');
       }
 
       if (!Array.isArray(ids)) ids = [ids];
@@ -3743,20 +3862,21 @@ var Collections = /*#__PURE__*/function () {
         signature: this.client.getCollectionsToken()
       });
     }
+    /**
+     * Remove all objects by id from the collection.
+     *
+     * @method delete
+     * @memberof Collections.prototype
+     * @param {string} collection  collection name
+     * @param {string | string[]} ids - A single object id or an array of ids
+     * @return {Promise<APIResponse>}
+     */
+
   }, {
     key: "deleteMany",
     value: function deleteMany(collection, ids) {
-      /**
-       * Remove all objects by id from the collection.
-       *
-       * @method delete
-       * @memberof Collections.prototype
-       * @param {string} collection  collection name
-       * @param {string | string[]} ids - A single object id or an array of ids
-       * @return {Promise<APIResponse>}
-       */
       if (!this.client.usingApiSecret) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_5__["SiteError"]('This method can only be used server-side using your API Secret');
+        throw new _errors__WEBPACK_IMPORTED_MODULE_5__[/* SiteError */ "c"]('This method can only be used server-side using your API Secret');
       }
 
       if (!Array.isArray(ids)) ids = [ids];
@@ -3778,21 +3898,18 @@ var Collections = /*#__PURE__*/function () {
   return Collections;
 }();
 
-
-
 /***/ }),
 /* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamFileStore; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
-
 
 
 
@@ -3809,18 +3926,19 @@ var StreamFileStore = /*#__PURE__*/function () {
   } // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
 
+  /**
+   * upload a File instance or a readable stream of data
+   * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
+   * @param {string} [name] - file name
+   * @param {string} [contentType] - mime-type
+   * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
+   * @return {Promise<FileUploadAPIResponse>}
+   */
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(StreamFileStore, [{
     key: "upload",
     value: function upload(uri, name, contentType, onUploadProgress) {
-      /**
-       * upload a File instance or a readable stream of data
-       * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
-       * @param {string} [name] - file name
-       * @param {string} [contentType] - mime-type
-       * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
-       * @return {Promise<FileUploadAPIResponse>}
-       */
       return this.client.upload('files/', uri, name, contentType, onUploadProgress);
     }
   }, {
@@ -3839,8 +3957,6 @@ var StreamFileStore = /*#__PURE__*/function () {
   return StreamFileStore;
 }();
 
-
-
 /***/ }),
 /* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -3849,13 +3965,12 @@ var StreamFileStore = /*#__PURE__*/function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamImageStore; });
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(64);
 /* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__);
-
 
 
 
@@ -3873,18 +3988,19 @@ var StreamImageStore = /*#__PURE__*/function () {
   } // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
 
+  /**
+   * upload an Image File instance or a readable stream of data
+   * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
+   * @param {string} [name] - file name
+   * @param {string} [contentType] - mime-type
+   * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
+   * @return {Promise<FileUploadAPIResponse>}
+   */
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(StreamImageStore, [{
     key: "upload",
     value: function upload(uri, name, contentType, onUploadProgress) {
-      /**
-       * upload an Image File instance or a readable stream of data
-       * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
-       * @param {string} [name] - file name
-       * @param {string} [contentType] - mime-type
-       * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
-       * @return {Promise<FileUploadAPIResponse>}
-       */
       return this.client.upload('images/', uri, name, contentType, onUploadProgress);
     }
   }, {
@@ -3937,8 +4053,6 @@ var StreamImageStore = /*#__PURE__*/function () {
   return StreamImageStore;
 }();
 
-
-
 /***/ }),
 /* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -3947,20 +4061,27 @@ var StreamImageStore = /*#__PURE__*/function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamReaction; });
 /* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(22);
 /* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2);
-
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
 
 
 
 
 
 var StreamReaction = /*#__PURE__*/function () {
+  /**
+   * Initialize a reaction object
+   * @method constructor
+   * @memberof StreamReaction.prototype
+   * @param {StreamClient} client Stream client this feed is constructed from
+   * @param {string} token JWT token
+   * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
+   */
   function StreamReaction(client, token) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, StreamReaction);
 
@@ -3983,43 +4104,29 @@ var StreamReaction = /*#__PURE__*/function () {
       });
     });
 
-    /**
-     * Initialize a reaction object
-     * @method constructor
-     * @memberof StreamReaction.prototype
-     * @param {StreamClient} client Stream client this feed is constructed from
-     * @param {string} token JWT token
-     * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
-     */
     this.client = client;
     this.token = token;
   }
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(StreamReaction, [{
-    key: "all",
-    // DEPRECATED
-    value: function all() {
-      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      /**
-       * get all reactions
-       * @method all
-       * @memberof StreamReaction.prototype
-       * @param  {object}   options  {limit:}
-       * @return {Promise} Promise object
-       * @example reactions.all()
-       * @example reactions.all({limit:100})
-       */
-      console.warn('Deprecated function, please use reactions.filter()'); // eslint-disable-line
-
-      return this.client.get({
-        url: this.buildURL(),
-        signature: this.token,
-        qs: options
-      });
-    }
-  }, {
     key: "add",
+
+    /**
+     * add reaction
+     * @method add
+     * @memberof StreamReaction.prototype
+     * @param  {string}   kind  kind of reaction
+     * @param  {string}   activity Activity or an ActivityID
+     * @param  {ReactionType}   data  data related to reaction
+     * @param  {object} [options]
+     * @param  {string} [options.id] id associated with reaction
+     * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
+     * @param  {string} [options.userId] useful for adding reaction with server token
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ReactionType>>}
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
+     */
     value: function add(kind, activity, data) {
       var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
           id = _ref.id,
@@ -4028,22 +4135,6 @@ var StreamReaction = /*#__PURE__*/function () {
           userId = _ref.userId,
           targetFeedsExtraData = _ref.targetFeedsExtraData;
 
-      /**
-       * add reaction
-       * @method add
-       * @memberof StreamReaction.prototype
-       * @param  {string}   kind  kind of reaction
-       * @param  {string}   activity Activity or an ActivityID
-       * @param  {ReactionType}   data  data related to reaction
-       * @param  {object} [options]
-       * @param  {string} [options.id] id associated with reaction
-       * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
-       * @param  {string} [options.userId] useful for adding reaction with server token
-       * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
-       * @return {Promise<ReactionAPIResponse<ReactionType>>}
-       * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-       * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
-       */
       var body = {
         id: id,
         activity_id: activity instanceof Object ? activity.id : activity,
@@ -4063,6 +4154,22 @@ var StreamReaction = /*#__PURE__*/function () {
         signature: this.token
       });
     }
+    /**
+     * add child reaction
+     * @method addChild
+     * @memberof StreamReaction.prototype
+     * @param  {string}   kind  kind of reaction
+     * @param  {string}   reaction Reaction or a ReactionID
+     * @param  {ChildReactionType}   data  data related to reaction
+     * @param  {object} [options]
+     * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
+     * @param  {string} [options.userId] useful for adding reaction with server token
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ChildReactionType>>}
+     * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
+     * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
+     */
+
   }, {
     key: "addChild",
     value: function addChild(kind, reaction, data) {
@@ -4072,21 +4179,6 @@ var StreamReaction = /*#__PURE__*/function () {
           userId = _ref2.userId,
           targetFeedsExtraData = _ref2.targetFeedsExtraData;
 
-      /**
-       * add child reaction
-       * @method addChild
-       * @memberof StreamReaction.prototype
-       * @param  {string}   kind  kind of reaction
-       * @param  {string}   reaction Reaction or a ReactionID
-       * @param  {ChildReactionType}   data  data related to reaction
-       * @param  {object} [options]
-       * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
-       * @param  {string} [options.userId] useful for adding reaction with server token
-       * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
-       * @return {Promise<ReactionAPIResponse<ChildReactionType>>}
-       * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
-       * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
-       */
       var body = {
         parent: reaction instanceof Object ? reaction.id : reaction,
         kind: kind,
@@ -4105,39 +4197,41 @@ var StreamReaction = /*#__PURE__*/function () {
         signature: this.token
       });
     }
+    /**
+     * get reaction
+     * @method get
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @return {Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>}
+     * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+
   }, {
     key: "get",
     value: function get(id) {
-      /**
-       * get reaction
-       * @method get
-       * @memberof StreamReaction.prototype
-       * @param  {string}   id Reaction Id
-       * @return {Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>}
-       * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
-       */
       return this.client.get({
         url: this.buildURL(id),
         signature: this.token
       });
     }
+    /**
+     * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
+     * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
+     * the reaction with ID equal to the value provided is included.
+     * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
+     * the reaction with ID equal to the value provided is included.
+     * results are limited to 25 at most and are ordered newest to oldest by default.
+     * @method filter
+     * @memberof StreamReaction.prototype
+     * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
+     * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
+     * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
+     * @example reactions.filter({user_id: "john", kinds:"like"})
+     */
+
   }, {
     key: "filter",
     value: function filter(conditions) {
-      /**
-       * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
-       * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
-       * the reaction with ID equal to the value provided is included.
-       * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
-       * the reaction with ID equal to the value provided is included.
-       * results are limited to 25 at most and are ordered newest to oldest by default.
-       * @method filter
-       * @memberof StreamReaction.prototype
-       * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
-       * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
-       * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
-       * @example reactions.filter({user_id: "john", kinds:"like"})
-       */
       var userId = conditions.user_id,
           activityId = conditions.activity_id,
           reactionId = conditions.reaction_id,
@@ -4148,7 +4242,7 @@ var StreamReaction = /*#__PURE__*/function () {
       }
 
       if ((userId ? 1 : 0) + (activityId ? 1 : 0) + (reactionId ? 1 : 0) !== 1) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_4__["SiteError"]('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
+        throw new _errors__WEBPACK_IMPORTED_MODULE_4__[/* SiteError */ "c"]('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
       }
 
       var lookupType = userId && 'user_id' || activityId && 'activity_id' || reactionId && 'reaction_id';
@@ -4160,6 +4254,20 @@ var StreamReaction = /*#__PURE__*/function () {
         signature: this.token
       });
     }
+    /**
+     * update reaction
+     * @method update
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @param  {ReactionType | ChildReactionType}   data  Data associated to reaction or childReaction
+     * @param  {object} [options]
+     * @param  {string[]} [options.targetFeeds] Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
+     * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
+     * @return {Promise<ReactionAPIResponse<ReactionType | ChildReactionType>>}
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
+     * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
+     */
+
   }, {
     key: "update",
     value: function update(id, data) {
@@ -4168,19 +4276,6 @@ var StreamReaction = /*#__PURE__*/function () {
           targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds,
           targetFeedsExtraData = _ref3.targetFeedsExtraData;
 
-      /**
-       * update reaction
-       * @method update
-       * @memberof StreamReaction.prototype
-       * @param  {string}   id Reaction Id
-       * @param  {ReactionType | ChildReactionType}   data  Data associated to reaction or childReaction
-       * @param  {object} [options]
-       * @param  {string[]} [options.targetFeeds] Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
-       * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
-       * @return {Promise<ReactionAPIResponse<ReactionType | ChildReactionType>>}
-       * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
-       * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
-       */
       var body = {
         data: data,
         target_feeds: this._convertTargetFeeds(targetFeeds)
@@ -4196,17 +4291,18 @@ var StreamReaction = /*#__PURE__*/function () {
         signature: this.token
       });
     }
+    /**
+     * delete reaction
+     * @method delete
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @return {Promise<APIResponse>}
+     * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+
   }, {
     key: "delete",
     value: function _delete(id) {
-      /**
-       * delete reaction
-       * @method delete
-       * @memberof StreamReaction.prototype
-       * @param  {string}   id Reaction Id
-       * @return {Promise<APIResponse>}
-       * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
-       */
       return this.client.delete({
         url: this.buildURL(id),
         signature: this.token
@@ -4217,22 +4313,20 @@ var StreamReaction = /*#__PURE__*/function () {
   return StreamReaction;
 }();
 
-
-
 /***/ }),
 /* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return StreamFeed; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(0);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(13);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2);
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(12);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7);
 
 
@@ -4253,6 +4347,15 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  * @class StreamFeed
  */
 var StreamFeed = /*#__PURE__*/function () {
+  /**
+   * Initialize a feed object
+   * @method constructor
+   * @memberof StreamFeed.prototype
+   * @param {StreamClient} client - The stream client this feed is constructed from
+   * @param {string} feedSlug - The feed slug
+   * @param {string} userId - The user id
+   * @param {string} [token] - The authentication token
+   */
   function StreamFeed(client, feedSlug, userId, token) {
     _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, StreamFeed);
 
@@ -4274,28 +4377,19 @@ var StreamFeed = /*#__PURE__*/function () {
 
     _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(this, "notificationChannel", void 0);
 
-    /**
-     * Initialize a feed object
-     * @method constructor
-     * @memberof StreamFeed.prototype
-     * @param {StreamClient} client - The stream client this feed is constructed from
-     * @param {string} feedSlug - The feed slug
-     * @param {string} userId - The user id
-     * @param {string} [token] - The authentication token
-     */
     if (!feedSlug || !userId) {
-      throw new _errors__WEBPACK_IMPORTED_MODULE_4__["FeedError"]('Please provide a feed slug and user id, ie client.feed("user", "1")');
+      throw new _errors__WEBPACK_IMPORTED_MODULE_4__[/* FeedError */ "a"]('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
 
     if (feedSlug.indexOf(':') !== -1) {
-      throw new _errors__WEBPACK_IMPORTED_MODULE_4__["FeedError"]('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
+      throw new _errors__WEBPACK_IMPORTED_MODULE_4__[/* FeedError */ "a"]('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
 
     _utils__WEBPACK_IMPORTED_MODULE_5__[/* default */ "a"].validateFeedSlug(feedSlug);
     _utils__WEBPACK_IMPORTED_MODULE_5__[/* default */ "a"].validateUserId(userId); // raise an error if there is no token
 
     if (!token) {
-      throw new _errors__WEBPACK_IMPORTED_MODULE_4__["FeedError"]('Missing token, in client side mode please provide a feed secret');
+      throw new _errors__WEBPACK_IMPORTED_MODULE_4__[/* FeedError */ "a"]('Missing token, in client side mode please provide a feed secret');
     }
 
     this.client = client;
@@ -4309,17 +4403,18 @@ var StreamFeed = /*#__PURE__*/function () {
 
     this.notificationChannel = "site-".concat(this.client.appId, "-feed-").concat(this.feedTogether);
   }
+  /**
+   * Adds the given activity to the feed
+   * @method addActivity
+   * @memberof StreamFeed.prototype
+   * @param {NewActivity<ActivityType>} activity - The activity to add
+   * @return {Promise<Activity<ActivityType>>}
+   */
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(StreamFeed, [{
     key: "addActivity",
     value: function addActivity(activity) {
-      /**
-       * Adds the given activity to the feed
-       * @method addActivity
-       * @memberof StreamFeed.prototype
-       * @param {NewActivity<ActivityType>} activity - The activity to add
-       * @return {Promise<Activity<ActivityType>>}
-       */
       activity = _utils__WEBPACK_IMPORTED_MODULE_5__[/* default */ "a"].replaceStreamObjects(activity);
 
       if (!activity.actor && this.client.currentUser) {
@@ -4332,18 +4427,19 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Removes the activity by activityId or foreignId
+     * @method removeActivity
+     * @memberof StreamFeed.prototype
+     * @param  {string}   activityId Identifier of activity to remove
+     * @return {Promise<APIResponse & { removed: string }>}
+     * @example feed.removeActivity(activityId);
+     * @example feed.removeActivity({'foreignId': foreignId});
+     */
+
   }, {
     key: "removeActivity",
     value: function removeActivity(activityId) {
-      /**
-       * Removes the activity by activityId or foreignId
-       * @method removeActivity
-       * @memberof StreamFeed.prototype
-       * @param  {string}   activityId Identifier of activity to remove
-       * @return {Promise<APIResponse & { removed: string }>}
-       * @example feed.removeActivity(activityId);
-       * @example feed.removeActivity({'foreignId': foreignId});
-       */
       return this.client.delete({
         url: "feed/".concat(this.feedUrl, "/").concat(activityId.foreignId || activityId, "/"),
         qs: activityId.foreignId ? {
@@ -4352,16 +4448,17 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Adds the given activities to the feed
+     * @method addActivities
+     * @memberof StreamFeed.prototype
+     * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
+     * @return {Promise<Activity<ActivityType>[]>}
+     */
+
   }, {
     key: "addActivities",
     value: function addActivities(activities) {
-      /**
-       * Adds the given activities to the feed
-       * @method addActivities
-       * @memberof StreamFeed.prototype
-       * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
-       * @return {Promise<Activity<ActivityType>[]>}
-       */
       return this.client.post({
         url: "feed/".concat(this.feedUrl, "/"),
         body: {
@@ -4370,25 +4467,26 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Follows the given target feed
+     * @method follow
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId User identifier of the target feed
+     * @param  {object}   [options]      Additional options
+     * @param  {number}   [options.limit] Limit the amount of activities copied over on follow
+     * @return {Promise<APIResponse>}
+     * @example feed.follow('user', '1');
+     * @example feed.follow('user', '1');
+     * @example feed.follow('user', '1', options);
+     */
+
   }, {
     key: "follow",
     value: function follow(targetSlug, targetUserId) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-      /**
-       * Follows the given target feed
-       * @method follow
-       * @memberof StreamFeed.prototype
-       * @param  {string}   targetSlug   Slug of the target feed
-       * @param  {string}   targetUserId User identifier of the target feed
-       * @param  {object}   [options]      Additional options
-       * @param  {number}   [options.limit] Limit the amount of activities copied over on follow
-       * @return {Promise<APIResponse>}
-       * @example feed.follow('user', '1');
-       * @example feed.follow('user', '1');
-       * @example feed.follow('user', '1', options);
-       */
-      if (targetUserId instanceof _user__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"]) {
+      if (targetUserId instanceof _user__WEBPACK_IMPORTED_MODULE_3__[/* StreamUser */ "a"]) {
         targetUserId = targetUserId.id;
       }
 
@@ -4404,23 +4502,23 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Unfollow the given feed
+     * @method unfollow
+     * @memberof StreamFeed.prototype
+     * @param  {string}   targetSlug   Slug of the target feed
+     * @param  {string}   targetUserId User identifier of the target feed
+     * @param  {object} [options]
+     * @param  {boolean} [options.keepHistory] when provided the activities from target
+     *                                                 feed will not be kept in the feed
+     * @return {Promise<APIResponse>}
+     * @example feed.unfollow('user', '2');
+     */
+
   }, {
     key: "unfollow",
     value: function unfollow(targetSlug, targetUserId) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-      /**
-       * Unfollow the given feed
-       * @method unfollow
-       * @memberof StreamFeed.prototype
-       * @param  {string}   targetSlug   Slug of the target feed
-       * @param  {string}   targetUserId User identifier of the target feed
-       * @param  {object} [options]
-       * @param  {boolean} [options.keepHistory] when provided the activities from target
-       *                                                 feed will not be kept in the feed
-       * @return {Promise<APIResponse>}
-       * @example feed.unfollow('user', '2');
-       */
       var qs = {};
       if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
       _utils__WEBPACK_IMPORTED_MODULE_5__[/* default */ "a"].validateFeedSlug(targetSlug);
@@ -4432,22 +4530,22 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * List which feeds this feed is following
+     * @method following
+     * @memberof StreamFeed.prototype
+     * @param  {GetFollowOptions}   [options]  Additional options
+     * @param  {string[]}   options.filter array of feed id to filter on
+     * @param  {number}   options.limit pagination
+     * @param  {number}   options.offset pagination
+     * @return {Promise<GetFollowAPIResponse>}
+     * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
+     */
+
   }, {
     key: "following",
     value: function following() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      /**
-       * List which feeds this feed is following
-       * @method following
-       * @memberof StreamFeed.prototype
-       * @param  {GetFollowOptions}   [options]  Additional options
-       * @param  {string[]}   options.filter array of feed id to filter on
-       * @param  {number}   options.limit pagination
-       * @param  {number}   options.offset pagination
-       * @return {Promise<GetFollowAPIResponse>}
-       * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
-       */
       var extraOptions = {};
       if (options.filter) extraOptions.filter = options.filter.join(',');
       return this.client.get({
@@ -4456,22 +4554,22 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * List the followers of this feed
+     * @method followers
+     * @memberof StreamFeed.prototype
+     * @param  {GetFollowOptions}   [options]  Additional options
+     * @param  {string[]}   options.filter array of feed id to filter on
+     * @param  {number}   options.limit pagination
+     * @param  {number}   options.offset pagination
+     * @return {Promise<GetFollowAPIResponse>}
+     * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
+     */
+
   }, {
     key: "followers",
     value: function followers() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      /**
-       * List the followers of this feed
-       * @method followers
-       * @memberof StreamFeed.prototype
-       * @param  {GetFollowOptions}   [options]  Additional options
-       * @param  {string[]}   options.filter array of feed id to filter on
-       * @param  {number}   options.limit pagination
-       * @param  {number}   options.offset pagination
-       * @return {Promise<GetFollowAPIResponse>}
-       * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
-       */
       var extraOptions = {};
       if (options.filter) extraOptions.filter = options.filter.join(',');
       return this.client.get({
@@ -4480,20 +4578,20 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Reads the feed
+     * @method get
+     * @memberof StreamFeed.prototype
+     * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
+     * @return {Promise<FeedAPIResponse>}
+     * @example feed.get({limit: 10, id_lte: 'activity-id'})
+     * @example feed.get({limit: 10, mark_seen: true})
+     */
+
   }, {
     key: "get",
     value: function get() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      /**
-       * Reads the feed
-       * @method get
-       * @memberof StreamFeed.prototype
-       * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
-       * @return {Promise<FeedAPIResponse>}
-       * @example feed.get({limit: 10, id_lte: 'activity-id'})
-       * @example feed.get({limit: 10, mark_seen: true})
-       */
       var extraOptions = {};
 
       if (options.mark_read && options.mark_read.join) {
@@ -4512,55 +4610,58 @@ var StreamFeed = /*#__PURE__*/function () {
         signature: this.signature
       });
     }
+    /**
+     * Retrieves one activity from a feed and adds enrichment
+     * @method getActivityDetail
+     * @memberof StreamFeed.prototype
+     * @param  {string}   activityId Identifier of activity to retrieve
+     * @param  {EnrichOptions}   options  Additional options
+     * @return {Promise<FeedAPIResponse>}
+     * @example feed.getActivityDetail(activityId)
+     * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
+     * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
+     */
+
   }, {
     key: "getActivityDetail",
     value: function getActivityDetail(activityId, options) {
-      /**
-       * Retrieves one activity from a feed and adds enrichment
-       * @method getActivityDetail
-       * @memberof StreamFeed.prototype
-       * @param  {string}   activityId Identifier of activity to retrieve
-       * @param  {EnrichOptions}   options  Additional options
-       * @return {Promise<FeedAPIResponse>}
-       * @example feed.getActivityDetail(activityId)
-       * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
-       * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
-       * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
-       */
       return this.get(_objectSpread({
         id_lte: activityId,
         id_gte: activityId,
         limit: 1
       }, options || {}));
     }
+    /**
+     * Returns the current faye client object
+     * @method getFayeClient
+     * @memberof StreamFeed.prototype
+     * @access private
+     * @return {Faye.Client} Faye client
+     */
+
   }, {
     key: "getFayeClient",
     value: function getFayeClient() {
-      /**
-       * Returns the current faye client object
-       * @method getFayeClient
-       * @memberof StreamFeed.prototype
-       * @access private
-       * @return {Faye.Client} Faye client
-       */
       return this.client.getFayeClient();
     }
+    /**
+     * Subscribes to any changes in the feed, return a promise
+     * @method subscribe
+     * @memberof StreamFeed.prototype
+     * @param  {function} callback Callback to call on completion
+     * @return {Promise<Faye.Subscription>}
+     * @example
+     * feed.subscribe(callback).then(function(){
+     * 		console.log('we are now listening to changes');
+     * });
+     */
+
   }, {
     key: "subscribe",
     value: function subscribe(callback) {
-      /**
-       * Subscribes to any changes in the feed, return a promise
-       * @method subscribe
-       * @memberof StreamFeed.prototype
-       * @param  {function} callback Callback to call on completion
-       * @return {Promise<Faye.Subscription>}
-       * @example
-       * feed.subscribe(callback).then(function(){
-       * 		console.log('we are now listening to changes');
-       * });
-       */
       if (!this.client.appId) {
-        throw new _errors__WEBPACK_IMPORTED_MODULE_4__["SiteError"]('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
+        throw new _errors__WEBPACK_IMPORTED_MODULE_4__[/* SiteError */ "c"]('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
       }
 
       var subscription = this.getFayeClient().subscribe("/".concat(this.notificationChannel), callback);
@@ -4571,13 +4672,14 @@ var StreamFeed = /*#__PURE__*/function () {
       };
       return subscription;
     }
+    /**
+     * Cancel updates created via feed.subscribe()
+     * @return void
+     */
+
   }, {
     key: "unsubscribe",
     value: function unsubscribe() {
-      /**
-       * Cancel updates created via feed.subscribe()
-       * @return void
-       */
       var streamSubscription = this.client.subscriptions["/".concat(this.notificationChannel)];
 
       if (streamSubscription) {
@@ -4585,18 +4687,19 @@ var StreamFeed = /*#__PURE__*/function () {
         streamSubscription.fayeSubscription.cancel();
       }
     }
+    /**
+     * Updates an activity's "to" fields
+     * @since 3.10.0
+     * @param {string} foreignId The foreign_id of the activity to update
+     * @param {string} time The time of the activity to update
+     * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
+     * @param {string[]} added_targets Add these new targets to the activity
+     * @param {string[]} removedTargets Remove these targets from the activity
+     */
+
   }, {
     key: "updateActivityToTargets",
     value: function updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
-      /**
-       * Updates an activity's "to" fields
-       * @since 3.10.0
-       * @param {string} foreignId The foreign_id of the activity to update
-       * @param {string} time The time of the activity to update
-       * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-       * @param {string[]} added_targets Add these new targets to the activity
-       * @param {string[]} removedTargets Remove these targets from the activity
-       */
       if (!foreignId) throw new Error('Missing `foreign_id` parameter!');
       if (!time) throw new Error('Missing `time` parameter!');
 
@@ -4636,8 +4739,6 @@ var StreamFeed = /*#__PURE__*/function () {
 
   return StreamFeed;
 }();
-
-
 
 /***/ }),
 /* 32 */
@@ -4878,35 +4979,48 @@ module.exports = _setPrototypeOf;
 
 /***/ }),
 /* 38 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return connect; });
-/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
+/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
+
+/**
+ * Create StreamClient
+ * @method connect
+ * @param  {string} apiKey    API key
+ * @param  {string} [apiSecret] API secret (only use this on the server)
+ * @param  {string} [appId]     Application identifier
+ * @param {ClientOptions} [options] - additional options
+ * @param {string} [options.location] - which data center to use
+ * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
+ * @param {string} [options.version] - advanced usage, custom api version
+ * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
+ * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
+ * @return {StreamClient}     StreamClient
+ * @example <caption>Basic usage</caption>
+ * stream.connect(apiKey, apiSecret);
+ * @example <caption>or if you want to be able to subscribe and listen</caption>
+ * stream.connect(apiKey, apiSecret, appId);
+ * @example <caption>or on Heroku</caption>
+ * stream.connect(streamURL);
+ * @example <caption>where streamURL looks like</caption>
+ * "https://thierry:pass@gestream.io/?app=1"
+ */
 
 function connect(apiKey, apiSecret, appId, options) {
-  /**
-   * Create StreamClient
-   * @method connect
-   * @param  {string} apiKey    API key
-   * @param  {string} [apiSecret] API secret (only use this on the server)
-   * @param  {string} [appId]     Application identifier
-   * @param {ClientOptions} [options] - additional options
-   * @param {string} [options.location] - which data center to use
-   * @param {boolean} [options.expireTokens=false] - whether to use a JWT timestamp field (i.e. iat)
-   * @param {string} [options.version] - advanced usage, custom api version
-   * @param {boolean} [options.keepAlive] - axios keepAlive, default to true
-   * @param {number} [options.timeout] - axios timeout in Ms, default to 10s
-   * @return {StreamClient}     StreamClient
-   * @example <caption>Basic usage</caption>
-   * stream.connect(apiKey, apiSecret);
-   * @example <caption>or if you want to be able to subscribe and listen</caption>
-   * stream.connect(apiKey, apiSecret, appId);
-   * @example <caption>or on Heroku</caption>
-   * stream.connect(streamURL);
-   * @example <caption>where streamURL looks like</caption>
-   * "https://thierry:pass@gestream.io/?app=1"
-   */
   if (typeof process !== 'undefined' && process.env && process.env.STREAM_URL && !apiKey) {
     var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
@@ -4923,21 +5037,9 @@ function connect(apiKey, apiSecret, appId, options) {
     }
   }
 
-  return new _client__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"](apiKey, apiSecret, appId, options);
+  return new _client__WEBPACK_IMPORTED_MODULE_0__[/* StreamClient */ "a"](apiKey, apiSecret, appId, options);
 }
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)))
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
 
 /***/ }),
 /* 41 */
@@ -5150,7 +5252,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(24)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(23)))
 
 /***/ }),
 /* 45 */
@@ -5475,7 +5577,7 @@ module.exports = Cancel;
 /***/ (function(module, exports) {
 
 module.exports = {
-  VERSION:          '1.3.0',
+  VERSION:          '1.4.0',
 
   BAYEUX_VERSION:   '1.0',
   ID_LENGTH:        160,
@@ -5931,18 +6033,6 @@ module.exports = __webpack_require__(72);
 
 /***/ }),
 /* 58 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5962,6 +6052,18 @@ Logging.wrapper = Faye;
 
 module.exports = Faye;
 
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
 
 /***/ }),
 /* 61 */
@@ -6213,48 +6315,67 @@ module.exports = __webpack_require__(69);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Client", function() { return _client__WEBPACK_IMPORTED_MODULE_0__["a"]; });
+/* harmony import */ var _connect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(40);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "connect", function() { return _connect__WEBPACK_IMPORTED_MODULE_0__["a"]; });
 
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "errors", function() { return _errors__WEBPACK_IMPORTED_MODULE_1__; });
-/* harmony import */ var _signing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "signing", function() { return _signing__WEBPACK_IMPORTED_MODULE_2__["a"]; });
+/* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(25);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamClient", function() { return _client__WEBPACK_IMPORTED_MODULE_1__["a"]; });
 
-/* harmony import */ var _connect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(38);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "connect", function() { return _connect__WEBPACK_IMPORTED_MODULE_3__["a"]; });
+/* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(27);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CollectionEntry", function() { return _collections__WEBPACK_IMPORTED_MODULE_2__["a"]; });
 
-/* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(27);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CollectionEntry", function() { return _collections__WEBPACK_IMPORTED_MODULE_4__["a"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Collections", function() { return _collections__WEBPACK_IMPORTED_MODULE_2__["b"]; });
 
-/* harmony import */ var _feed__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(31);
-/* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(28);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(29);
-/* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(26);
-/* harmony import */ var _reaction__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(30);
-/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(13);
+/* harmony import */ var _feed__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(31);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamFeed", function() { return _feed__WEBPACK_IMPORTED_MODULE_3__["a"]; });
+
+/* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(28);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamFileStore", function() { return _files__WEBPACK_IMPORTED_MODULE_4__["a"]; });
+
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamImageStore", function() { return _images__WEBPACK_IMPORTED_MODULE_5__["a"]; });
+
+/* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(26);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Personalization", function() { return _personalization__WEBPACK_IMPORTED_MODULE_6__["a"]; });
+
+/* harmony import */ var _reaction__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(30);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamReaction", function() { return _reaction__WEBPACK_IMPORTED_MODULE_7__["a"]; });
+
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(12);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamUser", function() { return _user__WEBPACK_IMPORTED_MODULE_8__["a"]; });
+
+/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(13);
+/* harmony import */ var _batch_operations__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_batch_operations__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _batch_operations__WEBPACK_IMPORTED_MODULE_9__) if(["default","connect","StreamClient","CollectionEntry","Collections","StreamFeed","StreamFileStore","StreamImageStore","Personalization","StreamReaction","StreamUser"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _batch_operations__WEBPACK_IMPORTED_MODULE_9__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(3);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FeedError", function() { return _errors__WEBPACK_IMPORTED_MODULE_10__["a"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SiteError", function() { return _errors__WEBPACK_IMPORTED_MODULE_10__["c"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MissingSchemaError", function() { return _errors__WEBPACK_IMPORTED_MODULE_10__["b"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StreamApiError", function() { return _errors__WEBPACK_IMPORTED_MODULE_10__["d"]; });
+
+/* harmony import */ var _signing__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "JWTScopeToken", function() { return _signing__WEBPACK_IMPORTED_MODULE_11__["a"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "JWTUserSessionToken", function() { return _signing__WEBPACK_IMPORTED_MODULE_11__["b"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "isJWTSignature", function() { return _signing__WEBPACK_IMPORTED_MODULE_11__["c"]; });
+
 /**
  * @module stream
  * @author Thierry Schellenbach
  * BSD License
  */
 
-
-
-
-
-/* deprecated default export */
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  connect: _connect__WEBPACK_IMPORTED_MODULE_3__[/* connect */ "a"],
-  errors: _errors__WEBPACK_IMPORTED_MODULE_1__,
-  signing: _signing__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"],
-  Client: _client__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"]
-});
 /*
  * typescript does not export the default exports here
  * useful for exposing exported internal types
  */
+
+
+
 
 
 
@@ -7825,7 +7946,7 @@ module.exports = function spread(callback) {
 
 var asap            = __webpack_require__(50),
     Class           = __webpack_require__(10),
-    Promise         = __webpack_require__(25),
+    Promise         = __webpack_require__(24),
     array           = __webpack_require__(33),
     browser         = __webpack_require__(34),
     constants       = __webpack_require__(49),
@@ -8888,7 +9009,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var Class      = __webpack_require__(10),
-    Promise    = __webpack_require__(25),
+    Promise    = __webpack_require__(24),
     Set        = __webpack_require__(54),
     URI        = __webpack_require__(14),
     browser    = __webpack_require__(34),
@@ -9755,7 +9876,7 @@ module.exports = _nonIterableRest;
 /* 115 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"5.1.0-0\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 -i --grep 'Files|Images'\",\"test-browser\":\"karma start karma.config.js\",\"generate-docs\":\"jsdoc -c .jsdoc\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.10.4\",\"@babel/core\":\"^7.10.4\",\"@babel/node\":\"^7.10.4\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.10.4\",\"@babel/plugin-transform-object-assign\":\"^7.10.4\",\"@babel/plugin-transform-runtime\":\"^7.10.4\",\"@babel/preset-env\":\"^7.10.4\",\"@babel/preset-typescript\":\"^7.10.4\",\"@babel/register\":\"^7.10.4\",\"@typescript-eslint/eslint-plugin\":\"^3.6.1\",\"@typescript-eslint/parser\":\"^3.6.1\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.1.0\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.7.1\",\"eslint\":\"^7.3.1\",\"eslint-config-airbnb-base\":\"^14.2.0\",\"eslint-config-prettier\":\"^6.11.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.0\",\"eslint-plugin-prettier\":\"^3.1.4\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.3.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.2.5\",\"jsdoc\":\"^3.6.4\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.1.0\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.1.5\",\"karma-sourcemap-loader\":\"~0.3.7\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.0.1\",\"null-loader\":\"^4.0.0\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.0.5\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.0\",\"typescript\":\"^3.9.6\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.43.0\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.10.4\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.0\",\"@types/qs\":\"^6.9.4\",\"Base64\":\"^1.1.0\",\"axios\":\"^0.19.2\",\"faye\":\"^1.3.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^2.2.0\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"6.0.0\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'\",\"test-browser\":\"karma start karma.config.js\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.10.5\",\"@babel/core\":\"^7.11.1\",\"@babel/node\":\"^7.10.5\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-transform-object-assign\":\"^7.10.4\",\"@babel/plugin-transform-runtime\":\"^7.11.0\",\"@babel/preset-env\":\"^7.11.0\",\"@babel/preset-typescript\":\"^7.10.4\",\"@babel/register\":\"^7.10.5\",\"@typescript-eslint/eslint-plugin\":\"^3.9.0\",\"@typescript-eslint/parser\":\"^3.9.0\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.1.0\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.7.2\",\"eslint\":\"^7.6.0\",\"eslint-config-airbnb-base\":\"^14.2.0\",\"eslint-config-prettier\":\"^6.11.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.0\",\"eslint-plugin-prettier\":\"^3.1.4\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.3.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.2.5\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.1.1\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.1.5\",\"karma-sourcemap-loader\":\"~0.3.7\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.1.1\",\"null-loader\":\"^4.0.0\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.0.5\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.1\",\"typescript\":\"^3.9.7\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.11.2\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.1\",\"@types/qs\":\"^6.9.4\",\"Base64\":\"^1.1.0\",\"axios\":\"^0.19.2\",\"faye\":\"^1.4.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^2.2.0\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"}}");
 
 /***/ })
 /******/ ]);
