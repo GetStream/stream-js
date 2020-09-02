@@ -11,7 +11,7 @@ export type CollectionResponse<CollectionType extends UnknownRecord = UnknownRec
   CollectionType
 > & {
   created_at: string;
-  foregin_id: string;
+  foreign_id: string;
   updated_at: string;
 };
 
