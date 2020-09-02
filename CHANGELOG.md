@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.1.1](https://github.com/GetStream/stream-js/releases/tag/v6.1.1) - 2020-09-02
+
+### Fixed
+
+- Correct `CollectionResponse` type ([#372](https://github.com/GetStream/stream-js/pull/372)).
+
 ## [6.1.0](https://github.com/GetStream/stream-js/releases/tag/v6.1.0) - 2020-09-02
 
 ### Added
