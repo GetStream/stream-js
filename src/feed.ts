@@ -50,6 +50,13 @@ export type GetFollowAPIResponse = APIResponse & {
   results: { created_at: string; feed_id: string; target_id: string; updated_at: string }[];
 };
 
+export type FollowStatsAPIResponse = APIResponse & {
+  results: {
+    followers: { count: number; feed: string };
+    following: { count: number; feed: string };
+  };
+};
+
 type BaseActivity<ActivityType> = ActivityType & {
   actor: string;
   object: string | unknown;
@@ -417,6 +424,33 @@ export class StreamFeed<
     return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/followers/`,
       qs: { ...options, ...extraOptions },
+      signature: this.signature,
+    });
+  }
+
+  /**
+   *  Retrieve the number of follower and following feed stats of the current feed.
+   *  For each count, feed slugs can be provided to filter counts accordingly.
+   * @method followStats
+   * @param  {object}   [options]
+   * @param  {string[]} [options.followerSlugs] find counts only on these slugs
+   * @param  {string[]} [options.followingSlugs] find counts only on these slugs
+   * @return {Promise<FollowStatsAPIResponse>}
+   * @example feed.followStats();
+   * @example feed.followStats({ followerSlugs:['user', 'news'], followingSlugs:['timeline'] });
+   */
+  followStats(options: { followerSlugs?: string[]; followingSlugs?: string[] } = {}) {
+    const qs: { followers: string; following: string; followers_slugs?: string; following_slugs?: string } = {
+      followers: this.id,
+      following: this.id,
+    };
+
+    if (options.followerSlugs && options.followerSlugs.length) qs.followers_slugs = options.followerSlugs.join(',');
+    if (options.followingSlugs && options.followingSlugs.length) qs.following_slugs = options.followingSlugs.join(',');
+
+    return this.client.get<FollowStatsAPIResponse>({
+      url: 'stats/follow/',
+      qs,
       signature: this.signature,
     });
   }
