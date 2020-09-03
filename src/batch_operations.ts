@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse } from './client';
 import utils from './utils';
 
 type BaseFollowRelation = {
@@ -23,11 +23,7 @@ export type UnfollowRelation = BaseFollowRelation & {
  * @param {string[]}  feeds    Array of feed id in form of `${feedSlug}:${feedId}`
  * @return {Promise<APIResponse>}
  */
-function addToMany<ActivityType extends UnknownRecord = UnknownRecord>(
-  this: StreamClient,
-  activity: ActivityType,
-  feeds: string[],
-) {
+function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) {
   this._throwMissingApiSecret();
 
   return this.post<APIResponse>({

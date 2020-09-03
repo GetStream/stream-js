@@ -68,7 +68,7 @@ export type ReactionFilterAPIResponse<
 export class StreamReaction<
   UserType extends UnknownRecord = UnknownRecord,
   ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
+  CollectionType extends UnknownRecord = UnknownRecord, // eslint-disable-line @typescript-eslint/no-unused-vars
   ReactionType extends UnknownRecord = UnknownRecord,
   ChildReactionType extends UnknownRecord = UnknownRecord
 > {

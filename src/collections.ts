@@ -42,10 +42,11 @@ export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = U
 export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> {
   id: string;
   collection: string;
-  store: Collections<CollectionType>;
+  store: Collections<CollectionType>; // eslint-disable-line no-use-before-define
   data: CollectionType | null;
   full?: unknown;
 
+  // eslint-disable-next-line no-use-before-define
   constructor(store: Collections<CollectionType>, collection: string, id: string, data: CollectionType) {
     this.collection = collection;
     this.store = store;

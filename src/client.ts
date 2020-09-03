@@ -162,11 +162,8 @@ export class StreamClient<
   private _collectionsToken?: string;
   private _getOrCreateToken?: string;
 
-  addToMany?: <ActivityType extends UnknownRecord = UnknownRecord>(
-    this: StreamClient,
-    activity: ActivityType,
-    feeds: string[],
-  ) => Promise<APIResponse>;
+  // eslint-disable-next-line no-shadow
+  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>;
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
@@ -639,6 +636,7 @@ export class StreamClient<
       axiosOptions: {
         timeout: 0,
         maxContentLength: Infinity,
+        maxBodyLength: Infinity,
         onUploadProgress,
       },
     });
@@ -881,9 +879,8 @@ export class StreamClient<
   async activityPartialUpdate(
     data: ActivityPartialChanges<ActivityType>,
   ): Promise<APIResponse & Activity<ActivityType>> {
-    const response = await this.activitiesPartialUpdate([data]);
-    const activity = response.activities[0];
-    delete response.activities;
+    const { activities, ...response } = await this.activitiesPartialUpdate([data]);
+    const [activity] = activities;
     return { ...activity, ...response };
   }
 
