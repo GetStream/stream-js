@@ -148,7 +148,7 @@ export type AggregatedActivityEnriched<
   ReactionType extends UnknownRecord = UnknownRecord,
   ChildReactionType extends UnknownRecord = UnknownRecord
 > = BaseAggregatedActivity & {
-  activities: EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
+  activities: EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
 };
 
 type BaseNotificationActivity = { is_read: boolean; is_seen: boolean };
