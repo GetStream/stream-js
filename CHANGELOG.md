@@ -5,6 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.1.2](https://github.com/GetStream/stream-js/releases/tag/v6.1.2) - 2020-09-03
+
+### Fixed
+
+- Correct `AggregatedActivityEnriched` type ([#374](https://github.com/GetStream/stream-js/pull/374)).
+
+- Add `maxBodyLength: Infinity` option to axios file upload requests ([#375](https://github.com/GetStream/stream-js/pull/375)).
+
+### Chore
+
+- Bump dependencies ([#375](https://github.com/GetStream/stream-js/pull/375)).
+
 ## [6.1.1](https://github.com/GetStream/stream-js/releases/tag/v6.1.1) - 2020-09-02
 
 ### Fixed
@@ -16,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support follow counting ([#369](https://github.com/GetStream/stream-js/pull/369)). By default,
-only server side auth is allowed. Contact support to enable for client side auth support for specific feed groups.
+  only server side auth is allowed. Contact support to enable for client side auth support for specific feed groups.
 
 ## [6.0.0](https://github.com/GetStream/stream-js/releases/tag/6.0.0) - 2020-08-26
 
