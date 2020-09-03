@@ -636,6 +636,7 @@ export class StreamClient<
       axiosOptions: {
         timeout: 0,
         maxContentLength: Infinity,
+        maxBodyLength: Infinity,
         onUploadProgress,
       },
     });
