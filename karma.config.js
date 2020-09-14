@@ -20,6 +20,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'test/browser-test-helper.js',
       'test/unit/common/**/*_test.js',
       'test/unit/browser/**/*_test.js',
       'test/integration/common/**/*_test.js',
@@ -32,6 +33,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'test/browser-test-helper.js': ['webpack'],
       'test/unit/common/**/*_test.js': ['webpack', 'sourcemap'],
       'test/unit/browser/**/*_test.js': ['webpack', 'sourcemap'],
       'test/integration/common/**/*_test.js': ['webpack', 'sourcemap'],

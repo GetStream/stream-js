@@ -1,16 +1,15 @@
-const isNodeEnv = typeof window === 'undefined';
+const e = module.exports;
 
-const LOCAL_RUN = false;
+e.IS_NODE_ENV = typeof window === 'undefined';
 
-const API_KEY = 'q56mdvdzreye';
-const API_SECRET = 'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf';
-
-if (LOCAL_RUN && isNodeEnv) {
-  module.exports.API_KEY = process.env.STREAM_API_KEY || API_KEY;
-  module.exports.API_SECRET = process.env.STREAM_API_SECRET || API_SECRET;
+if (e.IS_NODE_ENV) {
+  e.API_KEY = process.env.STREAM_API_KEY;
+  e.API_SECRET = process.env.STREAM_API_SECRET;
 } else {
-  module.exports.API_KEY = API_KEY;
-  module.exports.API_SECRET = API_SECRET;
+  e.API_KEY = window.STREAM_API_KEY;
+  e.API_SECRET = window.STREAM_API_SECRET;
 }
 
-module.exports.IS_NODE_ENV = isNodeEnv;
+if (!e.API_KEY || !e.API_SECRET) {
+  throw new Error('Expected STREAM_API_KEY and STREAM_API_SECRET env vars');
+}
