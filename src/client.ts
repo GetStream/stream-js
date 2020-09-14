@@ -505,7 +505,7 @@ export class StreamClient<
     }
 
     return (
-      this.enrichByDefault ||
+      (this.enrichByDefault && options.enrich !== false) ||
       options.ownReactions != null ||
       options.withRecentReactions != null ||
       options.withReactionCounts != null ||
