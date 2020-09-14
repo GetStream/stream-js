@@ -37,6 +37,7 @@ describe('OpenGraph story', () => {
         status_code: 400,
         code: 4,
         exception: 'InputException',
+        more_info: 'https://getstream.io/docs/api_error_responses',
       });
     });
   });
