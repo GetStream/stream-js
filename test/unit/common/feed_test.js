@@ -302,37 +302,32 @@ describe('[UNIT] Stream Feed (Common)', function () {
       );
     });
 
-    it('(4) enrich undefined', function () {
+    it('(5) enrich undefined', function () {
       feed.get({});
+
       td.verify(
-        get({
-          url: feed.client.enrichByDefault ? 'enrich/feed/user/matthisk/' : 'feed/user/matthisk/',
-          qs: {},
-          signature: 'usermatthisk token',
-        }),
+        get(
+          td.matchers.contains({
+            url: feed.client.enrichByDefault ? 'enrich/feed/user/matthisk/' : 'feed/user/matthisk/',
+            qs: {},
+          }),
+        ),
       );
     });
 
-    it('(4) enrich true', function () {
+    it('(6) enrich true', function () {
       feed.get({ enrich: true });
-      td.verify(
-        get({
-          url: 'enrich/feed/user/matthisk/',
-          qs: {},
-          signature: 'usermatthisk token',
-        }),
-      );
+      td.verify(get(td.matchers.contains({ url: 'enrich/feed/user/matthisk/' })));
     });
 
-    it('(4) enrich false', function () {
+    it('(7) enrich false', function () {
       feed.get({ enrich: false });
-      td.verify(
-        get({
-          url: 'feed/user/matthisk/',
-          qs: {},
-          signature: 'usermatthisk token',
-        }),
-      );
+      td.verify(get(td.matchers.contains({ url: 'feed/user/matthisk/' })));
+    });
+
+    it('(8) enrich false with ownReactions true', function () {
+      feed.get({ enrich: false, ownReactions: true });
+      td.verify(get(td.matchers.contains({ url: 'feed/user/matthisk/' })));
     });
   });
 
