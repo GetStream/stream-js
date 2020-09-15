@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.1.3](https://github.com/GetStream/stream-js/releases/tag/v6.1.3) - 2020-09-15
+
+### Fixed
+
+- Enrich option respects the enrich value if not undefined ([#382](https://github.com/GetStream/stream-js/pull/382)).
+
 ## [6.1.2](https://github.com/GetStream/stream-js/releases/tag/v6.1.2) - 2020-09-03
 
 ### Fixed
