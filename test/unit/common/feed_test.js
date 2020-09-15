@@ -301,6 +301,39 @@ describe('[UNIT] Stream Feed (Common)', function () {
         }),
       );
     });
+
+    it('(4) enrich undefined', function () {
+      feed.get({});
+      td.verify(
+        get({
+          url: feed.client.enrichByDefault ? 'enrich/feed/user/matthisk/' : 'feed/user/matthisk/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
+      );
+    });
+
+    it('(4) enrich true', function () {
+      feed.get({ enrich: true });
+      td.verify(
+        get({
+          url: 'enrich/feed/user/matthisk/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
+      );
+    });
+
+    it('(4) enrich false', function () {
+      feed.get({ enrich: false });
+      td.verify(
+        get({
+          url: 'feed/user/matthisk/',
+          qs: {},
+          signature: 'usermatthisk token',
+        }),
+      );
+    });
   });
 
   describe('#subscribe', function () {
