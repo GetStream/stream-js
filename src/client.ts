@@ -498,7 +498,7 @@ export class StreamClient<
       withRecentReactions?: boolean;
     } = {},
   ) {
-    if (options.enrich) {
+    if (options.enrich !== undefined) {
       const result = options.enrich;
       delete options.enrich;
       return result;
