@@ -14,7 +14,7 @@ describe('OpenGraph story', () => {
         title: 'Try out the Stream API with Postman - The Stream Blog',
         description: 'Many of us at Stream use Postman regularly as w…',
         url: 'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
-        favicon: 'https://getstream.io/blog/icons/icon-48x48.png?v=428e1cda5f1a9b09c558311127be2859',
+        favicon: 'https://getstream.io/blog/favicon-32x32.png?v=a90bc4693ff63b2c71ad2c84a80bdc44',
         images: [
           {
             height: 600,
