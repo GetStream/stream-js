@@ -30,7 +30,7 @@ export function connect<
   ChildReactionType extends UnknownRecord = UnknownRecord,
   PersonalizationType extends UnknownRecord = UnknownRecord
 >(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions) {
-  if (typeof process !== 'undefined' && process.env && process.env.STREAM_URL && !apiKey) {
+  if (typeof process !== 'undefined' && process.env?.STREAM_URL && !apiKey) {
     const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
