@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.1.4](https://github.com/GetStream/stream-js/releases/tag/v6.1.4) - 2020-09-23
+
+### Fixed
+
+- Typescript compiler option `allowSyntheticDefaultImports` no longer needed ([#387](https://github.com/GetStream/stream-js/pull/387)).
+- Undefined process error in some environments ([#388](https://github.com/GetStream/stream-js/pull/388)).
+
 ## [6.1.3](https://github.com/GetStream/stream-js/releases/tag/v6.1.3) - 2020-09-15
 
 ### Fixed
