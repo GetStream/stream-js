@@ -219,8 +219,9 @@ export class StreamClient<
     this.location = this.options.location as string;
     this.baseUrl = this.getBaseUrl();
 
-    if (process?.env?.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (process?.env?.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined' && process.env?.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
+    if (typeof process !== 'undefined' && process.env?.STREAM_ANALYTICS_BASE_URL)
+      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
 
     this.handlers = {};
     this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
@@ -312,9 +313,11 @@ export class StreamClient<
     if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
 
     const urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : `STREAM_${serviceName.toUpperCase()}_URL`;
-    if (process?.env?.[urlEnvironmentKey]) return process.env[urlEnvironmentKey] as string;
+    if (typeof process !== 'undefined' && process.env?.[urlEnvironmentKey])
+      return process.env[urlEnvironmentKey] as string;
 
-    if (process?.env?.LOCAL || this.options.local) return `http://localhost:8000/${serviceName}/`;
+    if ((typeof process !== 'undefined' && process.env?.LOCAL) || this.options.local)
+      return `http://localhost:8000/${serviceName}/`;
 
     if (this.location) {
       const protocol = this.options.protocol || 'https';
