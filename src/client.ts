@@ -2,8 +2,8 @@
 
 import * as axios from 'axios';
 import * as Faye from 'faye';
-import http from 'http';
-import https from 'https';
+import * as http from 'http';
+import * as https from 'https';
 import jwtDecode from 'jwt-decode';
 
 import { Personalization } from './personalization';
