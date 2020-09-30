@@ -13,14 +13,14 @@ export class StreamFileStore {
   // param. If you don't then Android will refuse to perform the upload
   /**
    * upload a File instance or a readable stream of data
-   * @param {File|NodeJS.ReadStream|string} uri - File object or stream or URI
+   * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
    * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
    * @return {Promise<FileUploadAPIResponse>}
    */
   upload(
-    uri: string | File | NodeJS.ReadStream,
+    uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
     onUploadProgress?: OnUploadProgress,

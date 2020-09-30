@@ -19,6 +19,22 @@ describe('Files', () => {
     });
   });
 
+  describe('When alice adds a different type of file stream', () => {
+    ctx.requestShouldNotError(async () => {
+      const file = request('http://nodejs.org/images/logo.png');
+      ctx.response = await ctx.alice.files.upload(file);
+      ctx.response.should.not.be.empty;
+    });
+  });
+
+  describe('When alice adds a buffer as a file', () => {
+    ctx.requestShouldNotError(async () => {
+      const file = Buffer.from('some string', 'binary');
+      ctx.response = await ctx.alice.files.upload(file, 'x.txt', 'text/plain');
+      ctx.response.should.not.be.empty;
+    });
+  });
+
   describe('When alice adds a big file', () => {
     ctx.requestShouldError(413, async () => {
       const file = fs.createReadStream('./test/integration/cloud/toolarge2.jpeg');
