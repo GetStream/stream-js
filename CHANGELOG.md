@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.2.0](https://github.com/GetStream/stream-js/releases/tag/v6.2.0) - 2020-10-01
+
+### Feature
+
+- Buffer and other types of data streams are accepted for file and image uploads [#389](https://github.com/GetStream/stream-js/pull/389)
+
 ## [6.1.4](https://github.com/GetStream/stream-js/releases/tag/v6.1.4) - 2020-09-23
 
 ### Fixed
