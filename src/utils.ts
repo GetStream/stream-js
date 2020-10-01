@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import FormData, { AppendOptions } from 'form-data';
 
 import { FeedError } from './errors';
 
@@ -31,8 +31,27 @@ function rfc3986(str: string) {
   return str.replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
 }
 
-function isReadableStream(obj: NodeJS.ReadStream): obj is NodeJS.ReadStream {
-  return obj !== null && typeof obj === 'object' && typeof (obj as NodeJS.ReadStream)._read === 'function';
+function isReadableStream(obj: unknown): obj is NodeJS.ReadStream {
+  return (
+    obj !== null &&
+    typeof obj === 'object' &&
+    ((obj as NodeJS.ReadStream).readable || typeof (obj as NodeJS.ReadStream)._read === 'function')
+  );
+}
+
+function isBuffer(obj: unknown): obj is Buffer {
+  return (
+    obj != null &&
+    (obj as Buffer).constructor != null &&
+    // @ts-expect-error
+    typeof obj.constructor.isBuffer === 'function' &&
+    // @ts-expect-error
+    obj.constructor.isBuffer(obj)
+  );
+}
+
+function isFileWebAPI(uri: unknown): uri is File {
+  return typeof window !== 'undefined' && 'File' in window && uri instanceof File;
 }
 
 /*
@@ -50,21 +69,23 @@ function validateFeedId(feedId: string) {
   return feedId;
 }
 
-function addFileToFormData(uri: string | File | NodeJS.ReadStream, name?: string, contentType?: string) {
+function addFileToFormData(uri: string | File | Buffer | NodeJS.ReadStream, name?: string, contentType?: string) {
   const data = new FormData();
 
-  let fileField: File | NodeJS.ReadStream | { name: string; uri: string; type?: string };
+  const appendOptions: AppendOptions = {};
+  if (name) appendOptions.filename = name;
+  if (contentType) appendOptions.contentType = contentType;
 
-  if (isReadableStream(uri as NodeJS.ReadStream)) {
-    fileField = uri as NodeJS.ReadStream;
-  } else if (uri && uri.toString && uri.toString() === '[object File]') {
-    fileField = uri as File;
+  if (isReadableStream(uri) || isBuffer(uri) || isFileWebAPI(uri)) {
+    data.append('file', uri, appendOptions);
   } else {
-    fileField = { uri: uri as string, name: name || (uri as string).split('/').reverse()[0] };
-    if (contentType != null) fileField.type = contentType;
+    data.append('file', {
+      uri,
+      name: name || (uri as string).split('/').reverse()[0],
+      contentType: contentType || undefined,
+    });
   }
 
-  data.append('file', fileField);
   return data;
 }
 

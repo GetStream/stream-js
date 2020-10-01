@@ -625,7 +625,7 @@ export class StreamClient<
 
   upload(
     url: string,
-    uri: string | File | NodeJS.ReadStream,
+    uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
     onUploadProgress?: OnUploadProgress,
