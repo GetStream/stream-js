@@ -232,6 +232,10 @@ export class CloudContext {
     obj1Copy.should.eql(obj2Copy);
   };
 
+  shouldHaveNonEmptyKeys = (obj, ...keys) => {
+    keys.map((k) => should.exist(obj[k]));
+  };
+
   responseShouldEqualPreviousResponse() {
     this.responseShould('be the same as the previous response', () => {
       should.exist(this.prevResponse);
