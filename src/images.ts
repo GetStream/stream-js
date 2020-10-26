@@ -44,6 +44,10 @@ export class StreamImageStore {
     });
   }
 
+  refreshUrl(url: string) {
+    return this.client.refreshUrl('images/refresh/', url);
+  }
+
   process(uri: string, options: ImageProcessOptions) {
     const params = Object.assign(options, { url: uri });
     if (Array.isArray(params.crop)) {

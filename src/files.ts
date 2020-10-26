@@ -35,4 +35,8 @@ export class StreamFileStore {
       signature: this.token,
     });
   }
+
+  refreshUrl(url: string) {
+    return this.client.refreshUrl('files/refresh/', url);
+  }
 }

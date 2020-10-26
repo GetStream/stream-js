@@ -37,6 +37,8 @@ export type APIResponse = { duration?: string };
 
 export type FileUploadAPIResponse = APIResponse & { file: string };
 
+export type RefreshUrlAPIResponse = APIResponse & { url: string };
+
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
 
 export type ClientOptions = {
@@ -642,6 +644,16 @@ export class StreamClient<
         maxBodyLength: Infinity,
         onUploadProgress,
       },
+    });
+  }
+
+  refreshUrl(url: string, linkUrl: string) {
+    return this.doAxiosRequest<RefreshUrlAPIResponse>('POST', {
+      url,
+      body: {
+        url: linkUrl,
+      },
+      signature: this.getOrCreateToken(),
     });
   }
 
