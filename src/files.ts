@@ -1,4 +1,4 @@
-import { StreamClient, OnUploadProgress } from './client';
+import { StreamClient, OnUploadProgress, RefreshUrlAPIResponse } from './client';
 
 export class StreamFileStore {
   client: StreamClient;
@@ -36,7 +36,16 @@ export class StreamFileStore {
     });
   }
 
-  refreshUrl(url: string) {
-    return this.client.refreshUrl('files/refresh/', url);
+  /**
+   * explicitly refresh CDN urls for uploaded files.
+   * @param  {string} url uploaded file url that needs to be refreshed
+   * @return {Promise<RefreshUrlAPIResponse>}
+   */
+  refreshUrl(uri: string) {
+    return this.client.post<RefreshUrlAPIResponse>({
+      url: 'files/refresh/',
+      body: { url: uri },
+      signature: this.token,
+    });
   }
 }

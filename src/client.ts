@@ -647,16 +647,6 @@ export class StreamClient<
     });
   }
 
-  refreshUrl(url: string, linkUrl: string) {
-    return this.doAxiosRequest<RefreshUrlAPIResponse>('POST', {
-      url,
-      body: {
-        url: linkUrl,
-      },
-      signature: this.getOrCreateToken(),
-    });
-  }
-
   /**
    * Shorthand function for get request
    * @method get

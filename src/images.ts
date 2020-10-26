@@ -1,4 +1,4 @@
-import { StreamClient, FileUploadAPIResponse, OnUploadProgress } from './client';
+import { StreamClient, FileUploadAPIResponse, OnUploadProgress, RefreshUrlAPIResponse } from './client';
 
 export type ImageProcessOptions = {
   crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
@@ -44,8 +44,17 @@ export class StreamImageStore {
     });
   }
 
-  refreshUrl(url: string) {
-    return this.client.refreshUrl('images/refresh/', url);
+  /**
+   * explicitly refresh CDN urls for uploaded images.
+   * @param  {string} url uploaded image url that needs to be refreshed
+   * @return {Promise<RefreshUrlAPIResponse>}
+   */
+  refreshUrl(uri: string) {
+    return this.client.post<RefreshUrlAPIResponse>({
+      url: 'images/refresh/',
+      body: { url: uri },
+      signature: this.token,
+    });
   }
 
   process(uri: string, options: ImageProcessOptions) {
