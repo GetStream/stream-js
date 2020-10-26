@@ -45,8 +45,9 @@ export class StreamImageStore {
   }
 
   /**
-   * explicitly refresh CDN urls for uploaded images.
-   * @param  {string} url uploaded image url that needs to be refreshed
+   * Explicitly refresh CDN urls for uploaded images on the Stream CDN (only needed for files on the Stream CDN).
+   * Note that Stream CDN is not enabled by default, if in doubt please contact us.
+   * @param  {string} uri full uploaded image url that needs to be refreshed
    * @return {Promise<RefreshUrlAPIResponse>}
    */
   refreshUrl(uri: string) {
