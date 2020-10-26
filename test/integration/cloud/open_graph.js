@@ -18,7 +18,7 @@ describe('OpenGraph story', () => {
         images: [
           {
             height: 600,
-            image: 'https://i.imgur.com/cQTq2QA.jpg',
+            image: 'stream-blog-v2.imgix.net/blog/wp-content/uploads/decd2d313c2d09e47d1f9ce62384ce4e/cQTq2QA.jpg',
             width: 1200,
           },
         ],
