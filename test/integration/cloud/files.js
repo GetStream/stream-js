@@ -51,6 +51,14 @@ describe('Files', () => {
     });
   });
 
+  describe('When refreshUrl is requested', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.alice.files.refreshUrl(fileURL);
+      ctx.response.should.not.be.empty;
+      ctx.response.file.should.be.eql(fileURL);
+    });
+  });
+
   describe("When bob tries to delete alice's file", () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.bob.files.delete(fileURL);
