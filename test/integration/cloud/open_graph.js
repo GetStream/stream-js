@@ -9,20 +9,8 @@ describe('OpenGraph story', () => {
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.shouldEqualBesideDuration(ctx.response, {
-        type: 'website',
-        title: 'Try out the Stream API with Postman - The Stream Blog',
-        description: 'Many of us at Stream use Postman regularly as w…',
-        url: 'https://getstream.io/blog/try-out-the-stream-api-with-postman/',
-        favicon: 'https://getstream.io/blog/favicon-32x32.png?v=a90bc4693ff63b2c71ad2c84a80bdc44',
-        images: [
-          {
-            height: 600,
-            image: 'stream-blog-v2.imgix.net/blog/wp-content/uploads/decd2d313c2d09e47d1f9ce62384ce4e/cQTq2QA.jpg',
-            width: 1200,
-          },
-        ],
-      });
+      ctx.shouldHaveNonEmptyKeys(ctx.response, 'type', 'title', 'description', 'url', 'favicon', 'images');
+      ctx.shouldHaveNonEmptyKeys(ctx.response.images[0], 'height', 'width', 'image');
     });
   });
 
