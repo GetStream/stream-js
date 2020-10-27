@@ -55,7 +55,7 @@ describe('Files', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.files.refreshUrl(fileURL);
       ctx.response.should.not.be.empty;
-      ctx.response.file.should.be.eql(fileURL);
+      ctx.response.url.should.be.eql(fileURL);
     });
   });
 

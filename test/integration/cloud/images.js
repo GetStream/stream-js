@@ -59,7 +59,7 @@ describe('Images', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.images.refreshUrl(imageUrl);
       ctx.response.should.not.be.empty;
-      ctx.response.file.should.be.eql(imageUrl);
+      ctx.response.url.should.be.eql(imageUrl);
     });
   });
 
