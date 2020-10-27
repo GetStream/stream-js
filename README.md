@@ -21,7 +21,7 @@ npm install getstream
 or if you are using yarn
 
 ```bash
-yarn install getstream
+yarn add getstream
 ```
 
 ### Using JS deliver
