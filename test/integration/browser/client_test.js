@@ -66,7 +66,7 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
         .upload('files/', mockedFile(1024, 'file.txt'))
         .then(({ file }) => {
           expect(file).to.be.a('string');
-          expect(file.includes('file.txt')).to.be.ok();
+          expect(file.includes('file.txt?')).to.be.ok();
           const uri = file.split('?')[0].split('.').reverse();
           expect(uri[0]).to.be.equal('txt');
           expect(uri[1]).to.be.equal('file');
@@ -80,8 +80,8 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
         .upload('files/', mockedFile(), 'random.pdf')
         .then(({ file }) => {
           expect(file).to.be.a('string');
-          expect(file.includes('file.txt')).not.to.be.ok();
-          expect(file.includes('random.pdf')).to.be.ok();
+          expect(file.includes('file.txt?')).not.to.be.ok();
+          expect(file.includes('random.pdf?')).to.be.ok();
           const uri = file.split('?')[0].split('.').reverse();
           expect(uri[0]).to.be.equal('pdf');
           expect(uri[1]).to.be.equal('random');
