@@ -1,4 +1,4 @@
-import FormData, { AppendOptions } from 'form-data';
+import FormData from 'form-data';
 
 import { FeedError } from './errors';
 
@@ -72,12 +72,9 @@ function validateFeedId(feedId: string) {
 function addFileToFormData(uri: string | File | Buffer | NodeJS.ReadStream, name?: string, contentType?: string) {
   const data = new FormData();
 
-  const appendOptions: AppendOptions = {};
-  if (name) appendOptions.filename = name;
-  if (contentType) appendOptions.contentType = contentType;
-
   if (isReadableStream(uri) || isBuffer(uri) || isFileWebAPI(uri)) {
-    data.append('file', uri, appendOptions);
+    if (name) data.append('file', uri, name);
+    else data.append('file', uri);
   } else {
     data.append('file', {
       uri,
