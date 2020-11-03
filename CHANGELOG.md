@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.2.1](https://github.com/GetStream/stream-js/releases/tag/v6.2.1) - 2020-11-03
+
+### Fix
+
+- Browser file upload incorrect file name [#393](https://github.com/GetStream/stream-js/pull/393)
+
 ## [6.2.0](https://github.com/GetStream/stream-js/releases/tag/v6.2.0) - 2020-10-01
 
 ### Feature
