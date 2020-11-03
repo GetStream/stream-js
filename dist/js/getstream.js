@@ -607,12 +607,9 @@ function validateFeedId(feedId) {
 
 function addFileToFormData(uri, name, contentType) {
   var data = new form_data__WEBPACK_IMPORTED_MODULE_2___default.a();
-  var appendOptions = {};
-  if (name) appendOptions.filename = name;
-  if (contentType) appendOptions.contentType = contentType;
 
   if (isReadableStream(uri) || isBuffer(uri) || isFileWebAPI(uri)) {
-    data.append('file', uri, appendOptions);
+    if (name) data.append('file', uri, name);else data.append('file', uri);
   } else {
     data.append('file', {
       uri: uri,
@@ -2236,7 +2233,6 @@ module.exports = Promise;
 /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(61);
 /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(62);
-/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(26);
 /* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(27);
 /* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(28);
@@ -2283,7 +2279,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  // TODO: no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 
-var pkg = __webpack_require__(115);
+var pkg = __webpack_require__(113);
 
 /**
  * Client to connect to Stream api
@@ -2479,7 +2475,7 @@ var StreamClient = /*#__PURE__*/function () {
     this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
-      var jwtBody = jwt_decode__WEBPACK_IMPORTED_MODULE_11___default()(this.userToken);
+      var jwtBody = Object(jwt_decode__WEBPACK_IMPORTED_MODULE_11__[/* default */ "a"])(this.userToken);
 
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
@@ -6159,35 +6155,12 @@ module.exports = Faye;
 
 /***/ }),
 /* 62 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-var base64_url_decode = __webpack_require__(109);
-
-function InvalidTokenError(message) {
-  this.message = message;
-}
-
-InvalidTokenError.prototype = new Error();
-InvalidTokenError.prototype.name = 'InvalidTokenError';
-
-module.exports = function (token,options) {
-  if (typeof token !== 'string') {
-    throw new InvalidTokenError('Invalid token specified');
-  }
-
-  options = options || {};
-  var pos = options.header === true ? 0 : 1;
-  try {
-    return JSON.parse(base64_url_decode(token.split('.')[pos]));
-  } catch (e) {
-    throw new InvalidTokenError('Invalid token specified: ' + e.message);
-  }
-};
-
-module.exports.InvalidTokenError = InvalidTokenError;
+/* unused harmony export InvalidTokenError */
+function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ __webpack_exports__["a"] = (o);
+//# sourceMappingURL=jwt-decode.esm.js.map
 
 
 /***/ }),
@@ -6216,9 +6189,9 @@ var getPrototypeOf = __webpack_require__(33);
 
 var setPrototypeOf = __webpack_require__(38);
 
-var isNativeFunction = __webpack_require__(111);
+var isNativeFunction = __webpack_require__(109);
 
-var construct = __webpack_require__(112);
+var construct = __webpack_require__(110);
 
 function _wrapNativeSuper(Class) {
   var _cache = typeof Map === "function" ? new Map() : undefined;
@@ -6292,7 +6265,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   if ( true && exports != null &&
       typeof exports.nodeType !== 'number') {
     module.exports = f ();
-  } else if ( true && __webpack_require__(114) != null) {
+  } else if ( true && __webpack_require__(112) != null) {
     !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (f),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
@@ -9819,89 +9792,6 @@ module.exports = Subscription;
 
 /***/ }),
 /* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var atob = __webpack_require__(110);
-
-function b64DecodeUnicode(str) {
-  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
-    var code = p.charCodeAt(0).toString(16).toUpperCase();
-    if (code.length < 2) {
-      code = '0' + code;
-    }
-    return '%' + code;
-  }));
-}
-
-module.exports = function(str) {
-  var output = str.replace(/-/g, "+").replace(/_/g, "/");
-  switch (output.length % 4) {
-    case 0:
-      break;
-    case 2:
-      output += "==";
-      break;
-    case 3:
-      output += "=";
-      break;
-    default:
-      throw "Illegal base64url string!";
-  }
-
-  try{
-    return b64DecodeUnicode(output);
-  } catch (err) {
-    return atob(output);
-  }
-};
-
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports) {
-
-/**
- * The code was extracted from:
- * https://github.com/davidchambers/Base64.js
- */
-
-var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-function InvalidCharacterError(message) {
-  this.message = message;
-}
-
-InvalidCharacterError.prototype = new Error();
-InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-function polyfill (input) {
-  var str = String(input).replace(/=+$/, '');
-  if (str.length % 4 == 1) {
-    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-  }
-  for (
-    // initialize result and counters
-    var bc = 0, bs, buffer, idx = 0, output = '';
-    // get next character
-    buffer = str.charAt(idx++);
-    // character found in table? initialize bit storage and add its ascii value;
-    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-      // and if not first of each 4 characters,
-      // convert the first 8 bits to one ascii character
-      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-  ) {
-    // try to find character in table (0-63, not found => -1)
-    buffer = chars.indexOf(buffer);
-  }
-  return output;
-}
-
-
-module.exports = typeof window !== 'undefined' && window.atob && window.atob.bind(window) || polyfill;
-
-
-/***/ }),
-/* 111 */
 /***/ (function(module, exports) {
 
 function _isNativeFunction(fn) {
@@ -9911,12 +9801,12 @@ function _isNativeFunction(fn) {
 module.exports = _isNativeFunction;
 
 /***/ }),
-/* 112 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var setPrototypeOf = __webpack_require__(38);
 
-var isNativeReflectConstruct = __webpack_require__(113);
+var isNativeReflectConstruct = __webpack_require__(111);
 
 function _construct(Parent, args, Class) {
   if (isNativeReflectConstruct()) {
@@ -9938,7 +9828,7 @@ function _construct(Parent, args, Class) {
 module.exports = _construct;
 
 /***/ }),
-/* 113 */
+/* 111 */
 /***/ (function(module, exports) {
 
 function _isNativeReflectConstruct() {
@@ -9957,7 +9847,7 @@ function _isNativeReflectConstruct() {
 module.exports = _isNativeReflectConstruct;
 
 /***/ }),
-/* 114 */
+/* 112 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -9966,10 +9856,10 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(this, {}))
 
 /***/ }),
-/* 115 */
+/* 113 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"6.2.0\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'\",\"test-browser\":\"karma start karma.config.js\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.11.5\",\"@babel/core\":\"^7.11.5\",\"@babel/node\":\"^7.10.5\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-transform-object-assign\":\"^7.10.4\",\"@babel/plugin-transform-runtime\":\"^7.11.5\",\"@babel/preset-env\":\"^7.11.5\",\"@babel/preset-typescript\":\"^7.10.4\",\"@babel/register\":\"^7.11.5\",\"@typescript-eslint/eslint-plugin\":\"^4.0.1\",\"@typescript-eslint/parser\":\"^4.0.1\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.1.0\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.7.2\",\"dotenv\":\"^8.2.0\",\"eslint\":\"^7.8.1\",\"eslint-config-airbnb-base\":\"^14.2.0\",\"eslint-config-prettier\":\"^6.11.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.0\",\"eslint-plugin-prettier\":\"^3.1.4\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.3.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.2.5\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.2.1\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.1.5\",\"karma-sourcemap-loader\":\"~0.3.8\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.1.3\",\"null-loader\":\"^4.0.0\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.1.1\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.1\",\"typescript\":\"^4.0.2\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.11.2\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.1\",\"@types/qs\":\"^6.9.4\",\"Base64\":\"^1.1.0\",\"axios\":\"^0.20.0\",\"faye\":\"^1.4.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^2.2.0\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"}}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"6.2.1\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'\",\"test-browser\":\"karma start karma.config.js\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.11.5\",\"@babel/core\":\"^7.11.5\",\"@babel/node\":\"^7.10.5\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-transform-object-assign\":\"^7.10.4\",\"@babel/plugin-transform-runtime\":\"^7.11.5\",\"@babel/preset-env\":\"^7.11.5\",\"@babel/preset-typescript\":\"^7.10.4\",\"@babel/register\":\"^7.11.5\",\"@typescript-eslint/eslint-plugin\":\"^4.0.1\",\"@typescript-eslint/parser\":\"^4.0.1\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.1.0\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.7.2\",\"dotenv\":\"^8.2.0\",\"eslint\":\"^7.8.1\",\"eslint-config-airbnb-base\":\"^14.2.0\",\"eslint-config-prettier\":\"^6.11.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.0\",\"eslint-plugin-prettier\":\"^3.1.4\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.3.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.2.5\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.2.1\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.1.5\",\"karma-sourcemap-loader\":\"~0.3.8\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.1.3\",\"null-loader\":\"^4.0.0\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.1.1\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.1\",\"typescript\":\"^4.0.2\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.11.2\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.1\",\"@types/qs\":\"^6.9.4\",\"Base64\":\"^1.1.0\",\"axios\":\"^0.20.0\",\"faye\":\"^1.4.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^2.2.0\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"}}");
 
 /***/ })
 /******/ ]);
