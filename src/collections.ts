@@ -166,12 +166,12 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
    * @method add
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
-   * @param  {string}   itemId  entry id
+   * @param  {?string}   itemId  entry id
    * @param  {CollectionType}   itemData  ObjectStore data
    * @return {Promise<CollectionEntry<CollectionType>>}
    * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
    */
-  async add(collection: string, itemId: string, itemData: CollectionType) {
+  async add(collection: string, itemId: string | null, itemData: CollectionType) {
     const response = await this.client.post<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection),
       body: {
