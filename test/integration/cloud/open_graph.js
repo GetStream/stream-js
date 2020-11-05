@@ -10,7 +10,7 @@ describe('OpenGraph story', () => {
 
     ctx.responseShould('have the expected content', () => {
       ctx.shouldHaveNonEmptyKeys(ctx.response, 'type', 'title', 'description', 'url', 'favicon', 'images');
-      ctx.shouldHaveNonEmptyKeys(ctx.response.images[0], 'height', 'width', 'image');
+      ctx.shouldHaveNonEmptyKeys(ctx.response.images[0], 'image');
     });
   });
 
