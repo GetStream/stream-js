@@ -166,7 +166,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
    * @method add
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
-   * @param  {?string}   itemId  entry id
+   * @param  {string | null}    itemId  entry id, if null a random id will be assigned to the item
    * @param  {CollectionType}   itemData  ObjectStore data
    * @return {Promise<CollectionEntry<CollectionType>>}
    * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
