@@ -15,6 +15,7 @@ describe('Files', () => {
 
     ctx.responseShould('have the expected content', () => {
       ctx.response.should.have.all.keys('file', 'duration');
+      ctx.response.file.includes('helloworld.txt?').should.be.true;
       fileURL = ctx.response.file;
     });
   });
@@ -24,6 +25,7 @@ describe('Files', () => {
       const file = request('http://nodejs.org/images/logo.png');
       ctx.response = await ctx.alice.files.upload(file);
       ctx.response.should.not.be.empty;
+      ctx.response.file.includes('logo.png?').should.be.true;
     });
   });
 
@@ -32,6 +34,7 @@ describe('Files', () => {
       const file = Buffer.from('some string', 'binary');
       ctx.response = await ctx.alice.files.upload(file, 'x.txt', 'text/plain');
       ctx.response.should.not.be.empty;
+      ctx.response.file.includes('x.txt?').should.be.true;
     });
   });
 
