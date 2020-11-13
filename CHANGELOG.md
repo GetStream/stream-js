@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.2.2](https://github.com/GetStream/stream-js/releases/tag/v6.2.2) - 2020-11-13
+
+### Fix
+
+- Correct type of own_reactions [#398](https://github.com/GetStream/stream-js/pull/398)
+
 ## [6.2.1](https://github.com/GetStream/stream-js/releases/tag/v6.2.1) - 2020-11-03
 
 ### Fix
