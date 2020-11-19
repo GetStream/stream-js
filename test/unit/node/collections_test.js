@@ -40,7 +40,7 @@ describe('[UNIT] Stream Collections (node)', function () {
             collection_name: collectionName,
             ids: id,
           },
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -62,7 +62,7 @@ describe('[UNIT] Stream Collections (node)', function () {
           url: 'collections/',
           serviceName: 'api',
           body,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -82,7 +82,7 @@ describe('[UNIT] Stream Collections (node)', function () {
           url: 'collections/',
           serviceName: 'api',
           body,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -105,7 +105,7 @@ describe('[UNIT] Stream Collections (node)', function () {
           url: 'collections/',
           serviceName: 'api',
           body,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -125,7 +125,7 @@ describe('[UNIT] Stream Collections (node)', function () {
           url: 'collections/',
           serviceName: 'api',
           qs: { foreign_ids: `${collectionName}:${id}` },
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -143,7 +143,7 @@ describe('[UNIT] Stream Collections (node)', function () {
           url: 'collections/',
           serviceName: 'api',
           qs: { foreign_ids: `${collectionName}:${id}` },
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -167,7 +167,7 @@ describe('[UNIT] Stream Collections (node)', function () {
               })
               .join(','),
           },
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });

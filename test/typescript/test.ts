@@ -128,7 +128,7 @@ ogPromise.then((og) => {
 // @ts-expect-error
 client.og();
 
-const axiosConfig = { signature: '', url: '' };
+const axiosConfig = { token: '', url: '' };
 const response: T = client.handleResponse<T>({ data: {}, status: 100, statusText: '', headers: {}, config: {} });
 const axiosReq: Promise<T> = client.doAxiosRequest<T>('GET', axiosConfig);
 // @ts-expect-error

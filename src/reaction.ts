@@ -137,7 +137,7 @@ export class StreamReaction<
     return this.client.post<ReactionAPIResponse<ReactionType>>({
       url: this.buildURL(),
       body,
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -183,7 +183,7 @@ export class StreamReaction<
     return this.client.post<ReactionAPIResponse<ChildReactionType>>({
       url: this.buildURL(),
       body,
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -198,7 +198,7 @@ export class StreamReaction<
   get(id: string) {
     return this.client.get<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>({
       url: this.buildURL(id),
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -247,7 +247,7 @@ export class StreamReaction<
     return this.client.get<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>({
       url,
       qs: qs as { [key: string]: unknown },
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -282,7 +282,7 @@ export class StreamReaction<
     return this.client.put<ReactionAPIResponse<ReactionType | ChildReactionType>>({
       url: this.buildURL(id),
       body,
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -297,7 +297,7 @@ export class StreamReaction<
   delete(id: string) {
     return this.client.delete({
       url: this.buildURL(id),
-      signature: this.token,
+      token: this.token,
     });
   }
 }

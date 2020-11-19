@@ -32,7 +32,7 @@ function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, fee
       activity: utils.replaceStreamObjects(activity),
       feeds,
     },
-    signature: this.getOrCreateToken(),
+    token: this.getOrCreateToken(),
   });
 }
 
@@ -55,7 +55,7 @@ function followMany(this: StreamClient, follows: FollowRelation[], activityCopyL
     url: 'follow_many/',
     body: follows,
     qs,
-    signature: this.getOrCreateToken(),
+    token: this.getOrCreateToken(),
   });
 }
 
@@ -73,7 +73,7 @@ function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]) {
   return this.post<APIResponse>({
     url: 'unfollow_many/',
     body: unfollows,
-    signature: this.getOrCreateToken(),
+    token: this.getOrCreateToken(),
   });
 }
 

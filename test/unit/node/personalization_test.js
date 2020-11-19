@@ -37,7 +37,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           url: `${resource}/`,
           serviceName: 'personalization',
           qs: options,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -54,7 +54,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           url: `${resource}/`,
           serviceName: 'personalization',
           qs: {},
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -76,7 +76,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           serviceName: 'personalization',
           qs: options,
           body: data,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -95,7 +95,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           serviceName: 'personalization',
           qs: options,
           body: {},
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -113,7 +113,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           serviceName: 'personalization',
           qs: {},
           body: {},
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -133,7 +133,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           url: `${resource}/`,
           serviceName: 'personalization',
           qs: options,
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });
@@ -150,7 +150,7 @@ describe('[UNIT] Stream Personalization (node)', function () {
           url: `${resource}/`,
           serviceName: 'personalization',
           qs: {},
-          signature: fakedJWT,
+          token: fakedJWT,
         }),
       );
     });

@@ -1,49 +1,4 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import Base64 from 'Base64';
-
-const JWS_REGEX = /^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/;
-
-function safeJsonParse<T>(thing: T | string): T | undefined {
-  if (typeof thing === 'object') return thing;
-  try {
-    return JSON.parse(thing as string);
-  } catch (e) {
-    return undefined;
-  }
-}
-
-function padString(string: string) {
-  const segmentLength = 4;
-  const diff = string.length % segmentLength;
-  if (!diff) return string;
-
-  let padLength = segmentLength - diff;
-  while (padLength--) string += '=';
-
-  return string;
-}
-
-function toBase64(base64UrlString: string) {
-  return padString(base64UrlString)
-    .replace(/\-/g, '+') // eslint-disable-line no-useless-escape
-    .replace(/_/g, '/');
-}
-
-function decodeBase64Url(base64UrlString: string) {
-  try {
-    return Base64.atob(toBase64(base64UrlString));
-  } catch (e) {
-    if (e.name === 'InvalidCharacterError') {
-      return undefined;
-    }
-    throw e;
-  }
-}
-
-function headerFromJWS(jwsSig: string) {
-  const encodedHeader = jwsSig.split('.', 1)[0];
-  return safeJsonParse(decodeBase64Url(encodedHeader));
-}
 
 /**
  * Creates the JWT token for feedId, resource and action using the apiSecret
@@ -98,20 +53,4 @@ export function JWTUserSessionToken(
 
   const opts: SignOptions = { algorithm: 'HS256', noTimestamp: true, ...jwtOptions };
   return jwt.sign(payload, apiSecret, opts);
-}
-
-/**
- * check if token is a valid JWT token
- * @method isJWTSignature
- * @memberof signing
- * @private
- * @param {string} signature - Signature to check
- * @return {boolean}
- */
-export function isJWTSignature(signature: string | null) {
-  if (signature == null || signature.length === 0) {
-    return false;
-  }
-  const token = signature.split(' ')[1] || signature;
-  return JWS_REGEX.test(token) && !!headerFromJWS(token);
 }
