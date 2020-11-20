@@ -108,7 +108,7 @@ export type EnrichedActivity<
 
   latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
   latest_reactions_extra?: Record<string, { next?: string }>;
-  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>[];
+  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
   own_reactions_extra?: Record<string, { next?: string }>;
   // Reaction posted to feed
   reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
