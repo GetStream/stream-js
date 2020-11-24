@@ -43,14 +43,14 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
   delete() {
     return this.client.delete({
       url: this.url,
-      signature: this.token,
+      token: this.token,
     });
   }
 
   async get(options?: { with_follow_counts?: boolean }) {
     const response = await this.client.get<UserAPIResponse<UserType>>({
       url: this.url,
-      signature: this.token,
+      token: this.token,
       qs: options,
     });
 
@@ -68,7 +68,7 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
         data: data || this.data || {},
       },
       qs: options,
-      signature: this.token,
+      token: this.token,
     });
 
     this.full = { ...response };
@@ -83,7 +83,7 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
       body: {
         data: data || this.data || {},
       },
-      signature: this.token,
+      token: this.token,
     });
 
     this.full = { ...response };

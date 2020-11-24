@@ -212,67 +212,38 @@ describe('[UNIT] Stream Client (Common)', function () {
   });
 
   describe('#enrichKwargs', function () {
-    it('(1) api service - simple auth type', function () {
-      const kwargs = this.client.enrichKwargs({
-        url: 'feed',
-        signature: 'Basic encoded_password',
-      });
-
-      expect(kwargs.params.api_key).to.be(this.client.apiKey);
-      expect(kwargs.params.location).to.be(this.client.group);
-      expect(kwargs.headers['stream-auth-type']).to.be('simple');
-      expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
-      expect(kwargs.url).to.contain('api.stream-io-api.com');
-    });
-
-    it('(2) api service - jwt signature', function () {
-      const signature =
+    it('(1) api service - jwt signature', function () {
+      const token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG5Eb2UiLCJhY3Rpb24iOiJyZWFkIn0.dfayorXXS1rAyd97BGCNgrCodPH9X3P80DPMH5b9D_A';
 
       const kwargs = this.client.enrichKwargs({
         url: 'feed',
-        signature: `feedname ${signature}`,
+        token: `${token}`,
       });
 
       expect(kwargs.params.api_key).to.be(this.client.apiKey);
       expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers.Authorization).to.be(signature);
+      expect(kwargs.headers.Authorization).to.be(token);
       expect(kwargs.url).to.contain('api.stream-io-api.com');
     });
 
-    it('(3) personalization service - simple auth type', function () {
-      const kwargs = this.client.enrichKwargs({
-        url: 'feed',
-        serviceName: 'personalization',
-        signature: 'Basic encoded_password',
-      });
-
-      expect(kwargs.params.api_key).to.be(this.client.apiKey);
-      expect(kwargs.params.location).to.be(this.client.group);
-      expect(kwargs.headers['stream-auth-type']).to.be('simple');
-      expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers.Authorization).to.be('Basic encoded_password');
-      expect(kwargs.url).to.contain('personalization.stream-io-api.com');
-    });
-
-    it('(4) personalization service - jwt signature', function () {
-      const signature =
+    it('(2) personalization service - jwt signature', function () {
+      const token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6IioiLCJhY3Rpb24iOiJwZXJzb25hbGl6YXRpb24iLCJmZWVkX2lkIjoiKiIsInVzZXJfaWQiOiIqIn0.JvX_IGajZSPD5zDOVpeZLkn0hhClMheN_ILnowyBUN';
 
       const kwargs = this.client.enrichKwargs({
         url: 'feed',
         serviceName: 'personalization',
-        signature: `feedname ${signature}`,
+        token: `${token}`,
       });
 
       expect(kwargs.params.api_key).to.be(this.client.apiKey);
       expect(kwargs.params.location).to.be(this.client.group);
       expect(kwargs.headers['stream-auth-type']).to.be('jwt');
       expect(kwargs.headers['X-Stream-Client']).to.be(this.client.userAgent());
-      expect(kwargs.headers.Authorization).to.be(signature);
+      expect(kwargs.headers.Authorization).to.be(token);
       expect(kwargs.url).to.contain('personalization.stream-io-api.com');
     });
 
@@ -348,7 +319,7 @@ describe('[UNIT] Stream Client (Common)', function () {
           url: 'images',
           body: fd,
           headers: config.IS_NODE_ENV ? 'headers' : {},
-          signature: 'token',
+          token: 'token',
           axiosOptions: {
             timeout: 0,
             maxContentLength: Infinity,

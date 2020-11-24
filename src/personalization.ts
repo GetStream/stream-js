@@ -44,7 +44,7 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
-      signature: options.token || this.client.getPersonalizationToken(),
+      token: options.token || this.client.getPersonalizationToken(),
     });
   }
 
@@ -65,7 +65,7 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
       serviceName: 'personalization',
       qs: options,
       body: data,
-      signature: this.client.getPersonalizationToken(),
+      token: this.client.getPersonalizationToken(),
     });
   }
 
@@ -84,7 +84,7 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
       url: `${resource}/`,
       serviceName: 'personalization',
       qs: options,
-      signature: this.client.getPersonalizationToken(),
+      token: this.client.getPersonalizationToken(),
     });
   }
 }

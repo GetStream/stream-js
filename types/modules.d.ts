@@ -24,7 +24,3 @@ declare module 'faye' {
     subscribe(channel: string, callback: Callback): Promise<Subscription>;
   }
 }
-
-declare module 'Base64' {
-  function atob(input: string): string;
-}
