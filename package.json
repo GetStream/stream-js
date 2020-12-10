@@ -129,5 +129,15 @@
   ],
   "engines": {
     "node": "10 || 12 || >=14"
-  }
+  },
+  "keywords": [
+    "stream",
+    "get",
+    "get-stream",
+    "chat",
+    "notification",
+    "feed",
+    "stream.io",
+    "getstream"
+  ]
 }
