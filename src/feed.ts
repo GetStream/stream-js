@@ -233,7 +233,6 @@ export class StreamFeed<
   userId: string;
   feedUrl: string;
   feedTogether: string;
-  signature: string;
   notificationChannel: string;
 
   /**
@@ -270,7 +269,6 @@ export class StreamFeed<
 
     this.feedUrl = this.id.replace(':', '/');
     this.feedTogether = this.id.replace(':', '');
-    this.signature = `${this.feedTogether} ${this.token}`;
 
     // faye setup
     this.notificationChannel = `site-${this.client.appId}-feed-${this.feedTogether}`;
@@ -292,7 +290,7 @@ export class StreamFeed<
     return this.client.post<Activity<ActivityType>>({
       url: `feed/${this.feedUrl}/`,
       body: activity,
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -309,7 +307,7 @@ export class StreamFeed<
     return this.client.delete<APIResponse & { removed: string }>({
       url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
       qs: (activityId as { foreignId: string }).foreignId ? { foreign_id: '1' } : {},
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -324,7 +322,7 @@ export class StreamFeed<
     return this.client.post<Activity<ActivityType>[]>({
       url: `feed/${this.feedUrl}/`,
       body: { activities: utils.replaceStreamObjects(activities) },
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -354,7 +352,7 @@ export class StreamFeed<
     return this.client.post<APIResponse>({
       url: `feed/${this.feedUrl}/following/`,
       body,
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -380,7 +378,7 @@ export class StreamFeed<
     return this.client.delete<APIResponse>({
       url: `feed/${this.feedUrl}/following/${targetFeedId}/`,
       qs,
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -402,7 +400,7 @@ export class StreamFeed<
     return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/following/`,
       qs: { ...options, ...extraOptions },
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -424,7 +422,7 @@ export class StreamFeed<
     return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/followers/`,
       qs: { ...options, ...extraOptions },
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -451,7 +449,7 @@ export class StreamFeed<
     return this.client.get<FollowStatsAPIResponse>({
       url: 'stats/follow/',
       qs,
-      signature: this.signature,
+      token: this.client.getOrCreateToken(),
     });
   }
 
@@ -482,7 +480,7 @@ export class StreamFeed<
     return this.client.get<FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>>({
       url: `${path}${this.feedUrl}/`,
       qs: { ...options, ...extraOptions },
-      signature: this.signature,
+      token: this.token,
     });
   }
 
@@ -611,7 +609,7 @@ export class StreamFeed<
 
     return this.client.post<APIResponse & Activity<ActivityType> & { added?: string[]; removed?: string[] }>({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,
-      signature: this.signature,
+      token: this.token,
       body,
     });
   }

@@ -33,7 +33,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
     expect(feed.id).to.be('user:matthisk');
     expect(feed.feedUrl).to.be('user/matthisk');
     expect(feed.feedTogether).to.be('usermatthisk');
-    expect(feed.signature).to.be('usermatthisk token');
+    expect(feed.token).to.be('token');
     expect(feed.notificationChannel).to.be(`site-${this.client.appId}-feed-usermatthisk`);
   });
 
@@ -45,7 +45,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
       post({
         url: 'feed/user/matthisk/',
         body: activity,
-        signature: 'usermatthisk token',
+        token: 'token',
       }),
     );
   });
@@ -58,7 +58,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
       post({
         url: 'feed/user/matthisk/',
         body: { activities },
-        signature: 'usermatthisk token',
+        token: 'token',
       }),
     );
   });
@@ -88,7 +88,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post({
           url: 'feed/user/matthisk/following/',
           body,
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -105,7 +105,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         post({
           url: 'feed/user/matthisk/following/',
           body,
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -132,7 +132,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         del({
           url: 'feed/user/matthisk/following/user:henk/',
           qs: {},
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -146,7 +146,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
           qs: {
             keep_history: '1',
           },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -160,7 +160,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         get({
           url: 'feed/user/matthisk/following/',
           qs: {},
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -175,7 +175,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
           qs: {
             filter: 'a,b,c',
           },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -189,7 +189,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         get({
           url: 'feed/user/matthisk/followers/',
           qs: {},
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -204,7 +204,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
           qs: {
             filter: 'a,b,c',
           },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -218,7 +218,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         get({
           url: 'stats/follow/',
           qs: { followers: 'user:matthisk', following: 'user:matthisk' },
-          signature: 'usermatthisk token',
+          token: feed.client.getOrCreateToken(),
         }),
       );
     });
@@ -235,7 +235,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
             following_slugs: 'user,timeline',
             followers_slugs: 'channel',
           },
-          signature: 'usermatthisk token',
+          token: feed.client.getOrCreateToken(),
         }),
       );
     });
@@ -253,7 +253,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         get({
           url: expectedUrl,
           qs: {},
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -275,7 +275,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
             mark_read: 'a,b',
             mark_seen: 'c,d',
           },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -297,7 +297,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
             mark_read: 'a,b',
             mark_seen: 'c,d',
           },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -403,7 +403,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         del({
           url: 'feed/user/matthisk/aID/',
           qs: {},
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });
@@ -415,7 +415,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         del({
           url: 'feed/user/matthisk/fID/',
           qs: { foreign_id: '1' },
-          signature: 'usermatthisk token',
+          token: 'token',
         }),
       );
     });

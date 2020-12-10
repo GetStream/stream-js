@@ -32,7 +32,7 @@ export class StreamFileStore {
     return this.client.delete({
       url: `files/`,
       qs: { url: uri },
-      signature: this.token,
+      token: this.token,
     });
   }
 

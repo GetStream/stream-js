@@ -153,7 +153,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
   async get(collection: string, itemId: string) {
     const response = await this.client.get<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection, itemId),
-      signature: this.token,
+      token: this.token,
     });
 
     const entry = this.entry(response.collection, response.id, response.data);
@@ -178,7 +178,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
         id: itemId === null ? undefined : itemId,
         data: itemData,
       },
-      signature: this.token,
+      token: this.token,
     });
 
     const entry = this.entry(response.collection, response.id, response.data);
@@ -201,7 +201,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
     const response = await this.client.put<CollectionAPIResponse<CollectionType>>({
       url: this.buildURL(collection, entryId),
       body: { data },
-      signature: this.token,
+      token: this.token,
     });
 
     const entry = this.entry(response.collection, response.id, response.data);
@@ -221,7 +221,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
   delete(collection: string, entryId: string) {
     return this.client.delete({
       url: this.buildURL(collection, entryId),
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -245,7 +245,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
       url: 'collections/',
       serviceName: 'api',
       body: { data: { [collection]: data } },
-      signature: this.client.getCollectionsToken(),
+      token: this.client.getCollectionsToken(),
     });
   }
 
@@ -269,7 +269,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
       url: 'collections/',
       serviceName: 'api',
       qs: { foreign_ids: ids.map((id) => `${collection}:${id}`).join(',') },
-      signature: this.client.getCollectionsToken(),
+      token: this.client.getCollectionsToken(),
     });
   }
 
@@ -298,7 +298,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
       url: 'collections/',
       serviceName: 'api',
       qs: params,
-      signature: this.client.getCollectionsToken(),
+      token: this.client.getCollectionsToken(),
     });
   }
 }

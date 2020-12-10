@@ -40,7 +40,7 @@ export class StreamImageStore {
     return this.client.delete({
       url: `images/`,
       qs: { url: uri },
-      signature: this.token,
+      token: this.token,
     });
   }
 
@@ -67,7 +67,7 @@ export class StreamImageStore {
     return this.client.get<FileUploadAPIResponse>({
       url: `images/`,
       qs: params,
-      signature: this.token,
+      token: this.token,
     });
   }
 

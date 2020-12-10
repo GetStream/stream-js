@@ -5,6 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.0.1](https://github.com/GetStream/stream-js/releases/tag/v7.0.1) - 2020-12-04
+
+### Fix
+
+- Correct server side follow stat call permission [#401](https://github.com/GetStream/stream-js/pull/401)
+
+## [7.0.0](https://github.com/GetStream/stream-js/releases/tag/v7.0.0) - 2020-11-24
+
+### ⚠️ Breaking Changes
+
+- Drop simple auth, only JWT is supported [#399](https://github.com/GetStream/stream-js/pull/399)
+
 ## [6.2.2](https://github.com/GetStream/stream-js/releases/tag/v6.2.2) - 2020-11-13
 
 ### Fix

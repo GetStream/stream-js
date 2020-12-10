@@ -71,7 +71,7 @@ describe('Collection CRUD behaviours', () => {
       await ctx.alice.collections.client.put({
         url: ctx.alice.collections.buildURL('food', ctx.cheeseBurger.id),
         body,
-        signature: ctx.alice.collections.token,
+        token: ctx.alice.collections.token,
       });
     });
   });

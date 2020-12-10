@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "6.2.2",
+  "version": "7.0.1",
   "scripts": {
     "transpile": "babel src --out-dir lib --extensions '.ts'",
     "types": "tsc --emitDeclarationOnly",
@@ -107,7 +107,6 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/jwt-decode": "^2.2.1",
     "@types/qs": "^6.9.4",
-    "Base64": "^1.1.0",
     "axios": "^0.20.0",
     "faye": "^1.4.0",
     "form-data": "^3.0.0",

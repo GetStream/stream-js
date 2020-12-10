@@ -12,7 +12,7 @@ import { StreamFileStore } from './files';
 import { StreamImageStore } from './images';
 import { StreamReaction } from './reaction';
 import { StreamUser } from './user';
-import { JWTScopeToken, isJWTSignature, JWTUserSessionToken } from './signing';
+import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
 import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
@@ -94,7 +94,7 @@ export type OGAPIResponse = APIResponse & {
 };
 
 type AxiosConfig = {
-  signature: string;
+  token: string;
   url: string;
   axiosOptions?: axios.AxiosRequestConfig;
   body?: unknown;
@@ -192,7 +192,7 @@ export class StreamClient<
     this.baseUrl = 'https://api.stream-io-api.com/api/';
     this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
     this.apiKey = apiKey;
-    this.usingApiSecret = apiSecretOrToken != null && !isJWTSignature(apiSecretOrToken);
+    this.usingApiSecret = apiSecretOrToken != null && !apiSecretOrToken.includes(`.`);
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
     this.enrichByDefault = !this.usingApiSecret;
@@ -204,7 +204,6 @@ export class StreamClient<
       }
       this.userId = jwtBody.user_id;
       this.currentUser = this.user(this.userId);
-      this.authPayload = jwtBody;
     }
 
     this.appId = appId;
@@ -519,24 +518,14 @@ export class StreamClient<
   }
 
   /**
-   * Adds the API key and the signature
+   * Adds the API key and the token
    * @method enrichKwargs
    * @private
    * @memberof StreamClient.prototype
    * @param {AxiosConfig} kwargs
    * @return {axios.AxiosRequestConfig}
    */
-  enrichKwargs({ method, signature, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
-    /**
-     * Adds the API key and the signature
-     * @method enrichKwargs
-     * @private
-     * @memberof StreamClient.prototype
-     * @param {AxiosConfig} kwargs
-     * @return {axios.AxiosRequestConfig}
-     */
-    const isJWT = isJWTSignature(signature);
-
+  enrichKwargs({ method, token, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
     return {
       method,
       url: this.enrichUrl(kwargs.url, kwargs.serviceName),
@@ -548,8 +537,8 @@ export class StreamClient<
       },
       headers: {
         'X-Stream-Client': this.userAgent(),
-        'stream-auth-type': isJWT ? 'jwt' : 'simple',
-        Authorization: isJWT ? signature.split(' ').reverse()[0] : signature,
+        'stream-auth-type': 'jwt',
+        Authorization: token,
         ...(kwargs.headers || {}),
       },
       ...(kwargs.axiosOptions || {}),
@@ -637,7 +626,7 @@ export class StreamClient<
       url,
       body: fd,
       headers: fd.getHeaders ? fd.getHeaders() : {}, // node vs browser
-      signature: this.getOrCreateToken(),
+      token: this.getOrCreateToken(),
       axiosOptions: {
         timeout: 0,
         maxContentLength: Infinity,
@@ -721,7 +710,7 @@ export class StreamClient<
       throw new TypeError('The activities argument should be an Array');
     }
 
-    const authToken = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
+    const token = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
       feedId: '*',
       expireTokens: this.expireTokens,
     });
@@ -729,7 +718,7 @@ export class StreamClient<
     return this.post<APIResponse>({
       url: 'activities/',
       body: { activities },
-      signature: authToken,
+      token,
     });
   }
 
@@ -801,7 +790,7 @@ export class StreamClient<
     return this.get<GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>>({
       url: path,
       qs: { ...params, ...extraParams },
-      signature: token,
+      token,
     });
   }
 
@@ -835,7 +824,7 @@ export class StreamClient<
     return this.get<OGAPIResponse>({
       url: 'og/',
       qs: { url },
-      signature: this.getOrCreateToken(),
+      token: this.getOrCreateToken(),
     });
   }
 
@@ -845,7 +834,7 @@ export class StreamClient<
     >({
       url: 'enrich/personalization/feed/',
       qs: options,
-      signature: this.getOrCreateToken(),
+      token: this.getOrCreateToken(),
     });
   }
 
@@ -965,9 +954,9 @@ export class StreamClient<
       }
     });
 
-    let authToken = this.userToken as string;
+    let token = this.userToken as string;
     if (this.usingApiSecret) {
-      authToken = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
+      token = JWTScopeToken(this.apiSecret as string, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens,
       });
@@ -978,7 +967,7 @@ export class StreamClient<
       body: {
         changes,
       },
-      signature: authToken,
+      token,
     });
   }
 }
