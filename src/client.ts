@@ -37,6 +37,8 @@ export type APIResponse = { duration?: string };
 
 export type FileUploadAPIResponse = APIResponse & { file: string };
 
+export type RefreshUrlAPIResponse = APIResponse & { url: string };
+
 export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
 
 export type ClientOptions = {
