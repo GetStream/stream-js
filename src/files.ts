@@ -46,7 +46,7 @@ export class StreamFileStore {
     return this.client.post<RefreshUrlAPIResponse>({
       url: 'files/refresh/',
       body: { url: uri },
-      signature: this.token,
+      token: this.token,
     });
   }
 }

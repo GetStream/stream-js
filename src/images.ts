@@ -54,7 +54,7 @@ export class StreamImageStore {
     return this.client.post<RefreshUrlAPIResponse>({
       url: 'images/refresh/',
       body: { url: uri },
-      signature: this.token,
+      token: this.token,
     });
   }
 
