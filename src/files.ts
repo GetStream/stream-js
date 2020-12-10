@@ -1,4 +1,4 @@
-import { StreamClient, OnUploadProgress } from './client';
+import { StreamClient, OnUploadProgress, RefreshUrlAPIResponse } from './client';
 
 export class StreamFileStore {
   client: StreamClient;
@@ -32,6 +32,20 @@ export class StreamFileStore {
     return this.client.delete({
       url: `files/`,
       qs: { url: uri },
+      token: this.token,
+    });
+  }
+
+  /**
+   * Explicitly refresh CDN urls for uploaded files on the Stream CDN (only needed for files on the Stream CDN).
+   * Note that Stream CDN is not enabled by default, if in doubt please contact us.
+   * @param  {string} uri full uploaded file url that needs to be refreshed
+   * @return {Promise<RefreshUrlAPIResponse>}
+   */
+  refreshUrl(uri: string) {
+    return this.client.post<RefreshUrlAPIResponse>({
+      url: 'files/refresh/',
+      body: { url: uri },
       token: this.token,
     });
   }
