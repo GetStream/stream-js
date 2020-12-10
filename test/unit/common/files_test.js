@@ -36,7 +36,7 @@ describe('[UNIT] Files (Common)', function () {
       post({
         url: 'files/refresh/',
         body: { url: uri },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });
@@ -48,7 +48,7 @@ describe('[UNIT] Files (Common)', function () {
       del({
         url: 'files/',
         qs: { url: uri },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });

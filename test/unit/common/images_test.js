@@ -39,7 +39,7 @@ describe('[UNIT] Images (Common)', function () {
       post({
         url: 'images/refresh/',
         body: { url: uri },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });
@@ -52,7 +52,7 @@ describe('[UNIT] Images (Common)', function () {
       get({
         url: 'images/',
         qs: { url: uri, ...options },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });
@@ -64,7 +64,7 @@ describe('[UNIT] Images (Common)', function () {
       get({
         url: 'images/',
         qs: { url: uri, crop: 'center', resize: 'clip', h: '200', w: '200' },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });
@@ -76,7 +76,7 @@ describe('[UNIT] Images (Common)', function () {
       del({
         url: 'images/',
         qs: { url: uri },
-        signature: 'token',
+        token: 'token',
       }),
     );
   });
