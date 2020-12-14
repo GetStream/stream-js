@@ -7,17 +7,17 @@ type BaseCollection<CollectionType> = {
   id: string;
 };
 
-export type CollectionResponse<CollectionType extends UnknownRecord = UnknownRecord> = BaseCollection<
-  CollectionType
-> & {
+export type CollectionResponse<
+  CollectionType extends UnknownRecord = UnknownRecord
+> = BaseCollection<CollectionType> & {
   created_at: string;
   foreign_id: string;
   updated_at: string;
 };
 
-export type NewCollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> = BaseCollection<
-  CollectionType
-> & {
+export type NewCollectionEntry<
+  CollectionType extends UnknownRecord = UnknownRecord
+> = BaseCollection<CollectionType> & {
   user_id?: string;
 };
 
