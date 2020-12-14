@@ -184,13 +184,9 @@ client.activityPartialUpdate([{ unset: ['missing'] }]);
 // @ts-expect-error
 client.activityPartialUpdate([{ set: { missing: '' } }]);
 
-const activitiesPromise: Promise<GetActivitiesAPIResponse<
-  UserType,
-  ActivityType,
-  CollectionType,
-  ReactionType,
-  ChildReactionType
->> = client.getActivities({ ids: ['', ''] });
+const activitiesPromise: Promise<
+  GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
+> = client.getActivities({ ids: ['', ''] });
 activitiesPromise.then(({ results }) => {
   results[0].id as string;
   results[0].time as string;
@@ -206,13 +202,9 @@ client.getActivities({});
 // @ts-expect-error
 client.getActivities();
 
-const pFeedPromise: Promise<PersonalizationFeedAPIResponse<
-  UserType,
-  ActivityType,
-  CollectionType,
-  ReactionType,
-  ChildReactionType
->> = client.personalizedFeed({ enrich: true });
+const pFeedPromise: Promise<
+  PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
+> = client.personalizedFeed({ enrich: true });
 pFeedPromise.then((pFeed) => {
   pFeed.results as Array<EnrichedActivity>;
   pFeed.version as string;
