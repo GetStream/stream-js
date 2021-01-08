@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.1.1](https://github.com/GetStream/stream-js/releases/tag/v7.1.1) - 2021-01-08
+
+- Security upgrades [#405](https://github.com/GetStream/stream-js/pull/405)[#406](https://github.com/GetStream/stream-js/pull/406)[#408](https://github.com/GetStream/stream-js/pull/408)
+
 ## [7.1.0](https://github.com/GetStream/stream-js/releases/tag/v7.1.0) - 2020-12-10
 
 - Add CDN url refresh handlers [#391](https://github.com/GetStream/stream-js/pull/391)
