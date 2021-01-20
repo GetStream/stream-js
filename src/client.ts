@@ -39,7 +39,8 @@ export type FileUploadAPIResponse = APIResponse & { file: string };
 
 export type RefreshUrlAPIResponse = APIResponse & { url: string };
 
-export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type OnUploadProgress = (progressEvent: any) => void;
 
 export type ClientOptions = {
   browser?: boolean;
