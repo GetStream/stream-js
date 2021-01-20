@@ -13,6 +13,7 @@ export class StreamFileStore {
   // param. If you don't then Android will refuse to perform the upload
   /**
    * upload a File instance or a readable stream of data
+   * @link https://getstream.io/docs/files_introduction/?language=js#upload
    * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
@@ -28,6 +29,11 @@ export class StreamFileStore {
     return this.client.upload('files/', uri, name, contentType, onUploadProgress);
   }
 
+  /**
+   * delete an uploaded file
+   * @link https://getstream.io/docs/files_introduction/?language=js#delete
+   * @param {string} uri
+   */
   delete(uri: string) {
     return this.client.delete({
       url: `files/`,

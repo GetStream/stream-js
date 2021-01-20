@@ -2,6 +2,7 @@ import { StreamClient, UnknownRecord, ClientOptions } from './client';
 
 /**
  * Create StreamClient
+ * @link https://getstream.io/docs/feeds_getting_started/?language=js#setup
  * @method connect
  * @param  {string} apiKey    API key
  * @param  {string} [apiSecret] API secret (only use this on the server)

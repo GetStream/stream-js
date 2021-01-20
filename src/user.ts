@@ -20,6 +20,7 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Initialize a user session object
+   * @link https://getstream.io/docs/users_introduction/?language=js
    * @method constructor
    * @memberof StreamUser.prototype
    * @param {StreamClient} client Stream client this collection is constructed from
@@ -36,10 +37,19 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
     this.url = `user/${this.id}/`;
   }
 
+  /**
+   * Create a stream user ref
+   * @return {string}
+   */
   ref() {
     return `SU:${this.id}`;
   }
 
+  /**
+   * Delete the user
+   * @link https://getstream.io/docs/users_introduction/?language=js#removing-users
+   * @return {Promise<APIResponse>}
+   */
   delete() {
     return this.client.delete({
       url: this.url,
@@ -47,6 +57,12 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
     });
   }
 
+  /**
+   * Get the user data
+   * @link https://getstream.io/docs/users_introduction/?language=js#retrieving-users
+   * @param {boolean} [options.with_follow_counts]
+   * @return {Promise<StreamUser>}
+   */
   async get(options?: { with_follow_counts?: boolean }) {
     const response = await this.client.get<UserAPIResponse<UserType>>({
       url: this.url,
@@ -60,6 +76,13 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
     return this;
   }
 
+  /**
+   * Create a new user in stream
+   * @link https://getstream.io/docs/users_introduction/?language=js#adding-users
+   * @param {object} data user date stored in stream
+   * @param {boolean} [options.get_or_create] if user already exists return it
+   * @return {Promise<StreamUser>}
+   */
   async create(data?: UserType, options?: { get_or_create?: boolean }) {
     const response = await this.client.post<UserAPIResponse<UserType>>({
       url: 'user/',
@@ -77,6 +100,12 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
     return this;
   }
 
+  /**
+   * Update the user
+   * @link https://getstream.io/docs/users_introduction/?language=js#updating-users
+   * @param {object} data user date stored in stream
+   * @return {Promise<StreamUser>}
+   */
   async update(data?: Partial<UserType>) {
     const response = await this.client.put<UserAPIResponse<UserType>>({
       url: this.url,
@@ -92,10 +121,21 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
     return this;
   }
 
+  /**
+   * Get or Create a new user in stream
+   * @link https://getstream.io/docs/users_introduction/?language=js#adding-users
+   * @param {object} data user date stored in stream
+   * @return {Promise<StreamUser>}
+   */
   getOrCreate(data: UserType) {
     return this.create(data, { get_or_create: true });
   }
 
+  /**
+   * Get the user profile, it includes the follow counts by default
+   * @link https://getstream.io/docs/users_introduction/?language=js#retrieving-users
+   * @return {Promise<StreamUser>}
+   */
   profile() {
     return this.get({ with_follow_counts: true });
   }

@@ -74,6 +74,7 @@ export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecor
 
   /**
    * Add item to collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#adding-collections
    * @method add
    * @memberof CollectionEntry.prototype
    * @return {Promise<CollectionEntry<CollectionType>>}
@@ -88,6 +89,7 @@ export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecor
 
   /**
    * Update item in the object storage
+   * @link https://getstream.io/docs/collections_introduction/?language=js#updating-collections
    * @method update
    * @memberof CollectionEntry.prototype
    * @return {Promise<CollectionEntry<CollectionType>>}
@@ -103,6 +105,7 @@ export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecor
 
   /**
    * Delete item from collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#removing-collections
    * @method delete
    * @memberof CollectionEntry.prototype
    * @return {Promise<APIResponse>}
@@ -143,6 +146,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * get item from collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#retrieving-collections
    * @method get
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
@@ -163,6 +167,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Add item to collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#adding-collections
    * @method add
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
@@ -188,6 +193,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Update entry in the collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#updating-collections
    * @method update
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
@@ -211,6 +217,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Delete entry from collection
+   * @link https://getstream.io/docs/collections_introduction/?language=js#removing-collections
    * @method delete
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
@@ -227,7 +234,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Upsert one or more items within a collection.
-   *
+   * @link https://getstream.io/docs/collections_batch/?language=js#upsert
    * @method upsert
    * @memberof Collections.prototype
    * @param  {string}   collection  collection name
@@ -251,7 +258,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Select all objects with ids from the collection.
-   *
+   * @link https://getstream.io/docs/collections_batch/?language=js#select
    * @method select
    * @memberof Collections.prototype
    * @param {string} collection  collection name
@@ -275,7 +282,7 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
 
   /**
    * Remove all objects by id from the collection.
-   *
+   * @link https://getstream.io/docs/collections_batch/?language=js#delete_many
    * @method delete
    * @memberof Collections.prototype
    * @param {string} collection  collection name

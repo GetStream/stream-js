@@ -16,6 +16,7 @@ export type UnfollowRelation = BaseFollowRelation & {
 
 /**
  * Add one activity to many feeds
+ * @link https://getstream.io/docs/add_many_activities/?language=js#batch-activity-add
  * @method addToMany
  * @memberof StreamClient.prototype
  * @since 2.3.0
@@ -38,6 +39,7 @@ function addToMany<ActivityType>(this: StreamClient, activity: ActivityType, fee
 
 /**
  * Follow multiple feeds with one API call
+ * @link https://getstream.io/docs/add_many_activities/?language=js#batch-follow
  * @method followMany
  * @memberof StreamClient.prototype
  * @since 2.3.0
@@ -61,6 +63,8 @@ function followMany(this: StreamClient, follows: FollowRelation[], activityCopyL
 
 /**
  * Unfollow multiple feeds with one API call
+ * This feature is usually restricted, please contact support if you face an issue
+ * @link https://getstream.io/docs/add_many_activities/?language=js#batch-unfollow
  * @method unfollowMany
  * @memberof StreamClient.prototype
  * @since 3.15.0
