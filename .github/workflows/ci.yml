@@ -25,8 +25,14 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install deps
-        run: yarn install
+      - name: Cache Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install Dependencies & Build
+        run: yarn install --frozen-lockfile
 
       - name: Lint and Test with ${{ matrix.node }}
         env:
@@ -38,7 +44,6 @@ jobs:
           CLOUD_TESTS: ${{ matrix.cloud_tests }}
           RUN_LINTERS: ${{ matrix.run_linters }}
         run: |
-          yarn run build
           yarn run coverage
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-cloud; fi
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-integration-node; fi
