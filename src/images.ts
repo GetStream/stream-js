@@ -21,6 +21,7 @@ export class StreamImageStore {
   // param. If you don't then Android will refuse to perform the upload
   /**
    * upload an Image File instance or a readable stream of data
+   * @link https://getstream.io/docs/files_introduction/?language=js#upload
    * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
@@ -36,6 +37,11 @@ export class StreamImageStore {
     return this.client.upload('images/', uri, name, contentType, onUploadProgress);
   }
 
+  /**
+   * delete an uploaded image
+   * @link https://getstream.io/docs/files_introduction/?language=js#delete
+   * @param {string} uri
+   */
   delete(uri: string) {
     return this.client.delete({
       url: `images/`,
@@ -58,6 +64,12 @@ export class StreamImageStore {
     });
   }
 
+  /**
+   * Generate a diffrent variant of the uploaded image
+   * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+   * @param {string} uri
+   * @param {ImageProcessOptions} options
+   */
   process(uri: string, options: ImageProcessOptions) {
     const params = Object.assign(options, { url: uri });
     if (Array.isArray(params.crop)) {
@@ -71,6 +83,14 @@ export class StreamImageStore {
     });
   }
 
+  /**
+   * Generate a thumbnail for a given image
+   * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+   * @param {string} uri
+   * @param {number|string} w
+   * @param {number|string} h
+   * @param {Object} [options]
+   */
   thumbnail(
     uri: string,
     w: number | string,

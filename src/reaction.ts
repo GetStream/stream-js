@@ -77,6 +77,7 @@ export class StreamReaction<
 
   /**
    * Initialize a reaction object
+   * @link https://getstream.io/docs/reactions_introduction/?language=js
    * @method constructor
    * @memberof StreamReaction.prototype
    * @param {StreamClient} client Stream client this feed is constructed from
@@ -98,6 +99,7 @@ export class StreamReaction<
 
   /**
    * add reaction
+   * @link https://getstream.io/docs/reactions_introduction/?language=js#adding-reactions
    * @method add
    * @memberof StreamReaction.prototype
    * @param  {string}   kind  kind of reaction
@@ -143,6 +145,7 @@ export class StreamReaction<
 
   /**
    * add child reaction
+   * @link https://getstream.io/docs/reactions_add_child/?language=js
    * @method addChild
    * @memberof StreamReaction.prototype
    * @param  {string}   kind  kind of reaction
@@ -189,6 +192,7 @@ export class StreamReaction<
 
   /**
    * get reaction
+   * @link https://getstream.io/docs/reactions_introduction/?language=js#retrieving-reactions
    * @method get
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
@@ -209,6 +213,7 @@ export class StreamReaction<
    * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
    * the reaction with ID equal to the value provided is included.
    * results are limited to 25 at most and are ordered newest to oldest by default.
+   * @link https://getstream.io/docs/reactions_introduction/?language=js#retrieving-reactions
    * @method filter
    * @memberof StreamReaction.prototype
    * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
@@ -253,6 +258,7 @@ export class StreamReaction<
 
   /**
    * update reaction
+   * @link https://getstream.io/docs/reactions_introduction/?language=js#updating-reactions
    * @method update
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
@@ -288,6 +294,7 @@ export class StreamReaction<
 
   /**
    * delete reaction
+   * @link https://getstream.io/docs/reactions_introduction/?language=js#removing-reactions
    * @method delete
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
