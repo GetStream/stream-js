@@ -1045,6 +1045,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 var StreamUser = /*#__PURE__*/function () {
   /**
    * Initialize a user session object
+   * @link https://getstream.io/docs/users_introduction/?language=js
    * @method constructor
    * @memberof StreamUser.prototype
    * @param {StreamClient} client Stream client this collection is constructed from
@@ -1074,12 +1075,23 @@ var StreamUser = /*#__PURE__*/function () {
     this.token = userAuthToken;
     this.url = "user/".concat(this.id, "/");
   }
+  /**
+   * Create a stream user ref
+   * @return {string}
+   */
+
 
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default()(StreamUser, [{
     key: "ref",
     value: function ref() {
       return "SU:".concat(this.id);
     }
+    /**
+     * Delete the user
+     * @link https://getstream.io/docs/users_introduction/?language=js#removing-users
+     * @return {Promise<APIResponse>}
+     */
+
   }, {
     key: "delete",
     value: function _delete() {
@@ -1088,6 +1100,13 @@ var StreamUser = /*#__PURE__*/function () {
         token: this.token
       });
     }
+    /**
+     * Get the user data
+     * @link https://getstream.io/docs/users_introduction/?language=js#retrieving-users
+     * @param {boolean} [options.with_follow_counts]
+     * @return {Promise<StreamUser>}
+     */
+
   }, {
     key: "get",
     value: function () {
@@ -1125,6 +1144,14 @@ var StreamUser = /*#__PURE__*/function () {
 
       return get;
     }()
+    /**
+     * Create a new user in stream
+     * @link https://getstream.io/docs/users_introduction/?language=js#adding-users
+     * @param {object} data user date stored in stream
+     * @param {boolean} [options.get_or_create] if user already exists return it
+     * @return {Promise<StreamUser>}
+     */
+
   }, {
     key: "create",
     value: function () {
@@ -1166,6 +1193,13 @@ var StreamUser = /*#__PURE__*/function () {
 
       return create;
     }()
+    /**
+     * Update the user
+     * @link https://getstream.io/docs/users_introduction/?language=js#updating-users
+     * @param {object} data user date stored in stream
+     * @return {Promise<StreamUser>}
+     */
+
   }, {
     key: "update",
     value: function () {
@@ -1205,6 +1239,13 @@ var StreamUser = /*#__PURE__*/function () {
 
       return update;
     }()
+    /**
+     * Get or Create a new user in stream
+     * @link https://getstream.io/docs/users_introduction/?language=js#adding-users
+     * @param {object} data user date stored in stream
+     * @return {Promise<StreamUser>}
+     */
+
   }, {
     key: "getOrCreate",
     value: function getOrCreate(data) {
@@ -1212,6 +1253,12 @@ var StreamUser = /*#__PURE__*/function () {
         get_or_create: true
       });
     }
+    /**
+     * Get the user profile, it includes the follow counts by default
+     * @link https://getstream.io/docs/users_introduction/?language=js#retrieving-users
+     * @return {Promise<StreamUser>}
+     */
+
   }, {
     key: "profile",
     value: function profile() {
@@ -1340,7 +1387,7 @@ var Class    = __webpack_require__(10),
     array    = __webpack_require__(33),
     assign   = __webpack_require__(7),
     Logging  = __webpack_require__(19),
-    Timeouts = __webpack_require__(98),
+    Timeouts = __webpack_require__(99),
     Channel  = __webpack_require__(52);
 
 var Transport = assign(Class({ className: 'Transport',
@@ -2140,7 +2187,6 @@ module.exports = Promise;
 /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(61);
 /* harmony import */ var https__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(62);
-/* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(jwt_decode__WEBPACK_IMPORTED_MODULE_11__);
 /* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(25);
 /* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(26);
 /* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(27);
@@ -2187,7 +2233,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  // TODO: no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 
-var pkg = __webpack_require__(113);
+var pkg = __webpack_require__(112);
 
 /**
  * Client to connect to Stream api
@@ -2198,6 +2244,7 @@ var StreamClient = /*#__PURE__*/function () {
 
   /**
    * Initialize a client
+   * @link https://getstream.io/docs/feeds_getting_started/?language=js#setup
    * @method initialize
    * @memberof StreamClient.prototype
    * @param {string} apiKey - the api key
@@ -2297,7 +2344,7 @@ var StreamClient = /*#__PURE__*/function () {
 
     _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_6___default()(this, "replaceReactionOptions", function (options) {
       // Shortcut options for reaction enrichment
-      if (options === null || options === void 0 ? void 0 : options.reactions) {
+      if (options !== null && options !== void 0 && options.reactions) {
         if (options.reactions.own != null) {
           options.withOwnReactions = options.reactions.own;
         }
@@ -2383,7 +2430,7 @@ var StreamClient = /*#__PURE__*/function () {
     this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
-      var jwtBody = jwt_decode__WEBPACK_IMPORTED_MODULE_11___default()(this.userToken);
+      var jwtBody = Object(jwt_decode__WEBPACK_IMPORTED_MODULE_11__[/* default */ "a"])(this.userToken);
 
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
@@ -2406,8 +2453,8 @@ var StreamClient = /*#__PURE__*/function () {
 
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
-    if (typeof process !== 'undefined' && ((_process$env = process.env) === null || _process$env === void 0 ? void 0 : _process$env.LOCAL_FAYE)) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && ((_process$env2 = process.env) === null || _process$env2 === void 0 ? void 0 : _process$env2.STREAM_ANALYTICS_BASE_URL)) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined' && (_process$env = process.env) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
+    if (typeof process !== 'undefined' && (_process$env2 = process.env) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
     this.handlers = {};
     this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
     this.node = !this.browser;
@@ -2502,8 +2549,8 @@ var StreamClient = /*#__PURE__*/function () {
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if (typeof process !== 'undefined' && ((_process$env3 = process.env) === null || _process$env3 === void 0 ? void 0 : _process$env3[urlEnvironmentKey])) return process.env[urlEnvironmentKey];
-      if (typeof process !== 'undefined' && ((_process$env4 = process.env) === null || _process$env4 === void 0 ? void 0 : _process$env4.LOCAL) || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+      if (typeof process !== 'undefined' && (_process$env3 = process.env) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
+      if (typeof process !== 'undefined' && (_process$env4 = process.env) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
 
       if (this.location) {
         var protocol = this.options.protocol || 'https';
@@ -2621,6 +2668,7 @@ var StreamClient = /*#__PURE__*/function () {
     }
     /**
      * Returns a feed object for the given feed id and token
+     * @link https://getstream.io/docs/adding_activities/?language=js
      * @method feed
      * @memberof StreamClient.prototype
      * @param {string} feedSlug - The feed slug
@@ -2836,6 +2884,8 @@ var StreamClient = /*#__PURE__*/function () {
       return this.doAxiosRequest('PUT', kwargs);
     }
     /**
+     * create a user token
+     * @link https://getstream.io/docs/feeds_getting_started/?language=js#generate-user-token-server-side
      * @param {string} userId
      * @param {object} extraData
      * @return {string}
@@ -2853,8 +2903,8 @@ var StreamClient = /*#__PURE__*/function () {
       });
     }
     /**
-     * Updates all supplied activities on the getstream-io api
-     * @since  3.1.0
+     * Updates all supplied activities on the stream
+     * @link https://getstream.io/docs/adding_activities/?language=js#updating-activities
      * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
      * @return {Promise<APIResponse>}
      */
@@ -2881,8 +2931,8 @@ var StreamClient = /*#__PURE__*/function () {
       });
     }
     /**
-     * Updates one activity on the getstream-io api
-     * @since  3.1.0
+     * Updates one activity on the stream
+     * @link https://getstream.io/docs/adding_activities/?language=js#updating-activities
      * @param  {UpdateActivity<ActivityType>} activity The activity to update
      * @return {Promise<APIResponse>}
      */
@@ -2896,7 +2946,7 @@ var StreamClient = /*#__PURE__*/function () {
     }
     /**
      * Retrieve activities by ID or foreign ID and time
-     * @since  3.19.0
+     * @link https://getstream.io/docs/add_many_activities/?language=js#batch-get-activities-by-id
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
      * @return {Promise<GetActivitiesAPIResponse>}
      */
@@ -3034,7 +3084,7 @@ var StreamClient = /*#__PURE__*/function () {
     }
     /**
      * Update a single activity with partial operations.
-     * @since 3.20.0
+     * @link https://getstream.io/docs/adding_activities/?language=js&q=partial+#activity-partial-update
      * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
      * @return {Promise<Activity<ActivityType>>}
      * @example
@@ -3101,7 +3151,7 @@ var StreamClient = /*#__PURE__*/function () {
     }()
     /**
      * Update multiple activities with partial operations.
-     * @since v3.20.0
+     * @link https://getstream.io/docs/adding_activities/?language=js&q=partial+#activity-partial-update
      * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
      * @return {Promise<{ activities: Activity<ActivityType>[] }>}
      * @example
@@ -3229,7 +3279,7 @@ var StreamClient = /*#__PURE__*/function () {
 var Personalization = /*#__PURE__*/function () {
   /**
    * Initialize the Personalization class
-   *
+   * @link https://getstream.io/docs/personalization_introduction/?language=js
    * @method constructor
    * @memberof Personalization.prototype
    * @param {StreamClient} client - The stream client
@@ -3409,6 +3459,7 @@ var CollectionEntry = /*#__PURE__*/function () {
     }()
     /**
      * Add item to collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#adding-collections
      * @method add
      * @memberof CollectionEntry.prototype
      * @return {Promise<CollectionEntry<CollectionType>>}
@@ -3449,6 +3500,7 @@ var CollectionEntry = /*#__PURE__*/function () {
     }()
     /**
      * Update item in the object storage
+     * @link https://getstream.io/docs/collections_introduction/?language=js#updating-collections
      * @method update
      * @memberof CollectionEntry.prototype
      * @return {Promise<CollectionEntry<CollectionType>>}
@@ -3490,6 +3542,7 @@ var CollectionEntry = /*#__PURE__*/function () {
     }()
     /**
      * Delete item from collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#removing-collections
      * @method delete
      * @memberof CollectionEntry.prototype
      * @return {Promise<APIResponse>}
@@ -3563,6 +3616,7 @@ var Collections = /*#__PURE__*/function () {
     }
     /**
      * get item from collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#retrieving-collections
      * @method get
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
@@ -3608,6 +3662,7 @@ var Collections = /*#__PURE__*/function () {
     }()
     /**
      * Add item to collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#adding-collections
      * @method add
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
@@ -3658,6 +3713,7 @@ var Collections = /*#__PURE__*/function () {
     }()
     /**
      * Update entry in the collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#updating-collections
      * @method update
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
@@ -3708,6 +3764,7 @@ var Collections = /*#__PURE__*/function () {
     }()
     /**
      * Delete entry from collection
+     * @link https://getstream.io/docs/collections_introduction/?language=js#removing-collections
      * @method delete
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
@@ -3726,7 +3783,7 @@ var Collections = /*#__PURE__*/function () {
     }
     /**
      * Upsert one or more items within a collection.
-     *
+     * @link https://getstream.io/docs/collections_batch/?language=js#upsert
      * @method upsert
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
@@ -3753,7 +3810,7 @@ var Collections = /*#__PURE__*/function () {
     }
     /**
      * Select all objects with ids from the collection.
-     *
+     * @link https://getstream.io/docs/collections_batch/?language=js#select
      * @method select
      * @memberof Collections.prototype
      * @param {string} collection  collection name
@@ -3782,7 +3839,7 @@ var Collections = /*#__PURE__*/function () {
     }
     /**
      * Remove all objects by id from the collection.
-     *
+     * @link https://getstream.io/docs/collections_batch/?language=js#delete_many
      * @method delete
      * @memberof Collections.prototype
      * @param {string} collection  collection name
@@ -3846,6 +3903,7 @@ var StreamFileStore = /*#__PURE__*/function () {
 
   /**
    * upload a File instance or a readable stream of data
+   * @link https://getstream.io/docs/files_introduction/?language=js#upload
    * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
@@ -3859,6 +3917,12 @@ var StreamFileStore = /*#__PURE__*/function () {
     value: function upload(uri, name, contentType, onUploadProgress) {
       return this.client.upload('files/', uri, name, contentType, onUploadProgress);
     }
+    /**
+     * delete an uploaded file
+     * @link https://getstream.io/docs/files_introduction/?language=js#delete
+     * @param {string} uri
+     */
+
   }, {
     key: "delete",
     value: function _delete(uri) {
@@ -3926,6 +3990,7 @@ var StreamImageStore = /*#__PURE__*/function () {
 
   /**
    * upload an Image File instance or a readable stream of data
+   * @link https://getstream.io/docs/files_introduction/?language=js#upload
    * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
@@ -3939,6 +4004,12 @@ var StreamImageStore = /*#__PURE__*/function () {
     value: function upload(uri, name, contentType, onUploadProgress) {
       return this.client.upload('images/', uri, name, contentType, onUploadProgress);
     }
+    /**
+     * delete an uploaded image
+     * @link https://getstream.io/docs/files_introduction/?language=js#delete
+     * @param {string} uri
+     */
+
   }, {
     key: "delete",
     value: function _delete(uri) {
@@ -3968,6 +4039,13 @@ var StreamImageStore = /*#__PURE__*/function () {
         token: this.token
       });
     }
+    /**
+     * Generate a diffrent variant of the uploaded image
+     * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+     * @param {string} uri
+     * @param {ImageProcessOptions} options
+     */
+
   }, {
     key: "process",
     value: function process(uri, options) {
@@ -3985,6 +4063,15 @@ var StreamImageStore = /*#__PURE__*/function () {
         token: this.token
       });
     }
+    /**
+     * Generate a thumbnail for a given image
+     * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+     * @param {string} uri
+     * @param {number|string} w
+     * @param {number|string} h
+     * @param {Object} [options]
+     */
+
   }, {
     key: "thumbnail",
     value: function thumbnail(uri, w, h) {
@@ -4030,6 +4117,7 @@ var StreamImageStore = /*#__PURE__*/function () {
 var StreamReaction = /*#__PURE__*/function () {
   /**
    * Initialize a reaction object
+   * @link https://getstream.io/docs/reactions_introduction/?language=js
    * @method constructor
    * @memberof StreamReaction.prototype
    * @param {StreamClient} client Stream client this feed is constructed from
@@ -4067,6 +4155,7 @@ var StreamReaction = /*#__PURE__*/function () {
 
     /**
      * add reaction
+     * @link https://getstream.io/docs/reactions_introduction/?language=js#adding-reactions
      * @method add
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
@@ -4110,6 +4199,7 @@ var StreamReaction = /*#__PURE__*/function () {
     }
     /**
      * add child reaction
+     * @link https://getstream.io/docs/reactions_add_child/?language=js
      * @method addChild
      * @memberof StreamReaction.prototype
      * @param  {string}   kind  kind of reaction
@@ -4153,6 +4243,7 @@ var StreamReaction = /*#__PURE__*/function () {
     }
     /**
      * get reaction
+     * @link https://getstream.io/docs/reactions_introduction/?language=js#retrieving-reactions
      * @method get
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
@@ -4175,6 +4266,7 @@ var StreamReaction = /*#__PURE__*/function () {
      * id_gt and id_gte return reactions order by creation ascending (oldest to newest) starting from the reaction with the ID provided, when id_gte is used
      * the reaction with ID equal to the value provided is included.
      * results are limited to 25 at most and are ordered newest to oldest by default.
+     * @link https://getstream.io/docs/reactions_introduction/?language=js#retrieving-reactions
      * @method filter
      * @memberof StreamReaction.prototype
      * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
@@ -4210,6 +4302,7 @@ var StreamReaction = /*#__PURE__*/function () {
     }
     /**
      * update reaction
+     * @link https://getstream.io/docs/reactions_introduction/?language=js#updating-reactions
      * @method update
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
@@ -4247,6 +4340,7 @@ var StreamReaction = /*#__PURE__*/function () {
     }
     /**
      * delete reaction
+     * @link https://getstream.io/docs/reactions_introduction/?language=js#removing-reactions
      * @method delete
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
@@ -4303,6 +4397,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 var StreamFeed = /*#__PURE__*/function () {
   /**
    * Initialize a feed object
+   * @link https://getstream.io/docs/adding_activities/?language=js
    * @method constructor
    * @memberof StreamFeed.prototype
    * @param {StreamClient} client - The stream client this feed is constructed from
@@ -4356,6 +4451,7 @@ var StreamFeed = /*#__PURE__*/function () {
   }
   /**
    * Adds the given activity to the feed
+   * @link https://getstream.io/docs/adding_activities/?language=js#adding-activities-basic
    * @method addActivity
    * @memberof StreamFeed.prototype
    * @param {NewActivity<ActivityType>} activity - The activity to add
@@ -4380,6 +4476,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Removes the activity by activityId or foreignId
+     * @link https://getstream.io/docs/adding_activities/?language=js#removing-activities
      * @method removeActivity
      * @memberof StreamFeed.prototype
      * @param  {string}   activityId Identifier of activity to remove
@@ -4401,6 +4498,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Adds the given activities to the feed
+     * @link https://getstream.io/docs/add_many_activities/?language=js#batch-add-activities
      * @method addActivities
      * @memberof StreamFeed.prototype
      * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
@@ -4420,6 +4518,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Follows the given target feed
+     * @link https://getstream.io/docs/following/?language=js
      * @method follow
      * @memberof StreamFeed.prototype
      * @param  {string}   targetSlug   Slug of the target feed
@@ -4455,6 +4554,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Unfollow the given feed
+     * @link https://getstream.io/docs/following/?language=js#unfollowing-feeds
      * @method unfollow
      * @memberof StreamFeed.prototype
      * @param  {string}   targetSlug   Slug of the target feed
@@ -4483,6 +4583,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * List which feeds this feed is following
+     * @link https://getstream.io/docs/following/?language=js#reading-followed-feeds
      * @method following
      * @memberof StreamFeed.prototype
      * @param  {GetFollowOptions}   [options]  Additional options
@@ -4507,6 +4608,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * List the followers of this feed
+     * @link https://getstream.io/docs/following/?language=js#reading-feed-followers
      * @method followers
      * @memberof StreamFeed.prototype
      * @param  {GetFollowOptions}   [options]  Additional options
@@ -4532,6 +4634,7 @@ var StreamFeed = /*#__PURE__*/function () {
     /**
      *  Retrieve the number of follower and following feed stats of the current feed.
      *  For each count, feed slugs can be provided to filter counts accordingly.
+     * @link https://getstream.io/docs/following/?language=js#reading-follow-stats
      * @method followStats
      * @param  {object}   [options]
      * @param  {string[]} [options.followerSlugs] find counts only on these slugs
@@ -4559,6 +4662,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Reads the feed
+     * @link https://getstream.io/docs/adding_activities/?language=js#retrieving-activities
      * @method get
      * @memberof StreamFeed.prototype
      * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
@@ -4591,6 +4695,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Retrieves one activity from a feed and adds enrichment
+     * @link https://getstream.io/docs/adding_activities/?language=js#retrieving-activities
      * @method getActivityDetail
      * @memberof StreamFeed.prototype
      * @param  {string}   activityId Identifier of activity to retrieve
@@ -4626,6 +4731,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Subscribes to any changes in the feed, return a promise
+     * @link https://getstream.io/docs/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
      * @method subscribe
      * @memberof StreamFeed.prototype
      * @param  {function} callback Callback to call on completion
@@ -4653,6 +4759,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Cancel updates created via feed.subscribe()
+     * @link https://getstream.io/docs/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
      * @return void
      */
 
@@ -4668,7 +4775,7 @@ var StreamFeed = /*#__PURE__*/function () {
     }
     /**
      * Updates an activity's "to" fields
-     * @since 3.10.0
+     * @link https://getstream.io/docs/targeting/?language=js
      * @param {string} foreignId The foreign_id of the activity to update
      * @param {string} time The time of the activity to update
      * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
@@ -4897,7 +5004,7 @@ module.exports = {
 
 
 var assign       = __webpack_require__(7),
-    EventEmitter = __webpack_require__(95);
+    EventEmitter = __webpack_require__(96);
 
 var Publisher = {
   countListeners: function(eventType) {
@@ -5018,6 +5125,7 @@ module.exports = _typeof;
 
 /**
  * Create StreamClient
+ * @link https://getstream.io/docs/feeds_getting_started/?language=js#setup
  * @method connect
  * @param  {string} apiKey    API key
  * @param  {string} [apiSecret] API secret (only use this on the server)
@@ -5042,7 +5150,7 @@ module.exports = _typeof;
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
 
-  if (typeof process !== 'undefined' && ((_process$env = process.env) === null || _process$env === void 0 ? void 0 : _process$env.STREAM_URL) && !apiKey) {
+  if (typeof process !== 'undefined' && (_process$env = process.env) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
     var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
@@ -5300,19 +5408,12 @@ module.exports = function xhrAdapter(config) {
       delete requestHeaders['Content-Type']; // Let the browser set it
     }
 
-    if (
-      (utils.isBlob(requestData) || utils.isFile(requestData)) &&
-      requestData.type
-    ) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
     var request = new XMLHttpRequest();
 
     // HTTP basic authentication
     if (config.auth) {
       var username = config.auth.username || '';
-      var password = unescape(encodeURIComponent(config.auth.password)) || '';
+      var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
       requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
     }
 
@@ -5637,7 +5738,7 @@ module.exports = {
 
 
 // rawAsap provides everything we need except exception management.
-var rawAsap = __webpack_require__(93);
+var rawAsap = __webpack_require__(94);
 // RawTasks are recycled to reduce GC churn.
 var freeTasks = [];
 // We queue errors to ensure they are thrown in right order (FIFO).
@@ -6085,7 +6186,7 @@ var constants = __webpack_require__(50),
 var Faye = {
   VERSION:    constants.VERSION,
 
-  Client:     __webpack_require__(92),
+  Client:     __webpack_require__(93),
   Scheduler:  __webpack_require__(57)
 };
 
@@ -6108,35 +6209,12 @@ module.exports = Faye;
 
 /***/ }),
 /* 62 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-var base64_url_decode = __webpack_require__(108);
-
-function InvalidTokenError(message) {
-  this.message = message;
-}
-
-InvalidTokenError.prototype = new Error();
-InvalidTokenError.prototype.name = 'InvalidTokenError';
-
-module.exports = function (token,options) {
-  if (typeof token !== 'string') {
-    throw new InvalidTokenError('Invalid token specified');
-  }
-
-  options = options || {};
-  var pos = options.header === true ? 0 : 1;
-  try {
-    return JSON.parse(base64_url_decode(token.split('.')[pos]));
-  } catch (e) {
-    throw new InvalidTokenError('Invalid token specified: ' + e.message);
-  }
-};
-
-module.exports.InvalidTokenError = InvalidTokenError;
+/* unused harmony export InvalidTokenError */
+function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ __webpack_exports__["a"] = (o);
+//# sourceMappingURL=jwt-decode.esm.js.map
 
 
 /***/ }),
@@ -6165,9 +6243,9 @@ var getPrototypeOf = __webpack_require__(32);
 
 var setPrototypeOf = __webpack_require__(37);
 
-var isNativeFunction = __webpack_require__(110);
+var isNativeFunction = __webpack_require__(109);
 
-var construct = __webpack_require__(111);
+var construct = __webpack_require__(110);
 
 function _wrapNativeSuper(Class) {
   var _cache = typeof Map === "function" ? new Map() : undefined;
@@ -7234,6 +7312,9 @@ axios.all = function all(promises) {
 };
 axios.spread = __webpack_require__(91);
 
+// Expose isAxiosError
+axios.isAxiosError = __webpack_require__(92);
+
 module.exports = axios;
 
 // Allow use of default import syntax in TypeScript
@@ -7322,7 +7403,8 @@ utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData
   Axios.prototype[method] = function(url, config) {
     return this.request(mergeConfig(config || {}, {
       method: method,
-      url: url
+      url: url,
+      data: (config || {}).data
     }));
   };
 });
@@ -7980,6 +8062,24 @@ module.exports = function spread(callback) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+/**
+ * Determines whether the payload is an error thrown by Axios
+ *
+ * @param {*} payload The value to test
+ * @returns {boolean} True if the payload is an error thrown by Axios, otherwise false
+ */
+module.exports = function isAxiosError(payload) {
+  return (typeof payload === 'object') && (payload.isAxiosError === true);
+};
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var asap            = __webpack_require__(51),
@@ -7989,16 +8089,16 @@ var asap            = __webpack_require__(51),
     browser         = __webpack_require__(34),
     constants       = __webpack_require__(50),
     assign          = __webpack_require__(7),
-    validateOptions = __webpack_require__(94),
+    validateOptions = __webpack_require__(95),
     Deferrable      = __webpack_require__(21),
     Logging         = __webpack_require__(19),
     Publisher       = __webpack_require__(35),
     Channel         = __webpack_require__(52),
-    Dispatcher      = __webpack_require__(96),
-    Error           = __webpack_require__(104),
-    Extensible      = __webpack_require__(105),
-    Publication     = __webpack_require__(106),
-    Subscription    = __webpack_require__(107);
+    Dispatcher      = __webpack_require__(97),
+    Error           = __webpack_require__(105),
+    Extensible      = __webpack_require__(106),
+    Publication     = __webpack_require__(107),
+    Subscription    = __webpack_require__(108);
 
 var Client = Class({ className: 'Client',
   UNCONNECTED:  1,
@@ -8369,7 +8469,7 @@ module.exports = Client;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8600,7 +8700,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8617,7 +8717,7 @@ module.exports = function(options, validKeys) {
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports) {
 
 /*
@@ -8794,7 +8894,7 @@ EventEmitter.prototype.listeners = function(type) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8806,7 +8906,7 @@ var Class     = __webpack_require__(10),
     assign    = __webpack_require__(7),
     Logging   = __webpack_require__(19),
     Publisher = __webpack_require__(35),
-    Transport = __webpack_require__(97),
+    Transport = __webpack_require__(98),
     Scheduler = __webpack_require__(57);
 
 var Dispatcher = Class({ className: 'Dispatcher',
@@ -8988,7 +9088,7 @@ module.exports = Dispatcher;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8996,17 +9096,17 @@ module.exports = Dispatcher;
 
 var Transport = __webpack_require__(15);
 
-Transport.register('websocket', __webpack_require__(99));
-Transport.register('eventsource', __webpack_require__(101));
+Transport.register('websocket', __webpack_require__(100));
+Transport.register('eventsource', __webpack_require__(102));
 Transport.register('long-polling', __webpack_require__(56));
-Transport.register('cross-origin-long-polling', __webpack_require__(102));
-Transport.register('callback-polling', __webpack_require__(103));
+Transport.register('cross-origin-long-polling', __webpack_require__(103));
+Transport.register('callback-polling', __webpack_require__(104));
 
 module.exports = Transport;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9040,7 +9140,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9054,7 +9154,7 @@ var Class      = __webpack_require__(10),
     copyObject = __webpack_require__(36),
     assign     = __webpack_require__(7),
     toJSON     = __webpack_require__(20),
-    ws         = __webpack_require__(100),
+    ws         = __webpack_require__(101),
     Deferrable = __webpack_require__(21),
     Transport  = __webpack_require__(15);
 
@@ -9209,7 +9309,7 @@ module.exports = WebSocket;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9227,7 +9327,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9332,7 +9432,7 @@ module.exports = EventSource;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9425,7 +9525,7 @@ module.exports = CORS;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9497,7 +9597,7 @@ module.exports = JSONP;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9559,7 +9659,7 @@ module.exports = Error;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9613,7 +9713,7 @@ module.exports = Extensible;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9626,7 +9726,7 @@ module.exports = Class(Deferrable);
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9677,90 +9777,7 @@ module.exports = Subscription;
 
 
 /***/ }),
-/* 108 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var atob = __webpack_require__(109);
-
-function b64DecodeUnicode(str) {
-  return decodeURIComponent(atob(str).replace(/(.)/g, function (m, p) {
-    var code = p.charCodeAt(0).toString(16).toUpperCase();
-    if (code.length < 2) {
-      code = '0' + code;
-    }
-    return '%' + code;
-  }));
-}
-
-module.exports = function(str) {
-  var output = str.replace(/-/g, "+").replace(/_/g, "/");
-  switch (output.length % 4) {
-    case 0:
-      break;
-    case 2:
-      output += "==";
-      break;
-    case 3:
-      output += "=";
-      break;
-    default:
-      throw "Illegal base64url string!";
-  }
-
-  try{
-    return b64DecodeUnicode(output);
-  } catch (err) {
-    return atob(output);
-  }
-};
-
-
-/***/ }),
 /* 109 */
-/***/ (function(module, exports) {
-
-/**
- * The code was extracted from:
- * https://github.com/davidchambers/Base64.js
- */
-
-var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-function InvalidCharacterError(message) {
-  this.message = message;
-}
-
-InvalidCharacterError.prototype = new Error();
-InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-function polyfill (input) {
-  var str = String(input).replace(/=+$/, '');
-  if (str.length % 4 == 1) {
-    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-  }
-  for (
-    // initialize result and counters
-    var bc = 0, bs, buffer, idx = 0, output = '';
-    // get next character
-    buffer = str.charAt(idx++);
-    // character found in table? initialize bit storage and add its ascii value;
-    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-      // and if not first of each 4 characters,
-      // convert the first 8 bits to one ascii character
-      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-  ) {
-    // try to find character in table (0-63, not found => -1)
-    buffer = chars.indexOf(buffer);
-  }
-  return output;
-}
-
-
-module.exports = typeof window !== 'undefined' && window.atob && window.atob.bind(window) || polyfill;
-
-
-/***/ }),
-/* 110 */
 /***/ (function(module, exports) {
 
 function _isNativeFunction(fn) {
@@ -9770,12 +9787,12 @@ function _isNativeFunction(fn) {
 module.exports = _isNativeFunction;
 
 /***/ }),
-/* 111 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var setPrototypeOf = __webpack_require__(37);
 
-var isNativeReflectConstruct = __webpack_require__(112);
+var isNativeReflectConstruct = __webpack_require__(111);
 
 function _construct(Parent, args, Class) {
   if (isNativeReflectConstruct()) {
@@ -9797,7 +9814,7 @@ function _construct(Parent, args, Class) {
 module.exports = _construct;
 
 /***/ }),
-/* 112 */
+/* 111 */
 /***/ (function(module, exports) {
 
 function _isNativeReflectConstruct() {
@@ -9816,10 +9833,10 @@ function _isNativeReflectConstruct() {
 module.exports = _isNativeReflectConstruct;
 
 /***/ }),
-/* 113 */
+/* 112 */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"7.1.0\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'\",\"test-browser\":\"karma start karma.config.js\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.11.5\",\"@babel/core\":\"^7.11.5\",\"@babel/node\":\"^7.10.5\",\"@babel/plugin-proposal-class-properties\":\"^7.10.4\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.11.0\",\"@babel/plugin-transform-object-assign\":\"^7.10.4\",\"@babel/plugin-transform-runtime\":\"^7.11.5\",\"@babel/preset-env\":\"^7.11.5\",\"@babel/preset-typescript\":\"^7.10.4\",\"@babel/register\":\"^7.11.5\",\"@typescript-eslint/eslint-plugin\":\"^4.0.1\",\"@typescript-eslint/parser\":\"^4.0.1\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.1.0\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.7.2\",\"dotenv\":\"^8.2.0\",\"eslint\":\"^7.8.1\",\"eslint-config-airbnb-base\":\"^14.2.0\",\"eslint-config-prettier\":\"^6.11.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.0\",\"eslint-plugin-prettier\":\"^3.1.4\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.3.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.2.5\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.2.1\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.1.5\",\"karma-sourcemap-loader\":\"~0.3.8\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.1.3\",\"null-loader\":\"^4.0.0\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.1.1\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.1\",\"typescript\":\"^4.0.2\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.11.2\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.1\",\"@types/qs\":\"^6.9.4\",\"axios\":\"^0.20.0\",\"faye\":\"^1.4.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^2.2.0\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"},\"keywords\":[\"stream\",\"get\",\"get-stream\",\"chat\",\"notification\",\"feed\",\"stream.io\",\"getstream\"]}");
+module.exports = JSON.parse("{\"author\":{\"name\":\"Thierry Schellenbach\",\"company\":\"Stream.io Inc\"},\"name\":\"getstream\",\"description\":\"The official low-level GetStream.io client for Node.js and the browser.\",\"main\":\"./lib/index.js\",\"module\":\"./lib/index.js\",\"types\":\"./lib/index.d.ts\",\"homepage\":\"https://getstream.io/docs/?language=js\",\"email\":\"support@getstream.io\",\"license\":\"BSD-3-Clause\",\"version\":\"7.1.2\",\"scripts\":{\"transpile\":\"babel src --out-dir lib --extensions '.ts'\",\"types\":\"tsc --emitDeclarationOnly\",\"build\":\"rm -rf lib && yarn run transpile && yarn run types\",\"dist\":\"webpack && webpack --minify\",\"eslint\":\"eslint '**/*.{js,ts}' --max-warnings 0\",\"prettier\":\"prettier --list-different '**/*.{js,ts}'\",\"lint\":\"yarn run prettier && yarn run eslint\",\"lint-fix\":\"prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'\",\"test\":\"yarn run test-unit-node\",\"test-types\":\"tsc --esModuleInterop true --noEmit true test/typescript/*.ts\",\"test-unit-node\":\"mocha --require ./babel-register.js test/unit/common test/unit/node\",\"test-integration-node\":\"mocha --require ./babel-register.js test/integration/common test/integration/node --exit\",\"test-cloud\":\"mocha --require ./babel-register.js test/integration/cloud --timeout 40000\",\"test-cloud-local\":\"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'\",\"test-browser\":\"karma start karma.config.js\",\"coverage\":\"nyc yarn run test-unit-node && nyc report --reporter=text-lcov | codecov --pipe\",\"prepare\":\"yarn run build\",\"preversion\":\"yarn run test-unit-node\",\"version\":\"yarn run dist && yarn run build && git add dist\",\"postversion\":\"git push && git push --tags && npm publish\"},\"husky\":{\"hooks\":{\"pre-commit\":\"dotgit/hooks/pre-commit-format.sh && dotgit/hooks/pre-commit-reject-binaries.py\"}},\"browser\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false,\"http\":false,\"https\":false},\"react-native\":{\"crypto\":false,\"jsonwebtoken\":false,\"./lib/batch_operations.js\":false,\"qs\":false,\"url\":false},\"devDependencies\":{\"@babel/cli\":\"^7.12.10\",\"@babel/core\":\"^7.12.10\",\"@babel/node\":\"^7.12.10\",\"@babel/plugin-proposal-class-properties\":\"^7.12.1\",\"@babel/plugin-proposal-object-rest-spread\":\"^7.12.1\",\"@babel/plugin-transform-object-assign\":\"^7.12.1\",\"@babel/plugin-transform-runtime\":\"^7.12.10\",\"@babel/preset-env\":\"^7.12.10\",\"@babel/preset-typescript\":\"^7.12.7\",\"@babel/register\":\"^7.12.10\",\"@typescript-eslint/eslint-plugin\":\"^4.9.1\",\"@typescript-eslint/parser\":\"^4.9.1\",\"babel-eslint\":\"^10.1.0\",\"babel-loader\":\"^8.2.2\",\"chai\":\"^4.2.0\",\"codecov\":\"^3.8.1\",\"dotenv\":\"^8.2.0\",\"eslint\":\"^7.15.0\",\"eslint-config-airbnb-base\":\"^14.2.1\",\"eslint-config-prettier\":\"^7.0.0\",\"eslint-plugin-chai-friendly\":\"^0.6.0\",\"eslint-plugin-import\":\"^2.22.1\",\"eslint-plugin-prettier\":\"^3.3.0\",\"eslint-plugin-sonarjs\":\"^0.5.0\",\"eslint-plugin-typescript-sort-keys\":\"^1.5.0\",\"expect.js\":\"^0.3.1\",\"husky\":\"^4.3.6\",\"json-loader\":\"~0.5.7\",\"karma\":\"^5.2.3\",\"karma-chrome-launcher\":\"^3.1.0\",\"karma-mocha\":\"^2.0.1\",\"karma-mocha-reporter\":\"~2.2.5\",\"karma-sauce-launcher\":\"^4.3.4\",\"karma-sourcemap-loader\":\"~0.3.8\",\"karma-webpack\":\"^4.0.2\",\"mocha\":\"^8.2.1\",\"null-loader\":\"^4.0.1\",\"nyc\":\"^15.1.0\",\"prettier\":\"^2.2.1\",\"request\":\"^2.88.2\",\"testdouble\":\"^3.16.1\",\"typescript\":\"^4.1.3\",\"uglifyjs-webpack-plugin\":\"^2.2.0\",\"webpack\":\"^4.44.1\",\"webpack-cli\":\"^3.3.12\"},\"dependencies\":{\"@babel/runtime\":\"^7.12.5\",\"@types/jsonwebtoken\":\"^8.5.0\",\"@types/jwt-decode\":\"^2.2.1\",\"@types/qs\":\"^6.9.5\",\"axios\":\"^0.21.0\",\"faye\":\"^1.4.0\",\"form-data\":\"^3.0.0\",\"jsonwebtoken\":\"^8.5.1\",\"jwt-decode\":\"^3.1.2\",\"qs\":\"^6.9.4\"},\"peerDependencies\":{\"@types/node\":\">=10\"},\"repository\":{\"type\":\"git\",\"url\":\"git://github.com/GetStream/stream-js.git\"},\"files\":[\"src\",\"dist\",\"types\",\"lib\"],\"engines\":{\"node\":\"10 || 12 || >=14\"},\"keywords\":[\"stream\",\"get\",\"get-stream\",\"chat\",\"notification\",\"feed\",\"stream.io\",\"getstream\"]}");
 
 /***/ })
 /******/ ]);
