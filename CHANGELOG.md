@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.0](https://github.com/GetStream/stream-js/releases/tag/v7.2.0) - 2021-01-21
+
+- Add JWT support for multi action, resource and feed id [#415](https://github.com/GetStream/stream-js/pull/415)
+
 ## [7.1.3](https://github.com/GetStream/stream-js/releases/tag/v7.1.3) - 2021-01-21
 
 - Add a note into readme about browser detection and option to skip [#414](https://github.com/GetStream/stream-js/pull/414)

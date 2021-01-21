@@ -540,30 +540,44 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+ // for a claim in jwt
 
+function joinClaimValue(items) {
+  var values = Array.isArray(items) ? items : [items];
+  var claims = [];
+
+  for (var i = 0; i < values.length; i += 1) {
+    var s = values[i].trim();
+    if (s === '*') return s;
+    claims.push(s);
+  }
+
+  return claims.join(',');
+}
 /**
  * Creates the JWT token for feedId, resource and action using the apiSecret
  * @method JWTScopeToken
  * @memberof signing
  * @private
  * @param {string} apiSecret - API Secret key
- * @param {string} resource - JWT payload resource
- * @param {string} action - JWT payload action
+ * @param {string | string[]} resource - JWT payload resource
+ * @param {string | string[]} action - JWT payload action
  * @param {object} [options] - Optional additional options
- * @param {string} [options.feedId] - JWT payload feed identifier
+ * @param {string | string[]} [options.feedId] - JWT payload feed identifier
  * @param {string} [options.userId] - JWT payload user identifier
  * @param {boolean} [options.expireTokens] - JWT noTimestamp
  * @return {string} JWT Token
  */
 
+
 function JWTScopeToken(apiSecret, resource, action) {
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   var noTimestamp = options.expireTokens ? !options.expireTokens : true;
   var payload = {
-    resource: resource,
-    action: action
+    resource: joinClaimValue(resource),
+    action: joinClaimValue(action)
   };
-  if (options.feedId) payload.feed_id = options.feedId;
+  if (options.feedId) payload.feed_id = joinClaimValue(options.feedId);
   if (options.userId) payload.user_id = options.userId;
   return jsonwebtoken__WEBPACK_IMPORTED_MODULE_1___default.a.sign(payload, apiSecret, {
     algorithm: 'HS256',
