@@ -34,8 +34,8 @@ export function JWTScopeToken(
 ) {
   const noTimestamp = options.expireTokens ? !options.expireTokens : true;
   const payload: { action: string; resource: string; feed_id?: string; user_id?: string } = {
-    action: joinClaimValue(action),
     resource: joinClaimValue(resource),
+    action: joinClaimValue(action),
   };
   if (options.feedId) payload.feed_id = joinClaimValue(options.feedId);
   if (options.userId) payload.user_id = options.userId;

@@ -33,4 +33,13 @@ describe('[UNIT] Creating tokens', function () {
 
     expect(token).to.be(expected);
   });
+
+  it('#multiClaimToken', () => {
+    const token = JWTScopeToken('abcdefghijklmnop', ['personalization', 'collections'], ['read', 'delete'], {
+      feedId: ['timeline:me', 'timeline:you'],
+    });
+    expect(token).to.be(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXNvdXJjZSI6InBlcnNvbmFsaXphdGlvbixjb2xsZWN0aW9ucyIsImFjdGlvbiI6InJlYWQsZGVsZXRlIiwiZmVlZF9pZCI6InRpbWVsaW5lOm1lLHRpbWVsaW5lOnlvdSJ9.zWwZIdeWl2HCFvFPC9aMK4h832bmoQuifmUlyPq9knE',
+    );
+  });
 });
