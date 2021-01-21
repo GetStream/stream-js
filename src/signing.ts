@@ -2,8 +2,14 @@ import jwt, { SignOptions } from 'jsonwebtoken';
 
 // for a claim in jwt
 function joinClaimValue(items: string | string[]): string {
-  const value = Array.isArray(items) ? items.filter((x) => x?.trim()).join(',') : items;
-  return value.includes('*') ? '*' : value;
+  const values = Array.isArray(items) ? items : [items];
+  const claims = [];
+  for (let i = 0; i < values.length; i += 1) {
+    const s = values[i].trim();
+    if (s === '*') return s;
+    claims.push(s);
+  }
+  return claims.join(',');
 }
 
 /**
