@@ -55,7 +55,7 @@ This package can be integrated into React Native applications. Remember to not e
 
 ### API client setup Node
 
-```javascript
+```js
 import { connect } from 'getstream';
 // or if you are on commonjs
 const { connect } = require('getstream');
@@ -72,7 +72,7 @@ If you want to use the API client directly on your web/mobile app you need to ge
 
 #### Server-side token generation
 
-```javascript
+```js
 import { connect } from 'getstream';
 // or if you are on commonjs
 const { connect } = require('getstream');
@@ -85,9 +85,15 @@ const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { location: '
 const userToken = client.createUserToken('the-user-id');
 ```
 
+> :warning: Client checks if it's running in a browser environment with a secret and throws an error for a possible security issue of exposing your secret. If you are running backend code in Google Cloud or you know what you're doing, you can specify `browser: false` in `options` to skip this check.
+
+```js
+const client = connect('YOUR_API_KEY', 'API_KEY_SECRET', 'APP_ID', { browser: false });
+```
+
 #### Client API init
 
-```javascript
+```js
 import { connect } from 'getstream';
 // or if you are on commonjs
 const { connect } = require('getstream');
@@ -97,7 +103,7 @@ const client = connect('apikey', userToken, 'appid');
 
 #### Examples
 
-```javascript
+```js
 // Instantiate a feed object server side
 user1 = client.feed('user', '1');
 
@@ -260,7 +266,7 @@ client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp,
 
 ### Typescript
 
-```typescript
+```ts
 import { connect, EnrichedActivity, NotificationActivity } from getstream;
 
 type User1Type = { name: string; username: string; image?: string };
@@ -328,7 +334,7 @@ client.collections.get('collection_1', 'taco').then((item: CollectionEntry<Colle
 
 Stream uses [Faye](http://faye.jcoglan.com/browser.html) for realtime notifications. Below is quick guide to subscribing to feed changes
 
-```javascript
+```js
 const { connect } = require('getstream');
 
 // ⚠️ userToken is generated server-side (see previous section)
@@ -366,6 +372,6 @@ You can find generic API documentation enriched by code snippets from this packa
 
 ### Copyright and License Information
 
-Copyright (c) 2015-2020 Stream.io Inc, and individual contributors. All rights reserved.
+Copyright (c) 2015-2021 Stream.io Inc, and individual contributors. All rights reserved.
 
 See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
