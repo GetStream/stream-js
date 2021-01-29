@@ -79,6 +79,7 @@ function addFileToFormData(uri: string | File | Buffer | NodeJS.ReadStream, name
     data.append('file', {
       uri,
       name: name || (uri as string).split('/').reverse()[0],
+      type: contentType || undefined,
       contentType: contentType || undefined,
     });
   }
