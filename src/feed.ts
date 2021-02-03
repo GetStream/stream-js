@@ -10,7 +10,7 @@ import { CollectionResponse } from './collections';
 
 export type EnrichOptions = {
   enrich?: boolean;
-  ownReactions?: boolean; // best not to use it, will removed by clinet.replaceReactionOptions()
+  ownReactions?: boolean; // best not to use it, will be removed by client.replaceReactionOptions()
   reactionKindsFilter?: string; // TODO: add support for array sample: kind,kind,kind
   recentReactionsLimit?: number;
   withOwnChildren?: boolean;
