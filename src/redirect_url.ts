@@ -11,7 +11,7 @@ import { JWTScopeToken } from './signing';
  * Creates a redirect url for tracking the given events in the context of
  * an email using Stream's analytics platform. Learn more at
  * getstream.io/personalization
- * @link https://getstream.io/docs/analytics_email/?language=js
+ * @link https://getstream.io/activity-feeds/docs/node/analytics_email/?language=js
  * @method createRedirectUrl
  * @memberof StreamClient.prototype
  * @param  {string} targetUrl Target url

@@ -21,7 +21,7 @@ export class StreamImageStore {
   // param. If you don't then Android will refuse to perform the upload
   /**
    * upload an Image File instance or a readable stream of data
-   * @link https://getstream.io/docs/files_introduction/?language=js#upload
+   * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#upload
    * @param {File|Buffer|NodeJS.ReadStream|string} uri - File object or stream or URI
    * @param {string} [name] - file name
    * @param {string} [contentType] - mime-type
@@ -39,7 +39,7 @@ export class StreamImageStore {
 
   /**
    * delete an uploaded image
-   * @link https://getstream.io/docs/files_introduction/?language=js#delete
+   * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#delete
    * @param {string} uri
    */
   delete(uri: string) {
@@ -66,7 +66,7 @@ export class StreamImageStore {
 
   /**
    * Generate a diffrent variant of the uploaded image
-   * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+   * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#image_processing
    * @param {string} uri
    * @param {ImageProcessOptions} options
    */
@@ -85,7 +85,7 @@ export class StreamImageStore {
 
   /**
    * Generate a thumbnail for a given image
-   * @link https://getstream.io/docs/files_introduction/?language=js#image_processing
+   * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#image_processing
    * @param {string} uri
    * @param {number|string} w
    * @param {number|string} h

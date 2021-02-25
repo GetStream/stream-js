@@ -20,7 +20,7 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
 
   /**
    * Initialize the Personalization class
-   * @link https://getstream.io/docs/personalization_introduction/?language=js
+   * @link https://getstream.io/activity-feeds/docs/node/personalization_introduction/?language=js
    * @method constructor
    * @memberof Personalization.prototype
    * @param {StreamClient} client - The stream client
