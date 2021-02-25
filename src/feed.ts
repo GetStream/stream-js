@@ -236,7 +236,7 @@ export class StreamFeed<
 
   /**
    * Initialize a feed object
-   * @link https://getstream.io/docs/adding_activities/?language=js
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js
    * @method constructor
    * @memberof StreamFeed.prototype
    * @param {StreamClient} client - The stream client this feed is constructed from
@@ -276,7 +276,7 @@ export class StreamFeed<
 
   /**
    * Adds the given activity to the feed
-   * @link https://getstream.io/docs/adding_activities/?language=js#adding-activities-basic
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#adding-activities-basic
    * @method addActivity
    * @memberof StreamFeed.prototype
    * @param {NewActivity<ActivityType>} activity - The activity to add
@@ -297,7 +297,7 @@ export class StreamFeed<
 
   /**
    * Removes the activity by activityId or foreignId
-   * @link https://getstream.io/docs/adding_activities/?language=js#removing-activities
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#removing-activities
    * @method removeActivity
    * @memberof StreamFeed.prototype
    * @param  {string}   activityId Identifier of activity to remove
@@ -315,7 +315,7 @@ export class StreamFeed<
 
   /**
    * Adds the given activities to the feed
-   * @link https://getstream.io/docs/add_many_activities/?language=js#batch-add-activities
+   * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-add-activities
    * @method addActivities
    * @memberof StreamFeed.prototype
    * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
@@ -331,7 +331,7 @@ export class StreamFeed<
 
   /**
    * Follows the given target feed
-   * @link https://getstream.io/docs/following/?language=js
+   * @link https://getstream.io/activity-feeds/docs/node/following/?language=js
    * @method follow
    * @memberof StreamFeed.prototype
    * @param  {string}   targetSlug   Slug of the target feed
@@ -362,7 +362,7 @@ export class StreamFeed<
 
   /**
    * Unfollow the given feed
-   * @link https://getstream.io/docs/following/?language=js#unfollowing-feeds
+   * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#unfollowing-feeds
    * @method unfollow
    * @memberof StreamFeed.prototype
    * @param  {string}   targetSlug   Slug of the target feed
@@ -389,7 +389,7 @@ export class StreamFeed<
 
   /**
    * List which feeds this feed is following
-   * @link https://getstream.io/docs/following/?language=js#reading-followed-feeds
+   * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#reading-followed-feeds
    * @method following
    * @memberof StreamFeed.prototype
    * @param  {GetFollowOptions}   [options]  Additional options
@@ -412,7 +412,7 @@ export class StreamFeed<
 
   /**
    * List the followers of this feed
-   * @link https://getstream.io/docs/following/?language=js#reading-feed-followers
+   * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#reading-feed-followers
    * @method followers
    * @memberof StreamFeed.prototype
    * @param  {GetFollowOptions}   [options]  Additional options
@@ -436,7 +436,7 @@ export class StreamFeed<
   /**
    *  Retrieve the number of follower and following feed stats of the current feed.
    *  For each count, feed slugs can be provided to filter counts accordingly.
-   * @link https://getstream.io/docs/following/?language=js#reading-follow-stats
+   * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#reading-follow-stats
    * @method followStats
    * @param  {object}   [options]
    * @param  {string[]} [options.followerSlugs] find counts only on these slugs
@@ -463,7 +463,7 @@ export class StreamFeed<
 
   /**
    * Reads the feed
-   * @link https://getstream.io/docs/adding_activities/?language=js#retrieving-activities
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#retrieving-activities
    * @method get
    * @memberof StreamFeed.prototype
    * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
@@ -495,7 +495,7 @@ export class StreamFeed<
 
   /**
    * Retrieves one activity from a feed and adds enrichment
-   * @link https://getstream.io/docs/adding_activities/?language=js#retrieving-activities
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#retrieving-activities
    * @method getActivityDetail
    * @memberof StreamFeed.prototype
    * @param  {string}   activityId Identifier of activity to retrieve
@@ -528,7 +528,7 @@ export class StreamFeed<
 
   /**
    * Subscribes to any changes in the feed, return a promise
-   * @link https://getstream.io/docs/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
+   * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
    * @method subscribe
    * @memberof StreamFeed.prototype
    * @param  {function} callback Callback to call on completion
@@ -557,7 +557,7 @@ export class StreamFeed<
 
   /**
    * Cancel updates created via feed.subscribe()
-   * @link https://getstream.io/docs/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
+   * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
    * @return void
    */
   unsubscribe() {
@@ -570,7 +570,7 @@ export class StreamFeed<
 
   /**
    * Updates an activity's "to" fields
-   * @link https://getstream.io/docs/targeting/?language=js
+   * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
    * @param {string} foreignId The foreign_id of the activity to update
    * @param {string} time The time of the activity to update
    * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets

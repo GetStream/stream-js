@@ -172,7 +172,7 @@ export class StreamClient<
 
   /**
    * Initialize a client
-   * @link https://getstream.io/docs/feeds_getting_started/?language=js#setup
+   * @link https://getstream.io/activity-feeds/docs/node/#setup
    * @method initialize
    * @memberof StreamClient.prototype
    * @param {string} apiKey - the api key
@@ -425,7 +425,7 @@ export class StreamClient<
 
   /**
    * Returns a feed object for the given feed id and token
-   * @link https://getstream.io/docs/adding_activities/?language=js
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js
    * @method feed
    * @memberof StreamClient.prototype
    * @param {string} feedSlug - The feed slug
@@ -688,7 +688,7 @@ export class StreamClient<
 
   /**
    * create a user token
-   * @link https://getstream.io/docs/feeds_getting_started/?language=js#generate-user-token-server-side
+   * @link https://getstream.io/activity-feeds/docs/node/feeds_getting_started/?language=js#generate-user-token-server-side
    * @param {string} userId
    * @param {object} extraData
    * @return {string}
@@ -703,7 +703,7 @@ export class StreamClient<
 
   /**
    * Updates all supplied activities on the stream
-   * @link https://getstream.io/docs/adding_activities/?language=js#updating-activities
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
    * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
    * @return {Promise<APIResponse>}
    */
@@ -728,7 +728,7 @@ export class StreamClient<
 
   /**
    * Updates one activity on the stream
-   * @link https://getstream.io/docs/adding_activities/?language=js#updating-activities
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
    * @param  {UpdateActivity<ActivityType>} activity The activity to update
    * @return {Promise<APIResponse>}
    */
@@ -740,7 +740,7 @@ export class StreamClient<
 
   /**
    * Retrieve activities by ID or foreign ID and time
-   * @link https://getstream.io/docs/add_many_activities/?language=js#batch-get-activities-by-id
+   * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-get-activities-by-id
    * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
    * @return {Promise<GetActivitiesAPIResponse>}
    */
@@ -844,7 +844,7 @@ export class StreamClient<
 
   /**
    * Update a single activity with partial operations.
-   * @link https://getstream.io/docs/adding_activities/?language=js&q=partial+#activity-partial-update
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
    * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
    * @return {Promise<Activity<ActivityType>>}
    * @example
@@ -884,7 +884,7 @@ export class StreamClient<
 
   /**
    * Update multiple activities with partial operations.
-   * @link https://getstream.io/docs/adding_activities/?language=js&q=partial+#activity-partial-update
+   * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
    * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
    * @return {Promise<{ activities: Activity<ActivityType>[] }>}
    * @example
