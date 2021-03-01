@@ -1,7 +1,7 @@
 # Testing & stream-js
 
-[![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=master)](https://travis-ci.org/GetStream/stream-js)
-[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=master)
+[![Build Status](https://travis-ci.org/GetStream/stream-js.svg?branch=main)](https://travis-ci.org/GetStream/stream-js)
+[![Coverage Status](https://img.shields.io/coveralls/GetStream/stream-js.svg)](https://coveralls.io/r/GetStream/stream-js?branch=main)
 
 # Lint
 

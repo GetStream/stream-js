@@ -1,6 +1,6 @@
 # Stream-JS
 
-[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions) [![codecov](https://codecov.io/gh/GetStream/stream-js/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-js)
+[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions) [![codecov](https://codecov.io/gh/GetStream/stream-js/branch/main/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-js)
 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
@@ -38,8 +38,8 @@ yarn add getstream
 
 #### Install by downloading the JS file
 
-[JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js/getstream.js) /
-[Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/master/dist/js_min/getstream.js)
+[JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js/getstream.js) /
+[Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js_min/getstream.js)
 
 > :warning: Beware about the version you're pulling. It's the latest by default which can break your app anytime.
 
