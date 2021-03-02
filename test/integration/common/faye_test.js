@@ -81,16 +81,18 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
     const doneYet = function () {
       messages++;
 
+      if (messages === 1) {
+        testUser1
+          .subscribe(function () {
+            done('testUser1 should not receive any messages');
+          })
+          .then(function () {
+            done('testUser1 should not authenticate successfully');
+          }, doneYet);
+      }
+
       if (messages === 2) done();
     };
-
-    testUser1
-      .subscribe(function () {
-        done('testUser1 should not receive any messages');
-      })
-      .then(function () {
-        done('testUser1 should not authenticate succefully');
-      }, doneYet);
 
     testUser2.subscribe(doneYet).then(function () {
       testUser2.addActivity(activity, httpCallback);
