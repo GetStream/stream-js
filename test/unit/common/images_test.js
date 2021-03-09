@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import td from 'testdouble';
+import td from 'testdouble/dist/testdouble';
 
 import { StreamImageStore } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';
