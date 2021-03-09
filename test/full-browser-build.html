@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Full browser bundle App</title>
+  </head>
+
+  <body>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="../dist/js/getstream.js"></script>
+
+    <script type="text/babel">
+      const apiKey = 'sesb46h7zb6p';
+      const appId = '66001';
+      const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmF0bWFuIn0.8aYd7O_fx-1YMx28DXG1n274o4pa3SjHnRM8AIHLqkE';
+
+      const client = stream.connect(apiKey, token, appId);
+      client.setUser({ name: 'Amin' }).then(console.log);
+    </script>
+  </body>
+</html>
