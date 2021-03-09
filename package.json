@@ -16,7 +16,7 @@
     "transpile": "babel src --out-dir lib --extensions '.ts'",
     "types": "tsc --emitDeclarationOnly",
     "build": "rm -rf lib && yarn run transpile && yarn run types",
-    "dist": "webpack && webpack --minify",
+    "dist": "webpack && webpack --env minify",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
     "lint": "yarn run prettier && yarn run eslint",
