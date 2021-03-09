@@ -259,7 +259,7 @@ export class StreamClient<
     );
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
-    if (BatchOperations && createRedirectUrl) {
+    if (BatchOperations && !!createRedirectUrl) {
       this.addToMany = BatchOperations.addToMany;
       this.followMany = BatchOperations.followMany;
       this.unfollowMany = BatchOperations.unfollowMany;
