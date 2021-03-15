@@ -113,6 +113,20 @@ export type ActivityPartialChanges<ActivityType extends UnknownRecord = UnknownR
   unset?: Array<Extract<keyof ActivityType, string>>;
 };
 
+export type RealTimeMessage<
+  UserType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord
+> = {
+  deleted: Array<string>;
+  deleted_foreign_ids: Array<[id: string, time: string]>;
+  new: Array<Omit<Activity<ActivityType>, 'actor'> & { actor: string | UserType }>;
+  app_id?: string;
+  feed?: string;
+  mark_read?: 'all' | 'current' | Array<string>;
+  mark_seen?: 'all' | 'current' | Array<string>;
+  published_at?: string;
+};
+
 /**
  * Client to connect to Stream api
  * @class StreamClient
@@ -141,7 +155,7 @@ export class StreamClient<
   group: string;
   expireTokens: boolean;
   location: string;
-  fayeClient: Faye.Client | null;
+  fayeClient: Faye.Client<RealTimeMessage<UserType, ActivityType>> | null;
   browser: boolean;
   node: boolean;
   nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
@@ -153,9 +167,30 @@ export class StreamClient<
   >;
   handlers: Record<string, HandlerCallback>;
 
-  currentUser?: StreamUser<UserType>;
-  personalization: Personalization<PersonalizationType>;
-  collections: Collections<CollectionType>;
+  currentUser?: StreamUser<
+    UserType,
+    ActivityType,
+    CollectionType,
+    ReactionType,
+    ChildReactionType,
+    PersonalizationType
+  >;
+  personalization: Personalization<
+    UserType,
+    ActivityType,
+    CollectionType,
+    ReactionType,
+    ChildReactionType,
+    PersonalizationType
+  >;
+  collections: Collections<
+    UserType,
+    ActivityType,
+    CollectionType,
+    ReactionType,
+    ChildReactionType,
+    PersonalizationType
+  >;
   files: StreamFileStore;
   images: StreamImageStore;
   reactions: StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
@@ -243,20 +278,38 @@ export class StreamClient<
       ...(this.nodeOptions || {}),
     });
 
-    this.personalization = new Personalization<PersonalizationType>(this);
+    this.personalization = new Personalization<
+      UserType,
+      ActivityType,
+      CollectionType,
+      ReactionType,
+      ChildReactionType,
+      PersonalizationType
+    >(this);
 
     if (this.browser && this.usingApiSecret) {
       throw new FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
-    this.collections = new Collections<CollectionType>(this, this.getOrCreateToken());
-    this.files = new StreamFileStore(this, this.getOrCreateToken());
-    this.images = new StreamImageStore(this, this.getOrCreateToken());
-    this.reactions = new StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
-      this,
-      this.getOrCreateToken(),
-    );
+    this.collections = new Collections<
+      UserType,
+      ActivityType,
+      CollectionType,
+      ReactionType,
+      ChildReactionType,
+      PersonalizationType
+    >(this, this.getOrCreateToken());
+    this.files = new StreamFileStore(this as StreamClient, this.getOrCreateToken());
+    this.images = new StreamImageStore(this as StreamClient, this.getOrCreateToken());
+    this.reactions = new StreamReaction<
+      UserType,
+      ActivityType,
+      CollectionType,
+      ReactionType,
+      ChildReactionType,
+      PersonalizationType
+    >(this, this.getOrCreateToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && !!createRedirectUrl) {
@@ -436,9 +489,11 @@ export class StreamClient<
    */
   feed(
     feedSlug: string,
-    userId?: string | StreamUser<UserType>,
+    userId?:
+      | string
+      | StreamUser<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
     token?: string,
-  ): StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> {
+  ): StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType> {
     if (userId instanceof StreamUser) userId = userId.id;
 
     if (token === undefined) {
@@ -449,7 +504,7 @@ export class StreamClient<
       }
     }
 
-    return new StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
+    return new StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
       this,
       feedSlug,
       userId || (this.userId as string),
@@ -554,10 +609,16 @@ export class StreamClient<
    * @private
    * @return {Faye.Middleware} Faye authorization middleware
    */
-  getFayeAuthorization(): Faye.Middleware {
+  getFayeAuthorization() {
     return {
-      incoming: (message: Faye.Message, callback: Faye.Callback) => callback(message),
-      outgoing: (message: Faye.Message, callback: Faye.Callback) => {
+      incoming: (
+        message: Faye.Message<RealTimeMessage<UserType, ActivityType>>,
+        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>,
+      ) => callback(message),
+      outgoing: (
+        message: Faye.Message<RealTimeMessage<UserType, ActivityType>>,
+        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>,
+      ) => {
         if (message.subscription && this.subscriptions[message.subscription]) {
           const subscription = this.subscriptions[message.subscription];
 
@@ -583,7 +644,7 @@ export class StreamClient<
    */
   getFayeClient(timeout = 10) {
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client(this.fayeUrl, { timeout });
+      this.fayeClient = new Faye.Client<RealTimeMessage<UserType, ActivityType>>(this.fayeUrl, { timeout });
       const authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
@@ -807,8 +868,12 @@ export class StreamClient<
     return this._getOrCreateToken;
   }
 
-  user(userId: string): StreamUser<UserType> {
-    return new StreamUser<UserType>(this, userId, this.getOrCreateToken());
+  user(userId: string) {
+    return new StreamUser<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
+      this,
+      userId,
+      this.getOrCreateToken(),
+    );
   }
 
   async setUser(data: UserType) {
@@ -819,7 +884,14 @@ export class StreamClient<
     const body = { ...data };
     delete body.id;
 
-    const user = await (this.currentUser as StreamUser<UserType>).getOrCreate(body);
+    const user = await (this.currentUser as StreamUser<
+      UserType,
+      ActivityType,
+      CollectionType,
+      ReactionType,
+      ChildReactionType,
+      PersonalizationType
+    >).getOrCreate(body);
     this.currentUser = user;
     return user;
   }

@@ -15,8 +15,15 @@ export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord
   version?: string;
 };
 
-export class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
-  client: StreamClient;
+export class Personalization<
+  UserType extends UnknownRecord = UnknownRecord,
+  ActivityType extends UnknownRecord = UnknownRecord,
+  CollectionType extends UnknownRecord = UnknownRecord,
+  ReactionType extends UnknownRecord = UnknownRecord,
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  PersonalizationType extends UnknownRecord = UnknownRecord
+> {
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
 
   /**
    * Initialize the Personalization class
@@ -25,7 +32,9 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
    * @memberof Personalization.prototype
    * @param {StreamClient} client - The stream client
    */
-  constructor(client: StreamClient) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+  ) {
     this.client = client;
   }
 

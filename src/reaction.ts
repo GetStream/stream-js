@@ -68,11 +68,12 @@ export type ReactionFilterAPIResponse<
 export class StreamReaction<
   UserType extends UnknownRecord = UnknownRecord,
   ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord, // eslint-disable-line @typescript-eslint/no-unused-vars
+  CollectionType extends UnknownRecord = UnknownRecord,
   ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  PersonalizationType extends UnknownRecord = UnknownRecord
 > {
-  client: StreamClient;
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
 
   /**
@@ -84,7 +85,10 @@ export class StreamReaction<
    * @param {string} token JWT token
    * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
    */
-  constructor(client: StreamClient, token: string) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    token: string,
+  ) {
     this.client = client;
     this.token = token;
   }
@@ -93,7 +97,7 @@ export class StreamReaction<
     return `${['reaction', ...args].join('/')}/`;
   };
 
-  _convertTargetFeeds = (targetFeeds: TargetFeeds = []) => {
+  _convertTargetFeeds = (targetFeeds: TargetFeeds = []): string[] => {
     return targetFeeds.map((elem: TargetFeed) => (typeof elem === 'string' ? elem : (elem as StreamFeed).id));
   };
 

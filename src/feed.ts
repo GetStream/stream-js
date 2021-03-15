@@ -1,7 +1,7 @@
 /// <reference path="../types/modules.d.ts" />
 
 import * as Faye from 'faye';
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UnknownRecord, RealTimeMessage } from './client';
 import { StreamUser } from './user';
 import { FeedError, SiteError } from './errors';
 import utils from './utils';
@@ -223,9 +223,10 @@ export class StreamFeed<
   ActivityType extends UnknownRecord = UnknownRecord,
   CollectionType extends UnknownRecord = UnknownRecord,
   ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  ChildReactionType extends UnknownRecord = UnknownRecord,
+  PersonalizationType extends UnknownRecord = UnknownRecord
 > {
-  client: StreamClient;
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
   id: string;
   slug: string;
@@ -244,7 +245,12 @@ export class StreamFeed<
    * @param {string} userId - The user id
    * @param {string} [token] - The authentication token
    */
-  constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    feedSlug: string,
+    userId: string,
+    token: string,
+  ) {
     if (!feedSlug || !userId) {
       throw new FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
@@ -531,14 +537,14 @@ export class StreamFeed<
    * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
    * @method subscribe
    * @memberof StreamFeed.prototype
-   * @param  {function} callback Callback to call on completion
+   * @param  {function} Faye.Callback<RealTimeMessage<UserType, ActivityType>> Callback to call on completion
    * @return {Promise<Faye.Subscription>}
    * @example
    * feed.subscribe(callback).then(function(){
    * 		console.log('we are now listening to changes');
    * });
    */
-  subscribe(callback: Faye.Callback) {
+  subscribe(callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>) {
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
