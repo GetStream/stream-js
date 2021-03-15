@@ -22,5 +22,7 @@ declare module 'faye' {
     addExtension(extension: Middleware): void;
 
     subscribe(channel: string, callback: Callback): Promise<Subscription>;
+
+    disconnect(): void;
   }
 }
