@@ -65,6 +65,33 @@ export type ReactionFilterAPIResponse<
   activity?: ActivityType;
 };
 
+export type ReactionFilterConditions = {
+  activity_id?: string;
+  id_gt?: string;
+  id_gte?: string;
+  id_lt?: string;
+  id_lte?: string;
+  kind?: string;
+  limit?: number;
+  reaction_id?: string;
+  user_id?: string;
+  with_activity_data?: boolean;
+};
+
+export type ReactionUpdateOptions = {
+  targetFeeds?: TargetFeeds;
+  targetFeedsExtraData?: TargetFeedsExtraData;
+};
+
+export type ReactionAddOptions = ReactionUpdateOptions & {
+  id?: string;
+  userId?: string;
+};
+
+export type ReactionAddChildOptions = ReactionUpdateOptions & {
+  userId?: string;
+};
+
 export class StreamReaction<
   UserType extends UR = UR,
   ActivityType extends UR = UR,
@@ -109,7 +136,7 @@ export class StreamReaction<
    * @param  {string}   kind  kind of reaction
    * @param  {string}   activity Activity or an ActivityID
    * @param  {ReactionType}   data  data related to reaction
-   * @param  {object} [options]
+   * @param  {ReactionAddOptions} [options]
    * @param  {string} [options.id] id associated with reaction
    * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
    * @param  {string} [options.userId] useful for adding reaction with server token
@@ -122,12 +149,7 @@ export class StreamReaction<
     kind: string,
     activity: string | { id: string },
     data: ReactionType,
-    {
-      id,
-      targetFeeds = [],
-      userId,
-      targetFeedsExtraData,
-    }: { id?: string; targetFeeds?: TargetFeeds; targetFeedsExtraData?: TargetFeedsExtraData; userId?: string } = {},
+    { id, targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddOptions = {},
   ) {
     const body: ReactionBody<ReactionType> = {
       id,
@@ -155,7 +177,7 @@ export class StreamReaction<
    * @param  {string}   kind  kind of reaction
    * @param  {string}   reaction Reaction or a ReactionID
    * @param  {ChildReactionType}   data  data related to reaction
-   * @param  {object} [options]
+   * @param  {ReactionAddChildOptions} [options]
    * @param  {string[]} [options.targetFeeds] an array of feeds to which to send an activity with the reaction
    * @param  {string} [options.userId] useful for adding reaction with server token
    * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
@@ -167,15 +189,7 @@ export class StreamReaction<
     kind: string,
     reaction: string | { id: string },
     data: ChildReactionType,
-    {
-      targetFeeds = [],
-      userId,
-      targetFeedsExtraData,
-    }: {
-      targetFeeds?: TargetFeeds;
-      targetFeedsExtraData?: TargetFeedsExtraData;
-      userId?: string;
-    } = {},
+    { targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddChildOptions = {},
   ) {
     const body: ReactionBody<ChildReactionType> = {
       parent: reaction instanceof Object ? (reaction as { id: string }).id : reaction,
@@ -220,23 +234,12 @@ export class StreamReaction<
    * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#retrieving-reactions
    * @method filter
    * @memberof StreamReaction.prototype
-   * @param  {object}   conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
+   * @param  {ReactionFilterConditions} conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
    * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
    * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
    * @example reactions.filter({user_id: "john", kinds:"like"})
    */
-  filter(conditions: {
-    activity_id?: string;
-    id_gt?: string;
-    id_gte?: string;
-    id_lt?: string;
-    id_lte?: string;
-    kind?: string;
-    limit?: number;
-    reaction_id?: string;
-    user_id?: string;
-    with_activity_data?: boolean;
-  }) {
+  filter(conditions: ReactionFilterConditions) {
     const { user_id: userId, activity_id: activityId, reaction_id: reactionId, ...qs } = conditions;
     if (!qs.limit) {
       qs.limit = 10;
@@ -267,7 +270,7 @@ export class StreamReaction<
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
    * @param  {ReactionType | ChildReactionType}   data  Data associated to reaction or childReaction
-   * @param  {object} [options]
+   * @param  {ReactionUpdateOptions} [options]
    * @param  {string[]} [options.targetFeeds] Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
    * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
    * @return {Promise<ReactionAPIResponse<ReactionType | ChildReactionType>>}
@@ -277,10 +280,7 @@ export class StreamReaction<
   update(
     id: string,
     data: ReactionType | ChildReactionType,
-    {
-      targetFeeds = [],
-      targetFeedsExtraData,
-    }: { targetFeeds?: string[] | StreamFeed[]; targetFeedsExtraData?: TargetFeedsExtraData } = {},
+    { targetFeeds = [], targetFeedsExtraData }: ReactionUpdateOptions = {},
   ) {
     const body: ReactionBody<ReactionType | ChildReactionType> = {
       data,

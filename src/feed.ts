@@ -8,6 +8,11 @@ import utils from './utils';
 import { EnrichedReaction } from './reaction';
 import { CollectionResponse } from './collections';
 
+export type FollowStatsOptions = {
+  followerSlugs?: string[];
+  followingSlugs?: string[];
+};
+
 export type EnrichOptions = {
   enrich?: boolean;
   ownReactions?: boolean; // best not to use it, will be removed by client.replaceReactionOptions()
@@ -450,7 +455,7 @@ export class StreamFeed<
    * @example feed.followStats();
    * @example feed.followStats({ followerSlugs:['user', 'news'], followingSlugs:['timeline'] });
    */
-  followStats(options: { followerSlugs?: string[]; followingSlugs?: string[] } = {}) {
+  followStats(options: FollowStatsOptions = {}) {
     const qs: { followers: string; following: string; followers_slugs?: string; following_slugs?: string } = {
       followers: this.id,
       following: this.id,
