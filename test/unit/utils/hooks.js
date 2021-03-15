@@ -1,4 +1,4 @@
-const td = require('testdouble');
+const td = require('testdouble/dist/testdouble');
 const { StreamClient } = require('../../../src/client');
 const config = require('./config');
 

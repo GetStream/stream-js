@@ -50,7 +50,7 @@ module.exports = {
         'airbnb-base',
         'eslint:recommended',
         'plugin:prettier/recommended',
-        'prettier/@typescript-eslint',
+        'prettier',
         'plugin:@typescript-eslint/recommended',
         'plugin:sonarjs/recommended',
       ],
