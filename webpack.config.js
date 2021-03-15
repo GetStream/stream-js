@@ -1,8 +1,7 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = (env, argv = []) => ({
-  entry: ['./src/index.ts'],
+module.exports = (env = {}) => ({
+  entry: './src/index.ts',
 
   mode: 'production',
 
@@ -24,29 +23,12 @@ module.exports = (env, argv = []) => ({
     extensions: ['.js', '.ts'],
   },
 
-  node: {
-    console: false,
-    Buffer: false,
-    crypto: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    url: 'empty',
-  },
-
   optimization: {
-    minimizer:
-      argv.minify !== undefined
-        ? [
-            new UglifyJsPlugin({
-              uglifyOptions: { warnings: false },
-            }),
-          ]
-        : [],
+    minimize: !!env.minify,
   },
 
   output: {
-    path: argv.minify !== undefined ? path.join(__dirname, 'dist', 'js_min') : path.join(__dirname, 'dist', 'js'),
+    path: env.minify ? path.join(__dirname, 'dist', 'js_min') : path.join(__dirname, 'dist', 'js'),
     publicPath: 'dist/',
     filename: 'getstream.js',
     chunkFilename: '[chunkhash].js',
