@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 import { SiteError } from './errors';
 
 type BaseCollection<CollectionType> = {
@@ -7,30 +7,25 @@ type BaseCollection<CollectionType> = {
   id: string;
 };
 
-export type CollectionResponse<
-  CollectionType extends UnknownRecord = UnknownRecord
-> = BaseCollection<CollectionType> & {
+export type CollectionResponse<CollectionType extends UR = UR> = BaseCollection<CollectionType> & {
   created_at: string;
   foreign_id: string;
   updated_at: string;
 };
 
-export type NewCollectionEntry<
-  CollectionType extends UnknownRecord = UnknownRecord
-> = BaseCollection<CollectionType> & {
+export type NewCollectionEntry<CollectionType extends UR = UR> = BaseCollection<CollectionType> & {
   user_id?: string;
 };
 
-export type CollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse &
-  CollectionResponse<CollectionType>;
+export type CollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & CollectionResponse<CollectionType>;
 
-export type SelectCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type SelectCollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & {
   response: {
     data: CollectionResponse<CollectionType>[];
   };
 };
 
-export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type UpsertCollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & {
   data: {
     [key: string]: {
       data: CollectionType;
@@ -39,15 +34,27 @@ export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = U
   };
 };
 
-export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecord> {
+export class CollectionEntry<
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
+> {
   id: string;
   collection: string;
-  store: Collections<CollectionType>; // eslint-disable-line no-use-before-define
+  store: Collections<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>; // eslint-disable-line no-use-before-define
   data: CollectionType | null;
   full?: unknown;
 
-  // eslint-disable-next-line no-use-before-define
-  constructor(store: Collections<CollectionType>, collection: string, id: string, data: CollectionType) {
+  constructor(
+    // eslint-disable-next-line no-use-before-define
+    store: Collections<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    collection: string,
+    id: string,
+    data: CollectionType,
+  ) {
     this.collection = collection;
     this.store = store;
     this.id = id;
@@ -119,8 +126,15 @@ export class CollectionEntry<CollectionType extends UnknownRecord = UnknownRecor
   }
 }
 
-export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
-  client: StreamClient;
+export class Collections<
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
+> {
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
 
   /**
@@ -130,7 +144,10 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
    * @param {StreamCloudClient} client Stream client this collection is constructed from
    * @param {string} token JWT token
    */
-  constructor(client: StreamClient, token: string) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    token: string,
+  ) {
     this.client = client;
     this.token = token;
   }
@@ -141,7 +158,14 @@ export class Collections<CollectionType extends UnknownRecord = UnknownRecord> {
   };
 
   entry(collection: string, itemId: string, itemData: CollectionType) {
-    return new CollectionEntry<CollectionType>(this, collection, itemId, itemData);
+    return new CollectionEntry<
+      UserType,
+      ActivityType,
+      CollectionType,
+      ReactionType,
+      ChildReactionType,
+      PersonalizationType
+    >(this, collection, itemId, itemData);
   }
 
   /**

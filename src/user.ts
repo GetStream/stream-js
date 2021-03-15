@@ -1,6 +1,6 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 
-export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type UserAPIResponse<UserType extends UR = UR> = APIResponse & {
   created_at: string;
   data: UserType;
   id: string;
@@ -10,8 +10,15 @@ export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = AP
   following_count?: number;
 };
 
-export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
-  client: StreamClient;
+export class StreamUser<
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
+> {
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
   id: string;
   data?: UserType;
@@ -28,7 +35,11 @@ export class StreamUser<UserType extends UnknownRecord = UnknownRecord> {
    * @param {string} userAuthToken JWT token
    * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
    */
-  constructor(client: StreamClient, userId: string, userAuthToken: string) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    userId: string,
+    userAuthToken: string,
+  ) {
     this.client = client;
     this.id = userId;
     this.data = undefined;

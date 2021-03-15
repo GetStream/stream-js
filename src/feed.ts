@@ -1,12 +1,17 @@
 /// <reference path="../types/modules.d.ts" />
 
 import * as Faye from 'faye';
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR, RealTimeMessage } from './client';
 import { StreamUser } from './user';
 import { FeedError, SiteError } from './errors';
 import utils from './utils';
 import { EnrichedReaction } from './reaction';
 import { CollectionResponse } from './collections';
+
+export type FollowStatsOptions = {
+  followerSlugs?: string[];
+  followingSlugs?: string[];
+};
 
 export type EnrichOptions = {
   enrich?: boolean;
@@ -65,38 +70,38 @@ type BaseActivity<ActivityType> = ActivityType & {
   to?: string[];
 };
 
-export type NewActivity<ActivityType extends UnknownRecord = UnknownRecord> = BaseActivity<ActivityType> & {
+export type NewActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
   foreign_id?: string;
   time?: string;
 };
 
-export type UpdateActivity<ActivityType extends UnknownRecord = UnknownRecord> = BaseActivity<ActivityType> & {
+export type UpdateActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
   foreign_id: string;
   time: string;
 };
 
-export type Activity<ActivityType extends UnknownRecord = UnknownRecord> = BaseActivity<ActivityType> & {
+export type Activity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
   foreign_id: string;
   id: string;
   time: string;
   analytics?: Record<string, number>; // ranked feeds only
-  extra_context?: UnknownRecord;
+  extra_context?: UR;
   origin?: string;
   score?: number; // ranked feeds only
 };
 
 export type ReactionsRecords<
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  UserType extends UnknownRecord = UnknownRecord
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  UserType extends UR = UR
 > = Record<string, EnrichedReaction<ReactionType, ChildReactionType, UserType>[]>;
 
 export type EnrichedActivity<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = Activity<ActivityType> & {
   actor: UserType | string;
   object:
@@ -116,14 +121,14 @@ export type EnrichedActivity<
   reaction_counts?: Record<string, number>;
 };
 
-export type FlatActivity<ActivityType extends UnknownRecord = UnknownRecord> = Activity<ActivityType>;
+export type FlatActivity<ActivityType extends UR = UR> = Activity<ActivityType>;
 
 export type FlatActivityEnriched<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
 type BaseAggregatedActivity = {
@@ -137,41 +142,40 @@ type BaseAggregatedActivity = {
   score?: number;
 };
 
-export type AggregatedActivity<ActivityType extends UnknownRecord = UnknownRecord> = BaseAggregatedActivity & {
+export type AggregatedActivity<ActivityType extends UR = UR> = BaseAggregatedActivity & {
   activities: Activity<ActivityType>[];
 };
 
 export type AggregatedActivityEnriched<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = BaseAggregatedActivity & {
   activities: EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
 };
 
 type BaseNotificationActivity = { is_read: boolean; is_seen: boolean };
 
-export type NotificationActivity<
-  ActivityType extends UnknownRecord = UnknownRecord
-> = AggregatedActivity<ActivityType> & BaseNotificationActivity;
+export type NotificationActivity<ActivityType extends UR = UR> = AggregatedActivity<ActivityType> &
+  BaseNotificationActivity;
 
 export type NotificationActivityEnriched<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = BaseNotificationActivity &
   AggregatedActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
 export type FeedAPIResponse<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = APIResponse & {
   next: string;
   results:
@@ -188,11 +192,11 @@ export type FeedAPIResponse<
 };
 
 export type PersonalizationFeedAPIResponse<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = APIResponse & {
   limit: number;
   next: string;
@@ -202,11 +206,11 @@ export type PersonalizationFeedAPIResponse<
 };
 
 export type GetActivitiesAPIResponse<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR
 > = APIResponse & {
   results:
     | FlatActivity<ActivityType>[]
@@ -219,13 +223,14 @@ export type GetActivitiesAPIResponse<
  * @class StreamFeed
  */
 export class StreamFeed<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
-  client: StreamClient;
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
   id: string;
   slug: string;
@@ -244,7 +249,12 @@ export class StreamFeed<
    * @param {string} userId - The user id
    * @param {string} [token] - The authentication token
    */
-  constructor(client: StreamClient, feedSlug: string, userId: string, token: string) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    feedSlug: string,
+    userId: string,
+    token: string,
+  ) {
     if (!feedSlug || !userId) {
       throw new FeedError('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
@@ -445,7 +455,7 @@ export class StreamFeed<
    * @example feed.followStats();
    * @example feed.followStats({ followerSlugs:['user', 'news'], followingSlugs:['timeline'] });
    */
-  followStats(options: { followerSlugs?: string[]; followingSlugs?: string[] } = {}) {
+  followStats(options: FollowStatsOptions = {}) {
     const qs: { followers: string; following: string; followers_slugs?: string; following_slugs?: string } = {
       followers: this.id,
       following: this.id,
@@ -531,14 +541,14 @@ export class StreamFeed<
    * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
    * @method subscribe
    * @memberof StreamFeed.prototype
-   * @param  {function} callback Callback to call on completion
+   * @param  {function} Faye.Callback<RealTimeMessage<UserType, ActivityType>> Callback to call on completion
    * @return {Promise<Faye.Subscription>}
    * @example
    * feed.subscribe(callback).then(function(){
    * 		console.log('we are now listening to changes');
    * });
    */
-  subscribe(callback: Faye.Callback) {
+  subscribe(callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>) {
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',

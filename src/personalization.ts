@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 
 /**
  * Manage api calls for personalization
@@ -6,7 +6,7 @@ import { StreamClient, APIResponse, UnknownRecord } from './client';
  * @class Personalization
  */
 
-export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type PersonalizationAPIResponse<PersonalizationType extends UR = UR> = APIResponse & {
   app_id: string;
   next: string;
   results: PersonalizationType[];
@@ -15,8 +15,15 @@ export type PersonalizationAPIResponse<PersonalizationType extends UnknownRecord
   version?: string;
 };
 
-export class Personalization<PersonalizationType extends UnknownRecord = UnknownRecord> {
-  client: StreamClient;
+export class Personalization<
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
+> {
+  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
 
   /**
    * Initialize the Personalization class
@@ -25,7 +32,9 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
    * @memberof Personalization.prototype
    * @param {StreamClient} client - The stream client
    */
-  constructor(client: StreamClient) {
+  constructor(
+    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+  ) {
     this.client = client;
   }
 
@@ -59,7 +68,7 @@ export class Personalization<PersonalizationType extends UnknownRecord = Unknown
    * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
    * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
    */
-  post(resource: string, options: Record<string, string> = {}, data: UnknownRecord = {}) {
+  post(resource: string, options: Record<string, string> = {}, data: UR = {}) {
     return this.client.post<PersonalizationAPIResponse<PersonalizationType>>({
       url: `${resource}/`,
       serviceName: 'personalization',
