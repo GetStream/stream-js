@@ -1,6 +1,6 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 
-export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type UserAPIResponse<UserType extends UR = UR> = APIResponse & {
   created_at: string;
   data: UserType;
   id: string;
@@ -11,12 +11,12 @@ export type UserAPIResponse<UserType extends UnknownRecord = UnknownRecord> = AP
 };
 
 export class StreamUser<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  PersonalizationType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;

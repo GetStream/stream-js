@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 import { SiteError } from './errors';
 
 type BaseCollection<CollectionType> = {
@@ -7,30 +7,25 @@ type BaseCollection<CollectionType> = {
   id: string;
 };
 
-export type CollectionResponse<
-  CollectionType extends UnknownRecord = UnknownRecord
-> = BaseCollection<CollectionType> & {
+export type CollectionResponse<CollectionType extends UR = UR> = BaseCollection<CollectionType> & {
   created_at: string;
   foreign_id: string;
   updated_at: string;
 };
 
-export type NewCollectionEntry<
-  CollectionType extends UnknownRecord = UnknownRecord
-> = BaseCollection<CollectionType> & {
+export type NewCollectionEntry<CollectionType extends UR = UR> = BaseCollection<CollectionType> & {
   user_id?: string;
 };
 
-export type CollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse &
-  CollectionResponse<CollectionType>;
+export type CollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & CollectionResponse<CollectionType>;
 
-export type SelectCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type SelectCollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & {
   response: {
     data: CollectionResponse<CollectionType>[];
   };
 };
 
-export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = UnknownRecord> = APIResponse & {
+export type UpsertCollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & {
   data: {
     [key: string]: {
       data: CollectionType;
@@ -40,12 +35,12 @@ export type UpsertCollectionAPIResponse<CollectionType extends UnknownRecord = U
 };
 
 export class CollectionEntry<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  PersonalizationType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
   id: string;
   collection: string;
@@ -132,12 +127,12 @@ export class CollectionEntry<
 }
 
 export class Collections<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  PersonalizationType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;

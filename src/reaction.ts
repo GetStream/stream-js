@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UnknownRecord } from './client';
+import { StreamClient, APIResponse, UR } from './client';
 import { StreamFeed } from './feed';
 import { SiteError } from './errors';
 
@@ -10,7 +10,7 @@ export type TargetFeedsExtraData = Record<string, unknown>;
 
 type ReactionBody<T> = {
   activity_id?: string; // only required for reactions
-  data?: T | UnknownRecord;
+  data?: T | UR;
   id?: string; // api will generate an id if it's missing
   kind?: string; // required only for add/addChile, not update
   parent?: string; // only required for child reactions
@@ -19,7 +19,7 @@ type ReactionBody<T> = {
   user_id?: string; // optional when using client tokens
 };
 
-export type Reaction<T extends UnknownRecord = UnknownRecord> = {
+export type Reaction<T extends UR = UR> = {
   activity_id: string;
   created_at: string;
   data: T;
@@ -32,12 +32,12 @@ export type Reaction<T extends UnknownRecord = UnknownRecord> = {
   target_feeds_extra_data?: TargetFeedsExtraData;
 };
 
-export type ReactionAPIResponse<T extends UnknownRecord = UnknownRecord> = APIResponse & Reaction<T>;
+export type ReactionAPIResponse<T extends UR = UR> = APIResponse & Reaction<T>;
 
 export type EnrichedReaction<
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  UserType extends UnknownRecord = UnknownRecord
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  UserType extends UR = UR
 > = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
   latest_children: Record<string, ChildReactionType>;
@@ -47,16 +47,16 @@ export type EnrichedReaction<
 };
 
 export type EnrichedReactionAPIResponse<
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  UserType extends UnknownRecord = UnknownRecord
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  UserType extends UR = UR
 > = APIResponse & EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 
 export type ReactionFilterAPIResponse<
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  UserType extends UnknownRecord = UnknownRecord
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  ActivityType extends UR = UR,
+  UserType extends UR = UR
 > = APIResponse & {
   next: string;
   results:
@@ -66,12 +66,12 @@ export type ReactionFilterAPIResponse<
 };
 
 export class StreamReaction<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  PersonalizationType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;

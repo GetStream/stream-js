@@ -31,7 +31,8 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-export type UnknownRecord = Record<string, unknown>;
+export type UR = Record<string, unknown>;
+export type UnknownRecord = UR; // alias to avoid breaking change
 
 export type APIResponse = { duration?: string };
 
@@ -98,8 +99,8 @@ type AxiosConfig = {
   url: string;
   axiosOptions?: axios.AxiosRequestConfig;
   body?: unknown;
-  headers?: UnknownRecord;
-  qs?: UnknownRecord;
+  headers?: UR;
+  qs?: UR;
   serviceName?: string;
 };
 
@@ -107,16 +108,13 @@ export type HandlerCallback = (...args: unknown[]) => unknown;
 
 export type ForeignIDTimes = { foreignID: string; time: Date | string };
 
-export type ActivityPartialChanges<ActivityType extends UnknownRecord = UnknownRecord> = Partial<ForeignIDTimes> & {
+export type ActivityPartialChanges<ActivityType extends UR = UR> = Partial<ForeignIDTimes> & {
   id?: string;
   set?: Partial<ActivityType>;
   unset?: Array<Extract<keyof ActivityType, string>>;
 };
 
-export type RealTimeMessage<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord
-> = {
+export type RealTimeMessage<UserType extends UR = UR, ActivityType extends UR = UR> = {
   deleted: Array<string>;
   deleted_foreign_ids: Array<[id: string, time: string]>;
   new: Array<Omit<Activity<ActivityType>, 'actor'> & { actor: string | UserType }>;
@@ -132,12 +130,12 @@ export type RealTimeMessage<
  * @class StreamClient
  */
 export class StreamClient<
-  UserType extends UnknownRecord = UnknownRecord,
-  ActivityType extends UnknownRecord = UnknownRecord,
-  CollectionType extends UnknownRecord = UnknownRecord,
-  ReactionType extends UnknownRecord = UnknownRecord,
-  ChildReactionType extends UnknownRecord = UnknownRecord,
-  PersonalizationType extends UnknownRecord = UnknownRecord
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  PersonalizationType extends UR = UR
 > {
   baseUrl: string;
   baseAnalyticsUrl: string;
