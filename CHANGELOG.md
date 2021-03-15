@@ -5,6 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.2](https://github.com/GetStream/stream-js/releases/tag/v7.2.1) - 2021-02-15
+
+### Fix
+
+- Typescripting Faye realtime messages [#432](https://github.com/GetStream/stream-js/pull/432) [#431](https://github.com/GetStream/stream-js/pull/431)
+
+### Chore
+
+- Update jsdoc inline links [#425](https://github.com/GetStream/stream-js/pull/425)
+- Upgrade dependencies [#428](https://github.com/GetStream/stream-js/pull/428)
+
 ## [7.2.1](https://github.com/GetStream/stream-js/releases/tag/v7.2.1) - 2021-01-29
 
 ### Fix
