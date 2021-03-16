@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.3](https://github.com/GetStream/stream-js/releases/tag/v7.2.1) - 2021-02-16
+
+### Fix
+
+- EnrichedUser type [#435](https://github.com/GetStream/stream-js/pull/435)
+
 ## [7.2.2](https://github.com/GetStream/stream-js/releases/tag/v7.2.1) - 2021-02-15
 
 ### Fix
