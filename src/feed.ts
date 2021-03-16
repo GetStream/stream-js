@@ -2,7 +2,7 @@
 
 import * as Faye from 'faye';
 import { StreamClient, APIResponse, UR, RealTimeMessage } from './client';
-import { StreamUser } from './user';
+import { StreamUser, EnrichedUser } from './user';
 import { FeedError, SiteError } from './errors';
 import utils from './utils';
 import { EnrichedReaction } from './reaction';
@@ -103,7 +103,7 @@ export type EnrichedActivity<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR
 > = Activity<ActivityType> & {
-  actor: UserType | string;
+  actor: EnrichedUser<UserType> | string;
   object:
     | string
     | unknown
