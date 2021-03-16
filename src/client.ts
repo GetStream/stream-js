@@ -11,7 +11,7 @@ import { Collections } from './collections';
 import { StreamFileStore } from './files';
 import { StreamImageStore } from './images';
 import { StreamReaction } from './reaction';
-import { StreamUser } from './user';
+import { EnrichedUser, StreamUser } from './user';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
@@ -117,7 +117,7 @@ export type ActivityPartialChanges<ActivityType extends UR = UR> = Partial<Forei
 export type RealTimeMessage<UserType extends UR = UR, ActivityType extends UR = UR> = {
   deleted: Array<string>;
   deleted_foreign_ids: Array<[id: string, time: string]>;
-  new: Array<Omit<Activity<ActivityType>, 'actor'> & { actor: string | UserType }>;
+  new: Array<Omit<Activity<ActivityType>, 'actor'> & { actor: string | EnrichedUser<UserType> }>;
   app_id?: string;
   feed?: string;
   mark_read?: 'all' | 'current' | Array<string>;

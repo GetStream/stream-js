@@ -1,14 +1,18 @@
 import { StreamClient, APIResponse, UR } from './client';
 
-export type UserAPIResponse<UserType extends UR = UR> = APIResponse & {
+export type EnrichedUser<UserType extends UR = UR> = {
   created_at: string;
   data: UserType;
   id: string;
   updated_at: string;
-  // present only in profile response
-  followers_count?: number;
-  following_count?: number;
 };
+
+export type UserAPIResponse<UserType extends UR = UR> = APIResponse &
+  EnrichedUser<UserType> & {
+    // present only in profile response
+    followers_count?: number;
+    following_count?: number;
+  };
 
 export class StreamUser<
   UserType extends UR = UR,
