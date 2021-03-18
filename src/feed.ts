@@ -548,7 +548,7 @@ export class StreamFeed<
    * 		console.log('we are now listening to changes');
    * });
    */
-  subscribe(callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>) {
+  subscribe(callback: Faye.SubscribeCallback<RealTimeMessage<UserType, ActivityType>>) {
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
