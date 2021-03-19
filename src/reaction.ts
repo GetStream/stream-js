@@ -148,7 +148,7 @@ export class StreamReaction<
   add(
     kind: string,
     activity: string | { id: string },
-    data: ReactionType,
+    data?: ReactionType,
     { id, targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddOptions = {},
   ) {
     const body: ReactionBody<ReactionType> = {
@@ -188,7 +188,7 @@ export class StreamReaction<
   addChild(
     kind: string,
     reaction: string | { id: string },
-    data: ChildReactionType,
+    data?: ChildReactionType,
     { targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddChildOptions = {},
   ) {
     const body: ReactionBody<ChildReactionType> = {
@@ -279,7 +279,7 @@ export class StreamReaction<
    */
   update(
     id: string,
-    data: ReactionType | ChildReactionType,
+    data?: ReactionType | ChildReactionType,
     { targetFeeds = [], targetFeedsExtraData }: ReactionUpdateOptions = {},
   ) {
     const body: ReactionBody<ReactionType | ChildReactionType> = {

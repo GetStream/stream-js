@@ -38,12 +38,12 @@ export type RankedFeedOptions = {
   session?: string;
 };
 
-export type GetFeedOptions = FeedPaginationOptions & EnrichOptions & RankedFeedOptions;
-
 export type NotificationFeedOptions = {
   mark_read?: boolean | 'current' | string[];
   mark_seen?: boolean | 'current' | string[];
 };
+
+export type GetFeedOptions = FeedPaginationOptions & EnrichOptions & RankedFeedOptions & NotificationFeedOptions;
 
 export type GetFollowOptions = {
   filter?: string[];
@@ -476,12 +476,12 @@ export class StreamFeed<
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#retrieving-activities
    * @method get
    * @memberof StreamFeed.prototype
-   * @param {GetFeedOptions & NotificationFeedOptions}   options  Additional options
+   * @param {GetFeedOptions} options  Additional options
    * @return {Promise<FeedAPIResponse>}
    * @example feed.get({limit: 10, id_lte: 'activity-id'})
    * @example feed.get({limit: 10, mark_seen: true})
    */
-  get(options: GetFeedOptions & NotificationFeedOptions = {}) {
+  get(options: GetFeedOptions = {}) {
     const extraOptions: { mark_read?: boolean | string; mark_seen?: boolean | string } = {};
 
     if (options.mark_read && (options.mark_read as string[]).join) {
@@ -548,7 +548,7 @@ export class StreamFeed<
    * 		console.log('we are now listening to changes');
    * });
    */
-  subscribe(callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>) {
+  subscribe(callback: Faye.SubscribeCallback<RealTimeMessage<UserType, ActivityType>>) {
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
