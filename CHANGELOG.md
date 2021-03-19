@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.5](https://github.com/GetStream/stream-js/releases/tag/v7.2.5) - 2021-02-19
+
+### Fix
+
+- Handle custom token for follow stats [#438](https://github.com/GetStream/stream-js/pull/438)
+
 ## [7.2.4](https://github.com/GetStream/stream-js/releases/tag/v7.2.4) - 2021-02-19
 
 ### Fix
