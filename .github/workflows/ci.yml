@@ -39,12 +39,11 @@ jobs:
           STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
           STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
           STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           BROWSER_TESTS: ${{ matrix.browser_tests }}
           CLOUD_TESTS: ${{ matrix.cloud_tests }}
           RUN_LINTERS: ${{ matrix.run_linters }}
         run: |
-          yarn run coverage
+          yarn run test-unit-node
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-cloud; fi
           if [ "$CLOUD_TESTS" == "yes" ]; then yarn run test-integration-node; fi
           if [ "$RUN_LINTERS" == "yes" ]; then yarn run lint; fi
