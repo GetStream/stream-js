@@ -44,12 +44,6 @@ They ensure that the client is correctly talking to the stream API which is nece
 
 They are great because they mimic a real setup where someone would perform an API request to the Stream API. Using mocks or pre-saved responses often hides corner-cases and are the source of lots of issues.
 
-# Coverage
-
-We like to see that the metrics being generated are actually covered by tests. To generate the coverage report you can run `yarn run coverage`, this will invoke the nodejs istanbul coverage reporter.
-
-Coverage is also tracked by [codecov](https://codecov.io/gh/GetStream/stream-js). Note, however, that continuous integration does not enforce coverage. It will not fail the test run if you don't have 100% coverage.
-
 # Continuous Integration
 
 Its configuration is stored in [.github/workflows/build/ci.yml](../.github/workflows/ci.yml).
