@@ -372,6 +372,4 @@ You can find generic API documentation enriched by code snippets from this packa
 
 ### Copyright and License Information
 
-Copyright (c) 2015-2021 Stream.io Inc, and individual contributors. All rights reserved.
-
-See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
+Project is licensed under the [BSD 3-Clause](LICENSE).
