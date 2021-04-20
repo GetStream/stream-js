@@ -1,6 +1,7 @@
 import { StreamClient, APIResponse, UR } from './client';
 import { StreamFeed } from './feed';
 import { SiteError } from './errors';
+import { EnrichedUser } from './user';
 
 export type TargetFeeds = (string | StreamFeed)[];
 
@@ -43,7 +44,7 @@ export type EnrichedReaction<
   latest_children: Record<string, ChildReactionType>;
   latest_children_extra?: Record<string, { next?: string }>;
   own_children?: Record<string, ChildReactionType>;
-  user?: UserType;
+  user?: EnrichedUser<UserType>;
 };
 
 export type EnrichedReactionAPIResponse<
