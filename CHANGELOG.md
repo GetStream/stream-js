@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.6](https://github.com/GetStream/stream-js/releases/tag/v7.2.6) - 2021-04-20
+
+### Fix
+
+- Fix enriched reaction user type [#443](https://github.com/GetStream/stream-js/pull/443)
+- Drop codecov [#439](https://github.com/GetStream/stream-js/pull/439)
+
 ## [7.2.5](https://github.com/GetStream/stream-js/releases/tag/v7.2.5) - 2021-02-19
 
 ### Fix
