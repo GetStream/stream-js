@@ -218,7 +218,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
         get({
           url: 'stats/follow/',
           qs: { followers: 'user:matthisk', following: 'user:matthisk' },
-          token: feed.client.getOrCreateToken(),
+          token: feed.client.getOrCreateToken() || feed.token,
         }),
       );
     });
@@ -235,7 +235,7 @@ describe('[UNIT] Stream Feed (Common)', function () {
             following_slugs: 'user,timeline',
             followers_slugs: 'channel',
           },
-          token: feed.client.getOrCreateToken(),
+          token: feed.client.getOrCreateToken() || feed.token,
         }),
       );
     });
