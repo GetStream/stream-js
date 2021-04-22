@@ -467,7 +467,7 @@ export class StreamFeed<
     return this.client.get<FollowStatsAPIResponse>({
       url: 'stats/follow/',
       qs,
-      token: this.client.getOrCreateToken() || this.token,
+      token: this.token,
     });
   }
 
