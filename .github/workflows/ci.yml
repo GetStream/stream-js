@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [10, 12, 14]
+        node: [10, 12, 14, 16]
         browser_tests: ['no']
         cloud_tests: ['no']
         run_linters: ['no']
