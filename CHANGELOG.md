@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.7](https://github.com/GetStream/stream-js/releases/tag/v7.2.6) - 2021-04-22
+
+### Fix
+
+- Use cached token for feed follow stats [#445](https://github.com/GetStream/stream-js/pull/445)
+
 ## [7.2.6](https://github.com/GetStream/stream-js/releases/tag/v7.2.6) - 2021-04-20
 
 ### Fix
