@@ -5,6 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.9](https://github.com/GetStream/stream-js/releases/tag/v7.2.9) - 2021-05-05
+
+### Fix
+
+- Standardize 'foregin_id' field [#450](https://github.com/GetStream/stream-js/pull/450)
+- BaseActivity 'actor' type [#449](https://github.com/GetStream/stream-js/pull/449)
+
+### Chore
+
+- Support Node 16x [#447](https://github.com/GetStream/stream-js/pull/447)
+
 ## [7.2.8](https://github.com/GetStream/stream-js/releases/tag/v7.2.8) - 2021-04-22
 
 ### Fix
