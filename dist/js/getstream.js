@@ -3142,9 +3142,9 @@ var StreamClient = /*#__PURE__*/function () {
       return this.updateActivities([activity]);
     }
     /**
-     * Retrieve activities by ID or foreign ID and time
+     * Retrieve activities by ID or foreign_id and time
      * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-get-activities-by-id
-     * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
+     * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign_ids and time as {foreignIDTimes: [{foreign_id: ..., time: ...}, ...]}
      * @return {Promise<GetActivitiesAPIResponse>}
      */
 
@@ -3175,7 +3175,7 @@ var StreamClient = /*#__PURE__*/function () {
             throw new TypeError('foreignIDTimes elements should be Objects');
           }
 
-          foreignIDs.push(fidTime.foreignID);
+          foreignIDs.push(fidTime.foreign_id || fidTime.foreignID);
           timestamps.push(fidTime.time);
         });
         extraParams.foreign_ids = foreignIDs.join(',');
@@ -3282,7 +3282,7 @@ var StreamClient = /*#__PURE__*/function () {
     /**
      * Update a single activity with partial operations.
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
      * @return {Promise<Activity<ActivityType>>}
      * @example
      * client.activityPartialUpdate({
@@ -3301,7 +3301,7 @@ var StreamClient = /*#__PURE__*/function () {
      * })
      * @example
      * client.activityPartialUpdate({
-     *   foreignID: "product:123",
+     *   foreign_id: "product:123",
      *   time: "2016-11-10T13:20:00.000000",
      *   set: {
      *     ...
@@ -3379,7 +3379,7 @@ var StreamClient = /*#__PURE__*/function () {
      * @example
      * client.activitiesPartialUpdate([
      *   {
-     *     foreignID: "product:123",
+     *     foreign_id: "product:123",
      *     time: "2016-11-10T13:20:00.000000",
      *     set: {
      *       ...
@@ -3389,7 +3389,7 @@ var StreamClient = /*#__PURE__*/function () {
      *     ]
      *   },
      *   {
-     *     foreignID: "product:321",
+     *     foreign_id: "product:321",
      *     time: "2016-11-10T13:20:00.000000",
      *     set: {
      *       ...
@@ -3418,7 +3418,7 @@ var StreamClient = /*#__PURE__*/function () {
         }
 
         if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
-          throw new TypeError('missing id or foreign ID and time');
+          throw new TypeError('missing id or foreign_id and time');
         }
 
         if (item.set && !(item.set instanceof Object)) {
@@ -4430,18 +4430,19 @@ var StreamFeed = /*#__PURE__*/function () {
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#removing-activities
      * @method removeActivity
      * @memberof StreamFeed.prototype
-     * @param  {string}   activityId Identifier of activity to remove
+     * @param  {string} activityOrActivityId Identifier of activity to remove
      * @return {Promise<APIResponse & { removed: string }>}
      * @example feed.removeActivity(activityId);
-     * @example feed.removeActivity({'foreignId': foreignId});
+     * @example feed.removeActivity({'foreign_id': foreignId});
      */
 
   }, {
     key: "removeActivity",
-    value: function removeActivity(activityId) {
+    value: function removeActivity(activityOrActivityId) {
+      var foreign_id = activityOrActivityId.foreignId || activityOrActivityId.foreign_id;
       return this.client.delete({
-        url: "feed/".concat(this.feedUrl, "/").concat(activityId.foreignId || activityId, "/"),
-        qs: activityId.foreignId ? {
+        url: "feed/".concat(this.feedUrl, "/").concat(foreign_id || activityOrActivityId, "/"),
+        qs: foreign_id ? {
           foreign_id: '1'
         } : {},
         token: this.token
@@ -4730,7 +4731,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @param {string} foreignId The foreign_id of the activity to update
      * @param {string} time The time of the activity to update
      * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-     * @param {string[]} added_targets Add these new targets to the activity
+     * @param {string[]} addedTargets Add these new targets to the activity
      * @param {string[]} removedTargets Remove these targets from the activity
      */
 
@@ -9445,7 +9446,7 @@ try {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"7.2.8","scripts":{"transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.13.10","@babel/core":"^7.13.10","@babel/node":"^7.13.10","@babel/plugin-proposal-class-properties":"^7.13.0","@babel/plugin-proposal-object-rest-spread":"^7.13.8","@babel/plugin-transform-object-assign":"^7.12.13","@babel/plugin-transform-runtime":"^7.13.10","@babel/preset-env":"^7.13.10","@babel/preset-typescript":"^7.13.0","@babel/register":"^7.13.8","@typescript-eslint/eslint-plugin":"^4.17.0","@typescript-eslint/parser":"^4.17.0","babel-eslint":"^10.1.0","babel-loader":"^8.2.2","chai":"^4.3.3","dotenv":"^8.2.0","eslint":"^7.21.0","eslint-config-airbnb-base":"^14.2.1","eslint-config-prettier":"^8.1.0","eslint-plugin-chai-friendly":"^0.6.0","eslint-plugin-import":"^2.22.1","eslint-plugin-prettier":"^3.3.1","eslint-plugin-sonarjs":"^0.6.0","eslint-plugin-typescript-sort-keys":"^1.5.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.1.2","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.5","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.2.1","request":"^2.88.2","testdouble":"^3.16.1","typescript":"^4.2.3","webpack":"^5.24.4","webpack-cli":"^4.5.0"},"dependencies":{"@babel/runtime":"^7.13.10","@types/jsonwebtoken":"^8.5.0","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.6","axios":"^0.21.1","faye":"^1.4.0","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.9.6"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
+module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"7.2.9","scripts":{"transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.13.10","@babel/core":"^7.13.10","@babel/node":"^7.13.10","@babel/plugin-proposal-class-properties":"^7.13.0","@babel/plugin-proposal-object-rest-spread":"^7.13.8","@babel/plugin-transform-object-assign":"^7.12.13","@babel/plugin-transform-runtime":"^7.13.10","@babel/preset-env":"^7.13.10","@babel/preset-typescript":"^7.13.0","@babel/register":"^7.13.8","@typescript-eslint/eslint-plugin":"^4.17.0","@typescript-eslint/parser":"^4.17.0","babel-eslint":"^10.1.0","babel-loader":"^8.2.2","chai":"^4.3.3","dotenv":"^8.2.0","eslint":"^7.21.0","eslint-config-airbnb-base":"^14.2.1","eslint-config-prettier":"^8.1.0","eslint-plugin-chai-friendly":"^0.6.0","eslint-plugin-import":"^2.22.1","eslint-plugin-prettier":"^3.3.1","eslint-plugin-sonarjs":"^0.7.0","eslint-plugin-typescript-sort-keys":"^1.5.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.1.2","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.5","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.2.1","request":"^2.88.2","testdouble":"^3.16.1","typescript":"^4.2.3","webpack":"^5.24.4","webpack-cli":"^4.5.0"},"dependencies":{"@babel/runtime":"^7.13.10","@types/jsonwebtoken":"^8.5.0","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.6","axios":"^0.21.1","faye":"^1.4.0","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.9.6"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
 
 /***/ }),
 
