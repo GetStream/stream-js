@@ -312,15 +312,19 @@ export class StreamFeed<
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#removing-activities
    * @method removeActivity
    * @memberof StreamFeed.prototype
-   * @param  {string}   activityId Identifier of activity to remove
+   * @param  {string} activityOrActivityId Identifier of activity to remove
    * @return {Promise<APIResponse & { removed: string }>}
    * @example feed.removeActivity(activityId);
-   * @example feed.removeActivity({'foreignId': foreignId});
+   * @example feed.removeActivity({'foreign_id': foreignId});
    */
-  removeActivity(activityId: string | { foreignId: string }) {
+  removeActivity(activityOrActivityId: string | { foreignId: string } | { foreign_id: string }) {
+    const foreign_id =
+      (activityOrActivityId as { foreignId?: string }).foreignId ||
+      (activityOrActivityId as { foreign_id?: string }).foreign_id;
+
     return this.client.delete<APIResponse & { removed: string }>({
-      url: `feed/${this.feedUrl}/${(activityId as { foreignId: string }).foreignId || activityId}/`,
-      qs: (activityId as { foreignId: string }).foreignId ? { foreign_id: '1' } : {},
+      url: `feed/${this.feedUrl}/${foreign_id || activityOrActivityId}/`,
+      qs: foreign_id ? { foreign_id: '1' } : {},
       token: this.token,
     });
   }
@@ -586,7 +590,7 @@ export class StreamFeed<
    * @param {string} foreignId The foreign_id of the activity to update
    * @param {string} time The time of the activity to update
    * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-   * @param {string[]} added_targets Add these new targets to the activity
+   * @param {string[]} addedTargets Add these new targets to the activity
    * @param {string[]} removedTargets Remove these targets from the activity
    */
   updateActivityToTargets(
