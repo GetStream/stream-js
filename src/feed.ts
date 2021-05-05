@@ -63,7 +63,6 @@ export type FollowStatsAPIResponse = APIResponse & {
 };
 
 type BaseActivity<ActivityType> = ActivityType & {
-  actor: string;
   object: string | unknown;
   verb: string;
   target?: string;
@@ -71,16 +70,19 @@ type BaseActivity<ActivityType> = ActivityType & {
 };
 
 export type NewActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
+  actor: string | StreamUser;
   foreign_id?: string;
   time?: string;
 };
 
 export type UpdateActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
+  actor: string;
   foreign_id: string;
   time: string;
 };
 
 export type Activity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
+  actor: string;
   foreign_id: string;
   id: string;
   time: string;
@@ -102,15 +104,15 @@ export type EnrichedActivity<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR
-> = Activity<ActivityType> & {
+> = Omit<Activity<ActivityType>, 'actor' | 'object'> & {
   actor: EnrichedUser<UserType> | string;
+  // Object should be casted based on the verb
   object:
     | string
     | unknown
     | EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
     | EnrichedReaction<ReactionType, ChildReactionType, UserType>
     | CollectionResponse<CollectionType>;
-
   latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
   latest_reactions_extra?: Record<string, { next?: string }>;
   own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
