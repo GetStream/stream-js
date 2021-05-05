@@ -163,7 +163,7 @@ const partialUpdatePromise: Promise<Activity<ActivityType>> = client.activityPar
   set: { aText: '' },
   unset: ['attachments'],
 });
-client.activityPartialUpdate({ time: '', foreignID: '', unset: ['aText'] });
+client.activityPartialUpdate({ time: '', foreign_id: '', unset: ['aText'] });
 
 // @ts-expect-error
 client.activityPartialUpdate({ unset: ['missing'] });
@@ -177,7 +177,7 @@ const partialUpdatesPromise: Promise<{ activities: Activity<ActivityType>[] }> =
     unset: ['attachments'],
   },
 ]);
-client.activitiesPartialUpdate([{ time: '', foreignID: '', unset: ['aText'] }]);
+client.activitiesPartialUpdate([{ time: '', foreign_id: '', unset: ['aText'] }]);
 
 // @ts-expect-error
 client.activityPartialUpdate([{ unset: ['missing'] }]);

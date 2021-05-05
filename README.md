@@ -140,7 +140,7 @@ user1.addActivity(activity);
 // Remove an activity by its id
 user1.removeActivity('e561de8f-00f1-11e4-b400-0cc47a024be0');
 // or remove by the foreign id
-user1.removeActivity({ foreignId: 'tweet:1' });
+user1.removeActivity({ foreign_id: 'tweet:1' });
 
 // mark a notification feed as read
 notification1 = client.feed('notification', '1');
@@ -228,7 +228,7 @@ client.activityPartialUpdate({
 });
 // ...or by combination of foreign ID and time
 client.activityPartialUpdate({
-  foreignID: 'product:123',
+  foreign_id: 'product:123',
   time: '2016-11-10T13:20:00.000000',
   set: set,
   unset: unset,

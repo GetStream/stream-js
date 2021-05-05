@@ -106,7 +106,7 @@ type AxiosConfig = {
 
 export type HandlerCallback = (...args: unknown[]) => unknown;
 
-export type ForeignIDTimes = { foreignID: string; time: Date | string };
+export type ForeignIDTimes = { foreign_id: string; time: Date | string } | { foreignID: string; time: Date | string };
 
 export type ActivityPartialChanges<ActivityType extends UR = UR> = Partial<ForeignIDTimes> & {
   id?: string;
@@ -798,9 +798,9 @@ export class StreamClient<
   }
 
   /**
-   * Retrieve activities by ID or foreign ID and time
+   * Retrieve activities by ID or foreign_id and time
    * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-get-activities-by-id
-   * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign IDs and time as {foreignIDTimes: [{foreignID: ..., time: ...}, ...]}
+   * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign_ids and time as {foreignIDTimes: [{foreign_id: ..., time: ...}, ...]}
    * @return {Promise<GetActivitiesAPIResponse>}
    */
   getActivities({
@@ -829,7 +829,7 @@ export class StreamClient<
         if (!(fidTime instanceof Object)) {
           throw new TypeError('foreignIDTimes elements should be Objects');
         }
-        foreignIDs.push(fidTime.foreignID);
+        foreignIDs.push((fidTime as { foreign_id: string }).foreign_id || (fidTime as { foreignID: string }).foreignID);
         timestamps.push(fidTime.time);
       });
 
@@ -915,7 +915,7 @@ export class StreamClient<
   /**
    * Update a single activity with partial operations.
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-   * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign ID and time of the activity and the operations to issue as set:{...} and unset:[...].
+   * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
    * @return {Promise<Activity<ActivityType>>}
    * @example
    * client.activityPartialUpdate({
@@ -934,7 +934,7 @@ export class StreamClient<
    * })
    * @example
    * client.activityPartialUpdate({
-   *   foreignID: "product:123",
+   *   foreign_id: "product:123",
    *   time: "2016-11-10T13:20:00.000000",
    *   set: {
    *     ...
@@ -985,7 +985,7 @@ export class StreamClient<
    * @example
    * client.activitiesPartialUpdate([
    *   {
-   *     foreignID: "product:123",
+   *     foreign_id: "product:123",
    *     time: "2016-11-10T13:20:00.000000",
    *     set: {
    *       ...
@@ -995,7 +995,7 @@ export class StreamClient<
    *     ]
    *   },
    *   {
-   *     foreignID: "product:321",
+   *     foreign_id: "product:321",
    *     time: "2016-11-10T13:20:00.000000",
    *     set: {
    *       ...
@@ -1010,7 +1010,7 @@ export class StreamClient<
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
-    changes.forEach(function (item: ActivityPartialChanges<ActivityType> & { foreign_id?: string }) {
+    changes.forEach((item: ActivityPartialChanges<ActivityType> & { foreign_id?: string; foreignID?: string }) => {
       if (!(item instanceof Object)) {
         throw new TypeError(`changeset should be and Object`);
       }
@@ -1018,7 +1018,7 @@ export class StreamClient<
         item.foreign_id = item.foreignID;
       }
       if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
-        throw new TypeError('missing id or foreign ID and time');
+        throw new TypeError('missing id or foreign_id and time');
       }
       if (item.set && !(item.set instanceof Object)) {
         throw new TypeError('set field should be an Object');
@@ -1038,9 +1038,7 @@ export class StreamClient<
 
     return this.post<APIResponse & { activities: Activity<ActivityType>[] }>({
       url: 'activity/',
-      body: {
-        changes,
-      },
+      body: { changes },
       token,
     });
   }
