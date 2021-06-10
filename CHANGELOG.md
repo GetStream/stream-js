@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.10](https://github.com/GetStream/stream-js/releases/tag/v7.2.10) - 2021-06-10
+
+### Fix
+
+- RealTimeMessage type [#459](https://github.com/GetStream/stream-js/pull/459)
+
 ## [7.2.9](https://github.com/GetStream/stream-js/releases/tag/v7.2.9) - 2021-05-05
 
 ### Fix
