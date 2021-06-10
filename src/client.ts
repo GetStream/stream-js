@@ -11,7 +11,7 @@ import { Collections } from './collections';
 import { StreamFileStore } from './files';
 import { StreamImageStore } from './images';
 import { StreamReaction } from './reaction';
-import { EnrichedUser, StreamUser } from './user';
+import { StreamUser } from './user';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
@@ -25,6 +25,7 @@ import {
   PersonalizationFeedAPIResponse,
   GetActivitiesAPIResponse,
   GetFeedOptions,
+  EnrichedActivity,
 } from './feed';
 
 // TODO: no import since typescript json loader shifts the final output structure
@@ -114,10 +115,20 @@ export type ActivityPartialChanges<ActivityType extends UR = UR> = Partial<Forei
   unset?: Array<Extract<keyof ActivityType, string>>;
 };
 
-export type RealTimeMessage<UserType extends UR = UR, ActivityType extends UR = UR> = {
+export type RealTimeMessage<
+  UserType extends UR = UR,
+  ActivityType extends UR = UR,
+  CollectionType extends UR = UR,
+  ReactionType extends UR = UR
+> = {
   deleted: Array<string>;
   deleted_foreign_ids: Array<[id: string, time: string]>;
-  new: Array<Omit<Activity<ActivityType>, 'actor'> & { actor: string | EnrichedUser<UserType> }>;
+  new: Array<
+    Omit<
+      EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType>,
+      'latest_reactions' | 'latest_reactions_extra' | 'own_reactions' | 'own_reactions_extra' | 'reaction_counts'
+    > & { group?: string }
+  >;
   app_id?: string;
   feed?: string;
   mark_read?: 'all' | 'current' | Array<string>;
@@ -153,7 +164,7 @@ export class StreamClient<
   group: string;
   expireTokens: boolean;
   location: string;
-  fayeClient: Faye.Client<RealTimeMessage<UserType, ActivityType>> | null;
+  fayeClient: Faye.Client<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>> | null;
   browser: boolean;
   node: boolean;
   nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
@@ -610,12 +621,12 @@ export class StreamClient<
   getFayeAuthorization() {
     return {
       incoming: (
-        message: Faye.Message<RealTimeMessage<UserType, ActivityType>>,
-        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>,
+        message: Faye.Message<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
+        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
       ) => callback(message),
       outgoing: (
-        message: Faye.Message<RealTimeMessage<UserType, ActivityType>>,
-        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType>>,
+        message: Faye.Message<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
+        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
       ) => {
         if (message.subscription && this.subscriptions[message.subscription]) {
           const subscription = this.subscriptions[message.subscription];
@@ -642,7 +653,10 @@ export class StreamClient<
    */
   getFayeClient(timeout = 10) {
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client<RealTimeMessage<UserType, ActivityType>>(this.fayeUrl, { timeout });
+      this.fayeClient = new Faye.Client<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>(
+        this.fayeUrl,
+        { timeout },
+      );
       const authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }

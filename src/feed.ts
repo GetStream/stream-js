@@ -547,14 +547,14 @@ export class StreamFeed<
    * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
    * @method subscribe
    * @memberof StreamFeed.prototype
-   * @param  {function} Faye.Callback<RealTimeMessage<UserType, ActivityType>> Callback to call on completion
+   * @param  {function} Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>> Callback to call on completion
    * @return {Promise<Faye.Subscription>}
    * @example
    * feed.subscribe(callback).then(function(){
    * 		console.log('we are now listening to changes');
    * });
    */
-  subscribe(callback: Faye.SubscribeCallback<RealTimeMessage<UserType, ActivityType>>) {
+  subscribe(callback: Faye.SubscribeCallback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>) {
     if (!this.client.appId) {
       throw new SiteError(
         'Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);',
