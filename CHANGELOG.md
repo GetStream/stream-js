@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.11](https://github.com/GetStream/stream-js/releases/tag/v7.2.11) - 2021-09-14
+
+### Fix
+
+- EnrichedActivity type generic issue [#468](https://github.com/GetStream/stream-js/pull/468)
+
 ## [7.2.10](https://github.com/GetStream/stream-js/releases/tag/v7.2.10) - 2021-06-10
 
 ### Fix
