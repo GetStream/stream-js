@@ -62,35 +62,41 @@ export type FollowStatsAPIResponse = APIResponse & {
   };
 };
 
-type BaseActivity<ActivityType> = ActivityType & {
-  object: string | unknown;
+type BaseActivity = {
   verb: string;
   target?: string;
   to?: string[];
 };
 
-export type NewActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
-  actor: string | StreamUser;
-  foreign_id?: string;
-  time?: string;
-};
+export type NewActivity<ActivityType extends UR = UR> = ActivityType &
+  BaseActivity & {
+    actor: string | StreamUser;
+    object: string | unknown;
+    foreign_id?: string;
+    time?: string;
+  };
 
-export type UpdateActivity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
-  actor: string;
-  foreign_id: string;
-  time: string;
-};
+export type UpdateActivity<ActivityType extends UR = UR> = ActivityType &
+  BaseActivity & {
+    actor: string;
+    foreign_id: string;
+    object: string | unknown;
+    time: string;
+  };
 
-export type Activity<ActivityType extends UR = UR> = BaseActivity<ActivityType> & {
-  actor: string;
-  foreign_id: string;
-  id: string;
-  time: string;
-  analytics?: Record<string, number>; // ranked feeds only
-  extra_context?: UR;
-  origin?: string;
-  score?: number; // ranked feeds only
-};
+export type Activity<ActivityType extends UR = UR> = ActivityType &
+  BaseActivity & {
+    actor: string;
+    foreign_id: string;
+    id: string;
+    object: string | unknown;
+    time: string;
+    analytics?: Record<string, number>; // ranked feeds only
+    extra_context?: UR;
+    origin?: string;
+    score?: number; // ranked feeds only
+    // ** Add new fields to EnrichedActivity as well **
+  };
 
 export type ReactionsRecords<
   ReactionType extends UR = UR,
@@ -104,24 +110,26 @@ export type EnrichedActivity<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR
-> = Omit<Activity<ActivityType>, 'actor' | 'object'> & {
-  actor: EnrichedUser<UserType> | string;
-  // Object should be casted based on the verb
-  object:
-    | string
-    | unknown
-    | EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
-    | EnrichedReaction<ReactionType, ChildReactionType, UserType>
-    | CollectionResponse<CollectionType>;
-  latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
-  latest_reactions_extra?: Record<string, { next?: string }>;
-  own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
-  own_reactions_extra?: Record<string, { next?: string }>;
-  // Reaction posted to feed
-  reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
-  // enriched reactions
-  reaction_counts?: Record<string, number>;
-};
+> = ActivityType &
+  BaseActivity &
+  Pick<Activity, 'foreign_id' | 'id' | 'time' | 'analytics' | 'extra_context' | 'origin' | 'score'> & {
+    actor: EnrichedUser<UserType> | string;
+    // Object should be casted based on the verb
+    object:
+      | string
+      | unknown
+      | EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
+      | EnrichedReaction<ReactionType, ChildReactionType, UserType>
+      | CollectionResponse<CollectionType>;
+    latest_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
+    latest_reactions_extra?: Record<string, { next?: string }>;
+    own_reactions?: ReactionsRecords<ReactionType, ChildReactionType, UserType>;
+    own_reactions_extra?: Record<string, { next?: string }>;
+    // Reaction posted to feed
+    reaction?: EnrichedReaction<ReactionType, ChildReactionType, UserType>;
+    // enriched reactions
+    reaction_counts?: Record<string, number>;
+  };
 
 export type FlatActivity<ActivityType extends UR = UR> = Activity<ActivityType>;
 
