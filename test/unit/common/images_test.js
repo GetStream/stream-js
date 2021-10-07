@@ -33,17 +33,6 @@ describe('[UNIT] Images (Common)', function () {
     expect(store.token).to.be('token');
   });
 
-  it('#refreshUrl', function () {
-    store.refreshUrl(uri);
-    td.verify(
-      post({
-        url: 'images/refresh/',
-        body: { url: uri },
-        token: 'token',
-      }),
-    );
-  });
-
   it('#process', function () {
     const options = { crop: 'bottom', resize: 'scale', h: 100, w: 100 };
     store.process(uri, options);

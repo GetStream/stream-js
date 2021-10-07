@@ -55,14 +55,6 @@ describe('Images', () => {
     });
   });
 
-  describe('When refreshUrl is requested', () => {
-    ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.images.refreshUrl(imageUrl);
-      ctx.response.should.not.be.empty;
-      ctx.response.url.should.be.eql(imageUrl);
-    });
-  });
-
   describe('When the image {imageUrl} is requested', () => {
     ctx.test('should return 200', function (done) {
       request.get(imageUrl, function (err, res) {

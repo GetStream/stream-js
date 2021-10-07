@@ -30,17 +30,6 @@ describe('[UNIT] Files (Common)', function () {
     expect(store.token).to.be('token');
   });
 
-  it('#refreshUrl', function () {
-    store.refreshUrl(uri);
-    td.verify(
-      post({
-        url: 'files/refresh/',
-        body: { url: uri },
-        token: 'token',
-      }),
-    );
-  });
-
   it('#delete', function () {
     store.delete(uri);
 
