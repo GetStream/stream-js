@@ -1,4 +1,4 @@
-import { StreamClient, FileUploadAPIResponse, OnUploadProgress, RefreshUrlAPIResponse } from './client';
+import { StreamClient, FileUploadAPIResponse, OnUploadProgress } from './client';
 
 export type ImageProcessOptions = {
   crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
@@ -46,20 +46,6 @@ export class StreamImageStore {
     return this.client.delete({
       url: `images/`,
       qs: { url: uri },
-      token: this.token,
-    });
-  }
-
-  /**
-   * Explicitly refresh CDN urls for uploaded images on the Stream CDN (only needed for files on the Stream CDN).
-   * Note that Stream CDN is not enabled by default, if in doubt please contact us.
-   * @param  {string} uri full uploaded image url that needs to be refreshed
-   * @return {Promise<RefreshUrlAPIResponse>}
-   */
-  refreshUrl(uri: string) {
-    return this.client.post<RefreshUrlAPIResponse>({
-      url: 'images/refresh/',
-      body: { url: uri },
       token: this.token,
     });
   }
