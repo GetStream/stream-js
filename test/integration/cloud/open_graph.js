@@ -21,7 +21,7 @@ describe('OpenGraph story', () => {
 
     ctx.responseShould('have the expected content', () => {
       ctx.shouldEqualBesideDuration(ctx.response, {
-        detail: 'url content too big',
+        detail: "couldn't find og data for the provided url",
         status_code: 400,
         code: 4,
         exception: 'InputException',
