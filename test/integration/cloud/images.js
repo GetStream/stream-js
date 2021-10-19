@@ -13,7 +13,7 @@ describe('Images', () => {
       ctx.response = await ctx.alice.images.upload(file, 'helloworld.txt');
     });
     ctx.responseShould('have useful error message', () => {
-      ctx.response.detail.should.equal('File type text/plain is not supported');
+      ctx.response.detail.should.equal('File type application/octet-stream is not supported');
     });
   });
 

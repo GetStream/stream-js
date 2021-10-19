@@ -77,6 +77,7 @@ export type ReactionFilterConditions = {
   reaction_id?: string;
   user_id?: string;
   with_activity_data?: boolean;
+  with_own_children?: boolean;
 };
 
 export type ReactionUpdateOptions = {
