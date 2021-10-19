@@ -5,6 +5,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.3.0](https://github.com/GetStream/stream-js/releases/tag/v7.3.0) - 2021-10-19
+
+### Feature
+
+- Reaction filter supports own children [#475](https://github.com/GetStream/stream-js/pull/475)
+
+### Chore
+
+- Drop refresh endpoints [#471](https://github.com/GetStream/stream-js/pull/471)
+
 ## [7.2.11](https://github.com/GetStream/stream-js/releases/tag/v7.2.11) - 2021-09-14
 
 ### Fix
