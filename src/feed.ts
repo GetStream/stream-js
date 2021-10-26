@@ -43,7 +43,15 @@ export type NotificationFeedOptions = {
   mark_seen?: boolean | 'current' | string[];
 };
 
-export type GetFeedOptions = FeedPaginationOptions & EnrichOptions & RankedFeedOptions & NotificationFeedOptions;
+export type FeedContextOptions = {
+  user_id?: string;
+};
+
+export type GetFeedOptions = FeedPaginationOptions &
+  EnrichOptions &
+  RankedFeedOptions &
+  NotificationFeedOptions &
+  FeedContextOptions;
 
 export type GetFollowOptions = {
   filter?: string[];
