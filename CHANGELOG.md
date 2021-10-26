@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.3.1](https://github.com/GetStream/stream-js/releases/tag/v7.3.1) - 2021-10-26
+
+### Fix
+
+- Add optional user_id param for GetFeedOptions [#478](https://github.com/GetStream/stream-js/pull/478)
+
 ## [7.3.0](https://github.com/GetStream/stream-js/releases/tag/v7.3.0) - 2021-10-19
 
 ### Feature
