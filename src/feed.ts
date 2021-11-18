@@ -54,7 +54,6 @@ export type GetFeedOptions = FeedPaginationOptions &
   FeedContextOptions;
 
 export type GetFollowOptions = {
-  filter?: string[];
   limit?: number;
   offset?: number;
 };
@@ -425,19 +424,15 @@ export class StreamFeed<
    * @method following
    * @memberof StreamFeed.prototype
    * @param  {GetFollowOptions}   [options]  Additional options
-   * @param  {string[]}   options.filter array of feed id to filter on
    * @param  {number}   options.limit pagination
    * @param  {number}   options.offset pagination
    * @return {Promise<GetFollowAPIResponse>}
    * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
    */
   following(options: GetFollowOptions = {}) {
-    const extraOptions: { filter?: string } = {};
-    if (options.filter) extraOptions.filter = options.filter.join(',');
-
     return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/following/`,
-      qs: { ...options, ...extraOptions },
+      qs: options,
       token: this.token,
     });
   }
@@ -448,19 +443,15 @@ export class StreamFeed<
    * @method followers
    * @memberof StreamFeed.prototype
    * @param  {GetFollowOptions}   [options]  Additional options
-   * @param  {string[]}   options.filter array of feed id to filter on
    * @param  {number}   options.limit pagination
    * @param  {number}   options.offset pagination
    * @return {Promise<GetFollowAPIResponse>}
    * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
    */
   followers(options: GetFollowOptions = {}) {
-    const extraOptions: { filter?: string } = {};
-    if (options.filter) extraOptions.filter = options.filter.join(',');
-
     return this.client.get<GetFollowAPIResponse>({
       url: `feed/${this.feedUrl}/followers/`,
-      qs: { ...options, ...extraOptions },
+      qs: options,
       token: this.token,
     });
   }
