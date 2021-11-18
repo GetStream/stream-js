@@ -65,6 +65,7 @@ export class CloudContext {
       'parent',
       'latest_children',
       'children_counts',
+      'target_feeds',
     ];
     this.fields = {
       collection: ['id', 'created_at', 'updated_at', 'collection', 'data', 'duration', 'foreign_id'],
