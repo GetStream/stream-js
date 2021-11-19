@@ -907,7 +907,8 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.activity.latest_reactions.should.have.all.keys('comment');
       ctx.activity.latest_reactions.comment.should.have.length(1);
       const commentReaction = ctx.activity.latest_reactions.comment[0];
-      commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+      const expectedKeys = ctx.fields.reaction.filter((v) => v !== 'target_feeds');
+      commentReaction.should.have.all.keys(...expectedKeys, 'own_children');
       commentReaction.latest_children.should.have.all.keys('like');
       commentReaction.latest_children.like.should.have.length(1);
       commentReaction.latest_children.like[0].parent.should.eql(commentReaction.id);
@@ -1053,7 +1054,7 @@ describe('Reaction CRUD server side', () => {
       });
     });
 
-    describe('and then alice reads bob feed his from the server side', () => {
+    describe('and then alice reads bob feed from the server side', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.serverSideClient.feed('user', ctx.bob.userId).get({ enrich: true });
       });
