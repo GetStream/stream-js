@@ -35,15 +35,22 @@ export type Reaction<T extends UR = UR> = {
 
 export type ReactionAPIResponse<T extends UR = UR> = APIResponse & Reaction<T>;
 
+export type ChildReactionsRecords<
+  ReactionType extends UR = UR,
+  ChildReactionType extends UR = UR,
+  UserType extends UR = UR
+  // eslint-disable-next-line no-use-before-define
+> = Record<string, EnrichedReaction<ReactionType, ChildReactionType, UserType>[]>;
+
 export type EnrichedReaction<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
   UserType extends UR = UR
 > = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
-  latest_children: Record<string, ChildReactionType>;
+  latest_children: ChildReactionsRecords<ReactionType, ChildReactionType, UserType>;
   latest_children_extra?: Record<string, { next?: string }>;
-  own_children?: Record<string, ChildReactionType>;
+  own_children?: ChildReactionsRecords<ReactionType, ChildReactionType, UserType>;
   user?: EnrichedUser<UserType>;
 };
 
