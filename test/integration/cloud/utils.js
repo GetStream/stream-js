@@ -65,12 +65,12 @@ export class CloudContext {
       'parent',
       'latest_children',
       'children_counts',
-      'target_feeds',
     ];
     this.fields = {
       collection: ['id', 'created_at', 'updated_at', 'collection', 'data', 'duration', 'foreign_id'],
       reaction: reactionFields,
       reactionResponse: ['duration', ...reactionFields],
+      reactionResponseWithTargets: ['duration', 'target_feeds', ...reactionFields],
       activity: ['id', 'foreign_id', 'time', 'actor', 'verb', 'target', 'object', 'origin'],
       reactionInActivity: ['id', 'kind', 'user', 'data', 'created_at', 'updated_at'],
     };
