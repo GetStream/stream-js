@@ -179,7 +179,7 @@ describe('Enrich story', () => {
       );
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
     ctx.responseShouldHaveUUID();
 
