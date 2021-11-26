@@ -699,7 +699,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       comment = ctx.response;
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
     ctx.responseShouldHaveUUID();
 
@@ -717,7 +717,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
         ctx.response = await ctx.alice.reactions.get(comment.id);
       });
 
-      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.currentUser.full);
@@ -728,7 +728,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.bob.reactions.get(comment.id);
       });
-      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
     });
 
     describe('and then alice reads bob feed', () => {
@@ -821,7 +821,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       delete ctx.response.target_feeds_extra_data;
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
     ctx.responseShouldHaveUUID();
 
@@ -907,7 +907,7 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
       ctx.activity.latest_reactions.should.have.all.keys('comment');
       ctx.activity.latest_reactions.comment.should.have.length(1);
       const commentReaction = ctx.activity.latest_reactions.comment[0];
-      commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children');
+      commentReaction.should.have.all.keys(...ctx.fields.reaction, 'own_children', 'target_feeds');
       commentReaction.latest_children.should.have.all.keys('like');
       commentReaction.latest_children.like.should.have.length(1);
       commentReaction.latest_children.like[0].parent.should.eql(commentReaction.id);
@@ -1028,7 +1028,7 @@ describe('Reaction CRUD server side', () => {
       comment = ctx.response;
     });
 
-    ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+    ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
     ctx.responseShouldHaveUUID();
 
@@ -1046,14 +1046,14 @@ describe('Reaction CRUD server side', () => {
         ctx.response = await ctx.alice.reactions.get(comment.id);
       });
 
-      ctx.responseShouldHaveFields(...ctx.fields.reactionResponse);
+      ctx.responseShouldHaveFields(...ctx.fields.reactionResponseWithTargets);
 
       ctx.test('response should include bob user data', () => {
         ctx.response.user.should.eql(ctx.bob.currentUser.full);
       });
     });
 
-    describe('and then alice reads bob feed his from the server side', () => {
+    describe('and then alice reads bob feed from the server side', () => {
       ctx.requestShouldNotError(async () => {
         ctx.response = await ctx.serverSideClient.feed('user', ctx.bob.userId).get({ enrich: true });
       });
