@@ -67,11 +67,11 @@ export class MissingSchemaError extends ErrorAbstract {}
  * @param  {object} data
  * @param  {object} response
  */
-export class StreamApiError extends ErrorAbstract {
+export class StreamApiError<T> extends ErrorAbstract {
   error: unknown;
-  response: AxiosResponse;
+  response: AxiosResponse<T>;
 
-  constructor(msg: string, data: unknown, response: AxiosResponse) {
+  constructor(msg: string, data: unknown, response: AxiosResponse<T>) {
     super(msg);
 
     this.error = data;

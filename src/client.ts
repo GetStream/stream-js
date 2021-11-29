@@ -668,7 +668,7 @@ export class StreamClient<
       return response.data;
     }
 
-    throw new StreamApiError(
+    throw new StreamApiError<T>(
       `${JSON.stringify(response.data)} with HTTP status code ${response.status}`,
       response.data,
       response,
