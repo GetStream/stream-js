@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [7.4.0](https://github.com/GetStream/stream-js/releases/tag/v7.3.1) - 2021-12-15
+## [7.4.0](https://github.com/GetStream/stream-js/releases/tag/v7.4.0) - 2021-12-15
 
 ### Feature
 
