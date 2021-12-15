@@ -120,11 +120,13 @@ describe('[UNIT] Stream Collections (node)', function () {
       ];
 
       this.client._collectionsToken = fakedJWT;
-      this.client.collections.upsertMany({ collectionName: data, collectionName2: data });
 
-      const body = { data: {} };
-      body.data[collectionName] = data;
-      body.data[collectionName2] = data;
+      const req = {};
+      req[collectionName] = data;
+      req[collectionName2] = data;
+      this.client.collections.upsertMany(req);
+
+      const body = { data: req };
       td.verify(
         post({
           url: 'collections/',
