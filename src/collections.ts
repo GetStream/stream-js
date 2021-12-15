@@ -34,6 +34,10 @@ export type UpsertCollectionAPIResponse<CollectionType extends UR = UR> = APIRes
   };
 };
 
+export type UpsertManyCollectionRequest<CollectionType extends UR = UR> = {
+  [collection: string]: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[];
+};
+
 export class CollectionEntry<
   UserType extends UR = UR,
   ActivityType extends UR = UR,
@@ -276,6 +280,28 @@ export class Collections<
       url: 'collections/',
       serviceName: 'api',
       body: { data: { [collection]: data } },
+      token: this.client.getCollectionsToken(),
+    });
+  }
+
+  /**
+   * UpsertMany one or more items into many collections.
+   * @link https://getstream.io/activity-feeds/docs/node/collections_batch/?language=js#upsert
+   * @method upsert
+   * @memberof Collections.prototype
+   * @param  {string}   collection  collection name
+   * @param {UpsertManyCollectionRequest} data - A single json object that contains information of many collections
+   * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
+   */
+  upsertMany(data: UpsertManyCollectionRequest) {
+    if (!this.client.usingApiSecret) {
+      throw new SiteError('This method can only be used server-side using your API Secret');
+    }
+
+    return this.client.post<UpsertCollectionAPIResponse<CollectionType>>({
+      url: 'collections/',
+      serviceName: 'api',
+      body: { data },
       token: this.client.getCollectionsToken(),
     });
   }
