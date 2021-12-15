@@ -5,6 +5,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.4.0](https://github.com/GetStream/stream-js/releases/tag/v7.3.1) - 2021-12-15
+
+### Feature
+
+- Add target feeds into reaction responses [#480](https://github.com/GetStream/stream-js/pull/480)
+- Add support for multiple collection upsert in a single call [#486](https://github.com/GetStream/stream-js/pull/486)
+
+### Fix
+
+- Correct type for latest children in enriched reaction [#483](https://github.com/GetStream/stream-js/pull/483)
+
+### Chore
+
+- Bump axios for security related [#484](https://github.com/GetStream/stream-js/pull/484)
+
 ## [7.3.1](https://github.com/GetStream/stream-js/releases/tag/v7.3.1) - 2021-10-26
 
 ### Fix
