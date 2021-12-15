@@ -109,6 +109,33 @@ describe('[UNIT] Stream Collections (node)', function () {
         }),
       );
     });
+
+    it('should send post request correctly with multiple objects and collections', function () {
+      const fakedJWT = 'Faked JWT';
+      const collectionName = 'user';
+      const collectionName2 = 'user2';
+      const data = [
+        { id: 'john', username: 'johndoe', favorite_color: 'gray' },
+        { id: 'dave', username: 'daveo', favorite_color: 'green' },
+      ];
+
+      this.client._collectionsToken = fakedJWT;
+
+      const req = {};
+      req[collectionName] = data;
+      req[collectionName2] = data;
+      this.client.collections.upsertMany(req);
+
+      const body = { data: req };
+      td.verify(
+        post({
+          url: 'collections/',
+          serviceName: 'api',
+          body,
+          token: fakedJWT,
+        }),
+      );
+    });
   });
 
   describe('#select', function () {
