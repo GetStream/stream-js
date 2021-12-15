@@ -35,7 +35,7 @@ export type UpsertCollectionAPIResponse<CollectionType extends UR = UR> = APIRes
 };
 
 export type UpsertManyCollectionRequest<CollectionType extends UR = UR> = {
-  [collection: string]: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[];
+  [collection: string]: NewCollectionEntry<CollectionType>[];
 };
 
 export class CollectionEntry<
