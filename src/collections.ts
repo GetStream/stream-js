@@ -7,6 +7,11 @@ type BaseCollection<CollectionType> = {
   id: string;
 };
 
+export type CollectionInput<CollectionType extends UR = UR> = CollectionType & {
+  id: string;
+  user_id?: string;
+};
+
 export type CollectionResponse<CollectionType extends UR = UR> = BaseCollection<CollectionType> & {
   created_at: string;
   foreign_id: string;
@@ -27,15 +32,12 @@ export type SelectCollectionAPIResponse<CollectionType extends UR = UR> = APIRes
 
 export type UpsertCollectionAPIResponse<CollectionType extends UR = UR> = APIResponse & {
   data: {
-    [key: string]: {
-      data: CollectionType;
-      id: string;
-    }[];
+    [key: string]: CollectionInput<CollectionType>[];
   };
 };
 
 export type UpsertManyCollectionRequest<CollectionType extends UR = UR> = {
-  [collection: string]: NewCollectionEntry<CollectionType>[];
+  [collection: string]: CollectionInput<CollectionType>[];
 };
 
 export class CollectionEntry<
@@ -269,7 +271,7 @@ export class Collections<
    * @param {NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]} data - A single json object or an array of objects
    * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
    */
-  upsert(collection: string, data: NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]) {
+  upsert(collection: string, data: CollectionInput<CollectionType> | CollectionInput<CollectionType>[]) {
     if (!this.client.usingApiSecret) {
       throw new SiteError('This method can only be used server-side using your API Secret');
     }
@@ -293,7 +295,7 @@ export class Collections<
    * @param {UpsertManyCollectionRequest} data - A single json object that contains information of many collections
    * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
    */
-  upsertMany(data: UpsertManyCollectionRequest) {
+  upsertMany(items: UpsertManyCollectionRequest) {
     if (!this.client.usingApiSecret) {
       throw new SiteError('This method can only be used server-side using your API Secret');
     }
@@ -301,7 +303,7 @@ export class Collections<
     return this.client.post<UpsertCollectionAPIResponse<CollectionType>>({
       url: 'collections/',
       serviceName: 'api',
-      body: { data },
+      body: { data: items },
       token: this.client.getCollectionsToken(),
     });
   }
