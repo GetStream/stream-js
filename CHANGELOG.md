@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.4.1](https://github.com/GetStream/stream-js/releases/tag/v7.4.1) - 2021-12-21
+
+### Fix
+
+- Correct types of collections in upsert request and response [#487](https://github.com/GetStream/stream-js/pull/487)
+
 ## [7.4.0](https://github.com/GetStream/stream-js/releases/tag/v7.4.0) - 2021-12-15
 
 ### Feature
