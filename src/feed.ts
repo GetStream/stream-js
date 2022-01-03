@@ -109,7 +109,7 @@ export type Activity<ActivityType extends UR = UR> = ActivityType &
 export type ReactionsRecords<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  UserType extends UR = UR
+  UserType extends UR = UR,
 > = Record<string, EnrichedReaction<ReactionType, ChildReactionType, UserType>[]>;
 
 export type EnrichedActivity<
@@ -117,7 +117,7 @@ export type EnrichedActivity<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = ActivityType &
   BaseActivity &
   Pick<Activity, 'foreign_id' | 'id' | 'time' | 'analytics' | 'extra_context' | 'origin' | 'score'> & {
@@ -146,7 +146,7 @@ export type FlatActivityEnriched<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
 type BaseAggregatedActivity = {
@@ -169,7 +169,7 @@ export type AggregatedActivityEnriched<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = BaseAggregatedActivity & {
   activities: EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>[];
 };
@@ -184,7 +184,7 @@ export type NotificationActivityEnriched<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = BaseNotificationActivity &
   AggregatedActivityEnriched<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
 
@@ -193,7 +193,7 @@ export type FeedAPIResponse<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = APIResponse & {
   next: string;
   results:
@@ -214,7 +214,7 @@ export type PersonalizationFeedAPIResponse<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = APIResponse & {
   limit: number;
   next: string;
@@ -228,7 +228,7 @@ export type GetActivitiesAPIResponse<
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR
+  ChildReactionType extends UR = UR,
 > = APIResponse & {
   results:
     | FlatActivity<ActivityType>[]
@@ -246,7 +246,7 @@ export class StreamFeed<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;

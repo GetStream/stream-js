@@ -117,7 +117,7 @@ export type RealTimeMessage<
   UserType extends UR = UR,
   ActivityType extends UR = UR,
   CollectionType extends UR = UR,
-  ReactionType extends UR = UR
+  ReactionType extends UR = UR,
 > = {
   deleted: Array<string>;
   deleted_foreign_ids: Array<[id: string, time: string]>;
@@ -144,7 +144,7 @@ export class StreamClient<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   baseUrl: string;
   baseAnalyticsUrl: string;
@@ -207,10 +207,10 @@ export class StreamClient<
   private _getOrCreateToken?: string;
 
   // eslint-disable-next-line no-shadow
-  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>;
-  followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>;
-  unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>;
-  createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string;
+  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string; // eslint-disable-line no-use-before-define
 
   /**
    * Initialize a client
@@ -682,8 +682,9 @@ export class StreamClient<
       const response = await this.request(this.enrichKwargs({ method, ...options }));
       return this.handleResponse(response);
     } catch (error) {
-      if (error.response) return this.handleResponse(error.response);
-      throw new SiteError(error.message);
+      const err = error as StreamApiError<T>;
+      if (err.response) return this.handleResponse(err.response);
+      throw new SiteError(err.message);
     }
   };
 
@@ -894,14 +895,16 @@ export class StreamClient<
     const body = { ...data };
     delete body.id;
 
-    const user = await (this.currentUser as StreamUser<
-      UserType,
-      ActivityType,
-      CollectionType,
-      ReactionType,
-      ChildReactionType,
-      PersonalizationType
-    >).getOrCreate(body);
+    const user = await (
+      this.currentUser as StreamUser<
+        UserType,
+        ActivityType,
+        CollectionType,
+        ReactionType,
+        ChildReactionType,
+        PersonalizationType
+      >
+    ).getOrCreate(body);
     this.currentUser = user;
     return user;
   }

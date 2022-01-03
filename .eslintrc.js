@@ -12,6 +12,7 @@ const sharedRules = {
   'sonarjs/no-collapsible-if': 0,
   'sonarjs/no-duplicate-string': 0,
   'sonarjs/no-identical-functions': 0,
+  'class-methods-use-this': 0,
 };
 
 const settings = {
@@ -30,7 +31,7 @@ module.exports = {
     'plugin:sonarjs/recommended',
     'plugin:chai-friendly/recommended',
   ],
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   env: {
     es6: true,
     browser: true,
