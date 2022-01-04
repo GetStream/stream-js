@@ -21,7 +21,7 @@ export class Personalization<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
 

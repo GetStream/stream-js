@@ -14,12 +14,12 @@ async function mockedImage(size = 1024) {
   const context = canvas.getContext('2d');
   context.fillStyle = '#000000';
   context.fillRect(0, 0, size, size);
-  return new Promise((resolve) =>
+  return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       const file = new File([blob], 'x.png', { type: 'image/png' });
       resolve(file);
-    }, 'image/png'),
-  );
+    }, 'image/png');
+  });
 }
 
 describe('[INTEGRATION] Stream client (Browser)', function () {

@@ -29,7 +29,7 @@ export function connect<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 >(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions) {
   if (typeof process !== 'undefined' && process.env?.STREAM_URL && !apiKey) {
     const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];

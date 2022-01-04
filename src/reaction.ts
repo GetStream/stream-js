@@ -38,14 +38,14 @@ export type ReactionAPIResponse<T extends UR = UR> = APIResponse & Reaction<T>;
 export type ChildReactionsRecords<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  UserType extends UR = UR
+  UserType extends UR = UR,
   // eslint-disable-next-line no-use-before-define
 > = Record<string, EnrichedReaction<ReactionType, ChildReactionType, UserType>[]>;
 
 export type EnrichedReaction<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  UserType extends UR = UR
+  UserType extends UR = UR,
 > = Reaction<ReactionType | ChildReactionType> & {
   children_counts: Record<string, number>;
   latest_children: ChildReactionsRecords<ReactionType, ChildReactionType, UserType>;
@@ -57,14 +57,14 @@ export type EnrichedReaction<
 export type EnrichedReactionAPIResponse<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  UserType extends UR = UR
+  UserType extends UR = UR,
 > = APIResponse & EnrichedReaction<ReactionType, ChildReactionType, UserType>;
 
 export type ReactionFilterAPIResponse<
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
   ActivityType extends UR = UR,
-  UserType extends UR = UR
+  UserType extends UR = UR,
 > = APIResponse & {
   next: string;
   results:
@@ -107,7 +107,7 @@ export class StreamReaction<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;

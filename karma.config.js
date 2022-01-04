@@ -1,6 +1,6 @@
 require('dotenv').config(); // eslint-disable-line import/no-extraneous-dependencies
 const webpack = require('webpack'); // eslint-disable-line import/no-extraneous-dependencies
-const webpackConfig = require('./webpack.config.js')();
+const webpackConfig = require('./webpack.config.js')(); // eslint-disable-line import/extensions
 
 // Webpack config tweaks for test-time
 delete webpackConfig.entry;

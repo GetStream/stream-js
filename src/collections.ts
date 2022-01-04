@@ -46,7 +46,7 @@ export class CollectionEntry<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   id: string;
   collection: string;
@@ -138,7 +138,7 @@ export class Collections<
   CollectionType extends UR = UR,
   ReactionType extends UR = UR,
   ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR
+  PersonalizationType extends UR = UR,
 > {
   client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
   token: string;
