@@ -1,4 +1,4 @@
-name: Types
+name: Types Check
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  types:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

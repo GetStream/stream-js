@@ -1,4 +1,4 @@
-name: Browser
+name: Browser Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  browser:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
