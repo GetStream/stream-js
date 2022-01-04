@@ -267,7 +267,7 @@ client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp,
 ### Typescript
 
 ```ts
-import { connect, EnrichedActivity, NotificationActivity } from getstream;
+import { connect, UR, EnrichedActivity, NotificationActivity } from getstream;
 
 type User1Type = { name: string; username: string; image?: string };
 type User2Type = { name: string; avatar?: string };
@@ -278,13 +278,16 @@ type Collection2Type = { branch: number; location: string };
 type ReactionType = { text: string };
 type ChildReactionType = { text?: string };
 
-const client = connect<
-  User1Type | User2Type,
-  ActivityType,
-  Collection1Type | Collection2Type,
-  ReactionType,
-  ChildReactionType
->('api_key', 'secret!', 'app_id');
+type StreamType = {
+  userType: User1Type | User2Type,
+  activityType: ActivityType,
+  collectionType: Collection1Type | Collection2Type,
+  reactionType: ReactionType,
+  childReactionType: ChildReactionType,
+  personalizationType: UR,
+}
+
+const client = connect<StreamType>('api_key', 'secret!', 'app_id');
 
 // if you have different union types like "User1Type | User2Type" you can use type guards as follow:
 // https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
@@ -301,21 +304,21 @@ client
     return id;
   });
 
-// notification: StreamFeed<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+// notification: StreamFeed<StreamType>
 const timeline = client.feed('timeline', 'feed_id');
 timeline.get({ withOwnChildren: true, withOwnReactions: true }).then((response) => {
-  // response: FeedAPIResponse<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+  // response: FeedAPIResponse<StreamType>
   if (response.next !== '') return response.next;
 
-  return (response.results as EnrichedActivity<User2Type, ActivityType>[]).map((activity) => {
+  return (response.results as EnrichedActivity<StreamType>[]).map((activity) => {
     return activity.id + activity.text + (activity.actor as User2Type).name;
   });
 });
 
-// notification: StreamFeed<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+// notification: StreamFeed<StreamType>
 const notification = client.feed('notification', 'feed_id');
 notification.get({ mark_read: true, mark_seen: true }).then((response) => {
-  // response: FeedAPIResponse<User1Type | User2Type, ActivityType, Collection1Type | Collection2Type, ReactionType, ChildReactionType>
+  // response: FeedAPIResponse<StreamType>
   if (response.unread || response.unseen) return response.next;
 
   return (response.results as NotificationActivity<ActivityType>[]).map((activityGroup) => {
@@ -324,7 +327,7 @@ notification.get({ mark_read: true, mark_seen: true }).then((response) => {
   });
 });
 
-client.collections.get('collection_1', 'taco').then((item: CollectionEntry<Collection1Type>) => {
+client.collections.get('collection_1', 'taco').then((item: CollectionEntry<StreamType>) => {
   if (item.data.rating) return { [item.data.cid]: item.data.rating };
   return item.id;
 });

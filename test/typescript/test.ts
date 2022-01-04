@@ -16,6 +16,7 @@ import {
   StreamFeed,
   FeedAPIResponse,
   FlatActivity,
+  RealTimeMessage,
 } from '../..';
 
 type UserType = { name: string; image?: string };
@@ -25,23 +26,22 @@ type ReactionType = { rText: string };
 type ChildReactionType = { cText: string };
 type T = {};
 
+type Generics = {
+  userType: UserType;
+  activityType: ActivityType;
+  collectionType: CollectionType;
+  reactionType: ReactionType;
+  childReactionType: ChildReactionType;
+  personalizationType: Faye.UR;
+};
+
 let voidReturn: void;
 let voidPromise: Promise<void>;
 let emptyAPIPromise: Promise<APIResponse>;
 
-let client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = connect<
-  UserType,
-  ActivityType,
-  CollectionType,
-  ReactionType,
-  ChildReactionType
->('api_key', 'secret!', 'app_id');
+let client: StreamClient<Generics> = connect<Generics>('api_key', 'secret!', 'app_id');
 
-client = new StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>(
-  'api_key',
-  'secret!',
-  'app_id',
-);
+client = new StreamClient<Generics>('api_key', 'secret!', 'app_id');
 
 connect('', null);
 connect('', null, '', {});
@@ -105,7 +105,7 @@ client.shouldUseEnrichEndpoint({
 // @ts-expect-error
 client.shouldUseEnrichEndpoint({ enrich: '' });
 
-const faye: Faye.Client = client.getFayeClient();
+const faye: Faye.Client<RealTimeMessage<Generics>> = client.getFayeClient();
 client.getFayeClient(100);
 
 const upload: Promise<FileUploadAPIResponse> = client.upload('/file', 'uri');
@@ -158,7 +158,7 @@ client.updateActivity(emptyActivity);
 // @ts-expect-error
 client.updateActivities([emptyActivity]);
 
-const partialUpdatePromise: Promise<Activity<ActivityType>> = client.activityPartialUpdate({
+const partialUpdatePromise: Promise<Activity<Generics>> = client.activityPartialUpdate({
   id: '',
   set: { aText: '' },
   unset: ['attachments'],
@@ -170,7 +170,7 @@ client.activityPartialUpdate({ unset: ['missing'] });
 // @ts-expect-error
 client.activityPartialUpdate({ set: { missing: '' } });
 
-const partialUpdatesPromise: Promise<{ activities: Activity<ActivityType>[] }> = client.activitiesPartialUpdate([
+const partialUpdatesPromise: Promise<{ activities: Activity<Generics>[] }> = client.activitiesPartialUpdate([
   {
     id: '',
     set: { aText: '' },
@@ -184,9 +184,7 @@ client.activityPartialUpdate([{ unset: ['missing'] }]);
 // @ts-expect-error
 client.activityPartialUpdate([{ set: { missing: '' } }]);
 
-const activitiesPromise: Promise<
-  GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
-> = client.getActivities({ ids: ['', ''] });
+const activitiesPromise: Promise<GetActivitiesAPIResponse<Generics>> = client.getActivities({ ids: ['', ''] });
 activitiesPromise.then(({ results }) => {
   results[0].id as string;
   results[0].time as string;
@@ -202,9 +200,7 @@ client.getActivities({});
 // @ts-expect-error
 client.getActivities();
 
-const pFeedPromise: Promise<
-  PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
-> = client.personalizedFeed({ enrich: true });
+const pFeedPromise: Promise<PersonalizationFeedAPIResponse<Generics>> = client.personalizedFeed({ enrich: true });
 pFeedPromise.then((pFeed) => {
   pFeed.results as Array<EnrichedActivity>;
   pFeed.version as string;
@@ -213,31 +209,26 @@ pFeedPromise.then((pFeed) => {
   pFeed.offset as number;
 });
 
-const userPromise: Promise<StreamUser<UserType>> = client.setUser({ name: '' });
+const userPromise: Promise<StreamUser<Generics>> = client.setUser({ name: '' });
 // @ts-expect-error
 client.setUser({ username: '' });
 
-const user: StreamUser<UserType> = client.user('user_id');
-const userGet: Promise<StreamUser<UserType>> = client.user('user_id').get();
+const user: StreamUser<Generics> = client.user('user_id');
+const userGet: Promise<StreamUser<Generics>> = client.user('user_id').get();
 client.user('user_id').get({ with_follow_counts: true });
 // @ts-expect-error
 client.user('user_id').get({ with_follow_counts: 1 });
 // @ts-expect-error
 client.user('user_id').get({ list: true });
 
-const timeline: StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType> = client.feed(
-  'timeline',
-  'feed_id',
-);
+const timeline: StreamFeed<Generics> = client.feed('timeline', 'feed_id');
 
-timeline
-  .get({ withOwnChildren: true, withOwnReactions: true })
-  .then((response: FeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>) => {
-    response.next as string;
-    response.unread as number;
-    response.unseen as number;
-    response.results as FlatActivity<ActivityType>[];
-  });
+timeline.get({ withOwnChildren: true, withOwnReactions: true }).then((response: FeedAPIResponse<Generics>) => {
+  response.next as string;
+  response.unread as number;
+  response.unseen as number;
+  response.results as FlatActivity<Generics>[];
+});
 
 client
   .feed('notification', 'feed_id')
@@ -246,10 +237,10 @@ client
     response.next as string;
     response.unread as number;
     response.unseen as number;
-    response.results as NotificationActivity<ActivityType>[];
+    response.results as NotificationActivity<Generics>[];
   });
 
-const collection: Promise<CollectionEntry<CollectionType>> = client.collections.get('collection_1', 'taco');
+const collection: Promise<CollectionEntry<Generics>> = client.collections.get('collection_1', 'taco');
 
 collection.then((item) => {
   item.id as string;
