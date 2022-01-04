@@ -18,4 +18,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Test
+        env:
+          STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
+          STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+          STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         run: yarn run test-unit-node
