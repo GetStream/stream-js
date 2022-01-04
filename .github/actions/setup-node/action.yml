@@ -1,0 +1,24 @@
+name: Setup
+description: Sets up Node and Build SDK
+
+inputs:
+  node-version:
+    required: false
+    default: '16'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Cache Dependencies
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ runner.os }}-${{ inputs.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: ${{ runner.os }}-${{ inputs.node-version }}-modules-
+    - name: Install Dependencies & Build
+      run: yarn install --frozen-lockfile --ignore-engines
+      shell: bash

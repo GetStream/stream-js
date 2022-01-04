@@ -1,0 +1,25 @@
+name: Unit Test
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12, 14, 16]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup-node
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Test
+        env:
+          STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
+          STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+          STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+        run: yarn run test-unit-node
