@@ -1,4 +1,4 @@
-import { StreamClient, APIResponse, UR } from './client';
+import { StreamClient, APIResponse, UR, DefaultGenerics } from './client';
 import { StreamFeed } from './feed';
 import { SiteError } from './errors';
 import { EnrichedUser } from './user';
@@ -36,41 +36,29 @@ export type Reaction<T extends UR = UR> = {
 export type ReactionAPIResponse<T extends UR = UR> = APIResponse & Reaction<T>;
 
 export type ChildReactionsRecords<
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  UserType extends UR = UR,
+  StreamFeedGenerics extends DefaultGenerics = DefaultGenerics,
   // eslint-disable-next-line no-use-before-define
-> = Record<string, EnrichedReaction<ReactionType, ChildReactionType, UserType>[]>;
+> = Record<string, EnrichedReaction<StreamFeedGenerics>[]>;
 
-export type EnrichedReaction<
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  UserType extends UR = UR,
-> = Reaction<ReactionType | ChildReactionType> & {
+export type EnrichedReaction<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = Reaction<
+  StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType']
+> & {
   children_counts: Record<string, number>;
-  latest_children: ChildReactionsRecords<ReactionType, ChildReactionType, UserType>;
+  latest_children: ChildReactionsRecords<StreamFeedGenerics>;
   latest_children_extra?: Record<string, { next?: string }>;
-  own_children?: ChildReactionsRecords<ReactionType, ChildReactionType, UserType>;
-  user?: EnrichedUser<UserType>;
+  own_children?: ChildReactionsRecords<StreamFeedGenerics>;
+  user?: EnrichedUser<StreamFeedGenerics>;
 };
 
-export type EnrichedReactionAPIResponse<
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  UserType extends UR = UR,
-> = APIResponse & EnrichedReaction<ReactionType, ChildReactionType, UserType>;
+export type EnrichedReactionAPIResponse<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = APIResponse &
+  EnrichedReaction<StreamFeedGenerics>;
 
-export type ReactionFilterAPIResponse<
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  ActivityType extends UR = UR,
-  UserType extends UR = UR,
-> = APIResponse & {
+export type ReactionFilterAPIResponse<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = APIResponse & {
   next: string;
   results:
-    | ReactionAPIResponse<ReactionType | ChildReactionType>[]
-    | EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>[];
-  activity?: ActivityType;
+    | ReactionAPIResponse<StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType']>[]
+    | EnrichedReactionAPIResponse<StreamFeedGenerics>[];
+  activity?: StreamFeedGenerics['childReactionType'];
 };
 
 export type ReactionFilterConditions = {
@@ -101,15 +89,8 @@ export type ReactionAddChildOptions = ReactionUpdateOptions & {
   userId?: string;
 };
 
-export class StreamReaction<
-  UserType extends UR = UR,
-  ActivityType extends UR = UR,
-  CollectionType extends UR = UR,
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR,
-> {
-  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
+export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
+  client: StreamClient<StreamFeedGenerics>;
   token: string;
 
   /**
@@ -121,10 +102,7 @@ export class StreamReaction<
    * @param {string} token JWT token
    * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
    */
-  constructor(
-    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
-    token: string,
-  ) {
+  constructor(client: StreamClient<StreamFeedGenerics>, token: string) {
     this.client = client;
     this.token = token;
   }
@@ -157,10 +135,10 @@ export class StreamReaction<
   add(
     kind: string,
     activity: string | { id: string },
-    data?: ReactionType,
+    data?: StreamFeedGenerics['reactionType'],
     { id, targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddOptions = {},
   ) {
-    const body: ReactionBody<ReactionType> = {
+    const body: ReactionBody<StreamFeedGenerics['reactionType']> = {
       id,
       activity_id: activity instanceof Object ? (activity as { id: string }).id : activity,
       kind,
@@ -171,7 +149,7 @@ export class StreamReaction<
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post<ReactionAPIResponse<ReactionType>>({
+    return this.client.post<ReactionAPIResponse<StreamFeedGenerics['reactionType']>>({
       url: this.buildURL(),
       body,
       token: this.token,
@@ -197,10 +175,10 @@ export class StreamReaction<
   addChild(
     kind: string,
     reaction: string | { id: string },
-    data?: ChildReactionType,
+    data?: StreamFeedGenerics['childReactionType'],
     { targetFeeds = [], userId, targetFeedsExtraData }: ReactionAddChildOptions = {},
   ) {
-    const body: ReactionBody<ChildReactionType> = {
+    const body: ReactionBody<StreamFeedGenerics['childReactionType']> = {
       parent: reaction instanceof Object ? (reaction as { id: string }).id : reaction,
       kind,
       data: data || {},
@@ -210,7 +188,7 @@ export class StreamReaction<
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.post<ReactionAPIResponse<ChildReactionType>>({
+    return this.client.post<ReactionAPIResponse<StreamFeedGenerics['childReactionType']>>({
       url: this.buildURL(),
       body,
       token: this.token,
@@ -223,11 +201,11 @@ export class StreamReaction<
    * @method get
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
-   * @return {Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>}
+   * @return {Promise<EnrichedReactionAPIResponse<StreamFeedGenerics>>}
    * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
    */
   get(id: string) {
-    return this.client.get<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>({
+    return this.client.get<EnrichedReactionAPIResponse<StreamFeedGenerics>>({
       url: this.buildURL(id),
       token: this.token,
     });
@@ -244,7 +222,7 @@ export class StreamReaction<
    * @method filter
    * @memberof StreamReaction.prototype
    * @param  {ReactionFilterConditions} conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
-   * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
+   * @return {Promise<ReactionFilterAPIResponse<StreamFeedGenerics>>}
    * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
    * @example reactions.filter({user_id: "john", kinds:"like"})
    */
@@ -265,7 +243,7 @@ export class StreamReaction<
       ? this.buildURL(lookupType as string, value as string, conditions.kind)
       : this.buildURL(lookupType as string, value as string);
 
-    return this.client.get<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>({
+    return this.client.get<ReactionFilterAPIResponse<StreamFeedGenerics>>({
       url,
       qs: qs as { [key: string]: unknown },
       token: this.token,
@@ -288,17 +266,19 @@ export class StreamReaction<
    */
   update(
     id: string,
-    data?: ReactionType | ChildReactionType,
+    data?: StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType'],
     { targetFeeds = [], targetFeedsExtraData }: ReactionUpdateOptions = {},
   ) {
-    const body: ReactionBody<ReactionType | ChildReactionType> = {
+    const body: ReactionBody<StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType']> = {
       data,
       target_feeds: this._convertTargetFeeds(targetFeeds),
     };
     if (targetFeedsExtraData != null) {
       body.target_feeds_extra_data = targetFeedsExtraData;
     }
-    return this.client.put<ReactionAPIResponse<ReactionType | ChildReactionType>>({
+    return this.client.put<
+      ReactionAPIResponse<StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType']>
+    >({
       url: this.buildURL(id),
       body,
       token: this.token,

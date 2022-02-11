@@ -35,6 +35,15 @@ const pkg = require('../package.json');
 export type UR = Record<string, unknown>;
 export type UnknownRecord = UR; // alias to avoid breaking change
 
+export type DefaultGenerics = {
+  activityType: UR;
+  childReactionType: UR;
+  collectionType: UR;
+  personalizationType: UR;
+  reactionType: UR;
+  userType: UR;
+};
+
 export type APIResponse = { duration?: string };
 
 export type FileUploadAPIResponse = APIResponse & { file: string };
@@ -107,23 +116,19 @@ export type HandlerCallback = (...args: unknown[]) => unknown;
 
 export type ForeignIDTimes = { foreign_id: string; time: Date | string } | { foreignID: string; time: Date | string };
 
-export type ActivityPartialChanges<ActivityType extends UR = UR> = Partial<ForeignIDTimes> & {
-  id?: string;
-  set?: Partial<ActivityType>;
-  unset?: Array<Extract<keyof ActivityType, string>>;
-};
+export type ActivityPartialChanges<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> =
+  Partial<ForeignIDTimes> & {
+    id?: string;
+    set?: Partial<StreamFeedGenerics['activityType']>;
+    unset?: Array<Extract<keyof StreamFeedGenerics['activityType'], string>>;
+  };
 
-export type RealTimeMessage<
-  UserType extends UR = UR,
-  ActivityType extends UR = UR,
-  CollectionType extends UR = UR,
-  ReactionType extends UR = UR,
-> = {
+export type RealTimeMessage<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = {
   deleted: Array<string>;
   deleted_foreign_ids: Array<[id: string, time: string]>;
   new: Array<
     Omit<
-      EnrichedActivity<UserType, ActivityType, CollectionType, ReactionType>,
+      EnrichedActivity<StreamFeedGenerics>,
       'latest_reactions' | 'latest_reactions_extra' | 'own_reactions' | 'own_reactions_extra' | 'reaction_counts'
     > & { group?: string }
   >;
@@ -138,14 +143,7 @@ export type RealTimeMessage<
  * Client to connect to Stream api
  * @class StreamClient
  */
-export class StreamClient<
-  UserType extends UR = UR,
-  ActivityType extends UR = UR,
-  CollectionType extends UR = UR,
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR,
-> {
+export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
   baseUrl: string;
   baseAnalyticsUrl: string;
   apiKey: string;
@@ -162,7 +160,7 @@ export class StreamClient<
   group: string;
   expireTokens: boolean;
   location: string;
-  fayeClient: Faye.Client<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>> | null;
+  fayeClient: Faye.Client<RealTimeMessage<StreamFeedGenerics>> | null;
   browser: boolean;
   node: boolean;
   nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
@@ -174,40 +172,22 @@ export class StreamClient<
   >;
   handlers: Record<string, HandlerCallback>;
 
-  currentUser?: StreamUser<
-    UserType,
-    ActivityType,
-    CollectionType,
-    ReactionType,
-    ChildReactionType,
-    PersonalizationType
-  >;
-  personalization: Personalization<
-    UserType,
-    ActivityType,
-    CollectionType,
-    ReactionType,
-    ChildReactionType,
-    PersonalizationType
-  >;
-  collections: Collections<
-    UserType,
-    ActivityType,
-    CollectionType,
-    ReactionType,
-    ChildReactionType,
-    PersonalizationType
-  >;
+  currentUser?: StreamUser<StreamFeedGenerics>;
+  personalization: Personalization<StreamFeedGenerics>;
+  collections: Collections<StreamFeedGenerics>;
   files: StreamFileStore;
   images: StreamImageStore;
-  reactions: StreamReaction<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>;
+  reactions: StreamReaction<StreamFeedGenerics>;
 
   private _personalizationToken?: string;
   private _collectionsToken?: string;
   private _getOrCreateToken?: string;
 
-  // eslint-disable-next-line no-shadow
-  addToMany?: <ActivityType>(this: StreamClient, activity: ActivityType, feeds: string[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  addToMany?: <StreamFeedGenerics extends DefaultGenerics = DefaultGenerics>( // eslint-disable-line no-shadow
+    this: StreamClient, // eslint-disable-line no-use-before-define
+    activity: StreamFeedGenerics['activityType'],
+    feeds: string[],
+  ) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string; // eslint-disable-line no-use-before-define
@@ -285,38 +265,17 @@ export class StreamClient<
       ...(this.nodeOptions || {}),
     });
 
-    this.personalization = new Personalization<
-      UserType,
-      ActivityType,
-      CollectionType,
-      ReactionType,
-      ChildReactionType,
-      PersonalizationType
-    >(this);
+    this.personalization = new Personalization<StreamFeedGenerics>(this);
 
     if (this.browser && this.usingApiSecret) {
       throw new FeedError(
         'You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.',
       );
     }
-    this.collections = new Collections<
-      UserType,
-      ActivityType,
-      CollectionType,
-      ReactionType,
-      ChildReactionType,
-      PersonalizationType
-    >(this, this.getOrCreateToken());
+    this.collections = new Collections<StreamFeedGenerics>(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this as StreamClient, this.getOrCreateToken());
     this.images = new StreamImageStore(this as StreamClient, this.getOrCreateToken());
-    this.reactions = new StreamReaction<
-      UserType,
-      ActivityType,
-      CollectionType,
-      ReactionType,
-      ChildReactionType,
-      PersonalizationType
-    >(this, this.getOrCreateToken());
+    this.reactions = new StreamReaction<StreamFeedGenerics>(this, this.getOrCreateToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && !!createRedirectUrl) {
@@ -496,11 +455,9 @@ export class StreamClient<
    */
   feed(
     feedSlug: string,
-    userId?:
-      | string
-      | StreamUser<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
+    userId?: string | StreamUser<StreamFeedGenerics>,
     token?: string,
-  ): StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType> {
+  ): StreamFeed<StreamFeedGenerics> {
     if (userId instanceof StreamUser) userId = userId.id;
 
     if (token === undefined) {
@@ -511,12 +468,7 @@ export class StreamClient<
       }
     }
 
-    return new StreamFeed<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
-      this,
-      feedSlug,
-      userId || (this.userId as string),
-      token,
-    );
+    return new StreamFeed<StreamFeedGenerics>(this, feedSlug, userId || (this.userId as string), token);
   }
 
   /**
@@ -619,12 +571,12 @@ export class StreamClient<
   getFayeAuthorization() {
     return {
       incoming: (
-        message: Faye.Message<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
-        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
+        message: Faye.Message<RealTimeMessage<StreamFeedGenerics>>,
+        callback: Faye.Callback<RealTimeMessage<StreamFeedGenerics>>,
       ) => callback(message),
       outgoing: (
-        message: Faye.Message<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
-        callback: Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>,
+        message: Faye.Message<RealTimeMessage<StreamFeedGenerics>>,
+        callback: Faye.Callback<RealTimeMessage<StreamFeedGenerics>>,
       ) => {
         if (message.subscription && this.subscriptions[message.subscription]) {
           const subscription = this.subscriptions[message.subscription];
@@ -651,10 +603,7 @@ export class StreamClient<
    */
   getFayeClient(timeout = 10) {
     if (this.fayeClient === null) {
-      this.fayeClient = new Faye.Client<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>>(
-        this.fayeUrl,
-        { timeout },
-      );
+      this.fayeClient = new Faye.Client<RealTimeMessage<StreamFeedGenerics>>(this.fayeUrl, { timeout });
       const authExtension = this.getFayeAuthorization();
       this.fayeClient.addExtension(authExtension);
     }
@@ -776,10 +725,10 @@ export class StreamClient<
   /**
    * Updates all supplied activities on the stream
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
-   * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
+   * @param  {UpdateActivity<StreamFeedGenerics>[]} activities list of activities to update
    * @return {Promise<APIResponse>}
    */
-  updateActivities(activities: UpdateActivity<ActivityType>[]) {
+  updateActivities(activities: UpdateActivity<StreamFeedGenerics>[]) {
     this._throwMissingApiSecret();
 
     if (!(activities instanceof Array)) {
@@ -801,10 +750,10 @@ export class StreamClient<
   /**
    * Updates one activity on the stream
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
-   * @param  {UpdateActivity<ActivityType>} activity The activity to update
+   * @param  {UpdateActivity<StreamFeedGenerics>} activity The activity to update
    * @return {Promise<APIResponse>}
    */
-  updateActivity(activity: UpdateActivity<ActivityType>) {
+  updateActivity(activity: UpdateActivity<StreamFeedGenerics>) {
     this._throwMissingApiSecret();
 
     return this.updateActivities([activity]);
@@ -863,7 +812,7 @@ export class StreamClient<
     this.replaceReactionOptions(params);
     const path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
 
-    return this.get<GetActivitiesAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>>({
+    return this.get<GetActivitiesAPIResponse<StreamFeedGenerics>>({
       url: path,
       qs: { ...params, ...extraParams },
       token,
@@ -880,14 +829,10 @@ export class StreamClient<
   }
 
   user(userId: string) {
-    return new StreamUser<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
-      this,
-      userId,
-      this.getOrCreateToken(),
-    );
+    return new StreamUser<StreamFeedGenerics>(this, userId, this.getOrCreateToken());
   }
 
-  async setUser(data: UserType) {
+  async setUser(data: StreamFeedGenerics['userType']) {
     if (this.usingApiSecret) {
       throw new SiteError('This method can only be used client-side using a user token');
     }
@@ -895,16 +840,7 @@ export class StreamClient<
     const body = { ...data };
     delete body.id;
 
-    const user = await (
-      this.currentUser as StreamUser<
-        UserType,
-        ActivityType,
-        CollectionType,
-        ReactionType,
-        ChildReactionType,
-        PersonalizationType
-      >
-    ).getOrCreate(body);
+    const user = await (this.currentUser as StreamUser<StreamFeedGenerics>).getOrCreate(body);
     this.currentUser = user;
     return user;
   }
@@ -918,9 +854,7 @@ export class StreamClient<
   }
 
   personalizedFeed(options: GetFeedOptions = {}) {
-    return this.get<
-      PersonalizationFeedAPIResponse<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType>
-    >({
+    return this.get<PersonalizationFeedAPIResponse<StreamFeedGenerics>>({
       url: 'enrich/personalization/feed/',
       qs: options,
       token: this.getOrCreateToken(),
@@ -930,8 +864,8 @@ export class StreamClient<
   /**
    * Update a single activity with partial operations.
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-   * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
-   * @return {Promise<Activity<ActivityType>>}
+   * @param {ActivityPartialChanges<StreamFeedGenerics>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
+   * @return {Promise<Activity<StreamFeedGenerics>>}
    * @example
    * client.activityPartialUpdate({
    *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
@@ -960,8 +894,8 @@ export class StreamClient<
    * })
    */
   async activityPartialUpdate(
-    data: ActivityPartialChanges<ActivityType>,
-  ): Promise<APIResponse & Activity<ActivityType>> {
+    data: ActivityPartialChanges<StreamFeedGenerics>,
+  ): Promise<APIResponse & Activity<StreamFeedGenerics>> {
     const { activities, ...response } = await this.activitiesPartialUpdate([data]);
     const [activity] = activities;
     return { ...activity, ...response };
@@ -970,8 +904,8 @@ export class StreamClient<
   /**
    * Update multiple activities with partial operations.
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-   * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
-   * @return {Promise<{ activities: Activity<ActivityType>[] }>}
+   * @param {ActivityPartialChanges<StreamFeedGenerics>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+   * @return {Promise<{ activities: Activity<StreamFeedGenerics>[] }>}
    * @example
    * client.activitiesPartialUpdate([
    *   {
@@ -1021,27 +955,29 @@ export class StreamClient<
    *   },
    * ])
    */
-  activitiesPartialUpdate(changes: ActivityPartialChanges<ActivityType>[]) {
+  activitiesPartialUpdate(changes: ActivityPartialChanges<StreamFeedGenerics>[]) {
     if (!(changes instanceof Array)) {
       throw new TypeError('changes should be an Array');
     }
-    changes.forEach((item: ActivityPartialChanges<ActivityType> & { foreign_id?: string; foreignID?: string }) => {
-      if (!(item instanceof Object)) {
-        throw new TypeError(`changeset should be and Object`);
-      }
-      if (item.foreignID) {
-        item.foreign_id = item.foreignID;
-      }
-      if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
-        throw new TypeError('missing id or foreign_id and time');
-      }
-      if (item.set && !(item.set instanceof Object)) {
-        throw new TypeError('set field should be an Object');
-      }
-      if (item.unset && !(item.unset instanceof Array)) {
-        throw new TypeError('unset field should be an Array');
-      }
-    });
+    changes.forEach(
+      (item: ActivityPartialChanges<StreamFeedGenerics> & { foreign_id?: string; foreignID?: string }) => {
+        if (!(item instanceof Object)) {
+          throw new TypeError(`changeset should be and Object`);
+        }
+        if (item.foreignID) {
+          item.foreign_id = item.foreignID;
+        }
+        if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
+          throw new TypeError('missing id or foreign_id and time');
+        }
+        if (item.set && !(item.set instanceof Object)) {
+          throw new TypeError('set field should be an Object');
+        }
+        if (item.unset && !(item.unset instanceof Array)) {
+          throw new TypeError('unset field should be an Array');
+        }
+      },
+    );
 
     let token = this.userToken as string;
     if (this.usingApiSecret) {
@@ -1051,7 +987,7 @@ export class StreamClient<
       });
     }
 
-    return this.post<APIResponse & { activities: Activity<ActivityType>[] }>({
+    return this.post<APIResponse & { activities: Activity<StreamFeedGenerics>[] }>({
       url: 'activity/',
       body: { changes },
       token,

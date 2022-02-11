@@ -1,32 +1,25 @@
-import { StreamClient, APIResponse, UR } from './client';
+import { StreamClient, APIResponse, DefaultGenerics } from './client';
 
-export type EnrichedUser<UserType extends UR = UR> = {
+export type EnrichedUser<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = {
   created_at: string;
-  data: UserType;
+  data: StreamFeedGenerics['userType'];
   id: string;
   updated_at: string;
 };
 
-export type UserAPIResponse<UserType extends UR = UR> = APIResponse &
-  EnrichedUser<UserType> & {
+export type UserAPIResponse<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> = APIResponse &
+  EnrichedUser<StreamFeedGenerics> & {
     // present only in profile response
     followers_count?: number;
     following_count?: number;
   };
 
-export class StreamUser<
-  UserType extends UR = UR,
-  ActivityType extends UR = UR,
-  CollectionType extends UR = UR,
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR,
-> {
-  client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>;
+export class StreamUser<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
+  client: StreamClient<StreamFeedGenerics>;
   token: string;
   id: string;
-  data?: UserType;
-  full?: UserAPIResponse<UserType>;
+  data?: StreamFeedGenerics['userType'];
+  full?: UserAPIResponse<StreamFeedGenerics>;
   private url: string;
 
   /**
@@ -39,11 +32,7 @@ export class StreamUser<
    * @param {string} userAuthToken JWT token
    * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
    */
-  constructor(
-    client: StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>,
-    userId: string,
-    userAuthToken: string,
-  ) {
+  constructor(client: StreamClient<StreamFeedGenerics>, userId: string, userAuthToken: string) {
     this.client = client;
     this.id = userId;
     this.data = undefined;
@@ -79,7 +68,7 @@ export class StreamUser<
    * @return {Promise<StreamUser>}
    */
   async get(options?: { with_follow_counts?: boolean }) {
-    const response = await this.client.get<UserAPIResponse<UserType>>({
+    const response = await this.client.get<UserAPIResponse<StreamFeedGenerics>>({
       url: this.url,
       token: this.token,
       qs: options,
@@ -98,8 +87,8 @@ export class StreamUser<
    * @param {boolean} [options.get_or_create] if user already exists return it
    * @return {Promise<StreamUser>}
    */
-  async create(data?: UserType, options?: { get_or_create?: boolean }) {
-    const response = await this.client.post<UserAPIResponse<UserType>>({
+  async create(data?: StreamFeedGenerics['userType'], options?: { get_or_create?: boolean }) {
+    const response = await this.client.post<UserAPIResponse<StreamFeedGenerics>>({
       url: 'user/',
       body: {
         id: this.id,
@@ -121,8 +110,8 @@ export class StreamUser<
    * @param {object} data user date stored in stream
    * @return {Promise<StreamUser>}
    */
-  async update(data?: Partial<UserType>) {
-    const response = await this.client.put<UserAPIResponse<UserType>>({
+  async update(data?: Partial<StreamFeedGenerics['userType']>) {
+    const response = await this.client.put<UserAPIResponse<StreamFeedGenerics>>({
       url: this.url,
       body: {
         data: data || this.data || {},
@@ -142,7 +131,7 @@ export class StreamUser<
    * @param {object} data user date stored in stream
    * @return {Promise<StreamUser>}
    */
-  getOrCreate(data: UserType) {
+  getOrCreate(data: StreamFeedGenerics['userType']) {
     return this.create(data, { get_or_create: true });
   }
 

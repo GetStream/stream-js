@@ -1,4 +1,4 @@
-import { StreamClient, UR, ClientOptions } from './client';
+import { StreamClient, ClientOptions, DefaultGenerics } from './client';
 
 /**
  * Create StreamClient
@@ -23,14 +23,12 @@ import { StreamClient, UR, ClientOptions } from './client';
  * @example <caption>where streamURL looks like</caption>
  * "https://thierry:pass@gestream.io/?app=1"
  */
-export function connect<
-  UserType extends UR = UR,
-  ActivityType extends UR = UR,
-  CollectionType extends UR = UR,
-  ReactionType extends UR = UR,
-  ChildReactionType extends UR = UR,
-  PersonalizationType extends UR = UR,
->(apiKey: string, apiSecret: string | null, appId?: string, options?: ClientOptions) {
+export function connect<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics>(
+  apiKey: string,
+  apiSecret: string | null,
+  appId?: string,
+  options?: ClientOptions,
+) {
   if (typeof process !== 'undefined' && process.env?.STREAM_URL && !apiKey) {
     const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
@@ -46,10 +44,5 @@ export function connect<
     }
   }
 
-  return new StreamClient<UserType, ActivityType, CollectionType, ReactionType, ChildReactionType, PersonalizationType>(
-    apiKey,
-    apiSecret,
-    appId,
-    options,
-  );
+  return new StreamClient<StreamFeedGenerics>(apiKey, apiSecret, appId, options);
 }
