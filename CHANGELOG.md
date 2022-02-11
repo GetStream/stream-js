@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [8.0.0](https://github.com/GetStream/stream-js/releases/tag/v8.0.0) - 2021-02-11
+
+- Refactor generics into a single one [#490](https://github.com/GetStream/stream-js/pull/490)
+- Security package upgrades [#498](https://github.com/GetStream/stream-js/pull/498)
+
 ## [7.4.1](https://github.com/GetStream/stream-js/releases/tag/v7.4.1) - 2021-12-21
 
 ### Fix

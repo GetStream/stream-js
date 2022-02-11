@@ -11,264 +11,6 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2137:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _asyncToGenerator)
-/* harmony export */ });
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-/***/ }),
-
-/***/ 6610:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _classCallCheck)
-/* harmony export */ });
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-/***/ }),
-
-/***/ 5991:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _createClass)
-/* harmony export */ });
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-/***/ }),
-
-/***/ 6156:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _defineProperty)
-/* harmony export */ });
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-/***/ }),
-
-/***/ 7375:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _objectWithoutProperties)
-});
-
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-/***/ }),
-
-/***/ 3391:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _slicedToArray)
-});
-
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
-function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
-
-
-
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
-
-/***/ }),
-
-/***/ 484:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _typeof)
-/* harmony export */ });
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-/***/ }),
-
 /***/ 7757:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -855,7 +597,7 @@ axios.Axios = Axios;
 axios.Cancel = __webpack_require__(5263);
 axios.CancelToken = __webpack_require__(4972);
 axios.isCancel = __webpack_require__(6502);
-axios.VERSION = __webpack_require__(7288).version;
+axios.VERSION = (__webpack_require__(7288).version);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -869,7 +611,7 @@ axios.isAxiosError = __webpack_require__(6268);
 module.exports = axios;
 
 // Allow use of default import syntax in TypeScript
-module.exports.default = axios;
+module.exports["default"] = axios;
 
 
 /***/ }),
@@ -2199,7 +1941,7 @@ module.exports = function spread(callback) {
 "use strict";
 
 
-var VERSION = __webpack_require__(7288).version;
+var VERSION = (__webpack_require__(7288).version);
 
 var validators = {};
 
@@ -2651,17 +2393,17 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 5 modules
-var slicedToArray = __webpack_require__(3391);
+var slicedToArray = __webpack_require__(8152);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js + 1 modules
-var objectWithoutProperties = __webpack_require__(7375);
+var objectWithoutProperties = __webpack_require__(4925);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(2137);
+var asyncToGenerator = __webpack_require__(5861);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(6610);
+var classCallCheck = __webpack_require__(5671);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(5991);
+var createClass = __webpack_require__(3144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-var defineProperty = __webpack_require__(6156);
+var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(7757);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
@@ -2671,9 +2413,9 @@ var axios_default = /*#__PURE__*/__webpack_require__.n(axios);
 // EXTERNAL MODULE: ./node_modules/faye/src/faye_browser.js
 var faye_browser = __webpack_require__(2965);
 // EXTERNAL MODULE: http (ignored)
-var http_ignored_ = __webpack_require__(8618);
+var http_ignored_ = __webpack_require__(8058);
 // EXTERNAL MODULE: https (ignored)
-var https_ignored_ = __webpack_require__(120);
+var https_ignored_ = __webpack_require__(5697);
 ;// CONCATENATED MODULE: ./node_modules/jwt-decode/build/jwt-decode.esm.js
 function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ const jwt_decode_esm = (o);
 //# sourceMappingURL=jwt-decode.esm.js.map
@@ -2685,7 +2427,7 @@ var collections = __webpack_require__(3709);
 // EXTERNAL MODULE: ./src/files.ts
 var files = __webpack_require__(448);
 // EXTERNAL MODULE: ./src/images.ts + 1 modules
-var src_images = __webpack_require__(407);
+var src_images = __webpack_require__(9082);
 // EXTERNAL MODULE: ./src/reaction.ts
 var reaction = __webpack_require__(8824);
 // EXTERNAL MODULE: ./src/user.ts
@@ -2693,7 +2435,7 @@ var src_user = __webpack_require__(7878);
 // EXTERNAL MODULE: ./src/signing.ts
 var signing = __webpack_require__(6685);
 // EXTERNAL MODULE: ./src/errors.ts + 9 modules
-var errors = __webpack_require__(1964);
+var errors = __webpack_require__(2589);
 // EXTERNAL MODULE: ./src/utils.ts
 var utils = __webpack_require__(2637);
 // EXTERNAL MODULE: ./src/batch_operations.ts
@@ -2711,11 +2453,14 @@ var src_feed = __webpack_require__(7248);
 
 
 
+var _excluded = ["method", "token"],
+    _excluded2 = ["ids", "foreignIDTimes"],
+    _excluded3 = ["activities"];
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0,defineProperty/* default */.Z)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,defineProperty/* default */.Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 /// <reference path="../types/modules.d.ts" />
 
@@ -2737,14 +2482,17 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  // TODO: no import since typescript json loader shifts the final output structure
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 
-var pkg = __webpack_require__(306);
+var pkg = __webpack_require__(4147);
 
 /**
  * Client to connect to Stream api
  * @class StreamClient
  */
 var StreamClient = /*#__PURE__*/function () {
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-line no-use-before-define
+  // eslint-disable-line no-use-before-define
+  // eslint-disable-line no-use-before-define
+  // eslint-disable-line no-use-before-define
 
   /**
    * Initialize a client
@@ -2881,7 +2629,7 @@ var StreamClient = /*#__PURE__*/function () {
 
     (0,defineProperty/* default */.Z)(this, "doAxiosRequest", /*#__PURE__*/function () {
       var _ref = (0,asyncToGenerator/* default */.Z)( /*#__PURE__*/regenerator_default().mark(function _callee(method, options) {
-        var response;
+        var response, err;
         return regenerator_default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -2901,18 +2649,19 @@ var StreamClient = /*#__PURE__*/function () {
               case 8:
                 _context.prev = 8;
                 _context.t0 = _context["catch"](1);
+                err = _context.t0;
 
-                if (!_context.t0.response) {
-                  _context.next = 12;
+                if (!err.response) {
+                  _context.next = 13;
                   break;
                 }
 
-                return _context.abrupt("return", _this.handleResponse(_context.t0.response));
-
-              case 12:
-                throw new errors/* SiteError */.z4(_context.t0.message);
+                return _context.abrupt("return", _this.handleResponse(err.response));
 
               case 13:
+                throw new errors/* SiteError */.z4(err.message);
+
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -3241,7 +2990,7 @@ var StreamClient = /*#__PURE__*/function () {
     value: function enrichKwargs(_ref2) {
       var method = _ref2.method,
           token = _ref2.token,
-          kwargs = (0,objectWithoutProperties/* default */.Z)(_ref2, ["method", "token"]);
+          kwargs = (0,objectWithoutProperties/* default */.Z)(_ref2, _excluded);
 
       return _objectSpread({
         method: method,
@@ -3409,7 +3158,7 @@ var StreamClient = /*#__PURE__*/function () {
     /**
      * Updates all supplied activities on the stream
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
-     * @param  {UpdateActivity<ActivityType>[]} activities list of activities to update
+     * @param  {UpdateActivity<StreamFeedGenerics>[]} activities list of activities to update
      * @return {Promise<APIResponse>}
      */
 
@@ -3437,7 +3186,7 @@ var StreamClient = /*#__PURE__*/function () {
     /**
      * Updates one activity on the stream
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
-     * @param  {UpdateActivity<ActivityType>} activity The activity to update
+     * @param  {UpdateActivity<StreamFeedGenerics>} activity The activity to update
      * @return {Promise<APIResponse>}
      */
 
@@ -3460,7 +3209,7 @@ var StreamClient = /*#__PURE__*/function () {
     value: function getActivities(_ref3) {
       var ids = _ref3.ids,
           foreignIDTimes = _ref3.foreignIDTimes,
-          params = (0,objectWithoutProperties/* default */.Z)(_ref3, ["ids", "foreignIDTimes"]);
+          params = (0,objectWithoutProperties/* default */.Z)(_ref3, _excluded2);
 
       var extraParams = {};
 
@@ -3589,8 +3338,8 @@ var StreamClient = /*#__PURE__*/function () {
     /**
      * Update a single activity with partial operations.
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-     * @param {ActivityPartialChanges<ActivityType>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
-     * @return {Promise<Activity<ActivityType>>}
+     * @param {ActivityPartialChanges<StreamFeedGenerics>} data object containing either the ID or the foreign_id and time of the activity and the operations to issue as set:{...} and unset:[...].
+     * @return {Promise<Activity<StreamFeedGenerics>>}
      * @example
      * client.activityPartialUpdate({
      *   id: "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
@@ -3635,7 +3384,7 @@ var StreamClient = /*#__PURE__*/function () {
               case 2:
                 _yield$this$activitie = _context3.sent;
                 activities = _yield$this$activitie.activities;
-                response = (0,objectWithoutProperties/* default */.Z)(_yield$this$activitie, ["activities"]);
+                response = (0,objectWithoutProperties/* default */.Z)(_yield$this$activitie, _excluded3);
                 _activities = (0,slicedToArray/* default */.Z)(activities, 1), activity = _activities[0];
                 return _context3.abrupt("return", _objectSpread(_objectSpread({}, activity), response));
 
@@ -3656,8 +3405,8 @@ var StreamClient = /*#__PURE__*/function () {
     /**
      * Update multiple activities with partial operations.
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
-     * @param {ActivityPartialChanges<ActivityType>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
-     * @return {Promise<{ activities: Activity<ActivityType>[] }>}
+     * @param {ActivityPartialChanges<StreamFeedGenerics>[]} changes array containing the changesets to be applied. Every changeset contains the activity identifier which is either the ID or the pair of of foreign ID and time of the activity. The operations to issue can be set:{...} and unset:[...].
+     * @return {Promise<{ activities: Activity<StreamFeedGenerics>[] }>}
      * @example
      * client.activitiesPartialUpdate([
      *   {
@@ -3768,13 +3517,13 @@ var StreamClient = /*#__PURE__*/function () {
 /* harmony export */   "R": () => (/* binding */ CollectionEntry),
 /* harmony export */   "n": () => (/* binding */ Collections)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(2137);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6156);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5861);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4942);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7757);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1964);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2589);
 
 
 
@@ -3785,17 +3534,17 @@ var CollectionEntry = /*#__PURE__*/function () {
   // eslint-disable-line no-use-before-define
   function CollectionEntry( // eslint-disable-next-line no-use-before-define
   store, collection, id, data) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, CollectionEntry);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, CollectionEntry);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "id", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "id", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "collection", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "collection", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "store", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "store", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "data", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "data", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "full", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "full", void 0);
 
     this.collection = collection;
     this.store = store;
@@ -3803,7 +3552,7 @@ var CollectionEntry = /*#__PURE__*/function () {
     this.data = data;
   }
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)(CollectionEntry, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(CollectionEntry, [{
     key: "ref",
     value: function ref() {
       return "SO:".concat(this.collection, ":").concat(this.id);
@@ -3812,14 +3561,14 @@ var CollectionEntry = /*#__PURE__*/function () {
      * get item from collection and sync data
      * @method get
      * @memberof CollectionEntry.prototype
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
 
   }, {
     key: "get",
     value: function () {
-      var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+      var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
@@ -3853,14 +3602,14 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @link https://getstream.io/activity-feeds/docs/node/collections_introduction/?language=js#adding-collections
      * @method add
      * @memberof CollectionEntry.prototype
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
 
   }, {
     key: "add",
     value: function () {
-      var _add = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+      var _add = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
@@ -3894,7 +3643,7 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @link https://getstream.io/activity-feeds/docs/node/collections_introduction/?language=js#updating-collections
      * @method update
      * @memberof CollectionEntry.prototype
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
@@ -3902,7 +3651,7 @@ var CollectionEntry = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function () {
-      var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+      var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
@@ -3943,7 +3692,7 @@ var CollectionEntry = /*#__PURE__*/function () {
   }, {
     key: "delete",
     value: function () {
-      var _delete2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+      var _delete2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
@@ -3985,13 +3734,13 @@ var Collections = /*#__PURE__*/function () {
    * @param {string} token JWT token
    */
   function Collections(client, token) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, Collections);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, Collections);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "client", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "token", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "token", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(this, "buildURL", function (collection, itemId) {
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "buildURL", function (collection, itemId) {
       var url = "collections/".concat(collection, "/");
       return itemId === undefined ? url : "".concat(url).concat(itemId, "/");
     });
@@ -4000,7 +3749,7 @@ var Collections = /*#__PURE__*/function () {
     this.token = token;
   }
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)(Collections, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(Collections, [{
     key: "entry",
     value: function entry(collection, itemId, itemData) {
       return new CollectionEntry(this, collection, itemId, itemData);
@@ -4012,14 +3761,14 @@ var Collections = /*#__PURE__*/function () {
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
      * @param  {string}   itemId  id for this entry
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
 
   }, {
     key: "get",
     value: function () {
-      var _get2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(collection, itemId) {
+      var _get2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(collection, itemId) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
           while (1) {
@@ -4059,14 +3808,14 @@ var Collections = /*#__PURE__*/function () {
      * @param  {string}   collection  collection name
      * @param  {string | null}    itemId  entry id, if null a random id will be assigned to the item
      * @param  {CollectionType}   itemData  ObjectStore data
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
 
   }, {
     key: "add",
     value: function () {
-      var _add2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(collection, itemId, itemData) {
+      var _add2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(collection, itemId, itemData) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
           while (1) {
@@ -4110,7 +3859,7 @@ var Collections = /*#__PURE__*/function () {
      * @param  {string}   collection  collection name
      * @param  {string}   entryId  Collection object id
      * @param  {CollectionType}   data  ObjectStore data
-     * @return {Promise<CollectionEntry<CollectionType>>}
+     * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
@@ -4118,7 +3867,7 @@ var Collections = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function () {
-      var _update2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(collection, entryId, data) {
+      var _update2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(collection, entryId, data) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
           while (1) {
@@ -4178,8 +3927,8 @@ var Collections = /*#__PURE__*/function () {
      * @method upsert
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
-     * @param {NewCollectionEntry<CollectionType> | NewCollectionEntry<CollectionType>[]} data - A single json object or an array of objects
-     * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
+     * @param {NewCollectionEntry<StreamFeedGenerics> | NewCollectionEntry<StreamFeedGenerics>[]} data - A single json object or an array of objects
+     * @return {Promise<UpsertCollectionAPIResponse<StreamFeedGenerics>>}
      */
 
   }, {
@@ -4194,7 +3943,7 @@ var Collections = /*#__PURE__*/function () {
         url: 'collections/',
         serviceName: 'api',
         body: {
-          data: (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)({}, collection, data)
+          data: (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)({}, collection, data)
         },
         token: this.client.getCollectionsToken()
       });
@@ -4206,7 +3955,7 @@ var Collections = /*#__PURE__*/function () {
      * @memberof Collections.prototype
      * @param  {string}   collection  collection name
      * @param {UpsertManyCollectionRequest} items - A single json object that contains information of many collections
-     * @return {Promise<UpsertCollectionAPIResponse<CollectionType>>}
+     * @return {Promise<UpsertCollectionAPIResponse<StreamFeedGenerics>>}
      */
 
   }, {
@@ -4232,7 +3981,7 @@ var Collections = /*#__PURE__*/function () {
      * @memberof Collections.prototype
      * @param {string} collection  collection name
      * @param {string | string[]} ids - A single object id or an array of ids
-     * @return {Promise<SelectCollectionAPIResponse<CollectionType>>}
+     * @return {Promise<SelectCollectionAPIResponse<StreamFeedGenerics>>}
      */
 
   }, {
@@ -4349,7 +4098,7 @@ function connect(apiKey, apiSecret, appId, options) {
 
 /***/ }),
 
-/***/ 1964:
+/***/ 2589:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4362,8 +4111,10 @@ __webpack_require__.d(__webpack_exports__, {
   "eY": () => (/* binding */ StreamApiError)
 });
 
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
+var createClass = __webpack_require__(3144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(6610);
+var classCallCheck = __webpack_require__(5671);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
@@ -4395,16 +4146,21 @@ function _inherits(subClass, superClass) {
       configurable: true
     }
   });
+  Object.defineProperty(subClass, "prototype", {
+    writable: false
+  });
   if (superClass) _setPrototypeOf(subClass, superClass);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-var esm_typeof = __webpack_require__(484);
+var esm_typeof = __webpack_require__(1002);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
 
 
 function _possibleConstructorReturn(self, call) {
   if (call && ((0,esm_typeof/* default */.Z)(call) === "object" || typeof call === "function")) {
     return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
   }
 
   return _assertThisInitialized(self);
@@ -4491,8 +4247,9 @@ function _wrapNativeSuper(Class) {
   return _wrapNativeSuper(Class);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-var defineProperty = __webpack_require__(6156);
+var defineProperty = __webpack_require__(4942);
 ;// CONCATENATED MODULE: ./src/errors.ts
+
 
 
 
@@ -4541,7 +4298,7 @@ var ErrorAbstract = /*#__PURE__*/function (_Error) {
     return _this;
   }
 
-  return ErrorAbstract;
+  return (0,createClass/* default */.Z)(ErrorAbstract);
 }( /*#__PURE__*/_wrapNativeSuper(Error));
 /**
  * FeedError
@@ -4564,7 +4321,7 @@ var FeedError = /*#__PURE__*/function (_ErrorAbstract) {
     return _super2.apply(this, arguments);
   }
 
-  return FeedError;
+  return (0,createClass/* default */.Z)(FeedError);
 }(ErrorAbstract);
 /**
  * SiteError
@@ -4586,7 +4343,7 @@ var SiteError = /*#__PURE__*/function (_ErrorAbstract2) {
     return _super3.apply(this, arguments);
   }
 
-  return SiteError;
+  return (0,createClass/* default */.Z)(SiteError);
 }(ErrorAbstract);
 /**
  * MissingSchemaError
@@ -4608,7 +4365,7 @@ var MissingSchemaError = /*#__PURE__*/function (_ErrorAbstract3) {
     return _super4.apply(this, arguments);
   }
 
-  return MissingSchemaError;
+  return (0,createClass/* default */.Z)(MissingSchemaError);
 }(ErrorAbstract);
 /**
  * StreamApiError
@@ -4642,7 +4399,7 @@ var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
     return _this2;
   }
 
-  return StreamApiError;
+  return (0,createClass/* default */.Z)(StreamApiError);
 }(ErrorAbstract);
 
 /***/ }),
@@ -4654,19 +4411,19 @@ var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "r": () => (/* binding */ StreamFeed)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6156);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4942);
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7878);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1964);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2589);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(2637);
 
 
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 /// <reference path="../types/modules.d.ts" />
 
@@ -4690,23 +4447,23 @@ var StreamFeed = /*#__PURE__*/function () {
    * @param {string} [token] - The authentication token
    */
   function StreamFeed(client, feedSlug, userId, token) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)(this, StreamFeed);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(this, StreamFeed);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "client", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "token", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "token", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "id", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "id", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "slug", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "slug", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "userId", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "userId", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "feedUrl", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "feedUrl", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "feedTogether", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "feedTogether", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, "notificationChannel", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "notificationChannel", void 0);
 
     if (!feedSlug || !userId) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Please provide a feed slug and user id, ie client.feed("user", "1")');
@@ -4716,8 +4473,8 @@ var StreamFeed = /*#__PURE__*/function () {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
 
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateFeedSlug */ .Z.validateFeedSlug(feedSlug);
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateUserId */ .Z.validateUserId(userId); // raise an error if there is no token
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(feedSlug);
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(userId); // raise an error if there is no token
 
     if (!token) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Missing token, in client side mode please provide a feed secret');
@@ -4738,15 +4495,15 @@ var StreamFeed = /*#__PURE__*/function () {
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#adding-activities-basic
    * @method addActivity
    * @memberof StreamFeed.prototype
-   * @param {NewActivity<ActivityType>} activity - The activity to add
-   * @return {Promise<Activity<ActivityType>>}
+   * @param {NewActivity<StreamFeedGenerics>} activity - The activity to add
+   * @return {Promise<Activity<StreamFeedGenerics>>}
    */
 
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__/* .default */ .Z)(StreamFeed, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)(StreamFeed, [{
     key: "addActivity",
     value: function addActivity(activity) {
-      activity = _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.replaceStreamObjects */ .Z.replaceStreamObjects(activity);
+      activity = _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].replaceStreamObjects */ .Z.replaceStreamObjects(activity);
 
       if (!activity.actor && this.client.currentUser) {
         activity.actor = this.client.currentUser.ref();
@@ -4786,8 +4543,8 @@ var StreamFeed = /*#__PURE__*/function () {
      * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-add-activities
      * @method addActivities
      * @memberof StreamFeed.prototype
-     * @param  {NewActivity<ActivityType>[]}   activities Array of activities to add
-     * @return {Promise<Activity<ActivityType>[]>}
+     * @param  {NewActivity<StreamFeedGenerics>[]}   activities Array of activities to add
+     * @return {Promise<Activity<StreamFeedGenerics>[]>}
      */
 
   }, {
@@ -4796,7 +4553,7 @@ var StreamFeed = /*#__PURE__*/function () {
       return this.client.post({
         url: "feed/".concat(this.feedUrl, "/"),
         body: {
-          activities: _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.replaceStreamObjects */ .Z.replaceStreamObjects(activities)
+          activities: _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].replaceStreamObjects */ .Z.replaceStreamObjects(activities)
         },
         token: this.token
       });
@@ -4825,8 +4582,8 @@ var StreamFeed = /*#__PURE__*/function () {
         targetUserId = targetUserId.id;
       }
 
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateUserId */ .Z.validateUserId(targetUserId);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(targetUserId);
       var body = {
         target: "".concat(targetSlug, ":").concat(targetUserId)
       };
@@ -4857,8 +4614,8 @@ var StreamFeed = /*#__PURE__*/function () {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var qs = {};
       if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* .default.validateUserId */ .Z.validateUserId(targetUserId);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(targetUserId);
       var targetFeedId = "".concat(targetSlug, ":").concat(targetUserId);
       return this.client.delete({
         url: "feed/".concat(this.feedUrl, "/following/").concat(targetFeedId, "/"),
@@ -5019,7 +4776,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
      * @method subscribe
      * @memberof StreamFeed.prototype
-     * @param  {function} Faye.Callback<RealTimeMessage<UserType, ActivityType, CollectionType, ReactionType>> Callback to call on completion
+     * @param  {function} Faye.Callback<RealTimeMessage<StreamFeedGenerics>> Callback to call on completion
      * @return {Promise<Faye.Subscription>}
      * @example
      * feed.subscribe(callback).then(function(){
@@ -5120,19 +4877,19 @@ var StreamFeed = /*#__PURE__*/function () {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "h": () => (/* binding */ StreamFileStore)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6156);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4942);
 
 
 
 var StreamFileStore = /*#__PURE__*/function () {
   function StreamFileStore(client, token) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, StreamFileStore);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, StreamFileStore);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "token", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "token", void 0);
 
     this.client = client;
     this.token = token;
@@ -5150,7 +4907,7 @@ var StreamFileStore = /*#__PURE__*/function () {
    */
 
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(StreamFileStore, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(StreamFileStore, [{
     key: "upload",
     value: function upload(uri, name, contentType, onUploadProgress) {
       return this.client.upload('files/', uri, name, contentType, onUploadProgress);
@@ -5179,7 +4936,7 @@ var StreamFileStore = /*#__PURE__*/function () {
 
 /***/ }),
 
-/***/ 407:
+/***/ 9082:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5208,11 +4965,11 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(6610);
+var classCallCheck = __webpack_require__(5671);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(5991);
+var createClass = __webpack_require__(3144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-var defineProperty = __webpack_require__(6156);
+var defineProperty = __webpack_require__(4942);
 ;// CONCATENATED MODULE: ./src/images.ts
 
 
@@ -5328,9 +5085,9 @@ var StreamImageStore = /*#__PURE__*/function () {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "S": () => (/* binding */ Personalization)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6156);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4942);
 
 
 
@@ -5349,9 +5106,9 @@ var Personalization = /*#__PURE__*/function () {
    * @param {StreamClient} client - The stream client
    */
   function Personalization(client) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(this, Personalization);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, Personalization);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
 
     this.client = client;
   }
@@ -5362,12 +5119,12 @@ var Personalization = /*#__PURE__*/function () {
    * @memberof Personalization.prototype
    * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
    * @param {object} options  Additional options
-   * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Personalized feed
+   * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Personalized feed
    * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
    */
 
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(Personalization, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(Personalization, [{
     key: "get",
     value: function get(resource) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -5386,7 +5143,7 @@ var Personalization = /*#__PURE__*/function () {
      * @param {string} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options - Additional options
      * @param {object} data - Data to send in the payload
-     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was posted if successful, or an error.
+     * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
 
@@ -5410,7 +5167,7 @@ var Personalization = /*#__PURE__*/function () {
      * @memberof Personalization.prototype
      * @param {object} resource - personalized resource endpoint i.e "follow_recommendations"
      * @param {object} options - Additional options
-     * @return {Promise<PersonalizationAPIResponse<PersonalizationType>>} Promise object. Data that was deleted if successful, or an error.
+     * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
 
@@ -5439,15 +5196,16 @@ var Personalization = /*#__PURE__*/function () {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "R": () => (/* binding */ StreamReaction)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7375);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6156);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1964);
+/* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4925);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4942);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2589);
 
 
 
 
+var _excluded = ["user_id", "activity_id", "reaction_id"];
 
 var StreamReaction = /*#__PURE__*/function () {
   /**
@@ -5460,13 +5218,13 @@ var StreamReaction = /*#__PURE__*/function () {
    * @example new StreamReaction(client, "eyJhbGciOiJIUzI1...")
    */
   function StreamReaction(client, token) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, StreamReaction);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, StreamReaction);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "client", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, "token", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "token", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, "buildURL", function () {
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "buildURL", function () {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
@@ -5474,7 +5232,7 @@ var StreamReaction = /*#__PURE__*/function () {
       return "".concat(['reaction'].concat(args).join('/'), "/");
     });
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, "_convertTargetFeeds", function () {
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "_convertTargetFeeds", function () {
       var targetFeeds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       return targetFeeds.map(function (elem) {
         return typeof elem === 'string' ? elem : elem.id;
@@ -5485,7 +5243,7 @@ var StreamReaction = /*#__PURE__*/function () {
     this.token = token;
   }
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(StreamReaction, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(StreamReaction, [{
     key: "add",
     value:
     /**
@@ -5582,7 +5340,7 @@ var StreamReaction = /*#__PURE__*/function () {
      * @method get
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
-     * @return {Promise<EnrichedReactionAPIResponse<ReactionType, ChildReactionType, UserType>>}
+     * @return {Promise<EnrichedReactionAPIResponse<StreamFeedGenerics>>}
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
 
@@ -5605,7 +5363,7 @@ var StreamReaction = /*#__PURE__*/function () {
      * @method filter
      * @memberof StreamReaction.prototype
      * @param  {ReactionFilterConditions} conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
-     * @return {Promise<ReactionFilterAPIResponse<ReactionType, ChildReactionType, ActivityType, UserType>>}
+     * @return {Promise<ReactionFilterAPIResponse<StreamFeedGenerics>>}
      * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
      * @example reactions.filter({user_id: "john", kinds:"like"})
      */
@@ -5616,7 +5374,7 @@ var StreamReaction = /*#__PURE__*/function () {
       var userId = conditions.user_id,
           activityId = conditions.activity_id,
           reactionId = conditions.reaction_id,
-          qs = (0,_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)(conditions, ["user_id", "activity_id", "reaction_id"]);
+          qs = (0,_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(conditions, _excluded);
 
       if (!qs.limit) {
         qs.limit = 10;
@@ -5706,14 +5464,14 @@ var StreamReaction = /*#__PURE__*/function () {
 /* harmony export */   "v": () => (/* binding */ JWTScopeToken),
 /* harmony export */   "c": () => (/* binding */ JWTUserSessionToken)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6156);
-/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1420);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4942);
+/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1726);
 /* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__);
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* .default */ .Z)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
  // for a claim in jwt
 
@@ -5800,10 +5558,10 @@ function JWTUserSessionToken(apiSecret, userId) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "h": () => (/* binding */ StreamUser)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2137);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6610);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5991);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6156);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5861);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3144);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4942);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7757);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
@@ -5812,9 +5570,9 @@ function JWTUserSessionToken(apiSecret, userId) {
 
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 var StreamUser = /*#__PURE__*/function () {
   /**
@@ -5828,19 +5586,19 @@ var StreamUser = /*#__PURE__*/function () {
    * @example new StreamUser(client, "123", "eyJhbGciOiJIUzI1...")
    */
   function StreamUser(client, userId, userAuthToken) {
-    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(this, StreamUser);
+    (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, StreamUser);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "client", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "token", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "token", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "id", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "id", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "data", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "data", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "full", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "full", void 0);
 
-    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* .default */ .Z)(this, "url", void 0);
+    (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "url", void 0);
 
     this.client = client;
     this.id = userId;
@@ -5855,7 +5613,7 @@ var StreamUser = /*#__PURE__*/function () {
    */
 
 
-  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(StreamUser, [{
+  (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(StreamUser, [{
     key: "ref",
     value: function ref() {
       return "SU:".concat(this.id);
@@ -5884,7 +5642,7 @@ var StreamUser = /*#__PURE__*/function () {
   }, {
     key: "get",
     value: function () {
-      var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(options) {
+      var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(options) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
@@ -5929,7 +5687,7 @@ var StreamUser = /*#__PURE__*/function () {
   }, {
     key: "create",
     value: function () {
-      var _create = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(data, options) {
+      var _create = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(data, options) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
@@ -5977,7 +5735,7 @@ var StreamUser = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function () {
-      var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* .default */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(data) {
+      var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(data) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
           while (1) {
@@ -6054,11 +5812,11 @@ var StreamUser = /*#__PURE__*/function () {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3391);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(484);
+/* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8152);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1002);
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6230);
 /* harmony import */ var form_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(form_data__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1964);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2589);
 
 
 
@@ -6096,7 +5854,7 @@ function rfc3986(str) {
 }
 
 function isReadableStream(obj) {
-  return obj !== null && (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__/* .default */ .Z)(obj) === 'object' && (obj.readable || typeof obj._read === 'function');
+  return obj !== null && (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(obj) === 'object' && (obj.readable || typeof obj._read === 'function');
 }
 
 function isBuffer(obj) {
@@ -6120,7 +5878,7 @@ function validateFeedId(feedId) {
     throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .FeedError */ .IY("Invalid feedId, expected something like user:1 got ".concat(feedId));
   }
 
-  var _parts = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__/* .default */ .Z)(parts, 2),
+  var _parts = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(parts, 2),
       feedSlug = _parts[0],
       userId = _parts[1];
 
@@ -7667,7 +7425,7 @@ module.exports = JSONP;
 
 
 var Class    = __webpack_require__(8702),
-    Cookie   = __webpack_require__(3754).Cookie,
+    Cookie   = (__webpack_require__(3754).Cookie),
     Promise  = __webpack_require__(4857),
     array    = __webpack_require__(8722),
     assign   = __webpack_require__(7088),
@@ -9075,9 +8833,9 @@ var runtime = (function (exports) {
   // This is a polyfill for %IteratorPrototype% for environments that
   // don't natively support it.
   var IteratorPrototype = {};
-  IteratorPrototype[iteratorSymbol] = function () {
+  define(IteratorPrototype, iteratorSymbol, function () {
     return this;
-  };
+  });
 
   var getProto = Object.getPrototypeOf;
   var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
@@ -9091,8 +8849,9 @@ var runtime = (function (exports) {
 
   var Gp = GeneratorFunctionPrototype.prototype =
     Generator.prototype = Object.create(IteratorPrototype);
-  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
-  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunction.prototype = GeneratorFunctionPrototype;
+  define(Gp, "constructor", GeneratorFunctionPrototype);
+  define(GeneratorFunctionPrototype, "constructor", GeneratorFunction);
   GeneratorFunction.displayName = define(
     GeneratorFunctionPrototype,
     toStringTagSymbol,
@@ -9206,9 +8965,9 @@ var runtime = (function (exports) {
   }
 
   defineIteratorMethods(AsyncIterator.prototype);
-  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+  define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
     return this;
-  };
+  });
   exports.AsyncIterator = AsyncIterator;
 
   // Note that simple async functions are implemented on top of
@@ -9401,13 +9160,13 @@ var runtime = (function (exports) {
   // iterator prototype chain incorrectly implement this, causing the Generator
   // object to not be returned from this call. This ensures that doesn't happen.
   // See https://github.com/facebook/regenerator/issues/274 for more details.
-  Gp[iteratorSymbol] = function() {
+  define(Gp, iteratorSymbol, function() {
     return this;
-  };
+  });
 
-  Gp.toString = function() {
+  define(Gp, "toString", function() {
     return "[object Generator]";
-  };
+  });
 
   function pushTryEntry(locs) {
     var entry = { tryLoc: locs[0] };
@@ -9726,45 +9485,308 @@ try {
 } catch (accidentalStrictMode) {
   // This module should not be running in strict mode, so the above
   // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, we can escape
+  // in case runtime.js accidentally runs in strict mode, in modern engines
+  // we can explicitly access globalThis. In older engines we can escape
   // strict mode using a global Function call. This could conceivably fail
   // if a Content Security Policy forbids using Function, but in that case
   // the proper solution is to fix the accidental strict mode problem. If
   // you've misconfigured your bundler to force strict mode and applied a
   // CSP to forbid Function, and you're not willing to fix either of those
   // problems, please detail your unique predicament in a GitHub issue.
-  Function("r", "regeneratorRuntime = r")(runtime);
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
 }
 
 
 /***/ }),
 
-/***/ 306:
+/***/ 8058:
+/***/ (() => {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 5697:
+/***/ (() => {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 1726:
+/***/ (() => {
+
+/* (ignored) */
+
+/***/ }),
+
+/***/ 5861:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* binding */ _asyncToGenerator)
+/* harmony export */ });
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
+/***/ }),
+
+/***/ 5671:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* binding */ _classCallCheck)
+/* harmony export */ });
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+/***/ }),
+
+/***/ 3144:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* binding */ _createClass)
+/* harmony export */ });
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
+  return Constructor;
+}
+
+/***/ }),
+
+/***/ 4942:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* binding */ _defineProperty)
+/* harmony export */ });
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+/***/ }),
+
+/***/ 4925:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "Z": () => (/* binding */ _objectWithoutProperties)
+});
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+/***/ }),
+
+/***/ 8152:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "Z": () => (/* binding */ _slicedToArray)
+});
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
+function _iterableToArrayLimit(arr, i) {
+  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+  if (_i == null) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+
+  var _s, _e;
+
+  try {
+    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
+
+
+
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
+
+/***/ }),
+
+/***/ 1002:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* binding */ _typeof)
+/* harmony export */ });
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, _typeof(obj);
+}
+
+/***/ }),
+
+/***/ 4147:
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"7.4.1","scripts":{"transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.13.10","@babel/core":"^7.13.10","@babel/node":"^7.13.10","@babel/plugin-proposal-class-properties":"^7.13.0","@babel/plugin-proposal-object-rest-spread":"^7.13.8","@babel/plugin-transform-object-assign":"^7.12.13","@babel/plugin-transform-runtime":"^7.13.10","@babel/preset-env":"^7.13.10","@babel/preset-typescript":"^7.13.0","@babel/register":"^7.13.8","@typescript-eslint/eslint-plugin":"^4.17.0","@typescript-eslint/parser":"^4.17.0","babel-eslint":"^10.1.0","babel-loader":"^8.2.2","chai":"^4.3.3","dotenv":"^8.2.0","eslint":"^7.21.0","eslint-config-airbnb-base":"^14.2.1","eslint-config-prettier":"^8.1.0","eslint-plugin-chai-friendly":"^0.6.0","eslint-plugin-import":"^2.22.1","eslint-plugin-prettier":"^3.3.1","eslint-plugin-sonarjs":"^0.7.0","eslint-plugin-typescript-sort-keys":"^1.5.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.1.2","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.5","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.2.1","request":"^2.88.2","testdouble":"^3.16.1","typescript":"^4.2.3","webpack":"^5.24.4","webpack-cli":"^4.5.0"},"dependencies":{"@babel/runtime":"^7.13.10","@types/jsonwebtoken":"^8.5.0","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.6","axios":"^0.22.0","faye":"^1.4.0","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.9.6"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
-
-/***/ }),
-
-/***/ 8618:
-/***/ (() => {
-
-/* (ignored) */
-
-/***/ }),
-
-/***/ 120:
-/***/ (() => {
-
-/* (ignored) */
-
-/***/ }),
-
-/***/ 1420:
-/***/ (() => {
-
-/* (ignored) */
+module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"8.0.0","scripts":{"transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.16.7","@babel/core":"^7.16.7","@babel/eslint-parser":"^7.16.5","@babel/node":"^7.16.7","@babel/plugin-proposal-class-properties":"^7.16.7","@babel/plugin-proposal-object-rest-spread":"^7.16.7","@babel/plugin-transform-object-assign":"^7.16.7","@babel/plugin-transform-runtime":"^7.16.7","@babel/preset-env":"^7.16.7","@babel/preset-typescript":"^7.16.7","@babel/register":"^7.16.7","@typescript-eslint/eslint-plugin":"^5.8.1","@typescript-eslint/parser":"^5.8.1","babel-loader":"^8.2.3","chai":"^4.3.4","dotenv":"^10.0.0","eslint":"^8.6.0","eslint-config-airbnb-base":"^15.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-chai-friendly":"^0.7.2","eslint-plugin-import":"^2.25.4","eslint-plugin-prettier":"^4.0.0","eslint-plugin-sonarjs":"^0.11.0","eslint-plugin-typescript-sort-keys":"^2.1.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.3.9","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.6","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.5.1","request":"^2.88.2","testdouble":"^3.16.4","typescript":"^4.5.4","webpack":"^5.65.0","webpack-cli":"^4.9.1"},"dependencies":{"@babel/runtime":"^7.16.7","@types/jsonwebtoken":"^8.5.6","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.7","axios":"^0.22.0","faye":"^1.4.0","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.10.2"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
 
 /***/ })
 
@@ -9776,8 +9798,9 @@ module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -9875,7 +9898,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _collections__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3709);
 /* harmony import */ var _feed__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7248);
 /* harmony import */ var _files__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(448);
-/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(407);
+/* harmony import */ var _images__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9082);
 /* harmony import */ var _personalization__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(8039);
 /* harmony import */ var _reaction__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8824);
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7878);
@@ -9884,7 +9907,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
 /* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _batch_operations__WEBPACK_IMPORTED_MODULE_9__) if(["default","connect","StreamClient","CollectionEntry","Collections","StreamFeed","StreamFileStore","StreamImageStore","Personalization","StreamReaction","StreamUser"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _batch_operations__WEBPACK_IMPORTED_MODULE_9__[__WEBPACK_IMPORT_KEY__]
 /* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
-/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1964);
+/* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(2589);
 /* harmony import */ var _signing__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(6685);
 /**
  * @module stream
