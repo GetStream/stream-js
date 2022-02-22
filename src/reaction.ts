@@ -222,11 +222,12 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @method filter
    * @memberof StreamReaction.prototype
    * @param  {ReactionFilterConditions} conditions Reaction Id {activity_id|user_id|reaction_id:string, kind:string, limit:integer}
+   * @param  {string} [token] - The token
    * @return {Promise<ReactionFilterAPIResponse<StreamFeedGenerics>>}
    * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
    * @example reactions.filter({user_id: "john", kinds:"like"})
    */
-  filter(conditions: ReactionFilterConditions) {
+  filter(conditions: ReactionFilterConditions, token?: string) {
     const { user_id: userId, activity_id: activityId, reaction_id: reactionId, ...qs } = conditions;
     if (!qs.limit) {
       qs.limit = 10;
@@ -246,7 +247,7 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
     return this.client.get<ReactionFilterAPIResponse<StreamFeedGenerics>>({
       url,
       qs: qs as { [key: string]: unknown },
-      token: this.token,
+      token: (token === undefined) ? this.token : token,
     });
   }
 
@@ -291,13 +292,14 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @method delete
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
+   * @param  {string} [token] - The token
    * @return {Promise<APIResponse>}
    * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
    */
-  delete(id: string) {
+  delete(id: string, token?: string) {
     return this.client.delete({
       url: this.buildURL(id),
-      token: this.token,
+      token: (token === undefined) ? this.token : token,
     });
   }
 }
