@@ -259,6 +259,7 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @param  {string}   id Reaction Id
    * @param  {ReactionType | ChildReactionType}   data  Data associated to reaction or childReaction
    * @param  {ReactionUpdateOptions} [options]
+   * @param  {string} [token] - The token
    * @param  {string[]} [options.targetFeeds] Optional feeds to post the activity to. If you sent this before and don't set it here it will be removed.
    * @param  {object} [options.targetFeedsExtraData] extra data related to target feeds
    * @return {Promise<ReactionAPIResponse<ReactionType | ChildReactionType>>}
@@ -269,6 +270,7 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
     id: string,
     data?: StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType'],
     { targetFeeds = [], targetFeedsExtraData }: ReactionUpdateOptions = {},
+    token?: string,
   ) {
     const body: ReactionBody<StreamFeedGenerics['reactionType'] | StreamFeedGenerics['childReactionType']> = {
       data,
@@ -282,7 +284,7 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
     >({
       url: this.buildURL(id),
       body,
-      token: this.token,
+      token: (token === undefined) ? this.token : token,
     });
   }
 
