@@ -6,3 +6,4 @@ test/integration/utils/kjur.js
 /.git/
 /docs/
 **/*.sh
+get_changelog_diff.js

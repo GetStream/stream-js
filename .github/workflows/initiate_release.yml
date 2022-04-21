@@ -1,0 +1,68 @@
+name: Create release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The new version number with 'v' prefix. Example: v1.40.1"
+        required: true
+
+jobs:
+  init_release:
+    name: 🚀 Create release PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # gives the changelog generator access to all previous commits
+
+      - name: Get current tag
+        id: previoustag
+        uses: WyriHaximus/github-action-get-previous-tag@v1
+
+      - name: Ensure version number higher than current
+        uses: actions/github-script@v5
+        env:
+          PREVIOUS_TAG: ${{ steps.previoustag.outputs.tag }}
+          DESTINATION_TAG: ${{ github.event.inputs.version }}
+        with:
+          script: |
+            const { PREVIOUS_TAG, DESTINATION_TAG } = process.env;
+            const result = DESTINATION_TAG.localeCompare(PREVIOUS_TAG, undefined, { numeric: true, sensitivity: 'base' })
+
+            if (result != 1) {
+              throw new Error('The new version number must be greater than the previous one.')
+            }
+
+      - name: Restore dependencies
+        uses: ./.github/actions/setup-node
+
+      - name: Update CHANGELOG.md, package.json and push release branch
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          npm run changelog
+          git config --global user.name 'github-actions' 
+          git config --global user.email 'release@getstream.io'
+          git checkout -q -b "release-$VERSION"
+          git commit -am "chore(release): $VERSION"
+          git push -q -u origin "release-$VERSION"
+
+      - name: Get changelog diff
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const get_change_log_diff = require('./scripts/get_changelog_diff.js')
+            core.exportVariable('CHANGELOG', get_change_log_diff())
+
+      - name: Open pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            -t "chore(release): ${{ github.event.inputs.version }}" \
+            -b "# :rocket: ${{ github.event.inputs.version }}
+            Make sure to use squash & merge when merging!
+            Once this is merged, another job will kick off automatically and publish the package.
+            # :memo: Changelog
+            ${{ env.CHANGELOG }}"
