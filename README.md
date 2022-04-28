@@ -1,8 +1,23 @@
-# Stream-JS
+# Official JavaScript SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
-[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions)
-
+[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions) 
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
+
+<p align="center">
+    <img src="./assets/logo.svg" width="50%" height="50%">
+</p>
+<p align="center">
+    Official JavaScript API client for Stream Feeds, a web service for building scalable newsfeeds and activity streams.
+    <br />
+    <a href="https://getstream.io/activity-feeds/docs/?language=javascript"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/GetStream/stream-js/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/GetStream/stream-js/issues">Request Feature</a>
+</p>
+
+## 📝 About Stream
 
 [stream-js](https://github.com/GetStream/stream-js) is the official JavaScript client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
@@ -10,9 +25,9 @@ Note that there is also a [higher level Node integration](https://github.com/get
 
 You can sign up for a Stream account at https://getstream.io/get_started.
 
-### Installation
+## ⚙️ Installation
 
-#### Install from NPM/YARN
+### Install from NPM/YARN
 
 ```bash
 npm install getstream
@@ -36,14 +51,14 @@ yarn add getstream
 <script src="https://cdn.jsdelivr.net/npm/getstream@5.0.0/dist/js_min/getstream.js"></script>
 ```
 
-#### Install by downloading the JS file
+### Install by downloading the JS file
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js/getstream.js) /
 [Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js_min/getstream.js)
 
 > :warning: Beware about the version you're pulling. It's the latest by default which can break your app anytime.
 
-### Full documentation
+## 📚 Full documentation
 
 Documentation for this JavaScript client are available at the [Stream website](https://getstream.io/docs/?language=js).
 
@@ -51,7 +66,7 @@ Documentation for this JavaScript client are available at the [Stream website](h
 
 This package can be integrated into React Native applications. Remember to not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.
 
-### Usage
+## ✨ Getting started
 
 ### API client setup Node
 
@@ -359,15 +374,15 @@ subscription.cancel();
 
 Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
-#### Node version requirements & Browser support
+## ⚠️ Node version requirements & Browser support
 
 This API Client project requires Node.js v10 at a minimum.
 
 The project is supported in line with the Node.js Foundation Release Working Group.
 
-See the [github action configuration](.github/workflows/ci.yml) for details of how it is built, tested and packaged.
+See the [github action configuration](.github/workflows/) for details of how it is built, tested and packaged.
 
-## Contributing
+## ♻️ Contributing
 
 See extensive at [test documentation](test/README.md) for your changes.
 
@@ -377,7 +392,9 @@ You can find generic API documentation enriched by code snippets from this packa
 
 Project is licensed under the [BSD 3-Clause](LICENSE).
 
-## We are hiring!
+We welcome code changes that improve this library or fix a problem, please make sure to follow all best practices and add tests if applicable before submitting a Pull Request on Github. We are very happy to merge your code in the official repository. Make sure to sign our [Contributor License Agreement (CLA)](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) first. See our [license file](./LICENSE) for more details.
+
+## 🧑‍💻 We are hiring!
 
 We've recently closed a [$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
