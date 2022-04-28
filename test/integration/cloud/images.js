@@ -73,12 +73,12 @@ describe('Images', () => {
     });
   });
 
-  describe('When alice creates a crop bottom,right 75x50', () => {
+  describe('When alice creates a crop bottom 75x50', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.images.process(imageUrl, {
         w: 75,
         h: 50,
-        crop: 'bottom,right',
+        crop: 'bottom',
         resize: 'crop',
       });
     });
