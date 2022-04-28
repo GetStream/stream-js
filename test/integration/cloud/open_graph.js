@@ -3,13 +3,13 @@ import { CloudContext } from './utils';
 describe('OpenGraph story', () => {
   const ctx = new CloudContext();
 
-  describe('When alice requests opengraph info for our blog', () => {
+  describe('When alice requests opengraph info for google', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.og('https://getstream.io/blog/try-out-the-stream-api-with-postman');
+      ctx.response = await ctx.alice.og('https://google.com');
     });
 
     ctx.responseShould('have the expected content', () => {
-      ctx.shouldHaveNonEmptyKeys(ctx.response, 'type', 'title', 'description', 'url', 'favicon', 'images');
+      ctx.shouldHaveNonEmptyKeys(ctx.response, 'title', 'description', 'original_url', 'favicon', 'images');
       ctx.shouldHaveNonEmptyKeys(ctx.response.images[0], 'image');
     });
   });
