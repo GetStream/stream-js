@@ -42,7 +42,7 @@ jobs:
           VERSION: ${{ github.event.inputs.version }}
         run: |
           npm run changelog
-          git config --global user.name 'github-actions' 
+          git config --global user.name 'github-actions'
           git config --global user.email 'release@getstream.io'
           git checkout -q -b "release-$VERSION"
           git commit -am "chore(release): $VERSION"

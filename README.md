@@ -1,6 +1,6 @@
 # Official JavaScript SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
-[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions) 
+[![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions)
 [![NPM](https://nodei.co/npm/getstream.png)](https://nodei.co/npm/getstream/)
 
 <p align="center">
@@ -48,7 +48,7 @@ yarn add getstream
 > :warning: This will pull the latest which can be breaking for your application. Always pin a specific version as follows:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/getstream@5.0.0/dist/js_min/getstream.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/getstream@8.0.0/dist/js_min/getstream.js"></script>
 ```
 
 ### Install by downloading the JS file
