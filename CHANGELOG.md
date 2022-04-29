@@ -1,9 +1,18 @@
-# CHANGELOG
+# Changelog
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
----
+### [8.0.1](https://github.com/GetStream/stream-js/compare/v8.0.0...v8.0.1) (2022-04-29)
+
+
+### Features
+
+* general maintenance of ci/cd ([#504](https://github.com/GetStream/stream-js/issues/504)) ([f35b66d](https://github.com/GetStream/stream-js/commit/f35b66da64396f0cfaecafe2d10ebd212ad962c3))
+
+
+### Bug Fixes
+
+* release scripts ([#508](https://github.com/GetStream/stream-js/issues/508)) ([a040f28](https://github.com/GetStream/stream-js/commit/a040f282d77345a40fa34abbd5d0be258d060767))
 
 ## [8.0.0](https://github.com/GetStream/stream-js/releases/tag/v8.0.0) - 2021-02-11
 
