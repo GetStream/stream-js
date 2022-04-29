@@ -63,6 +63,8 @@ export type ReactionFilterAPIResponse<StreamFeedGenerics extends DefaultGenerics
 
 export type ReactionFilterConditions = {
   activity_id?: string;
+  children_user_id?: string;
+  filter_user_id?: string;
   id_gt?: string;
   id_gte?: string;
   id_lt?: string;
