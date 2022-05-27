@@ -25,6 +25,8 @@ Note that there is also a [higher level Node integration](https://github.com/get
 
 You can sign up for a Stream account at https://getstream.io/get_started.
 
+> 💡 Note: this is a library for the **Feeds** product. The Chat SDKs can be found [here](https://getstream.io/chat/docs/).
+
 ## ⚙️ Installation
 
 ### Install from NPM/YARN
