@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.0.2](https://github.com/GetStream/stream-js/compare/v8.0.1...v8.0.2) (2022-08-01)
+
+
+### Bug Fixes
+
+* handle api secret and its warning in browser ([#517](https://github.com/GetStream/stream-js/issues/517)) ([e973fe5](https://github.com/GetStream/stream-js/commit/e973fe5d317d8f0b199356728bef7ab97447eac6))
+
 ### [8.0.1](https://github.com/GetStream/stream-js/compare/v8.0.0...v8.0.1) (2022-04-29)
 
 
