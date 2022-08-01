@@ -248,8 +248,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
 
     this.handlers = {};
-    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : typeof window !== 'undefined';
-    this.node = !this.browser;
+    this.node = typeof window === 'undefined'; // use for real browser vs node behavior
+    // use for browser warnings
+    this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : !this.node;
 
     if (this.node) {
       const keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
@@ -260,7 +261,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     }
 
     this.request = axios.default.create({
-      timeout: this.options.timeout || 10 * 1000, // 10 seconds
+      timeout: this.options.timeout || 10000,
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
     });
