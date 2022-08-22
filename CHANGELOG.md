@@ -2,24 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [8.0.2](https://github.com/GetStream/stream-js/compare/v8.0.1...v8.0.2) (2022-08-01)
-
+### [8.0.3](https://github.com/GetStream/stream-js/compare/v8.0.2...v8.0.3) (2022-08-22)
 
 ### Bug Fixes
 
-* handle api secret and its warning in browser ([#517](https://github.com/GetStream/stream-js/issues/517)) ([e973fe5](https://github.com/GetStream/stream-js/commit/e973fe5d317d8f0b199356728bef7ab97447eac6))
+- upgrade follow-redirects for security ([#520](https://github.com/GetStream/stream-js/pull/520)) ([071483e](https://github.com/GetStream/stream-js/commit/071483ecd7c87c0e6b4a2bd78a8e8be5976f8fc0))
+
+### [8.0.2](https://github.com/GetStream/stream-js/compare/v8.0.1...v8.0.2) (2022-08-01)
+
+### Bug Fixes
+
+- handle api secret and its warning in browser ([#517](https://github.com/GetStream/stream-js/issues/517)) ([e973fe5](https://github.com/GetStream/stream-js/commit/e973fe5d317d8f0b199356728bef7ab97447eac6))
 
 ### [8.0.1](https://github.com/GetStream/stream-js/compare/v8.0.0...v8.0.1) (2022-04-29)
 
-
 ### Features
 
-* general maintenance of ci/cd ([#504](https://github.com/GetStream/stream-js/issues/504)) ([f35b66d](https://github.com/GetStream/stream-js/commit/f35b66da64396f0cfaecafe2d10ebd212ad962c3))
-
+- general maintenance of ci/cd ([#504](https://github.com/GetStream/stream-js/issues/504)) ([f35b66d](https://github.com/GetStream/stream-js/commit/f35b66da64396f0cfaecafe2d10ebd212ad962c3))
 
 ### Bug Fixes
 
-* release scripts ([#508](https://github.com/GetStream/stream-js/issues/508)) ([a040f28](https://github.com/GetStream/stream-js/commit/a040f282d77345a40fa34abbd5d0be258d060767))
+- release scripts ([#508](https://github.com/GetStream/stream-js/issues/508)) ([a040f28](https://github.com/GetStream/stream-js/commit/a040f282d77345a40fa34abbd5d0be258d060767))
 
 ## [8.0.0](https://github.com/GetStream/stream-js/releases/tag/v8.0.0) - 2021-02-11
 
