@@ -18,7 +18,7 @@
     "transpile": "PACKAGE_VERSION=$(node -pe 'require(`./package.json`).version') babel src --out-dir lib --extensions '.ts'",
     "transpile-es": "PACKAGE_VERSION=$(node -pe 'require(`./package.json`).version') babel src --no-babelrc --config-file ./.babelrc.es --out-dir lib-es/ --extensions '.ts' --out-file-extension .mjs",
     "types": "tsc --emitDeclarationOnly",
-    "build": "rm -rf lib && yarn run transpile && yarn run transpile-es && yarn run types",
+    "build": "rm -rf lib && rm -rf lib-es && yarn run transpile && yarn run transpile-es && yarn run types",
     "dist": "webpack && webpack --env minify",
     "eslint": "eslint '**/*.{js,ts}' --max-warnings 0",
     "prettier": "prettier --list-different '**/*.{js,ts}'",
