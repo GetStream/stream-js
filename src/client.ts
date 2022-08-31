@@ -28,10 +28,6 @@ import {
   EnrichedActivity,
 } from './feed';
 
-// TODO: no import since typescript json loader shifts the final output structure
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pkg = require('../package.json');
-
 export type UR = Record<string, unknown>;
 export type UnknownRecord = UR; // alias to avoid breaking change
 
@@ -400,7 +396,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${pkg.version}`;
+    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${
+      process.env.PACKAGE_VERSION || '0.0.0-development'
+    }`;
   }
 
   /**
