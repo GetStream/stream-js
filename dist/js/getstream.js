@@ -4816,19 +4816,9 @@ var StreamFeed = /*#__PURE__*/function () {
         streamSubscription.fayeSubscription.cancel();
       }
     }
-    /**
-     * Updates an activity's "to" fields
-     * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
-     * @param {string} foreignId The foreign_id of the activity to update
-     * @param {string} time The time of the activity to update
-     * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-     * @param {string[]} addedTargets Add these new targets to the activity
-     * @param {string[]} removedTargets Remove these targets from the activity
-     */
-
   }, {
-    key: "updateActivityToTargets",
-    value: function updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
+    key: "_validateToTargetInput",
+    value: function _validateToTargetInput(foreignId, time, newTargets, addedTargets, removedTargets) {
       if (!foreignId) throw new Error('Missing `foreign_id` parameter!');
       if (!time) throw new Error('Missing `time` parameter!');
 
@@ -4850,18 +4840,57 @@ var StreamFeed = /*#__PURE__*/function () {
           }
         });
       }
+    }
+    /**
+     * Updates an activity's "to" fields
+     * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
+     * @param {string} foreignId The foreign_id of the activity to update
+     * @param {string} time The time of the activity to update
+     * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
+     * @param {string[]} addedTargets Add these new targets to the activity
+     * @param {string[]} removedTargets Remove these targets from the activity
+     */
 
-      var body = {
-        foreign_id: foreignId,
-        time: time
-      };
-      if (newTargets) body.new_targets = newTargets;
-      if (addedTargets) body.added_targets = addedTargets;
-      if (removedTargets) body.removed_targets = removedTargets;
+  }, {
+    key: "updateActivityToTargets",
+    value: function updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
+      return this._updateActivityToTargetsMany([{
+        foreignId: foreignId,
+        time: time,
+        newTargets: newTargets,
+        addedTargets: addedTargets,
+        removedTargets: removedTargets
+      }]);
+    } // NOTE: it can change without notice
+
+  }, {
+    key: "_updateActivityToTargetsMany",
+    value: function _updateActivityToTargetsMany(inputs) {
+      if (!inputs || inputs.length === 0) {
+        throw new Error('At least one input is required');
+      }
+
+      var body = [];
+
+      for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+
+        this._validateToTargetInput(input.foreignId, input.time, input.newTargets, input.addedTargets, input.removedTargets);
+
+        var item = {
+          foreign_id: input.foreignId,
+          time: input.time
+        };
+        if (input.newTargets) item.new_targets = input.newTargets;
+        if (input.addedTargets) item.added_targets = input.addedTargets;
+        if (input.removedTargets) item.removed_targets = input.removedTargets;
+        body.push(item);
+      }
+
       return this.client.post({
         url: "feed_targets/".concat(this.feedUrl, "/activity_to_targets/"),
         token: this.token,
-        body: body
+        body: body.length > 1 ? body : body[0]
       });
     }
   }]);
@@ -9787,7 +9816,7 @@ function _typeof(obj) {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"8.0.3","scripts":{"changelog":"standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v","commitlinter":"commitlint","transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.16.7","@babel/core":"^7.16.7","@babel/eslint-parser":"^7.16.5","@babel/node":"^7.16.7","@babel/plugin-proposal-class-properties":"^7.16.7","@babel/plugin-proposal-object-rest-spread":"^7.16.7","@babel/plugin-transform-object-assign":"^7.16.7","@babel/plugin-transform-runtime":"^7.16.7","@babel/preset-env":"^7.16.7","@babel/preset-typescript":"^7.16.7","@babel/register":"^7.16.7","@commitlint/cli":"^16.0.2","@commitlint/config-conventional":"^16.0.0","@typescript-eslint/eslint-plugin":"^5.8.1","@typescript-eslint/parser":"^5.8.1","babel-loader":"^8.2.3","chai":"^4.3.4","dotenv":"^10.0.0","eslint":"^8.6.0","eslint-config-airbnb-base":"^15.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-chai-friendly":"^0.7.2","eslint-plugin-import":"^2.25.4","eslint-plugin-prettier":"^4.0.0","eslint-plugin-sonarjs":"^0.11.0","eslint-plugin-typescript-sort-keys":"^2.1.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.3.9","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.6","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.5.1","request":"^2.88.2","standard-version":"^9.3.2","testdouble":"^3.16.4","typescript":"^4.5.4","webpack":"^5.65.0","webpack-cli":"^4.9.1"},"dependencies":{"@babel/runtime":"^7.16.7","@types/jsonwebtoken":"^8.5.6","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.7","axios":"^0.22.0","faye":"^1.4.0","follow-redirects":"1.14.7","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.10.2"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
+module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"8.1.0","scripts":{"changelog":"standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v","commitlinter":"commitlint","transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.16.7","@babel/core":"^7.16.7","@babel/eslint-parser":"^7.16.5","@babel/node":"^7.16.7","@babel/plugin-proposal-class-properties":"^7.16.7","@babel/plugin-proposal-object-rest-spread":"^7.16.7","@babel/plugin-transform-object-assign":"^7.16.7","@babel/plugin-transform-runtime":"^7.16.7","@babel/preset-env":"^7.16.7","@babel/preset-typescript":"^7.16.7","@babel/register":"^7.16.7","@commitlint/cli":"^16.0.2","@commitlint/config-conventional":"^16.0.0","@typescript-eslint/eslint-plugin":"^5.8.1","@typescript-eslint/parser":"^5.8.1","babel-loader":"^8.2.3","chai":"^4.3.4","dotenv":"^10.0.0","eslint":"^8.6.0","eslint-config-airbnb-base":"^15.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-chai-friendly":"^0.7.2","eslint-plugin-import":"^2.25.4","eslint-plugin-prettier":"^4.0.0","eslint-plugin-sonarjs":"^0.11.0","eslint-plugin-typescript-sort-keys":"^2.1.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.3.9","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.6","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.5.1","request":"^2.88.2","standard-version":"^9.3.2","testdouble":"^3.16.4","typescript":"^4.5.4","webpack":"^5.65.0","webpack-cli":"^4.9.1"},"dependencies":{"@babel/runtime":"^7.16.7","@types/jsonwebtoken":"^8.5.6","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.7","axios":"^0.22.0","faye":"^1.4.0","follow-redirects":"1.14.8","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.10.2"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
 
 /***/ })
 
