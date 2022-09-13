@@ -198,6 +198,22 @@ export type GetActivitiesAPIResponse<StreamFeedGenerics extends DefaultGenerics 
   results: FlatActivity<StreamFeedGenerics>[] | FlatActivityEnriched<StreamFeedGenerics>[];
 };
 
+export type ToTargetUpdate = {
+  foreignId: string;
+  time: string;
+  addedTargets?: string[];
+  newTargets?: string[];
+  removedTargets?: string[];
+};
+
+type ToTargetUpdateInternal = {
+  foreign_id: string;
+  time: string;
+  added_targets?: string[];
+  new_targets?: string[];
+  removed_targets?: string[];
+};
+
 /**
  * Manage api calls for specific feeds
  * The feed object contains convenience functions such add activity, remove activity etc
@@ -551,16 +567,7 @@ export class StreamFeed<StreamFeedGenerics extends DefaultGenerics = DefaultGene
     }
   }
 
-  /**
-   * Updates an activity's "to" fields
-   * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
-   * @param {string} foreignId The foreign_id of the activity to update
-   * @param {string} time The time of the activity to update
-   * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
-   * @param {string[]} addedTargets Add these new targets to the activity
-   * @param {string[]} removedTargets Remove these targets from the activity
-   */
-  updateActivityToTargets(
+  _validateToTargetInput(
     foreignId: string,
     time: string,
     newTargets?: string[],
@@ -590,22 +597,52 @@ export class StreamFeed<StreamFeedGenerics extends DefaultGenerics = DefaultGene
         }
       });
     }
+  }
 
-    const body: {
-      foreign_id: string;
-      time: string;
-      added_targets?: string[];
-      new_targets?: string[];
-      removed_targets?: string[];
-    } = { foreign_id: foreignId, time };
-    if (newTargets) body.new_targets = newTargets;
-    if (addedTargets) body.added_targets = addedTargets;
-    if (removedTargets) body.removed_targets = removedTargets;
+  /**
+   * Updates an activity's "to" fields
+   * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
+   * @param {string} foreignId The foreign_id of the activity to update
+   * @param {string} time The time of the activity to update
+   * @param {string[]} newTargets Set the new "to" targets for the activity - will remove old targets
+   * @param {string[]} addedTargets Add these new targets to the activity
+   * @param {string[]} removedTargets Remove these targets from the activity
+   */
+  updateActivityToTargets(
+    foreignId: string,
+    time: string,
+    newTargets?: string[],
+    addedTargets?: string[],
+    removedTargets?: string[],
+  ) {
+    return this._updateActivityToTargetsMany([{ foreignId, time, newTargets, addedTargets, removedTargets }]);
+  }
 
+  // NOTE: it can change without notice
+  _updateActivityToTargetsMany(inputs: ToTargetUpdate[]) {
+    if (!inputs || inputs.length === 0) {
+      throw new Error('At least one input is required');
+    }
+    const body: ToTargetUpdateInternal[] = [];
+    for (let i = 0; i < inputs.length; i++) {
+      const input = inputs[i];
+      this._validateToTargetInput(
+        input.foreignId,
+        input.time,
+        input.newTargets,
+        input.addedTargets,
+        input.removedTargets,
+      );
+      const item: ToTargetUpdateInternal = { foreign_id: input.foreignId, time: input.time };
+      if (input.newTargets) item.new_targets = input.newTargets;
+      if (input.addedTargets) item.added_targets = input.addedTargets;
+      if (input.removedTargets) item.removed_targets = input.removedTargets;
+      body.push(item);
+    }
     return this.client.post<APIResponse & Activity<StreamFeedGenerics> & { added?: string[]; removed?: string[] }>({
       url: `feed_targets/${this.feedUrl}/activity_to_targets/`,
       token: this.token,
-      body,
+      body: body.length > 1 ? body : body[0],
     });
   }
 }
