@@ -114,7 +114,7 @@
     "faye": "^1.4.0",
     "follow-redirects": "1.14.8",
     "form-data": "^4.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
     "qs": "^6.10.2"
   },
