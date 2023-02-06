@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [8.1.1](https://github.com/GetStream/stream-js/compare/v8.1.0...v8.1.1) (2023-02-06)
 
+### Chore
+
+- Bump JWT [#533](https://github.com/GetStream/stream-js/pull/533)
+
 ### [8.1.0](https://github.com/GetStream/stream-js/compare/v8.0.3...v8.1.0) (2022-09-13)
 
 ### Features
