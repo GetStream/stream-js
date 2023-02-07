@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.1](https://github.com/GetStream/stream-js/compare/v8.1.0...v8.1.1) (2023-02-06)
+
+### Chore
+
+- Bump JWT [#533](https://github.com/GetStream/stream-js/pull/533) ([e5aa262](https://github.com/GetStream/stream-js/commit/e5aa2623bf250a57255d6dfa5d110e078c03194e))
+
 ### [8.1.0](https://github.com/GetStream/stream-js/compare/v8.0.3...v8.1.0) (2022-09-13)
 
 ### Features
