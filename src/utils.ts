@@ -102,7 +102,6 @@ function replaceStreamObjects<T, V>(obj: T): V {
 
   // @ts-expect-error
   Object.keys(obj).forEach((k) => {
-    // @ts-expect-error
     cloned[k] = replaceStreamObjects(obj[k]);
   });
 
