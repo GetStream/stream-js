@@ -101,6 +101,7 @@ function replaceStreamObjects<T, V>(obj: T): V {
   const cloned = {};
 
   Object.getOwnPropertyNames(obj).forEach((k) => {
+    // @ts-expect-error
     cloned[k] = replaceStreamObjects(obj[k]);
   });
 
