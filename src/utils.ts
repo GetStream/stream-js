@@ -99,7 +99,8 @@ function replaceStreamObjects<T, V>(obj: T): V {
   if (typeof obj.ref === 'function') return obj.ref();
 
   const cloned = {};
-  Object.keys(obj).forEach((k) => {
+
+  Object.getOwnPropertyNames(obj).forEach((k) => {
     // @ts-expect-error
     cloned[k] = replaceStreamObjects(obj[k]);
   });
