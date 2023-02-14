@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.1](https://github.com/GetStream/stream-js/compare/v8.1.0...v8.1.1) (2023-02-14)
+
 ### [8.1.1](https://github.com/GetStream/stream-js/compare/v8.1.0...v8.1.1) (2023-02-06)
 
 ### Chore
