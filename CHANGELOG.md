@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.1.2](https://github.com/GetStream/stream-js/compare/v8.1.1...v8.1.2) (2023-02-15)
+
+
+### Bug Fixes
+
+* **utils:** failing TS check  ([#537](https://github.com/GetStream/stream-js/issues/537)) ([bb21585](https://github.com/GetStream/stream-js/commit/bb2158506e56b049407d123505e581b72b9b0ded))
+
 ### [8.1.1](https://github.com/GetStream/stream-js/compare/v8.1.0...v8.1.1) (2023-02-14)
 
 ### Chore
