@@ -2789,6 +2789,7 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "userAgent",
     value: function userAgent() {
+      if (false) {}
       return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.2");
     }
 

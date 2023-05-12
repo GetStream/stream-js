@@ -398,6 +398,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
+    if (typeof VERSION === 'undefined') {
+      VERSION = '0.0.0';
+    }
     return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${VERSION}`;
   }
 
