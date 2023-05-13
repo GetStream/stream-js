@@ -7,9 +7,17 @@
 		exports["stream"] = factory();
 	else
 		root["stream"] = factory();
-})(self, () => {
+})(self, function() {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
+
+/***/ 7757:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__(5666);
+
+
+/***/ }),
 
 /***/ 9272:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
@@ -2397,7 +2405,7 @@ var createClass = __webpack_require__(3144);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(4687);
+var regenerator = __webpack_require__(7757);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 // EXTERNAL MODULE: ./node_modules/axios/index.js
 var axios = __webpack_require__(9669);
@@ -2446,11 +2454,14 @@ var src_feed = __webpack_require__(7248);
 
 
 var _excluded = ["method", "token"],
-  _excluded2 = ["ids", "foreignIDTimes"],
-  _excluded3 = ["activities"];
+    _excluded2 = ["ids", "foreignIDTimes"],
+    _excluded3 = ["activities"];
+
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,defineProperty/* default */.Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 /// <reference path="../types/modules.d.ts" />
 
 
@@ -2468,16 +2479,19 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 
 
+ // TODO: no import since typescript json loader shifts the final output structure
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 
-
-
-// alias to avoid breaking change
+var pkg = __webpack_require__(4147);
 
 /**
  * Client to connect to Stream api
  * @class StreamClient
  */
 var StreamClient = /*#__PURE__*/function () {
+  // eslint-disable-line no-use-before-define
+  // eslint-disable-line no-use-before-define
+  // eslint-disable-line no-use-before-define
   // eslint-disable-line no-use-before-define
 
   /**
@@ -2501,110 +2515,165 @@ var StreamClient = /*#__PURE__*/function () {
    */
   function StreamClient(apiKey, apiSecretOrToken, appId) {
     var _this = this,
-      _process$env,
-      _process$env2;
+        _process$env,
+        _process$env2;
+
     var _options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
     (0,classCallCheck/* default */.Z)(this, StreamClient);
+
     (0,defineProperty/* default */.Z)(this, "baseUrl", void 0);
+
     (0,defineProperty/* default */.Z)(this, "baseAnalyticsUrl", void 0);
+
     (0,defineProperty/* default */.Z)(this, "apiKey", void 0);
+
     (0,defineProperty/* default */.Z)(this, "appId", void 0);
+
     (0,defineProperty/* default */.Z)(this, "usingApiSecret", void 0);
+
     (0,defineProperty/* default */.Z)(this, "apiSecret", void 0);
+
     (0,defineProperty/* default */.Z)(this, "userToken", void 0);
+
     (0,defineProperty/* default */.Z)(this, "enrichByDefault", void 0);
+
     (0,defineProperty/* default */.Z)(this, "options", void 0);
+
     (0,defineProperty/* default */.Z)(this, "userId", void 0);
+
     (0,defineProperty/* default */.Z)(this, "authPayload", void 0);
+
     (0,defineProperty/* default */.Z)(this, "version", void 0);
+
     (0,defineProperty/* default */.Z)(this, "fayeUrl", void 0);
+
     (0,defineProperty/* default */.Z)(this, "group", void 0);
+
     (0,defineProperty/* default */.Z)(this, "expireTokens", void 0);
+
     (0,defineProperty/* default */.Z)(this, "location", void 0);
+
     (0,defineProperty/* default */.Z)(this, "fayeClient", void 0);
+
     (0,defineProperty/* default */.Z)(this, "browser", void 0);
+
     (0,defineProperty/* default */.Z)(this, "node", void 0);
+
     (0,defineProperty/* default */.Z)(this, "nodeOptions", void 0);
+
     (0,defineProperty/* default */.Z)(this, "request", void 0);
+
     (0,defineProperty/* default */.Z)(this, "subscriptions", void 0);
+
     (0,defineProperty/* default */.Z)(this, "handlers", void 0);
+
     (0,defineProperty/* default */.Z)(this, "currentUser", void 0);
+
     (0,defineProperty/* default */.Z)(this, "personalization", void 0);
+
     (0,defineProperty/* default */.Z)(this, "collections", void 0);
+
     (0,defineProperty/* default */.Z)(this, "files", void 0);
+
     (0,defineProperty/* default */.Z)(this, "images", void 0);
+
     (0,defineProperty/* default */.Z)(this, "reactions", void 0);
+
     (0,defineProperty/* default */.Z)(this, "_personalizationToken", void 0);
+
     (0,defineProperty/* default */.Z)(this, "_collectionsToken", void 0);
+
     (0,defineProperty/* default */.Z)(this, "_getOrCreateToken", void 0);
+
     (0,defineProperty/* default */.Z)(this, "addToMany", void 0);
-    // eslint-disable-line no-use-before-define
+
     (0,defineProperty/* default */.Z)(this, "followMany", void 0);
-    // eslint-disable-line no-use-before-define
+
     (0,defineProperty/* default */.Z)(this, "unfollowMany", void 0);
-    // eslint-disable-line no-use-before-define
+
     (0,defineProperty/* default */.Z)(this, "createRedirectUrl", void 0);
+
     (0,defineProperty/* default */.Z)(this, "replaceReactionOptions", function (options) {
       // Shortcut options for reaction enrichment
       if (options !== null && options !== void 0 && options.reactions) {
         if (options.reactions.own != null) {
           options.withOwnReactions = options.reactions.own;
         }
+
         if (options.reactions.recent != null) {
           options.withRecentReactions = options.reactions.recent;
         }
+
         if (options.reactions.counts != null) {
           options.withReactionCounts = options.reactions.counts;
         }
+
         if (options.reactions.own_children != null) {
           options.withOwnChildren = options.reactions.own_children;
         }
+
         delete options.reactions;
       }
     });
+
     (0,defineProperty/* default */.Z)(this, "handleResponse", function (response) {
       if (/^2/.test("".concat(response.status))) {
         _this.send('response', null, response, response.data);
+
         return response.data;
       }
+
       throw new errors/* StreamApiError */.eY("".concat(JSON.stringify(response.data), " with HTTP status code ").concat(response.status), response.data, response);
     });
+
     (0,defineProperty/* default */.Z)(this, "doAxiosRequest", /*#__PURE__*/function () {
       var _ref = (0,asyncToGenerator/* default */.Z)( /*#__PURE__*/regenerator_default().mark(function _callee(method, options) {
         var response, err;
         return regenerator_default().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _this.send('request', method, options);
-              _context.prev = 1;
-              _context.next = 4;
-              return _this.request(_this.enrichKwargs(_objectSpread({
-                method: method
-              }, options)));
-            case 4:
-              response = _context.sent;
-              return _context.abrupt("return", _this.handleResponse(response));
-            case 8:
-              _context.prev = 8;
-              _context.t0 = _context["catch"](1);
-              err = _context.t0;
-              if (!err.response) {
-                _context.next = 13;
-                break;
-              }
-              return _context.abrupt("return", _this.handleResponse(err.response));
-            case 13:
-              throw new errors/* SiteError */.z4(err.message);
-            case 14:
-            case "end":
-              return _context.stop();
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this.send('request', method, options);
+
+                _context.prev = 1;
+                _context.next = 4;
+                return _this.request(_this.enrichKwargs(_objectSpread({
+                  method: method
+                }, options)));
+
+              case 4:
+                response = _context.sent;
+                return _context.abrupt("return", _this.handleResponse(response));
+
+              case 8:
+                _context.prev = 8;
+                _context.t0 = _context["catch"](1);
+                err = _context.t0;
+
+                if (!err.response) {
+                  _context.next = 13;
+                  break;
+                }
+
+                return _context.abrupt("return", _this.handleResponse(err.response));
+
+              case 13:
+                throw new errors/* SiteError */.z4(err.message);
+
+              case 14:
+              case "end":
+                return _context.stop();
+            }
           }
         }, _callee, null, [[1, 8]]);
       }));
+
       return function (_x, _x2) {
         return _ref.apply(this, arguments);
       };
     }());
+
     this.baseUrl = 'https://api.stream-io-api.com/api/';
     this.baseAnalyticsUrl = 'https://analytics.stream-io-api.com/analytics/';
     this.apiKey = apiKey;
@@ -2612,25 +2681,29 @@ var StreamClient = /*#__PURE__*/function () {
     this.apiSecret = this.usingApiSecret ? apiSecretOrToken : null;
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
     this.enrichByDefault = !this.usingApiSecret;
+
     if (this.userToken != null) {
       var jwtBody = jwt_decode_esm(this.userToken);
+
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
       }
+
       this.userId = jwtBody.user_id;
       this.currentUser = this.user(this.userId);
     }
+
     this.appId = appId;
     this.options = _options;
     this.version = this.options.version || 'v1.0';
     this.fayeUrl = this.options.fayeUrl || 'https://faye-us-east.stream-io-api.com/faye';
-    this.fayeClient = null;
-    // track a source name for the api calls, ie get started or databrowser
-    this.group = this.options.group || 'unspecified';
-    // track subscriptions made on feeds created by this client
+    this.fayeClient = null; // track a source name for the api calls, ie get started or databrowser
+
+    this.group = this.options.group || 'unspecified'; // track subscriptions made on feeds created by this client
+
     this.subscriptions = {};
-    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
-    // which data center to use
+    this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false; // which data center to use
+
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
     if (typeof process !== 'undefined' && (_process$env = process.env) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
@@ -2638,7 +2711,9 @@ var StreamClient = /*#__PURE__*/function () {
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
     // use for browser warnings
+
     this.browser = typeof this.options.browser !== 'undefined' ? this.options.browser : !this.node;
+
     if (this.node) {
       var keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
       this.nodeOptions = {
@@ -2652,20 +2727,22 @@ var StreamClient = /*#__PURE__*/function () {
         })
       };
     }
+
     this.request = axios_default().create(_objectSpread({
       timeout: this.options.timeout || 10000,
       withCredentials: false
     }, this.nodeOptions || {}));
     this.personalization = new personalization/* Personalization */.S(this);
+
     if (this.browser && this.usingApiSecret) {
       throw new errors/* FeedError */.IY('You are publicly sharing your App Secret. Do not expose the App Secret in browsers, "native" mobile apps, or other non-trusted environments.');
     }
+
     this.collections = new collections/* Collections */.n(this, this.getOrCreateToken());
     this.files = new files/* StreamFileStore */.h(this, this.getOrCreateToken());
     this.images = new src_images/* StreamImageStore */.$(this, this.getOrCreateToken());
-    this.reactions = new reaction/* StreamReaction */.R(this, this.getOrCreateToken());
+    this.reactions = new reaction/* StreamReaction */.R(this, this.getOrCreateToken()); // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
 
-    // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if ((batch_operations_default()) && !!(redirect_url_default())) {
       this.addToMany = (batch_operations_default()).addToMany;
       this.followMany = (batch_operations_default()).followMany;
@@ -2673,6 +2750,7 @@ var StreamClient = /*#__PURE__*/function () {
       this.createRedirectUrl = (redirect_url_default());
     }
   }
+
   (0,createClass/* default */.Z)(StreamClient, [{
     key: "_throwMissingApiSecret",
     value: function _throwMissingApiSecret() {
@@ -2684,7 +2762,9 @@ var StreamClient = /*#__PURE__*/function () {
     key: "getPersonalizationToken",
     value: function getPersonalizationToken() {
       if (this._personalizationToken) return this._personalizationToken;
+
       this._throwMissingApiSecret();
+
       this._personalizationToken = (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'personalization', '*', {
         userId: '*',
         feedId: '*',
@@ -2696,7 +2776,9 @@ var StreamClient = /*#__PURE__*/function () {
     key: "getCollectionsToken",
     value: function getCollectionsToken() {
       if (this._collectionsToken) return this._collectionsToken;
+
       this._throwMissingApiSecret();
+
       this._collectionsToken = (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'collections', '*', {
         feedId: '*',
         expireTokens: this.expireTokens
@@ -2707,6 +2789,7 @@ var StreamClient = /*#__PURE__*/function () {
     key: "getAnalyticsToken",
     value: function getAnalyticsToken() {
       this._throwMissingApiSecret();
+
       return (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'analytics', '*', {
         userId: '*',
         expireTokens: this.expireTokens
@@ -2716,19 +2799,21 @@ var StreamClient = /*#__PURE__*/function () {
     key: "getBaseUrl",
     value: function getBaseUrl(serviceName) {
       var _process$env3, _process$env4;
+
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
       if (typeof process !== 'undefined' && (_process$env3 = process.env) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return process.env[urlEnvironmentKey];
       if (typeof process !== 'undefined' && (_process$env4 = process.env) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+
       if (this.location) {
         var protocol = this.options.protocol || 'https';
         return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
       }
+
       if (serviceName !== 'api') return "https://".concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
       return this.baseUrl;
     }
-
     /**
      * Support for global event callbacks
      * This is useful for generic error and loading handling
@@ -2740,12 +2825,12 @@ var StreamClient = /*#__PURE__*/function () {
      * client.on('request', callback);
      * client.on('response', callback);
      */
+
   }, {
     key: "on",
     value: function on(event, callback) {
       this.handlers[event] = callback;
     }
-
     /**
      * Remove one or more event handlers
      * @method off
@@ -2755,6 +2840,7 @@ var StreamClient = /*#__PURE__*/function () {
      * client.off() removes all handlers
      * client.off(name) removes the specified handler
      */
+
   }, {
     key: "off",
     value: function off(key) {
@@ -2764,35 +2850,34 @@ var StreamClient = /*#__PURE__*/function () {
         delete this.handlers[key];
       }
     }
-
     /**
      * Call the given handler with the arguments
      * @method send
      * @memberof StreamClient.prototype
      * @access private
      */
+
   }, {
     key: "send",
     value: function send(key) {
       for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
+
       if (this.handlers[key]) this.handlers[key].apply(this, args);
     }
-
     /**
      * Get the current user agent
      * @method userAgent
      * @memberof StreamClient.prototype
      * @return {string} current user agent
      */
+
   }, {
     key: "userAgent",
     value: function userAgent() {
-      if (false) {}
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.2");
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat(pkg.version);
     }
-
     /**
      * Returns a token that allows only read operations
      *
@@ -2803,6 +2888,7 @@ var StreamClient = /*#__PURE__*/function () {
      * @return {string} token
      * @example client.getReadOnlyToken('user', '1');
      */
+
   }, {
     key: "getReadOnlyToken",
     value: function getReadOnlyToken(feedSlug, userId) {
@@ -2813,7 +2899,6 @@ var StreamClient = /*#__PURE__*/function () {
         expireTokens: this.expireTokens
       });
     }
-
     /**
      * Returns a token that allows read and write operations
      *
@@ -2824,6 +2909,7 @@ var StreamClient = /*#__PURE__*/function () {
      * @return {string} token
      * @example client.getReadWriteToken('user', '1');
      */
+
   }, {
     key: "getReadWriteToken",
     value: function getReadWriteToken(feedSlug, userId) {
@@ -2834,7 +2920,6 @@ var StreamClient = /*#__PURE__*/function () {
         expireTokens: this.expireTokens
       });
     }
-
     /**
      * Returns a feed object for the given feed id and token
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js
@@ -2846,10 +2931,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @return {StreamFeed}
      * @example  client.feed('user', '1');
      */
+
   }, {
     key: "feed",
     value: function feed(feedSlug, userId, token) {
       if (userId instanceof src_user/* StreamUser */.h) userId = userId.id;
+
       if (token === undefined) {
         if (this.usingApiSecret) {
           token = (0,signing/* JWTScopeToken */.v)(this.apiSecret, '*', '*', {
@@ -2859,9 +2946,9 @@ var StreamClient = /*#__PURE__*/function () {
           token = this.userToken;
         }
       }
+
       return new src_feed/* StreamFeed */.r(this, feedSlug, userId || this.userId, token);
     }
-
     /**
      * Combines the base url with version and the relative url
      * @method enrichUrl
@@ -2871,6 +2958,7 @@ var StreamClient = /*#__PURE__*/function () {
      * @param {string} [serviceName]
      * @return {string}
      */
+
   }, {
     key: "enrichUrl",
     value: function enrichUrl(relativeUrl, serviceName) {
@@ -2880,14 +2968,15 @@ var StreamClient = /*#__PURE__*/function () {
     key: "shouldUseEnrichEndpoint",
     value: function shouldUseEnrichEndpoint() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
       if (options.enrich !== undefined) {
         var result = options.enrich;
         delete options.enrich;
         return result;
       }
+
       return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
     }
-
     /**
      * Adds the API key and the token
      * @method enrichKwargs
@@ -2896,12 +2985,14 @@ var StreamClient = /*#__PURE__*/function () {
      * @param {AxiosConfig} kwargs
      * @return {axios.AxiosRequestConfig}
      */
+
   }, {
     key: "enrichKwargs",
     value: function enrichKwargs(_ref2) {
       var method = _ref2.method,
-        token = _ref2.token,
-        kwargs = (0,objectWithoutProperties/* default */.Z)(_ref2, _excluded);
+          token = _ref2.token,
+          kwargs = (0,objectWithoutProperties/* default */.Z)(_ref2, _excluded);
+
       return _objectSpread({
         method: method,
         url: this.enrichUrl(kwargs.url, kwargs.serviceName),
@@ -2917,7 +3008,6 @@ var StreamClient = /*#__PURE__*/function () {
         }, kwargs.headers || {})
       }, kwargs.axiosOptions || {});
     }
-
     /**
      * Get the authorization middleware to use Faye with getstream.io
      * @method getFayeAuthorization
@@ -2925,10 +3015,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @private
      * @return {Faye.Middleware} Faye authorization middleware
      */
+
   }, {
     key: "getFayeAuthorization",
     value: function getFayeAuthorization() {
       var _this2 = this;
+
       return {
         incoming: function incoming(message, callback) {
           return callback(message);
@@ -2942,11 +3034,11 @@ var StreamClient = /*#__PURE__*/function () {
               signature: subscription.token
             };
           }
+
           callback(message);
         }
       };
     }
-
     /**
      * Returns this client's current Faye client
      * @method getFayeClient
@@ -2955,10 +3047,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @param {number} timeout
      * @return {Faye.Client} Faye client
      */
+
   }, {
     key: "getFayeClient",
     value: function getFayeClient() {
       var timeout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 10;
+
       if (this.fayeClient === null) {
         this.fayeClient = new faye_browser.Client(this.fayeUrl, {
           timeout: timeout
@@ -2966,6 +3060,7 @@ var StreamClient = /*#__PURE__*/function () {
         var authExtension = this.getFayeAuthorization();
         this.fayeClient.addExtension(authExtension);
       }
+
       return this.fayeClient;
     }
   }, {
@@ -2986,7 +3081,6 @@ var StreamClient = /*#__PURE__*/function () {
         }
       });
     }
-
     /**
      * Shorthand function for get request
      * @method get
@@ -2995,12 +3089,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @param  {AxiosConfig}    kwargs
      * @return {Promise}   Promise object
      */
+
   }, {
     key: "get",
     value: function get(kwargs) {
       return this.doAxiosRequest('GET', kwargs);
     }
-
     /**
      * Shorthand function for post request
      * @method post
@@ -3009,12 +3103,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @param  {AxiosConfig}    kwargs
      * @return {Promise}   Promise object
      */
+
   }, {
     key: "post",
     value: function post(kwargs) {
       return this.doAxiosRequest('POST', kwargs);
     }
-
     /**
      * Shorthand function for delete request
      * @method delete
@@ -3023,12 +3117,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @param  {AxiosConfig}    kwargs
      * @return {Promise}   Promise object
      */
+
   }, {
     key: "delete",
     value: function _delete(kwargs) {
       return this.doAxiosRequest('DELETE', kwargs);
     }
-
     /**
      * Shorthand function for put request
      * @method put
@@ -3037,12 +3131,12 @@ var StreamClient = /*#__PURE__*/function () {
      * @param  {AxiosConfig}    kwargs
      * @return {Promise}   Promise object
      */
+
   }, {
     key: "put",
     value: function put(kwargs) {
       return this.doAxiosRequest('PUT', kwargs);
     }
-
     /**
      * create a user token
      * @link https://getstream.io/activity-feeds/docs/node/feeds_getting_started/?language=js#generate-user-token-server-side
@@ -3050,29 +3144,34 @@ var StreamClient = /*#__PURE__*/function () {
      * @param {object} extraData
      * @return {string}
      */
+
   }, {
     key: "createUserToken",
     value: function createUserToken(userId) {
       var extraData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
       this._throwMissingApiSecret();
+
       return (0,signing/* JWTUserSessionToken */.c)(this.apiSecret, userId, extraData, {
         noTimestamp: !this.expireTokens
       });
     }
-
     /**
      * Updates all supplied activities on the stream
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
      * @param  {UpdateActivity<StreamFeedGenerics>[]} activities list of activities to update
      * @return {Promise<APIResponse>}
      */
+
   }, {
     key: "updateActivities",
     value: function updateActivities(activities) {
       this._throwMissingApiSecret();
+
       if (!(activities instanceof Array)) {
         throw new TypeError('The activities argument should be an Array');
       }
+
       var token = (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'activities', '*', {
         feedId: '*',
         expireTokens: this.expireTokens
@@ -3085,48 +3184,54 @@ var StreamClient = /*#__PURE__*/function () {
         token: token
       });
     }
-
     /**
      * Updates one activity on the stream
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#updating-activities
      * @param  {UpdateActivity<StreamFeedGenerics>} activity The activity to update
      * @return {Promise<APIResponse>}
      */
+
   }, {
     key: "updateActivity",
     value: function updateActivity(activity) {
       this._throwMissingApiSecret();
+
       return this.updateActivities([activity]);
     }
-
     /**
      * Retrieve activities by ID or foreign_id and time
      * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-get-activities-by-id
      * @param  {object} params object containing either the list of activity IDs as {ids: ['...', ...]} or foreign_ids and time as {foreignIDTimes: [{foreign_id: ..., time: ...}, ...]}
      * @return {Promise<GetActivitiesAPIResponse>}
      */
+
   }, {
     key: "getActivities",
     value: function getActivities(_ref3) {
       var ids = _ref3.ids,
-        foreignIDTimes = _ref3.foreignIDTimes,
-        params = (0,objectWithoutProperties/* default */.Z)(_ref3, _excluded2);
+          foreignIDTimes = _ref3.foreignIDTimes,
+          params = (0,objectWithoutProperties/* default */.Z)(_ref3, _excluded2);
+
       var extraParams = {};
+
       if (ids) {
         if (!(ids instanceof Array)) {
           throw new TypeError('The ids argument should be an Array');
         }
+
         extraParams.ids = ids.join(',');
       } else if (foreignIDTimes) {
         if (!(foreignIDTimes instanceof Array)) {
           throw new TypeError('The foreignIDTimes argument should be an Array');
         }
+
         var foreignIDs = [];
         var timestamps = [];
         foreignIDTimes.forEach(function (fidTime) {
           if (!(fidTime instanceof Object)) {
             throw new TypeError('foreignIDTimes elements should be Objects');
           }
+
           foreignIDs.push(fidTime.foreign_id || fidTime.foreignID);
           timestamps.push(fidTime.time);
         });
@@ -3135,13 +3240,16 @@ var StreamClient = /*#__PURE__*/function () {
       } else {
         throw new TypeError('Missing ids or foreignIDTimes params');
       }
+
       var token = this.userToken;
+
       if (this.usingApiSecret) {
         token = (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'activities', '*', {
           feedId: '*',
           expireTokens: this.expireTokens
         });
       }
+
       this.replaceReactionOptions(params);
       var path = this.shouldUseEnrichEndpoint(params) ? 'enrich/activities/' : 'activities/';
       return this.get({
@@ -3158,6 +3266,7 @@ var StreamClient = /*#__PURE__*/function () {
           feedId: '*'
         }) : this.userToken;
       }
+
       return this._getOrCreateToken;
     }
   }, {
@@ -3171,31 +3280,39 @@ var StreamClient = /*#__PURE__*/function () {
       var _setUser = (0,asyncToGenerator/* default */.Z)( /*#__PURE__*/regenerator_default().mark(function _callee2(data) {
         var body, user;
         return regenerator_default().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!this.usingApiSecret) {
-                _context2.next = 2;
-                break;
-              }
-              throw new errors/* SiteError */.z4('This method can only be used client-side using a user token');
-            case 2:
-              body = _objectSpread({}, data);
-              delete body.id;
-              _context2.next = 6;
-              return this.currentUser.getOrCreate(body);
-            case 6:
-              user = _context2.sent;
-              this.currentUser = user;
-              return _context2.abrupt("return", user);
-            case 9:
-            case "end":
-              return _context2.stop();
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!this.usingApiSecret) {
+                  _context2.next = 2;
+                  break;
+                }
+
+                throw new errors/* SiteError */.z4('This method can only be used client-side using a user token');
+
+              case 2:
+                body = _objectSpread({}, data);
+                delete body.id;
+                _context2.next = 6;
+                return this.currentUser.getOrCreate(body);
+
+              case 6:
+                user = _context2.sent;
+                this.currentUser = user;
+                return _context2.abrupt("return", user);
+
+              case 9:
+              case "end":
+                return _context2.stop();
+            }
           }
         }, _callee2, this);
       }));
+
       function setUser(_x3) {
         return _setUser.apply(this, arguments);
       }
+
       return setUser;
     }()
   }, {
@@ -3219,7 +3336,6 @@ var StreamClient = /*#__PURE__*/function () {
         token: this.getOrCreateToken()
       });
     }
-
     /**
      * Update a single activity with partial operations.
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js&q=partial+#activity-partial-update
@@ -3252,31 +3368,39 @@ var StreamClient = /*#__PURE__*/function () {
      *   ]
      * })
      */
+
   }, {
     key: "activityPartialUpdate",
     value: function () {
       var _activityPartialUpdate = (0,asyncToGenerator/* default */.Z)( /*#__PURE__*/regenerator_default().mark(function _callee3(data) {
         var _yield$this$activitie, activities, response, _activities, activity;
+
         return regenerator_default().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return this.activitiesPartialUpdate([data]);
-            case 2:
-              _yield$this$activitie = _context3.sent;
-              activities = _yield$this$activitie.activities;
-              response = (0,objectWithoutProperties/* default */.Z)(_yield$this$activitie, _excluded3);
-              _activities = (0,slicedToArray/* default */.Z)(activities, 1), activity = _activities[0];
-              return _context3.abrupt("return", _objectSpread(_objectSpread({}, activity), response));
-            case 7:
-            case "end":
-              return _context3.stop();
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.activitiesPartialUpdate([data]);
+
+              case 2:
+                _yield$this$activitie = _context3.sent;
+                activities = _yield$this$activitie.activities;
+                response = (0,objectWithoutProperties/* default */.Z)(_yield$this$activitie, _excluded3);
+                _activities = (0,slicedToArray/* default */.Z)(activities, 1), activity = _activities[0];
+                return _context3.abrupt("return", _objectSpread(_objectSpread({}, activity), response));
+
+              case 7:
+              case "end":
+                return _context3.stop();
+            }
           }
         }, _callee3, this);
       }));
+
       function activityPartialUpdate(_x4) {
         return _activityPartialUpdate.apply(this, arguments);
       }
+
       return activityPartialUpdate;
     }()
     /**
@@ -3333,36 +3457,44 @@ var StreamClient = /*#__PURE__*/function () {
      *   },
      * ])
      */
+
   }, {
     key: "activitiesPartialUpdate",
     value: function activitiesPartialUpdate(changes) {
       if (!(changes instanceof Array)) {
         throw new TypeError('changes should be an Array');
       }
+
       changes.forEach(function (item) {
         if (!(item instanceof Object)) {
           throw new TypeError("changeset should be and Object");
         }
+
         if (item.foreignID) {
           item.foreign_id = item.foreignID;
         }
+
         if (item.id === undefined && (item.foreign_id === undefined || item.time === undefined)) {
           throw new TypeError('missing id or foreign_id and time');
         }
+
         if (item.set && !(item.set instanceof Object)) {
           throw new TypeError('set field should be an Object');
         }
+
         if (item.unset && !(item.unset instanceof Array)) {
           throw new TypeError('unset field should be an Array');
         }
       });
       var token = this.userToken;
+
       if (this.usingApiSecret) {
         token = (0,signing/* JWTScopeToken */.v)(this.apiSecret, 'activities', '*', {
           feedId: '*',
           expireTokens: this.expireTokens
         });
       }
+
       return this.post({
         url: 'activity/',
         body: {
@@ -3372,6 +3504,7 @@ var StreamClient = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamClient;
 }();
 
@@ -3389,7 +3522,7 @@ var StreamClient = /*#__PURE__*/function () {
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3144);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(4942);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4687);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7757);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _errors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2589);
 
@@ -3399,27 +3532,32 @@ var StreamClient = /*#__PURE__*/function () {
 
 
 var CollectionEntry = /*#__PURE__*/function () {
-  function CollectionEntry(
-  // eslint-disable-next-line no-use-before-define
+  // eslint-disable-line no-use-before-define
+  function CollectionEntry( // eslint-disable-next-line no-use-before-define
   store, collection, id, data) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, CollectionEntry);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "id", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "collection", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "store", void 0);
-    // eslint-disable-line no-use-before-define
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "data", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "full", void 0);
+
     this.collection = collection;
     this.store = store;
     this.id = id;
     this.data = data;
   }
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(CollectionEntry, [{
     key: "ref",
     value: function ref() {
       return "SO:".concat(this.collection, ":").concat(this.id);
     }
-
     /**
      * get item from collection and sync data
      * @method get
@@ -3427,30 +3565,37 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.get("0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
+
   }, {
     key: "get",
     value: function () {
       var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return this.store.get(this.collection, this.id);
-            case 2:
-              response = _context.sent;
-              this.data = response.data;
-              this.full = response;
-              return _context.abrupt("return", response);
-            case 6:
-            case "end":
-              return _context.stop();
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.store.get(this.collection, this.id);
+
+              case 2:
+                response = _context.sent;
+                this.data = response.data;
+                this.full = response;
+                return _context.abrupt("return", response);
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
           }
         }, _callee, this);
       }));
+
       function get() {
         return _get.apply(this, arguments);
       }
+
       return get;
     }()
     /**
@@ -3461,30 +3606,37 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.add("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+
   }, {
     key: "add",
     value: function () {
       var _add = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.next = 2;
-              return this.store.add(this.collection, this.id, this.data);
-            case 2:
-              response = _context2.sent;
-              this.data = response.data;
-              this.full = response;
-              return _context2.abrupt("return", response);
-            case 6:
-            case "end":
-              return _context2.stop();
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.store.add(this.collection, this.id, this.data);
+
+              case 2:
+                response = _context2.sent;
+                this.data = response.data;
+                this.full = response;
+                return _context2.abrupt("return", response);
+
+              case 6:
+              case "end":
+                return _context2.stop();
+            }
           }
         }, _callee2, this);
       }));
+
       function add() {
         return _add.apply(this, arguments);
       }
+
       return add;
     }()
     /**
@@ -3496,30 +3648,37 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+
   }, {
     key: "update",
     value: function () {
       var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return this.store.update(this.collection, this.id, this.data);
-            case 2:
-              response = _context3.sent;
-              this.data = response.data;
-              this.full = response;
-              return _context3.abrupt("return", response);
-            case 6:
-            case "end":
-              return _context3.stop();
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.store.update(this.collection, this.id, this.data);
+
+              case 2:
+                response = _context3.sent;
+                this.data = response.data;
+                this.full = response;
+                return _context3.abrupt("return", response);
+
+              case 6:
+              case "end":
+                return _context3.stop();
+            }
           }
         }, _callee3, this);
       }));
+
       function update() {
         return _update.apply(this, arguments);
       }
+
       return update;
     }()
     /**
@@ -3530,33 +3689,41 @@ var CollectionEntry = /*#__PURE__*/function () {
      * @return {Promise<APIResponse>}
      * @example collection.delete("cheese101")
      */
+
   }, {
     key: "delete",
     value: function () {
       var _delete2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              _context4.next = 2;
-              return this.store.delete(this.collection, this.id);
-            case 2:
-              response = _context4.sent;
-              this.data = null;
-              this.full = null;
-              return _context4.abrupt("return", response);
-            case 6:
-            case "end":
-              return _context4.stop();
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return this.store.delete(this.collection, this.id);
+
+              case 2:
+                response = _context4.sent;
+                this.data = null;
+                this.full = null;
+                return _context4.abrupt("return", response);
+
+              case 6:
+              case "end":
+                return _context4.stop();
+            }
           }
         }, _callee4, this);
       }));
+
       function _delete() {
         return _delete2.apply(this, arguments);
       }
+
       return _delete;
     }()
   }]);
+
   return CollectionEntry;
 }();
 var Collections = /*#__PURE__*/function () {
@@ -3569,21 +3736,25 @@ var Collections = /*#__PURE__*/function () {
    */
   function Collections(client, token) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, Collections);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "client", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "token", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(this, "buildURL", function (collection, itemId) {
       var url = "collections/".concat(collection, "/");
       return itemId === undefined ? url : "".concat(url).concat(itemId, "/");
     });
+
     this.client = client;
     this.token = token;
   }
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(Collections, [{
     key: "entry",
     value: function entry(collection, itemId, itemData) {
       return new CollectionEntry(this, collection, itemId, itemData);
     }
-
     /**
      * get item from collection
      * @link https://getstream.io/activity-feeds/docs/node/collections_introduction/?language=js#retrieving-collections
@@ -3594,33 +3765,40 @@ var Collections = /*#__PURE__*/function () {
      * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.get("food", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      */
+
   }, {
     key: "get",
     value: function () {
       var _get2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(collection, itemId) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
-            case 0:
-              _context5.next = 2;
-              return this.client.get({
-                url: this.buildURL(collection, itemId),
-                token: this.token
-              });
-            case 2:
-              response = _context5.sent;
-              entry = this.entry(response.collection, response.id, response.data);
-              entry.full = response;
-              return _context5.abrupt("return", entry);
-            case 6:
-            case "end":
-              return _context5.stop();
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.next = 2;
+                return this.client.get({
+                  url: this.buildURL(collection, itemId),
+                  token: this.token
+                });
+
+              case 2:
+                response = _context5.sent;
+                entry = this.entry(response.collection, response.id, response.data);
+                entry.full = response;
+                return _context5.abrupt("return", entry);
+
+              case 6:
+              case "end":
+                return _context5.stop();
+            }
           }
         }, _callee5, this);
       }));
+
       function get(_x, _x2) {
         return _get2.apply(this, arguments);
       }
+
       return get;
     }()
     /**
@@ -3634,37 +3812,44 @@ var Collections = /*#__PURE__*/function () {
      * @return {Promise<CollectionEntry<StreamFeedGenerics>>}
      * @example collection.add("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+
   }, {
     key: "add",
     value: function () {
       var _add2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(collection, itemId, itemData) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
-            case 0:
-              _context6.next = 2;
-              return this.client.post({
-                url: this.buildURL(collection),
-                body: {
-                  id: itemId === null ? undefined : itemId,
-                  data: itemData
-                },
-                token: this.token
-              });
-            case 2:
-              response = _context6.sent;
-              entry = this.entry(response.collection, response.id, response.data);
-              entry.full = response;
-              return _context6.abrupt("return", entry);
-            case 6:
-            case "end":
-              return _context6.stop();
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return this.client.post({
+                  url: this.buildURL(collection),
+                  body: {
+                    id: itemId === null ? undefined : itemId,
+                    data: itemData
+                  },
+                  token: this.token
+                });
+
+              case 2:
+                response = _context6.sent;
+                entry = this.entry(response.collection, response.id, response.data);
+                entry.full = response;
+                return _context6.abrupt("return", entry);
+
+              case 6:
+              case "end":
+                return _context6.stop();
+            }
           }
         }, _callee6, this);
       }));
+
       function add(_x3, _x4, _x5) {
         return _add2.apply(this, arguments);
       }
+
       return add;
     }()
     /**
@@ -3679,36 +3864,43 @@ var Collections = /*#__PURE__*/function () {
      * @example store.update("0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"name": "cheese burger","toppings": "cheese"})
      * @example store.update("food", "cheese101", {"name": "cheese burger","toppings": "cheese"})
      */
+
   }, {
     key: "update",
     value: function () {
       var _update2 = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(collection, entryId, data) {
         var response, entry;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
-          while (1) switch (_context7.prev = _context7.next) {
-            case 0:
-              _context7.next = 2;
-              return this.client.put({
-                url: this.buildURL(collection, entryId),
-                body: {
-                  data: data
-                },
-                token: this.token
-              });
-            case 2:
-              response = _context7.sent;
-              entry = this.entry(response.collection, response.id, response.data);
-              entry.full = response;
-              return _context7.abrupt("return", entry);
-            case 6:
-            case "end":
-              return _context7.stop();
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                _context7.next = 2;
+                return this.client.put({
+                  url: this.buildURL(collection, entryId),
+                  body: {
+                    data: data
+                  },
+                  token: this.token
+                });
+
+              case 2:
+                response = _context7.sent;
+                entry = this.entry(response.collection, response.id, response.data);
+                entry.full = response;
+                return _context7.abrupt("return", entry);
+
+              case 6:
+              case "end":
+                return _context7.stop();
+            }
           }
         }, _callee7, this);
       }));
+
       function update(_x6, _x7, _x8) {
         return _update2.apply(this, arguments);
       }
+
       return update;
     }()
     /**
@@ -3721,6 +3913,7 @@ var Collections = /*#__PURE__*/function () {
      * @return {Promise<APIResponse>} Promise object
      * @example collection.delete("food", "cheese101")
      */
+
   }, {
     key: "delete",
     value: function _delete(collection, entryId) {
@@ -3729,7 +3922,6 @@ var Collections = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Upsert one or more items within a collection.
      * @link https://getstream.io/activity-feeds/docs/node/collections_batch/?language=js#upsert
@@ -3739,12 +3931,14 @@ var Collections = /*#__PURE__*/function () {
      * @param {NewCollectionEntry<StreamFeedGenerics> | NewCollectionEntry<StreamFeedGenerics>[]} data - A single json object or an array of objects
      * @return {Promise<UpsertCollectionAPIResponse<StreamFeedGenerics>>}
      */
+
   }, {
     key: "upsert",
     value: function upsert(collection, data) {
       if (!this.client.usingApiSecret) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .SiteError */ .z4('This method can only be used server-side using your API Secret');
       }
+
       if (!Array.isArray(data)) data = [data];
       return this.client.post({
         url: 'collections/',
@@ -3755,7 +3949,6 @@ var Collections = /*#__PURE__*/function () {
         token: this.client.getCollectionsToken()
       });
     }
-
     /**
      * UpsertMany one or more items into many collections.
      * @link https://getstream.io/activity-feeds/docs/node/collections_batch/?language=js#upsert
@@ -3765,12 +3958,14 @@ var Collections = /*#__PURE__*/function () {
      * @param {UpsertManyCollectionRequest} items - A single json object that contains information of many collections
      * @return {Promise<UpsertCollectionAPIResponse<StreamFeedGenerics>>}
      */
+
   }, {
     key: "upsertMany",
     value: function upsertMany(items) {
       if (!this.client.usingApiSecret) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .SiteError */ .z4('This method can only be used server-side using your API Secret');
       }
+
       return this.client.post({
         url: 'collections/',
         serviceName: 'api',
@@ -3780,7 +3975,6 @@ var Collections = /*#__PURE__*/function () {
         token: this.client.getCollectionsToken()
       });
     }
-
     /**
      * Select all objects with ids from the collection.
      * @link https://getstream.io/activity-feeds/docs/node/collections_batch/?language=js#select
@@ -3790,12 +3984,14 @@ var Collections = /*#__PURE__*/function () {
      * @param {string | string[]} ids - A single object id or an array of ids
      * @return {Promise<SelectCollectionAPIResponse<StreamFeedGenerics>>}
      */
+
   }, {
     key: "select",
     value: function select(collection, ids) {
       if (!this.client.usingApiSecret) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .SiteError */ .z4('This method can only be used server-side using your API Secret');
       }
+
       if (!Array.isArray(ids)) ids = [ids];
       return this.client.get({
         url: 'collections/',
@@ -3808,7 +4004,6 @@ var Collections = /*#__PURE__*/function () {
         token: this.client.getCollectionsToken()
       });
     }
-
     /**
      * Remove all objects by id from the collection.
      * @link https://getstream.io/activity-feeds/docs/node/collections_batch/?language=js#delete_many
@@ -3818,12 +4013,14 @@ var Collections = /*#__PURE__*/function () {
      * @param {string | string[]} ids - A single object id or an array of ids
      * @return {Promise<APIResponse>}
      */
+
   }, {
     key: "deleteMany",
     value: function deleteMany(collection, ids) {
       if (!this.client.usingApiSecret) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .SiteError */ .z4('This method can only be used server-side using your API Secret');
       }
+
       if (!Array.isArray(ids)) ids = [ids];
       var params = {
         collection_name: collection,
@@ -3839,6 +4036,7 @@ var Collections = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return Collections;
 }();
 
@@ -3852,7 +4050,6 @@ var Collections = /*#__PURE__*/function () {
 /* harmony export */   "$": () => (/* binding */ connect)
 /* harmony export */ });
 /* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6663);
-
 
 /**
  * Create StreamClient
@@ -3877,21 +4074,26 @@ var Collections = /*#__PURE__*/function () {
  * @example <caption>where streamURL looks like</caption>
  * "https://thierry:pass@gestream.io/?app=1"
  */
+
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
+
   if (typeof process !== 'undefined' && (_process$env = process.env) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
     var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(process.env.STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
     appId = parts[4];
+
     if (options === undefined) {
       options = {};
     }
+
     if (location !== 'getstream' && location !== 'stream-io-api') {
       options.location = location;
     }
   }
+
   return new _client__WEBPACK_IMPORTED_MODULE_0__/* .StreamClient */ .n(apiKey, apiSecret, appId, options);
 }
 
@@ -3919,14 +4121,16 @@ function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
+
   return self;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
     o.__proto__ = p;
     return o;
   };
+
   return _setPrototypeOf(o, p);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
@@ -3935,6 +4139,7 @@ function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
   }
+
   subClass.prototype = Object.create(superClass && superClass.prototype, {
     constructor: {
       value: subClass,
@@ -3958,11 +4163,12 @@ function _possibleConstructorReturn(self, call) {
   } else if (call !== void 0) {
     throw new TypeError("Derived constructors may only return object or undefined");
   }
+
   return _assertThisInitialized(self);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
 function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
   };
   return _getPrototypeOf(o);
@@ -3976,6 +4182,7 @@ function _isNativeReflectConstruct() {
   if (typeof Reflect === "undefined" || !Reflect.construct) return false;
   if (Reflect.construct.sham) return false;
   if (typeof Proxy === "function") return true;
+
   try {
     Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
     return true;
@@ -3988,7 +4195,7 @@ function _isNativeReflectConstruct() {
 
 function _construct(Parent, args, Class) {
   if (_isNativeReflectConstruct()) {
-    _construct = Reflect.construct.bind();
+    _construct = Reflect.construct;
   } else {
     _construct = function _construct(Parent, args, Class) {
       var a = [null];
@@ -3999,6 +4206,7 @@ function _construct(Parent, args, Class) {
       return instance;
     };
   }
+
   return _construct.apply(null, arguments);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/wrapNativeSuper.js
@@ -4008,18 +4216,24 @@ function _construct(Parent, args, Class) {
 
 function _wrapNativeSuper(Class) {
   var _cache = typeof Map === "function" ? new Map() : undefined;
+
   _wrapNativeSuper = function _wrapNativeSuper(Class) {
     if (Class === null || !_isNativeFunction(Class)) return Class;
+
     if (typeof Class !== "function") {
       throw new TypeError("Super expression must either be null or a function");
     }
+
     if (typeof _cache !== "undefined") {
       if (_cache.has(Class)) return _cache.get(Class);
+
       _cache.set(Class, Wrapper);
     }
+
     function Wrapper() {
       return _construct(Class, arguments, _getPrototypeOf(this).constructor);
     }
+
     Wrapper.prototype = Object.create(Class.prototype, {
       constructor: {
         value: Wrapper,
@@ -4030,6 +4244,7 @@ function _wrapNativeSuper(Class) {
     });
     return _setPrototypeOf(Wrapper, Class);
   };
+
   return _wrapNativeSuper(Class);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
@@ -4043,26 +4258,36 @@ var defineProperty = __webpack_require__(4942);
 
 
 
+
 function _createSuper(Derived) { var hasNativeReflectConstruct = errors_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
 function errors_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
 var canCapture = typeof Error.captureStackTrace === 'function';
 var canStack = !!new Error().stack;
-
 /**
  * Abstract error object
  * @class ErrorAbstract
  * @access private
  * @param  {string}      [msg]         Error message
  */
+
 var ErrorAbstract = /*#__PURE__*/function (_Error) {
   _inherits(ErrorAbstract, _Error);
+
   var _super = _createSuper(ErrorAbstract);
+
   function ErrorAbstract(msg) {
     var _this;
+
     (0,classCallCheck/* default */.Z)(this, ErrorAbstract);
+
     _this = _super.call(this, msg);
+
     (0,defineProperty/* default */.Z)(_assertThisInitialized(_this), "message", void 0);
+
     _this.message = msg;
+
     if (canCapture) {
       Error.captureStackTrace(_assertThisInitialized(_this), ErrorAbstract.constructor);
     } else if (canStack) {
@@ -4070,8 +4295,10 @@ var ErrorAbstract = /*#__PURE__*/function (_Error) {
     } else {
       _this.stack = '';
     }
+
     return _this;
   }
+
   return (0,createClass/* default */.Z)(ErrorAbstract);
 }( /*#__PURE__*/_wrapNativeSuper(Error));
 /**
@@ -4082,16 +4309,21 @@ var ErrorAbstract = /*#__PURE__*/function (_Error) {
  * @memberof Stream.errors
  * @param {String} [msg] - An error message that will probably end up in a log.
  */
+
+
 var FeedError = /*#__PURE__*/function (_ErrorAbstract) {
   _inherits(FeedError, _ErrorAbstract);
+
   var _super2 = _createSuper(FeedError);
+
   function FeedError() {
     (0,classCallCheck/* default */.Z)(this, FeedError);
+
     return _super2.apply(this, arguments);
   }
+
   return (0,createClass/* default */.Z)(FeedError);
 }(ErrorAbstract);
-
 /**
  * SiteError
  * @class SiteError
@@ -4100,16 +4332,20 @@ var FeedError = /*#__PURE__*/function (_ErrorAbstract) {
  * @memberof Stream.errors
  * @param  {string}  [msg]  An error message that will probably end up in a log.
  */
+
 var SiteError = /*#__PURE__*/function (_ErrorAbstract2) {
   _inherits(SiteError, _ErrorAbstract2);
+
   var _super3 = _createSuper(SiteError);
+
   function SiteError() {
     (0,classCallCheck/* default */.Z)(this, SiteError);
+
     return _super3.apply(this, arguments);
   }
+
   return (0,createClass/* default */.Z)(SiteError);
 }(ErrorAbstract);
-
 /**
  * MissingSchemaError
  * @method MissingSchemaError
@@ -4118,16 +4354,20 @@ var SiteError = /*#__PURE__*/function (_ErrorAbstract2) {
  * @memberof Stream.errors
  * @param  {string} msg
  */
+
 var MissingSchemaError = /*#__PURE__*/function (_ErrorAbstract3) {
   _inherits(MissingSchemaError, _ErrorAbstract3);
+
   var _super4 = _createSuper(MissingSchemaError);
+
   function MissingSchemaError() {
     (0,classCallCheck/* default */.Z)(this, MissingSchemaError);
+
     return _super4.apply(this, arguments);
   }
+
   return (0,createClass/* default */.Z)(MissingSchemaError);
 }(ErrorAbstract);
-
 /**
  * StreamApiError
  * @method StreamApiError
@@ -4138,19 +4378,28 @@ var MissingSchemaError = /*#__PURE__*/function (_ErrorAbstract3) {
  * @param  {object} data
  * @param  {object} response
  */
+
 var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
   _inherits(StreamApiError, _ErrorAbstract4);
+
   var _super5 = _createSuper(StreamApiError);
+
   function StreamApiError(msg, data, response) {
     var _this2;
+
     (0,classCallCheck/* default */.Z)(this, StreamApiError);
+
     _this2 = _super5.call(this, msg);
+
     (0,defineProperty/* default */.Z)(_assertThisInitialized(_this2), "error", void 0);
+
     (0,defineProperty/* default */.Z)(_assertThisInitialized(_this2), "response", void 0);
+
     _this2.error = data;
     _this2.response = response;
     return _this2;
   }
+
   return (0,createClass/* default */.Z)(StreamApiError);
 }(ErrorAbstract);
 
@@ -4172,8 +4421,11 @@ var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
 
 
 
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 /// <reference path="../types/modules.d.ts" />
 
 
@@ -4197,39 +4449,48 @@ var StreamFeed = /*#__PURE__*/function () {
    */
   function StreamFeed(client, feedSlug, userId, token) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(this, StreamFeed);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "client", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "token", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "id", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "slug", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "userId", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "feedUrl", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "feedTogether", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, "notificationChannel", void 0);
+
     if (!feedSlug || !userId) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Please provide a feed slug and user id, ie client.feed("user", "1")');
     }
+
     if (feedSlug.indexOf(':') !== -1) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(feedSlug);
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(userId);
 
-    // raise an error if there is no token
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(feedSlug);
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(userId); // raise an error if there is no token
+
     if (!token) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Missing token, in client side mode please provide a feed secret');
     }
+
     this.client = client;
     this.slug = feedSlug;
     this.userId = userId;
     this.id = "".concat(this.slug, ":").concat(this.userId);
     this.token = token;
     this.feedUrl = this.id.replace(':', '/');
-    this.feedTogether = this.id.replace(':', '');
+    this.feedTogether = this.id.replace(':', ''); // faye setup
 
-    // faye setup
     this.notificationChannel = "site-".concat(this.client.appId, "-feed-").concat(this.feedTogether);
   }
-
   /**
    * Adds the given activity to the feed
    * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#adding-activities-basic
@@ -4238,20 +4499,23 @@ var StreamFeed = /*#__PURE__*/function () {
    * @param {NewActivity<StreamFeedGenerics>} activity - The activity to add
    * @return {Promise<Activity<StreamFeedGenerics>>}
    */
+
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)(StreamFeed, [{
     key: "addActivity",
     value: function addActivity(activity) {
       activity = _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].replaceStreamObjects */ .Z.replaceStreamObjects(activity);
+
       if (!activity.actor && this.client.currentUser) {
         activity.actor = this.client.currentUser.ref();
       }
+
       return this.client.post({
         url: "feed/".concat(this.feedUrl, "/"),
         body: activity,
         token: this.token
       });
     }
-
     /**
      * Removes the activity by activityId or foreignId
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#removing-activities
@@ -4262,6 +4526,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.removeActivity(activityId);
      * @example feed.removeActivity({'foreign_id': foreignId});
      */
+
   }, {
     key: "removeActivity",
     value: function removeActivity(activityOrActivityId) {
@@ -4274,7 +4539,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Adds the given activities to the feed
      * @link https://getstream.io/activity-feeds/docs/node/add_many_activities/?language=js#batch-add-activities
@@ -4283,6 +4547,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @param  {NewActivity<StreamFeedGenerics>[]}   activities Array of activities to add
      * @return {Promise<Activity<StreamFeedGenerics>[]>}
      */
+
   }, {
     key: "addActivities",
     value: function addActivities(activities) {
@@ -4294,7 +4559,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Follows the given target feed
      * @link https://getstream.io/activity-feeds/docs/node/following/?language=js
@@ -4309,13 +4573,16 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.follow('user', '1');
      * @example feed.follow('user', '1', options);
      */
+
   }, {
     key: "follow",
     value: function follow(targetSlug, targetUserId) {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
       if (targetUserId instanceof _user__WEBPACK_IMPORTED_MODULE_1__/* .StreamUser */ .h) {
         targetUserId = targetUserId.id;
       }
+
       _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
       _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(targetUserId);
       var body = {
@@ -4328,7 +4595,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Unfollow the given feed
      * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#unfollowing-feeds
@@ -4342,6 +4608,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @return {Promise<APIResponse>}
      * @example feed.unfollow('user', '2');
      */
+
   }, {
     key: "unfollow",
     value: function unfollow(targetSlug, targetUserId) {
@@ -4357,7 +4624,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * List which feeds this feed is following
      * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#reading-followed-feeds
@@ -4370,6 +4636,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @return {Promise<GetFollowAPIResponse>}
      * @example feed.following({limit:10, filter: ['user:1', 'user:2']});
      */
+
   }, {
     key: "following",
     value: function following() {
@@ -4382,7 +4649,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * List the followers of this feed
      * @link https://getstream.io/activity-feeds/docs/node/following/?language=js#reading-feed-followers
@@ -4395,6 +4661,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @return {Promise<GetFollowAPIResponse>}
      * @example feed.followers({limit:10, filter: ['user:1', 'user:2']});
      */
+
   }, {
     key: "followers",
     value: function followers() {
@@ -4407,7 +4674,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      *  Retrieve the number of follower and following feed stats of the current feed.
      *  For each count, feed slugs can be provided to filter counts accordingly.
@@ -4420,6 +4686,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.followStats();
      * @example feed.followStats({ followerSlugs:['user', 'news'], followingSlugs:['timeline'] });
      */
+
   }, {
     key: "followStats",
     value: function followStats() {
@@ -4436,7 +4703,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.client.getOrCreateToken() || this.token
       });
     }
-
     /**
      * Reads the feed
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#retrieving-activities
@@ -4447,17 +4713,21 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.get({limit: 10, id_lte: 'activity-id'})
      * @example feed.get({limit: 10, mark_seen: true})
      */
+
   }, {
     key: "get",
     value: function get() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var extraOptions = {};
+
       if (options.mark_read && options.mark_read.join) {
         extraOptions.mark_read = options.mark_read.join(',');
       }
+
       if (options.mark_seen && options.mark_seen.join) {
         extraOptions.mark_seen = options.mark_seen.join(',');
       }
+
       this.client.replaceReactionOptions(options);
       var path = this.client.shouldUseEnrichEndpoint(options) ? 'enrich/feed/' : 'feed/';
       return this.client.get({
@@ -4466,7 +4736,6 @@ var StreamFeed = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Retrieves one activity from a feed and adds enrichment
      * @link https://getstream.io/activity-feeds/docs/node/adding_activities/?language=js#retrieving-activities
@@ -4480,6 +4749,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
      * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
+
   }, {
     key: "getActivityDetail",
     value: function getActivityDetail(activityId, options) {
@@ -4489,7 +4759,6 @@ var StreamFeed = /*#__PURE__*/function () {
         limit: 1
       }, options || {}));
     }
-
     /**
      * Returns the current faye client object
      * @method getFayeClient
@@ -4497,12 +4766,12 @@ var StreamFeed = /*#__PURE__*/function () {
      * @access private
      * @return {Faye.Client} Faye client
      */
+
   }, {
     key: "getFayeClient",
     value: function getFayeClient() {
       return this.client.getFayeClient();
     }
-
     /**
      * Subscribes to any changes in the feed, return a promise
      * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
@@ -4515,12 +4784,14 @@ var StreamFeed = /*#__PURE__*/function () {
      * 		console.log('we are now listening to changes');
      * });
      */
+
   }, {
     key: "subscribe",
     value: function subscribe(callback) {
       if (!this.client.appId) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .SiteError */ .z4('Missing app id, which is needed to subscribe, use var client = stream.connect(key, secret, appId);');
       }
+
       var subscription = this.getFayeClient().subscribe("/".concat(this.notificationChannel), callback);
       this.client.subscriptions["/".concat(this.notificationChannel)] = {
         token: this.token,
@@ -4529,16 +4800,17 @@ var StreamFeed = /*#__PURE__*/function () {
       };
       return subscription;
     }
-
     /**
      * Cancel updates created via feed.subscribe()
      * @link https://getstream.io/activity-feeds/docs/node/web_and_mobile/?language=js#subscribe-to-realtime-updates-via-api-client
      * @return void
      */
+
   }, {
     key: "unsubscribe",
     value: function unsubscribe() {
       var streamSubscription = this.client.subscriptions["/".concat(this.notificationChannel)];
+
       if (streamSubscription) {
         delete this.client.subscriptions["/".concat(this.notificationChannel)];
         streamSubscription.fayeSubscription.cancel();
@@ -4549,14 +4821,17 @@ var StreamFeed = /*#__PURE__*/function () {
     value: function _validateToTargetInput(foreignId, time, newTargets, addedTargets, removedTargets) {
       if (!foreignId) throw new Error('Missing `foreign_id` parameter!');
       if (!time) throw new Error('Missing `time` parameter!');
+
       if (!newTargets && !addedTargets && !removedTargets) {
         throw new Error('Requires you to provide at least one parameter for `newTargets`, `addedTargets`, or `removedTargets` - example: `updateActivityToTargets("foreignID:1234", new Date(), [newTargets...], [addedTargets...], [removedTargets...])`');
       }
+
       if (newTargets) {
         if (addedTargets || removedTargets) {
           throw new Error("Can't include add_targets or removedTargets if you're also including newTargets");
         }
       }
+
       if (addedTargets && removedTargets) {
         // brute force - iterate through added, check to see if removed contains that element
         addedTargets.forEach(function (addedTarget) {
@@ -4566,7 +4841,6 @@ var StreamFeed = /*#__PURE__*/function () {
         });
       }
     }
-
     /**
      * Updates an activity's "to" fields
      * @link https://getstream.io/activity-feeds/docs/node/targeting/?language=js
@@ -4576,6 +4850,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @param {string[]} addedTargets Add these new targets to the activity
      * @param {string[]} removedTargets Remove these targets from the activity
      */
+
   }, {
     key: "updateActivityToTargets",
     value: function updateActivityToTargets(foreignId, time, newTargets, addedTargets, removedTargets) {
@@ -4586,19 +4861,22 @@ var StreamFeed = /*#__PURE__*/function () {
         addedTargets: addedTargets,
         removedTargets: removedTargets
       }]);
-    }
+    } // NOTE: it can change without notice
 
-    // NOTE: it can change without notice
   }, {
     key: "_updateActivityToTargetsMany",
     value: function _updateActivityToTargetsMany(inputs) {
       if (!inputs || inputs.length === 0) {
         throw new Error('At least one input is required');
       }
+
       var body = [];
+
       for (var i = 0; i < inputs.length; i++) {
         var input = inputs[i];
+
         this._validateToTargetInput(input.foreignId, input.time, input.newTargets, input.addedTargets, input.removedTargets);
+
         var item = {
           foreign_id: input.foreignId,
           time: input.time
@@ -4608,6 +4886,7 @@ var StreamFeed = /*#__PURE__*/function () {
         if (input.removedTargets) item.removed_targets = input.removedTargets;
         body.push(item);
       }
+
       return this.client.post({
         url: "feed_targets/".concat(this.feedUrl, "/activity_to_targets/"),
         token: this.token,
@@ -4615,6 +4894,7 @@ var StreamFeed = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamFeed;
 }();
 
@@ -4636,14 +4916,16 @@ var StreamFeed = /*#__PURE__*/function () {
 var StreamFileStore = /*#__PURE__*/function () {
   function StreamFileStore(client, token) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, StreamFileStore);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "token", void 0);
+
     this.client = client;
     this.token = token;
-  }
-
-  // React Native does not auto-detect MIME type, you need to pass that via contentType
+  } // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
+
   /**
    * upload a File instance or a readable stream of data
    * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#upload
@@ -4653,17 +4935,19 @@ var StreamFileStore = /*#__PURE__*/function () {
    * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
    * @return {Promise<FileUploadAPIResponse>}
    */
+
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(StreamFileStore, [{
     key: "upload",
     value: function upload(uri, name, contentType, onUploadProgress) {
       return this.client.upload('files/', uri, name, contentType, onUploadProgress);
     }
-
     /**
      * delete an uploaded file
      * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#delete
      * @param {string} uri
      */
+
   }, {
     key: "delete",
     value: function _delete(uri) {
@@ -4676,6 +4960,7 @@ var StreamFileStore = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamFileStore;
 }();
 
@@ -4693,17 +4978,20 @@ __webpack_require__.d(__webpack_exports__, {
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
 function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function (target) {
+  _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
+
       for (var key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
           target[key] = source[key];
         }
       }
     }
+
     return target;
   };
+
   return _extends.apply(this, arguments);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
@@ -4720,14 +5008,16 @@ var defineProperty = __webpack_require__(4942);
 var StreamImageStore = /*#__PURE__*/function () {
   function StreamImageStore(client, token) {
     (0,classCallCheck/* default */.Z)(this, StreamImageStore);
+
     (0,defineProperty/* default */.Z)(this, "client", void 0);
+
     (0,defineProperty/* default */.Z)(this, "token", void 0);
+
     this.client = client;
     this.token = token;
-  }
-
-  // React Native does not auto-detect MIME type, you need to pass that via contentType
+  } // React Native does not auto-detect MIME type, you need to pass that via contentType
   // param. If you don't then Android will refuse to perform the upload
+
   /**
    * upload an Image File instance or a readable stream of data
    * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#upload
@@ -4737,17 +5027,19 @@ var StreamImageStore = /*#__PURE__*/function () {
    * @param {function} [onUploadProgress] - browser only, Function that is called with upload progress
    * @return {Promise<FileUploadAPIResponse>}
    */
+
+
   (0,createClass/* default */.Z)(StreamImageStore, [{
     key: "upload",
     value: function upload(uri, name, contentType, onUploadProgress) {
       return this.client.upload('images/', uri, name, contentType, onUploadProgress);
     }
-
     /**
      * delete an uploaded image
      * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#delete
      * @param {string} uri
      */
+
   }, {
     key: "delete",
     value: function _delete(uri) {
@@ -4759,29 +5051,30 @@ var StreamImageStore = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Generate a diffrent variant of the uploaded image
      * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#image_processing
      * @param {string} uri
      * @param {ImageProcessOptions} options
      */
+
   }, {
     key: "process",
     value: function process(uri, options) {
       var params = _extends(options, {
         url: uri
       });
+
       if (Array.isArray(params.crop)) {
         params.crop = params.crop.join(',');
       }
+
       return this.client.get({
         url: "images/",
         qs: params,
         token: this.token
       });
     }
-
     /**
      * Generate a thumbnail for a given image
      * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#image_processing
@@ -4790,15 +5083,17 @@ var StreamImageStore = /*#__PURE__*/function () {
      * @param {number|string} h
      * @param {Object} [options]
      */
+
   }, {
     key: "thumbnail",
     value: function thumbnail(uri, w, h) {
       var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {
-          crop: 'center',
-          resize: 'clip'
-        },
-        crop = _ref.crop,
-        resize = _ref.resize;
+        crop: 'center',
+        resize: 'clip'
+      },
+          crop = _ref.crop,
+          resize = _ref.resize;
+
       return this.process(uri, {
         w: w,
         h: h,
@@ -4807,6 +5102,7 @@ var StreamImageStore = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamImageStore;
 }();
 
@@ -4825,12 +5121,12 @@ var StreamImageStore = /*#__PURE__*/function () {
 
 
 
+
 /**
  * Manage api calls for personalization
  * The collection object contains convenience functions such as  get, post, delete
  * @class Personalization
  */
-
 var Personalization = /*#__PURE__*/function () {
   /**
    * Initialize the Personalization class
@@ -4841,10 +5137,11 @@ var Personalization = /*#__PURE__*/function () {
    */
   function Personalization(client) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(this, Personalization);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
+
     this.client = client;
   }
-
   /**
    * Get personalized activities for this feed
    *
@@ -4855,6 +5152,8 @@ var Personalization = /*#__PURE__*/function () {
    * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Personalized feed
    * @example client.personalization.get('follow_recommendations', {foo: 'bar', baz: 'qux'})
    */
+
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(Personalization, [{
     key: "get",
     value: function get(resource) {
@@ -4866,7 +5165,6 @@ var Personalization = /*#__PURE__*/function () {
         token: options.token || this.client.getPersonalizationToken()
       });
     }
-
     /**
      * Post data to personalization endpoint
      *
@@ -4878,6 +5176,7 @@ var Personalization = /*#__PURE__*/function () {
      * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Data that was posted if successful, or an error.
      * @example client.personalization.post('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
+
   }, {
     key: "post",
     value: function post(resource) {
@@ -4891,7 +5190,6 @@ var Personalization = /*#__PURE__*/function () {
         token: this.client.getPersonalizationToken()
       });
     }
-
     /**
      * Delete metadata or activities
      *
@@ -4902,6 +5200,7 @@ var Personalization = /*#__PURE__*/function () {
      * @return {Promise<PersonalizationAPIResponse<StreamFeedGenerics>>} Promise object. Data that was deleted if successful, or an error.
      * @example client.personalization.delete('follow_recommendations', {foo: 'bar', baz: 'qux'})
      */
+
   }, {
     key: "delete",
     value: function _delete(resource) {
@@ -4914,6 +5213,7 @@ var Personalization = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return Personalization;
 }();
 
@@ -4949,23 +5249,30 @@ var StreamReaction = /*#__PURE__*/function () {
    */
   function StreamReaction(client, token) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, StreamReaction);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "client", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "token", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "buildURL", function () {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
+
       return "".concat(['reaction'].concat(args).join('/'), "/");
     });
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, "_convertTargetFeeds", function () {
       var targetFeeds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       return targetFeeds.map(function (elem) {
         return typeof elem === 'string' ? elem : elem.id;
       });
     });
+
     this.client = client;
     this.token = token;
   }
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(StreamReaction, [{
     key: "add",
     value:
@@ -4988,11 +5295,12 @@ var StreamReaction = /*#__PURE__*/function () {
      */
     function add(kind, activity, data) {
       var _ref = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        id = _ref.id,
-        _ref$targetFeeds = _ref.targetFeeds,
-        targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
-        userId = _ref.userId,
-        targetFeedsExtraData = _ref.targetFeedsExtraData;
+          id = _ref.id,
+          _ref$targetFeeds = _ref.targetFeeds,
+          targetFeeds = _ref$targetFeeds === void 0 ? [] : _ref$targetFeeds,
+          userId = _ref.userId,
+          targetFeedsExtraData = _ref.targetFeedsExtraData;
+
       var body = {
         id: id,
         activity_id: activity instanceof Object ? activity.id : activity,
@@ -5001,16 +5309,17 @@ var StreamReaction = /*#__PURE__*/function () {
         target_feeds: this._convertTargetFeeds(targetFeeds),
         user_id: userId
       };
+
       if (targetFeedsExtraData != null) {
         body.target_feeds_extra_data = targetFeedsExtraData;
       }
+
       return this.client.post({
         url: this.buildURL(),
         body: body,
         token: this.token
       });
     }
-
     /**
      * add child reaction
      * @link https://getstream.io/activity-feeds/docs/node/reactions_add_child/?language=js
@@ -5027,14 +5336,16 @@ var StreamReaction = /*#__PURE__*/function () {
      * @example reactions.add("like", "0c7db91c-67f9-11e8-bcd9-fe00a9219401")
      * @example reactions.add("comment", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", {"text": "love it!"},)
      */
+
   }, {
     key: "addChild",
     value: function addChild(kind, reaction, data) {
       var _ref2 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {},
-        _ref2$targetFeeds = _ref2.targetFeeds,
-        targetFeeds = _ref2$targetFeeds === void 0 ? [] : _ref2$targetFeeds,
-        userId = _ref2.userId,
-        targetFeedsExtraData = _ref2.targetFeedsExtraData;
+          _ref2$targetFeeds = _ref2.targetFeeds,
+          targetFeeds = _ref2$targetFeeds === void 0 ? [] : _ref2$targetFeeds,
+          userId = _ref2.userId,
+          targetFeedsExtraData = _ref2.targetFeedsExtraData;
+
       var body = {
         parent: reaction instanceof Object ? reaction.id : reaction,
         kind: kind,
@@ -5042,16 +5353,17 @@ var StreamReaction = /*#__PURE__*/function () {
         target_feeds: this._convertTargetFeeds(targetFeeds),
         user_id: userId
       };
+
       if (targetFeedsExtraData != null) {
         body.target_feeds_extra_data = targetFeedsExtraData;
       }
+
       return this.client.post({
         url: this.buildURL(),
         body: body,
         token: this.token
       });
     }
-
     /**
      * get reaction
      * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#retrieving-reactions
@@ -5061,6 +5373,7 @@ var StreamReaction = /*#__PURE__*/function () {
      * @return {Promise<EnrichedReactionAPIResponse<StreamFeedGenerics>>}
      * @example reactions.get("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
+
   }, {
     key: "get",
     value: function get(id) {
@@ -5069,7 +5382,6 @@ var StreamReaction = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * retrieve reactions by activity_id, user_id or reaction_id (to paginate children reactions), pagination can be done using id_lt, id_lte, id_gt and id_gte parameters
      * id_lt and id_lte return reactions order by creation descending starting from the reaction with the ID provided, when id_lte is used
@@ -5085,19 +5397,23 @@ var StreamReaction = /*#__PURE__*/function () {
      * @example reactions.filter({activity_id: "0c7db91c-67f9-11e8-bcd9-fe00a9219401", kind:"like"})
      * @example reactions.filter({user_id: "john", kinds:"like"})
      */
+
   }, {
     key: "filter",
     value: function filter(conditions) {
       var userId = conditions.user_id,
-        activityId = conditions.activity_id,
-        reactionId = conditions.reaction_id,
-        qs = (0,_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(conditions, _excluded);
+          activityId = conditions.activity_id,
+          reactionId = conditions.reaction_id,
+          qs = (0,_babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)(conditions, _excluded);
+
       if (!qs.limit) {
         qs.limit = 10;
       }
+
       if ((userId ? 1 : 0) + (activityId ? 1 : 0) + (reactionId ? 1 : 0) !== 1) {
         throw new _errors__WEBPACK_IMPORTED_MODULE_0__/* .SiteError */ .z4('Must provide exactly one value for one of these params: user_id, activity_id, reaction_id');
       }
+
       var lookupType = userId && 'user_id' || activityId && 'activity_id' || reactionId && 'reaction_id';
       var value = userId || activityId || reactionId;
       var url = conditions.kind ? this.buildURL(lookupType, value, conditions.kind) : this.buildURL(lookupType, value);
@@ -5107,7 +5423,6 @@ var StreamReaction = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * update reaction
      * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#updating-reactions
@@ -5122,27 +5437,30 @@ var StreamReaction = /*#__PURE__*/function () {
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "like")
      * @example reactions.update("67b3e3b5-b201-4697-96ac-482eb14f88ec", "0c7db91c-67f9-11e8-bcd9-fe00a9219401", "comment", {"text": "love it!"},)
      */
+
   }, {
     key: "update",
     value: function update(id, data) {
       var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-        _ref3$targetFeeds = _ref3.targetFeeds,
-        targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds,
-        targetFeedsExtraData = _ref3.targetFeedsExtraData;
+          _ref3$targetFeeds = _ref3.targetFeeds,
+          targetFeeds = _ref3$targetFeeds === void 0 ? [] : _ref3$targetFeeds,
+          targetFeedsExtraData = _ref3.targetFeedsExtraData;
+
       var body = {
         data: data,
         target_feeds: this._convertTargetFeeds(targetFeeds)
       };
+
       if (targetFeedsExtraData != null) {
         body.target_feeds_extra_data = targetFeedsExtraData;
       }
+
       return this.client.put({
         url: this.buildURL(id),
         body: body,
         token: this.token
       });
     }
-
     /**
      * delete reaction
      * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#removing-reactions
@@ -5152,6 +5470,7 @@ var StreamReaction = /*#__PURE__*/function () {
      * @return {Promise<APIResponse>}
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
+
   }, {
     key: "delete",
     value: function _delete(id) {
@@ -5161,6 +5480,7 @@ var StreamReaction = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamReaction;
 }();
 
@@ -5171,29 +5491,32 @@ var StreamReaction = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "c": () => (/* binding */ JWTUserSessionToken),
-/* harmony export */   "v": () => (/* binding */ JWTScopeToken)
+/* harmony export */   "v": () => (/* binding */ JWTScopeToken),
+/* harmony export */   "c": () => (/* binding */ JWTUserSessionToken)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4942);
 /* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1726);
 /* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__);
 
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
+ // for a claim in jwt
 
-// for a claim in jwt
 function joinClaimValue(items) {
   var values = Array.isArray(items) ? items : [items];
   var claims = [];
+
   for (var i = 0; i < values.length; i += 1) {
     var s = values[i].trim();
     if (s === '*') return s;
     claims.push(s);
   }
+
   return claims.join(',');
 }
-
 /**
  * Creates the JWT token for feedId, resource and action using the apiSecret
  * @method JWTScopeToken
@@ -5208,6 +5531,8 @@ function joinClaimValue(items) {
  * @param {boolean} [options.expireTokens] - JWT noTimestamp
  * @return {string} JWT Token
  */
+
+
 function JWTScopeToken(apiSecret, resource, action) {
   var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   var noTimestamp = options.expireTokens ? !options.expireTokens : true;
@@ -5222,7 +5547,6 @@ function JWTScopeToken(apiSecret, resource, action) {
     noTimestamp: noTimestamp
   });
 }
-
 /**
  * Creates the JWT token that can be used for a UserSession
  * @method JWTUserSessionToken
@@ -5234,19 +5558,24 @@ function JWTScopeToken(apiSecret, resource, action) {
  * @param {object} [jwtOptions] - Options that can be past to jwt.sign
  * @return {string} JWT Token
  */
+
 function JWTUserSessionToken(apiSecret, userId) {
   var extraData = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var jwtOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
   if (typeof userId !== 'string') {
     throw new TypeError('userId should be a string');
   }
+
   var payload = _objectSpread({
     user_id: userId
   }, extraData);
+
   var opts = _objectSpread({
     algorithm: 'HS256',
     noTimestamp: true
   }, jwtOptions);
+
   return jsonwebtoken__WEBPACK_IMPORTED_MODULE_1___default().sign(payload, apiSecret, opts);
 }
 
@@ -5263,15 +5592,18 @@ function JWTUserSessionToken(apiSecret, userId) {
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3144);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4942);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4687);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7757);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
 
 
 
 
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 var StreamUser = /*#__PURE__*/function () {
   /**
    * Initialize a user session object
@@ -5285,12 +5617,19 @@ var StreamUser = /*#__PURE__*/function () {
    */
   function StreamUser(client, userId, userAuthToken) {
     (0,_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(this, StreamUser);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "client", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "token", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "id", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "data", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "full", void 0);
+
     (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z)(this, "url", void 0);
+
     this.client = client;
     this.id = userId;
     this.data = undefined;
@@ -5298,22 +5637,23 @@ var StreamUser = /*#__PURE__*/function () {
     this.token = userAuthToken;
     this.url = "user/".concat(this.id, "/");
   }
-
   /**
    * Create a stream user ref
    * @return {string}
    */
+
+
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(StreamUser, [{
     key: "ref",
     value: function ref() {
       return "SU:".concat(this.id);
     }
-
     /**
      * Delete the user
      * @link https://getstream.io/activity-feeds/docs/node/users_introduction/?language=js#removing-users
      * @return {Promise<APIResponse>}
      */
+
   }, {
     key: "delete",
     value: function _delete() {
@@ -5322,42 +5662,48 @@ var StreamUser = /*#__PURE__*/function () {
         token: this.token
       });
     }
-
     /**
      * Get the user data
      * @link https://getstream.io/activity-feeds/docs/node/users_introduction/?language=js#retrieving-users
      * @param {boolean} [options.with_follow_counts]
      * @return {Promise<StreamUser>}
      */
+
   }, {
     key: "get",
     value: function () {
       var _get = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee(options) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return this.client.get({
-                url: this.url,
-                token: this.token,
-                qs: options
-              });
-            case 2:
-              response = _context.sent;
-              this.full = _objectSpread({}, response);
-              delete this.full.duration;
-              this.data = this.full.data;
-              return _context.abrupt("return", this);
-            case 7:
-            case "end":
-              return _context.stop();
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.client.get({
+                  url: this.url,
+                  token: this.token,
+                  qs: options
+                });
+
+              case 2:
+                response = _context.sent;
+                this.full = _objectSpread({}, response);
+                delete this.full.duration;
+                this.data = this.full.data;
+                return _context.abrupt("return", this);
+
+              case 7:
+              case "end":
+                return _context.stop();
+            }
           }
         }, _callee, this);
       }));
+
       function get(_x) {
         return _get.apply(this, arguments);
       }
+
       return get;
     }()
     /**
@@ -5367,39 +5713,46 @@ var StreamUser = /*#__PURE__*/function () {
      * @param {boolean} [options.get_or_create] if user already exists return it
      * @return {Promise<StreamUser>}
      */
+
   }, {
     key: "create",
     value: function () {
       var _create = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(data, options) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.next = 2;
-              return this.client.post({
-                url: 'user/',
-                body: {
-                  id: this.id,
-                  data: data || this.data || {}
-                },
-                qs: options,
-                token: this.token
-              });
-            case 2:
-              response = _context2.sent;
-              this.full = _objectSpread({}, response);
-              delete this.full.duration;
-              this.data = this.full.data;
-              return _context2.abrupt("return", this);
-            case 7:
-            case "end":
-              return _context2.stop();
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.client.post({
+                  url: 'user/',
+                  body: {
+                    id: this.id,
+                    data: data || this.data || {}
+                  },
+                  qs: options,
+                  token: this.token
+                });
+
+              case 2:
+                response = _context2.sent;
+                this.full = _objectSpread({}, response);
+                delete this.full.duration;
+                this.data = this.full.data;
+                return _context2.abrupt("return", this);
+
+              case 7:
+              case "end":
+                return _context2.stop();
+            }
           }
         }, _callee2, this);
       }));
+
       function create(_x2, _x3) {
         return _create.apply(this, arguments);
       }
+
       return create;
     }()
     /**
@@ -5408,37 +5761,44 @@ var StreamUser = /*#__PURE__*/function () {
      * @param {object} data user date stored in stream
      * @return {Promise<StreamUser>}
      */
+
   }, {
     key: "update",
     value: function () {
       var _update = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z)( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3(data) {
         var response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return this.client.put({
-                url: this.url,
-                body: {
-                  data: data || this.data || {}
-                },
-                token: this.token
-              });
-            case 2:
-              response = _context3.sent;
-              this.full = _objectSpread({}, response);
-              delete this.full.duration;
-              this.data = this.full.data;
-              return _context3.abrupt("return", this);
-            case 7:
-            case "end":
-              return _context3.stop();
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.client.put({
+                  url: this.url,
+                  body: {
+                    data: data || this.data || {}
+                  },
+                  token: this.token
+                });
+
+              case 2:
+                response = _context3.sent;
+                this.full = _objectSpread({}, response);
+                delete this.full.duration;
+                this.data = this.full.data;
+                return _context3.abrupt("return", this);
+
+              case 7:
+              case "end":
+                return _context3.stop();
+            }
           }
         }, _callee3, this);
       }));
+
       function update(_x4) {
         return _update.apply(this, arguments);
       }
+
       return update;
     }()
     /**
@@ -5447,6 +5807,7 @@ var StreamUser = /*#__PURE__*/function () {
      * @param {object} data user date stored in stream
      * @return {Promise<StreamUser>}
      */
+
   }, {
     key: "getOrCreate",
     value: function getOrCreate(data) {
@@ -5454,12 +5815,12 @@ var StreamUser = /*#__PURE__*/function () {
         get_or_create: true
       });
     }
-
     /**
      * Get the user profile, it includes the follow counts by default
      * @link https://getstream.io/activity-feeds/docs/node/users_introduction/?language=js#retrieving-users
      * @return {Promise<StreamUser>}
      */
+
   }, {
     key: "profile",
     value: function profile() {
@@ -5468,6 +5829,7 @@ var StreamUser = /*#__PURE__*/function () {
       });
     }
   }]);
+
   return StreamUser;
 }();
 
@@ -5491,62 +5853,73 @@ var StreamUser = /*#__PURE__*/function () {
 
 var validFeedSlugRe = /^[\w]+$/;
 var validUserIdRe = /^[\w-]+$/;
-
 /*
  * Validate that the feedSlug matches \w
  */
+
 function validateFeedSlug(feedSlug) {
   if (!validFeedSlugRe.test(feedSlug)) {
     throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .FeedError */ .IY("Invalid feedSlug, please use letters, numbers or _: ".concat(feedSlug));
   }
+
   return feedSlug;
 }
-
 /*
  * Validate the userId matches \w
  */
+
+
 function validateUserId(userId) {
   if (!validUserIdRe.test(userId)) {
     throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .FeedError */ .IY("Invalid userId, please use letters, numbers, - or _: ".concat(userId));
   }
+
   return userId;
 }
+
 function rfc3986(str) {
   return str.replace(/[!'()*]/g, function (c) {
     return "%".concat(c.charCodeAt(0).toString(16).toUpperCase());
   });
 }
+
 function isReadableStream(obj) {
   return obj !== null && (0,_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(obj) === 'object' && (obj.readable || typeof obj._read === 'function');
 }
+
 function isBuffer(obj) {
-  return obj != null && obj.constructor != null &&
-  // @ts-expect-error
-  typeof obj.constructor.isBuffer === 'function' &&
-  // @ts-expect-error
+  return obj != null && obj.constructor != null && // @ts-expect-error
+  typeof obj.constructor.isBuffer === 'function' && // @ts-expect-error
   obj.constructor.isBuffer(obj);
 }
+
 function isFileWebAPI(uri) {
   return typeof window !== 'undefined' && 'File' in window && uri instanceof File;
 }
-
 /*
  * Validate that the feedId matches the spec user:1
  */
+
+
 function validateFeedId(feedId) {
   var parts = feedId.split(':');
+
   if (parts.length !== 2) {
     throw new _errors__WEBPACK_IMPORTED_MODULE_1__/* .FeedError */ .IY("Invalid feedId, expected something like user:1 got ".concat(feedId));
   }
+
   var _parts = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z)(parts, 2),
-    feedSlug = _parts[0],
-    userId = _parts[1];
+      feedSlug = _parts[0],
+      userId = _parts[1];
+
   validateFeedSlug(feedSlug);
   validateUserId(userId);
   return feedId;
 }
+
 function addFileToFormData(uri, name, contentType) {
   var data = new (form_data__WEBPACK_IMPORTED_MODULE_0___default())();
+
   if (isReadableStream(uri) || isBuffer(uri) || isFileWebAPI(uri)) {
     if (name) data.append('file', uri, name);else data.append('file', uri);
   } else {
@@ -5557,30 +5930,29 @@ function addFileToFormData(uri, name, contentType) {
       contentType: contentType || undefined
     });
   }
-  return data;
-}
 
-// TODO: refactor and add proper types
+  return data;
+} // TODO: refactor and add proper types
+
+
 function replaceStreamObjects(obj) {
   // @ts-expect-error
   if (Array.isArray(obj)) return obj.map(function (v) {
     return replaceStreamObjects(v);
-  });
+  }); // @ts-expect-error
 
-  // @ts-expect-error
-  if (Object.prototype.toString.call(obj) !== '[object Object]') return obj;
+  if (Object.prototype.toString.call(obj) !== '[object Object]') return obj; // @ts-expect-error
 
-  // @ts-expect-error
   if (typeof obj.ref === 'function') return obj.ref();
   var cloned = {};
-  Object.getOwnPropertyNames(obj).forEach(function (k) {
+  Object.keys(obj).forEach(function (k) {
     // @ts-expect-error
     cloned[k] = replaceStreamObjects(obj[k]);
-  });
+  }); // @ts-expect-error
 
-  // @ts-expect-error
   return cloned;
 }
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   validateFeedId: validateFeedId,
   validateFeedSlug: validateFeedSlug,
@@ -8400,6 +8772,767 @@ module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 /***/ }),
 
+/***/ 5666:
+/***/ ((module) => {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var runtime = (function (exports) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  exports.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
+  }
+
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  define(IteratorPrototype, iteratorSymbol, function () {
+    return this;
+  });
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
+  }
+
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = GeneratorFunctionPrototype;
+  define(Gp, "constructor", GeneratorFunctionPrototype);
+  define(GeneratorFunctionPrototype, "constructor", GeneratorFunction);
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
+
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      define(prototype, method, function(arg) {
+        return this._invoke(method, arg);
+      });
+    });
+  }
+
+  exports.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
+
+  exports.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  exports.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator, PromiseImpl) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return PromiseImpl.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return PromiseImpl.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new PromiseImpl(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
+  }
+
+  defineIteratorMethods(AsyncIterator.prototype);
+  define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+    return this;
+  });
+  exports.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+    if (PromiseImpl === void 0) PromiseImpl = Promise;
+
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList),
+      PromiseImpl
+    );
+
+    return exports.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        // Note: ["return"] must be used for ES3 parsing compatibility.
+        if (delegate.iterator["return"]) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  define(Gp, toStringTagSymbol, "Generator");
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  define(Gp, iteratorSymbol, function() {
+    return this;
+  });
+
+  define(Gp, "toString", function() {
+    return "[object Generator]";
+  });
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  exports.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  exports.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+
+  // Regardless of whether this script is executing as a CommonJS module
+  // or not, return the runtime object so that we can declare the variable
+  // regeneratorRuntime in the outer scope, which allows this module to be
+  // injected easily by `bin/regenerator --include-runtime script.js`.
+  return exports;
+
+}(
+  // If this script is executing as a CommonJS module, use module.exports
+  // as the regeneratorRuntime namespace. Otherwise create a new empty
+  // object. Either way, the resulting object will be used to initialize
+  // the regeneratorRuntime variable at the top of this file.
+   true ? module.exports : 0
+));
+
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  // This module should not be running in strict mode, so the above
+  // assignment should always work unless something is misconfigured. Just
+  // in case runtime.js accidentally runs in strict mode, in modern engines
+  // we can explicitly access globalThis. In older engines we can escape
+  // strict mode using a global Function call. This could conceivably fail
+  // if a Content Security Policy forbids using Function, but in that case
+  // the proper solution is to fix the accidental strict mode problem. If
+  // you've misconfigured your bundler to force strict mode and applied a
+  // CSP to forbid Function, and you're not willing to fix either of those
+  // problems, please detail your unique predicament in a GitHub issue.
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
+}
+
+
+/***/ }),
+
 /***/ 8058:
 /***/ (() => {
 
@@ -8421,354 +9554,6 @@ module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 /***/ }),
 
-/***/ 7061:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var _typeof = (__webpack_require__(8698)["default"]);
-function _regeneratorRuntime() {
-  "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-  module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports;
-  var exports = {},
-    Op = Object.prototype,
-    hasOwn = Op.hasOwnProperty,
-    defineProperty = Object.defineProperty || function (obj, key, desc) {
-      obj[key] = desc.value;
-    },
-    $Symbol = "function" == typeof Symbol ? Symbol : {},
-    iteratorSymbol = $Symbol.iterator || "@@iterator",
-    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), obj[key];
-  }
-  try {
-    define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-      generator = Object.create(protoGenerator.prototype),
-      context = new Context(tryLocsList || []);
-    return defineProperty(generator, "_invoke", {
-      value: makeInvokeMethod(innerFn, self, context)
-    }), generator;
-  }
-  function tryCatch(fn, obj, arg) {
-    try {
-      return {
-        type: "normal",
-        arg: fn.call(obj, arg)
-      };
-    } catch (err) {
-      return {
-        type: "throw",
-        arg: err
-      };
-    }
-  }
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
-    return this;
-  });
-  var getProto = Object.getPrototypeOf,
-    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if ("throw" !== record.type) {
-        var result = record.arg,
-          value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-      reject(record.arg);
-    }
-    var previousPromise;
-    defineProperty(this, "_invoke", {
-      value: function value(method, arg) {
-        function callInvokeWithMethodAndArg() {
-          return new PromiseImpl(function (resolve, reject) {
-            invoke(method, arg, resolve, reject);
-          });
-        }
-        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-      }
-    });
-  }
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = "suspendedStart";
-    return function (method, arg) {
-      if ("executing" === state) throw new Error("Generator is already running");
-      if ("completed" === state) {
-        if ("throw" === method) throw arg;
-        return doneResult();
-      }
-      for (context.method = method, context.arg = arg;;) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-          if ("suspendedStart" === state) throw state = "completed", context.arg;
-          context.dispatchException(context.arg);
-        } else "return" === context.method && context.abrupt("return", context.arg);
-        state = "executing";
-        var record = tryCatch(innerFn, self, context);
-        if ("normal" === record.type) {
-          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-          return {
-            value: record.arg,
-            done: context.done
-          };
-        }
-        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-      }
-    };
-  }
-  function maybeInvokeDelegate(delegate, context) {
-    var methodName = context.method,
-      method = delegate.iterator[methodName];
-    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
-  }
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
-    };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
-  }
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
-  }
-  function Context(tryLocsList) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
-  }
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-          next = function next() {
-            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            return next.value = undefined, next.done = !0, next;
-          };
-        return next.next = next;
-      }
-    }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
-    value: GeneratorFunctionPrototype,
-    configurable: !0
-  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
-    value: GeneratorFunction,
-    configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
-    return {
-      __await: arg
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
-    return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
-    });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
-    return this;
-  }), define(Gp, "toString", function () {
-    return "[object Generator]";
-  }), exports.keys = function (val) {
-    var object = Object(val),
-      keys = [];
-    for (var key in object) keys.push(key);
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
-      }
-      return next.done = !0, next;
-    };
-  }, exports.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-    },
-    stop: function stop() {
-      this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
-      return this.rval;
-    },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
-      }
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-          record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-            hasFinally = hasOwn.call(entry, "finallyLoc");
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-          } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
-    },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
-    },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
-      }
-    },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-      throw new Error("illegal catch attempt");
-    },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
-      return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
-    }
-  }, exports;
-}
-module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 8698:
-/***/ ((module) => {
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
-}
-module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
-
-/***/ }),
-
-/***/ 4687:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-// TODO(Babel 8): Remove this file.
-
-var runtime = __webpack_require__(7061)();
-module.exports = runtime;
-
-// Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  if (typeof globalThis === "object") {
-    globalThis.regeneratorRuntime = runtime;
-  } else {
-    Function("r", "regeneratorRuntime = r")(runtime);
-  }
-}
-
-
-/***/ }),
-
 /***/ 5861:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
@@ -8784,24 +9569,29 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     reject(error);
     return;
   }
+
   if (info.done) {
     resolve(value);
   } else {
     Promise.resolve(value).then(_next, _throw);
   }
 }
+
 function _asyncToGenerator(fn) {
   return function () {
     var self = this,
-      args = arguments;
+        args = arguments;
     return new Promise(function (resolve, reject) {
       var gen = fn.apply(self, args);
+
       function _next(value) {
         asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
       }
+
       function _throw(err) {
         asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
       }
+
       _next(undefined);
     });
   };
@@ -8831,17 +9621,16 @@ function _classCallCheck(instance, Constructor) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (/* binding */ _createClass)
 /* harmony export */ });
-/* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9142);
-
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, (0,_toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(descriptor.key), descriptor);
+    Object.defineProperty(target, descriptor.key, descriptor);
   }
 }
+
 function _createClass(Constructor, protoProps, staticProps) {
   if (protoProps) _defineProperties(Constructor.prototype, protoProps);
   if (staticProps) _defineProperties(Constructor, staticProps);
@@ -8860,10 +9649,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (/* binding */ _defineProperty)
 /* harmony export */ });
-/* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9142);
-
 function _defineProperty(obj, key, value) {
-  key = (0,_toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .Z)(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -8874,6 +9660,7 @@ function _defineProperty(obj, key, value) {
   } else {
     obj[key] = value;
   }
+
   return obj;
 }
 
@@ -8895,11 +9682,13 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   var target = {};
   var sourceKeys = Object.keys(source);
   var key, i;
+
   for (i = 0; i < sourceKeys.length; i++) {
     key = sourceKeys[i];
     if (excluded.indexOf(key) >= 0) continue;
     target[key] = source[key];
   }
+
   return target;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js
@@ -8908,8 +9697,10 @@ function _objectWithoutProperties(source, excluded) {
   if (source == null) return {};
   var target = _objectWithoutPropertiesLoose(source, excluded);
   var key, i;
+
   if (Object.getOwnPropertySymbols) {
     var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
     for (i = 0; i < sourceSymbolKeys.length; i++) {
       key = sourceSymbolKeys[i];
       if (excluded.indexOf(key) >= 0) continue;
@@ -8917,6 +9708,7 @@ function _objectWithoutProperties(source, excluded) {
       target[key] = source[key];
     }
   }
+
   return target;
 }
 
@@ -8938,36 +9730,42 @@ function _arrayWithHoles(arr) {
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(arr, i) {
-  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
-  if (null != _i) {
-    var _s,
-      _e,
-      _x,
-      _r,
-      _arr = [],
-      _n = !0,
-      _d = !1;
-    try {
-      if (_x = (_i = _i.call(arr)).next, 0 === i) {
-        if (Object(_i) !== _i) return;
-        _n = !1;
-      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
-    } catch (err) {
-      _d = !0, _e = err;
-    } finally {
-      try {
-        if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return;
-      } finally {
-        if (_d) throw _e;
-      }
+  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+  if (_i == null) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+
+  var _s, _e;
+
+  try {
+    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
     }
-    return _arr;
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
   }
+
+  return _arr;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
 function _arrayLikeToArray(arr, len) {
   if (len == null || len > arr.length) len = arr.length;
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
   return arr2;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
@@ -8995,40 +9793,6 @@ function _slicedToArray(arr, i) {
 
 /***/ }),
 
-/***/ 9142:
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _toPropertyKey)
-});
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-var esm_typeof = __webpack_require__(1002);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
-
-function _toPrimitive(input, hint) {
-  if ((0,esm_typeof/* default */.Z)(input) !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if ((0,esm_typeof/* default */.Z)(res) !== "object") return res;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (hint === "string" ? String : Number)(input);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
-
-
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return (0,esm_typeof/* default */.Z)(key) === "symbol" ? key : String(key);
-}
-
-/***/ }),
-
 /***/ 1002:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
@@ -9045,6 +9809,14 @@ function _typeof(obj) {
     return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   }, _typeof(obj);
 }
+
+/***/ }),
+
+/***/ 4147:
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"author":{"name":"Thierry Schellenbach","company":"Stream.io Inc"},"name":"getstream","description":"The official low-level GetStream.io client for Node.js and the browser.","main":"./lib/index.js","module":"./lib/index.js","types":"./lib/index.d.ts","homepage":"https://getstream.io/docs/?language=js","email":"support@getstream.io","license":"BSD-3-Clause","version":"8.1.0","scripts":{"changelog":"standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v","commitlinter":"commitlint","transpile":"babel src --out-dir lib --extensions \'.ts\'","types":"tsc --emitDeclarationOnly","build":"rm -rf lib && yarn run transpile && yarn run types","dist":"webpack && webpack --env minify","eslint":"eslint \'**/*.{js,ts}\' --max-warnings 0","prettier":"prettier --list-different \'**/*.{js,ts}\'","lint":"yarn run prettier && yarn run eslint","lint-fix":"prettier --write \'**/*.{js,ts}\' && eslint --fix \'**/*.{js,ts}\'","test":"yarn run test-unit-node","test-types":"tsc --esModuleInterop true --noEmit true test/typescript/*.ts","test-unit-node":"mocha --require ./babel-register.js test/unit/common test/unit/node","test-integration-node":"mocha --require ./babel-register.js test/integration/common test/integration/node --exit","test-cloud":"mocha --require ./babel-register.js test/integration/cloud --timeout 40000","test-cloud-local":"LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore \'test/integration/cloud/{personalized_feed,files,images}.js\'","test-browser":"karma start karma.config.js","prepare":"yarn run build","preversion":"yarn run test-unit-node","version":"yarn run dist && yarn run build && git add dist","postversion":"git push && git push --tags && npm publish"},"husky":{"hooks":{"pre-commit":"yarn run lint"}},"browser":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false,"http":false,"https":false},"react-native":{"crypto":false,"jsonwebtoken":false,"./lib/batch_operations.js":false,"./lib/redirect_url.js":false,"qs":false,"url":false},"devDependencies":{"@babel/cli":"^7.16.7","@babel/core":"^7.16.7","@babel/eslint-parser":"^7.16.5","@babel/node":"^7.16.7","@babel/plugin-proposal-class-properties":"^7.16.7","@babel/plugin-proposal-object-rest-spread":"^7.16.7","@babel/plugin-transform-object-assign":"^7.16.7","@babel/plugin-transform-runtime":"^7.16.7","@babel/preset-env":"^7.16.7","@babel/preset-typescript":"^7.16.7","@babel/register":"^7.16.7","@commitlint/cli":"^16.0.2","@commitlint/config-conventional":"^16.0.0","@typescript-eslint/eslint-plugin":"^5.8.1","@typescript-eslint/parser":"^5.8.1","babel-loader":"^8.2.3","chai":"^4.3.4","dotenv":"^10.0.0","eslint":"^8.6.0","eslint-config-airbnb-base":"^15.0.0","eslint-config-prettier":"^8.3.0","eslint-plugin-chai-friendly":"^0.7.2","eslint-plugin-import":"^2.25.4","eslint-plugin-prettier":"^4.0.0","eslint-plugin-sonarjs":"^0.11.0","eslint-plugin-typescript-sort-keys":"^2.1.0","expect.js":"^0.3.1","husky":"^4.3.8","json-loader":"~0.5.7","karma":"^6.3.9","karma-chrome-launcher":"^3.1.0","karma-mocha":"^2.0.1","karma-mocha-reporter":"~2.2.5","karma-sauce-launcher":"^4.3.6","karma-sourcemap-loader":"~0.3.8","karma-webpack":"^5.0.0","mocha":"^8.3.1","null-loader":"^4.0.1","nyc":"^15.1.0","prettier":"^2.5.1","request":"^2.88.2","standard-version":"^9.3.2","testdouble":"^3.16.4","typescript":"^4.5.4","webpack":"^5.65.0","webpack-cli":"^4.9.1"},"dependencies":{"@babel/runtime":"^7.16.7","@types/jsonwebtoken":"^8.5.6","@types/jwt-decode":"^2.2.1","@types/qs":"^6.9.7","axios":"^0.22.0","faye":"^1.4.0","follow-redirects":"1.14.8","form-data":"^4.0.0","jsonwebtoken":"^8.5.1","jwt-decode":"^3.1.2","qs":"^6.10.2"},"peerDependencies":{"@types/node":">=10"},"repository":{"type":"git","url":"git://github.com/GetStream/stream-js.git"},"files":["src","dist","types","lib"],"engines":{"node":"10 || 12 || >=14"},"keywords":["stream","get","get-stream","chat","notification","feed","stream.io","getstream"]}');
 
 /***/ })
 
@@ -9134,22 +9906,22 @@ var __webpack_exports__ = {};
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "connect": () => (/* reexport safe */ _connect__WEBPACK_IMPORTED_MODULE_0__.$),
+/* harmony export */   "StreamClient": () => (/* reexport safe */ _client__WEBPACK_IMPORTED_MODULE_1__.n),
 /* harmony export */   "CollectionEntry": () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.R),
 /* harmony export */   "Collections": () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.n),
-/* harmony export */   "FeedError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.IY),
-/* harmony export */   "JWTScopeToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.v),
-/* harmony export */   "JWTUserSessionToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.c),
-/* harmony export */   "MissingSchemaError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.uA),
-/* harmony export */   "Personalization": () => (/* reexport safe */ _personalization__WEBPACK_IMPORTED_MODULE_6__.S),
-/* harmony export */   "SiteError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.z4),
-/* harmony export */   "StreamApiError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.eY),
-/* harmony export */   "StreamClient": () => (/* reexport safe */ _client__WEBPACK_IMPORTED_MODULE_1__.n),
 /* harmony export */   "StreamFeed": () => (/* reexport safe */ _feed__WEBPACK_IMPORTED_MODULE_3__.r),
 /* harmony export */   "StreamFileStore": () => (/* reexport safe */ _files__WEBPACK_IMPORTED_MODULE_4__.h),
 /* harmony export */   "StreamImageStore": () => (/* reexport safe */ _images__WEBPACK_IMPORTED_MODULE_5__.$),
+/* harmony export */   "Personalization": () => (/* reexport safe */ _personalization__WEBPACK_IMPORTED_MODULE_6__.S),
 /* harmony export */   "StreamReaction": () => (/* reexport safe */ _reaction__WEBPACK_IMPORTED_MODULE_7__.R),
 /* harmony export */   "StreamUser": () => (/* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_8__.h),
-/* harmony export */   "connect": () => (/* reexport safe */ _connect__WEBPACK_IMPORTED_MODULE_0__.$)
+/* harmony export */   "FeedError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.IY),
+/* harmony export */   "MissingSchemaError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.uA),
+/* harmony export */   "SiteError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.z4),
+/* harmony export */   "StreamApiError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.eY),
+/* harmony export */   "JWTScopeToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.v),
+/* harmony export */   "JWTUserSessionToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.c)
 /* harmony export */ });
 /* harmony import */ var _connect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2631);
 /* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6663);
