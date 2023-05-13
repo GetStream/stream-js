@@ -14,7 +14,7 @@
     "strict": true,
     "lib": ["DOM", "ES6"],
     "typeRoots": ["node_modules/@types"],
-    "target": "ES6"
+    "target": "ES5"
   },
   "include": ["src", "types"],
   "exclude": ["node_modules", "test", "lib", "dist"]
