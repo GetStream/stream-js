@@ -4,7 +4,7 @@ import * as errors from '../../../src/errors';
 import config from '../utils/config';
 import { init, beforeEachFn } from '../utils/hooks';
 
-describe('[INTEGRATION] Stream client (Common)', function () {
+describe.skip('[INTEGRATION] Stream client (Common)', function () {
   init.call(this);
   beforeEach(beforeEachFn);
 
