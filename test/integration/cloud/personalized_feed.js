@@ -4,7 +4,9 @@ describe('PersonalizedFeed', () => {
   const ctx = new CloudContext();
   ctx.createUsers();
 
-  describe('When alice reads her personalization feed', () => {
+  // skipping this one in favor of the one with the error below
+  /*
+  describe.skip('When alice reads her personalization feed', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.alice.personalizedFeed({
         feed_slug: 'timeline',
@@ -13,7 +15,6 @@ describe('PersonalizedFeed', () => {
     ctx.responseShouldHaveNoActivities();
   });
 
-  /*
   describe('When alice reads her personalization feed', () => {
     ctx.requestShouldError(403, async () => {
       ctx.response = await ctx.alice.personalizedFeed({
