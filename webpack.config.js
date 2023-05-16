@@ -40,7 +40,9 @@ module.exports = (env = {}) => ({
 
   plugins: [
     new webpack.DefinePlugin({
-      PACKAGE_VERSION: JSON.stringify(pkg.version),
+      'process.env': {
+        PACKAGE_VERSION: JSON.stringify(pkg.version),
+      },
     }),
   ],
 });

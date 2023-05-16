@@ -28,8 +28,6 @@ import {
   EnrichedActivity,
 } from './feed';
 
-declare let PACKAGE_VERSION: string;
-
 export type UR = Record<string, unknown>;
 export type UnknownRecord = UR; // alias to avoid breaking change
 
@@ -398,10 +396,12 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    if (typeof PACKAGE_VERSION === 'undefined') {
-      PACKAGE_VERSION = '0.0.0';
+    if (process.env.PACKAGE_VERSION === undefined) {
+      // eslint-disable-next-line
+      return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${require('../package.json').version}`;
     }
-    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${PACKAGE_VERSION}`;
+
+    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${process.env.PACKAGE_VERSION}`;
   }
 
   /**
@@ -644,7 +644,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: OnUploadProgress,
+    onUploadProgress?: (progressEvent: axios.AxiosProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
