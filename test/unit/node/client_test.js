@@ -1,5 +1,4 @@
 import expect from 'expect.js';
-// import td from 'testdouble/dist/testdouble';
 import * as td from 'testdouble';
 import jwtDecode from 'jwt-decode';
 
