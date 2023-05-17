@@ -50,6 +50,8 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
       });
   });
 
+  // CDN out of service
+  /*
   describe('#upload', function () {
     it('should upload a file', function (done) {
       this.browserClient
@@ -134,4 +136,5 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
         });
     });
   });
+  */
 });

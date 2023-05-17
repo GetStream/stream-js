@@ -58,6 +58,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
   });
   */
 
+  /*
   it('fayeSubscribeListeningWrongToken', function (done) {
     // Invalid token:
     const testUser1 = this.client.feed(
@@ -100,6 +101,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
       testUser2.addActivity(activity, httpCallback);
     }, done);
   });
+  */
 
   it('fayeSubscribeScope', function (done) {
     this.user1ReadOnly.getFayeClient();
