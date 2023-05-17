@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 
-import pkg from '../../../package.json';
+// import pkg from '../../../package.json';
 import { connect, FeedError, StreamFeed } from '../../../src';
 
 import { init, beforeEachFn } from '../utils/hooks';
