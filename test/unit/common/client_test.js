@@ -211,7 +211,6 @@ describe('[UNIT] Stream Client (Common)', function () {
     });
   });
 
-  /*
   describe('#enrichKwargs', function () {
     it('(1) api service - jwt signature', function () {
       const token =
@@ -267,7 +266,6 @@ describe('[UNIT] Stream Client (Common)', function () {
       expect(kwargs.url).to.be('https://api.stream-io-api.com/api/v1.0/feed');
     });
   });
-  */
 
   describe('Requests', function () {
     const tdDoAxiosRequest = td.function();

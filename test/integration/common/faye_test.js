@@ -15,7 +15,6 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
     return this.user1.subscribe(function callback() {});
   });
 
-  /*
   it('fayeSubscribeListening', function (done) {
     this.timeout(60000);
 
@@ -56,9 +55,7 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
       testUser3.addActivity(activity, httpCallback);
     }, done);
   });
-  */
 
-  /*
   it('fayeSubscribeListeningWrongToken', function (done) {
     // Invalid token:
     const testUser1 = this.client.feed(
@@ -101,7 +98,6 @@ describe('[INTEGRATION] Stream client (Faye)', function () {
       testUser2.addActivity(activity, httpCallback);
     }, done);
   });
-  */
 
   it('fayeSubscribeScope', function (done) {
     this.user1ReadOnly.getFayeClient();
