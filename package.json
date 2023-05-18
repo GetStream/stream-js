@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "8.1.4",
+  "version": "8.1.5",
   "scripts": {
     "changelog": "standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v",
     "commitlinter": "commitlint",
