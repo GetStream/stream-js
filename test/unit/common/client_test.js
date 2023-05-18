@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import td from 'testdouble/dist/testdouble';
+import * as td from 'testdouble';
 
 import utils from '../../../src/utils';
 import * as errors from '../../../src/errors';

@@ -25,6 +25,7 @@ module.exports = function (config) {
       'test/unit/browser/**/*_test.js',
       'test/integration/common/**/*_test.js',
       'test/integration/browser/**/*_test.js',
+      'test/global-variables.js',
     ],
 
     // list of files to exclude

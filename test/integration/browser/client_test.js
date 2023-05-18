@@ -1,13 +1,13 @@
 import expect from 'expect.js';
 
-import * as errors from '../../../src/errors';
+// import * as errors from '../../../src/errors';
 import { init, beforeEachFn } from '../utils/hooks';
 
-function mockedFile(size = 1024, name = 'file.txt', mimeType = 'plain/txt') {
+/* function mockedFile(size = 1024, name = 'file.txt', mimeType = 'plain/txt') {
   return new File(['x'.repeat(size)], name, { type: mimeType });
-}
+} */
 
-async function mockedImage(size = 1024) {
+/* async function mockedImage(size = 1024) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -20,7 +20,7 @@ async function mockedImage(size = 1024) {
       resolve(file);
     }, 'image/png');
   });
-}
+} */
 
 describe('[INTEGRATION] Stream client (Browser)', function () {
   init.call(this);
@@ -50,6 +50,8 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
       });
   });
 
+  // CDN out of service
+  /*
   describe('#upload', function () {
     it('should upload a file', function (done) {
       this.browserClient
@@ -134,4 +136,5 @@ describe('[INTEGRATION] Stream client (Browser)', function () {
         });
     });
   });
+  */
 });

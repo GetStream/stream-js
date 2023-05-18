@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import td from 'testdouble/dist/testdouble';
+import * as td from 'testdouble';
 
 import { StreamFeed, SiteError } from '../../../src';
 import { init, beforeEachFn } from '../utils/hooks';

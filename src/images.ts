@@ -1,4 +1,5 @@
-import { StreamClient, FileUploadAPIResponse, OnUploadProgress } from './client';
+import { AxiosProgressEvent } from 'axios';
+import { StreamClient, FileUploadAPIResponse } from './client';
 
 export type ImageProcessOptions = {
   crop?: string | 'top' | 'bottom' | 'left' | 'right' | 'center';
@@ -32,7 +33,7 @@ export class StreamImageStore {
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: OnUploadProgress,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
   ) {
     return this.client.upload('images/', uri, name, contentType, onUploadProgress);
   }
