@@ -103,6 +103,7 @@ client.shouldUseEnrichEndpoint({
   withOwnChildren: true,
   withReactionCounts: true,
   withRecentReactions: true,
+  reactionKindsFilter: ["likes"],
 });
 // @ts-ignore
 client.shouldUseEnrichEndpoint({ enrich: '' });

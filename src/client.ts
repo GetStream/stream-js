@@ -487,7 +487,8 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
-    reactions?: Record<string, boolean>;
+    reactionKindsFilter?: string[];
+    reactions?: Record<string, boolean | string[]>;
     withOwnChildren?: boolean;
     withOwnReactions?: boolean;
     withReactionCounts?: boolean;
@@ -496,16 +497,19 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     // Shortcut options for reaction enrichment
     if (options?.reactions) {
       if (options.reactions.own != null) {
-        options.withOwnReactions = options.reactions.own;
+        options.withOwnReactions = options.reactions.own as boolean;
       }
       if (options.reactions.recent != null) {
-        options.withRecentReactions = options.reactions.recent;
+        options.withRecentReactions = options.reactions.recent as boolean;
       }
       if (options.reactions.counts != null) {
-        options.withReactionCounts = options.reactions.counts;
+        options.withReactionCounts = options.reactions.counts as boolean;
       }
       if (options.reactions.own_children != null) {
-        options.withOwnChildren = options.reactions.own_children;
+        options.withOwnChildren = options.reactions.own_children as boolean;
+      }
+      if (options.reactions.kinds != null) {
+        options.reactionKindsFilter = options.reactions.kinds as string[];
       }
       delete options.reactions;
     }
@@ -515,6 +519,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     options: {
       enrich?: boolean;
       ownReactions?: boolean;
+      reactionKindsFilter?: string[];
       withOwnChildren?: boolean;
       withReactionCounts?: boolean;
       withRecentReactions?: boolean;
@@ -529,6 +534,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     return (
       this.enrichByDefault ||
       options.ownReactions != null ||
+      options.reactionKindsFilter != null ||
       options.withRecentReactions != null ||
       options.withReactionCounts != null ||
       options.withOwnChildren != null
