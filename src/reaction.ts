@@ -302,4 +302,19 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
       token: this.token,
     });
   }
+
+  softDelete(id: string) {
+    return this.client.delete({
+      url: this.buildURL(id),
+      token: this.token,
+      qs: { soft: "true" },
+    });
+  }
+
+  restore(id: string) {
+    return this.client.put({
+      url: this.buildURL(id, 'restore'),
+      token: this.token,
+    })
+  }
 }
