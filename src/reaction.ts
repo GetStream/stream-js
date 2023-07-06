@@ -296,18 +296,11 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @return {Promise<APIResponse>}
    * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
    */
-  delete(id: string) {
+  delete(id: string, soft: boolean = false) {
     return this.client.delete({
       url: this.buildURL(id),
       token: this.token,
-    });
-  }
-
-  softDelete(id: string) {
-    return this.client.delete({
-      url: this.buildURL(id),
-      token: this.token,
-      qs: { soft: "true" },
+      qs: soft ? { soft: "true" } : undefined,
     });
   }
 
