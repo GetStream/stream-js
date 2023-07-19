@@ -296,11 +296,11 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @return {Promise<APIResponse>}
    * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
    */
-  delete(id: string, soft: boolean = false) {
+  delete(id: string, soft = false) {
     return this.client.delete({
       url: this.buildURL(id),
       token: this.token,
-      qs: soft ? { soft: "true" } : undefined,
+      qs: soft ? { soft: 'true' } : undefined,
     });
   }
 
@@ -308,6 +308,6 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
     return this.client.put({
       url: this.buildURL(id, 'restore'),
       token: this.token,
-    })
+    });
   }
 }
