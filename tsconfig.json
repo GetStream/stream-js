@@ -13,7 +13,7 @@
     "strictNullChecks": true,
     "strict": true,
     "lib": ["DOM", "ES2020"],
-    "typeRoots": ["node_modules/@types"],
+    "sourceMap": true,
     "target": "ES2020"
   },
   "include": ["src", "types"],
