@@ -1,4 +1,5 @@
 /* tslint:disable */
+/* eslint-disable */
 // @ts-nocheck
 import * as Faye from 'faye';
 import {
@@ -37,7 +38,6 @@ type Generics = {
 };
 
 let voidReturn: void;
-let voidPromise: Promise<void>;
 let emptyAPIPromise: Promise<APIResponse>;
 
 let client: StreamClient<Generics> = connect<Generics>('api_key', 'secret!', 'app_id');
