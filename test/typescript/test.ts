@@ -28,12 +28,12 @@ type ChildReactionType = { cText: string };
 type T = {};
 
 type Generics = {
-  userType: UserType;
   activityType: ActivityType;
-  collectionType: CollectionType;
-  reactionType: ReactionType;
   childReactionType: ChildReactionType;
+  collectionType: CollectionType;
   personalizationType: Faye.UR;
+  reactionType: ReactionType;
+  userType: UserType;
 };
 
 let voidReturn: void;
@@ -78,7 +78,7 @@ client.enrichUrl('', '');
 
 client.enrichUrl();
 
-voidReturn = client.on('', () => { });
+voidReturn = client.on('', () => {});
 client.on('');
 voidReturn = client.off();
 voidReturn = client.off('');
@@ -94,7 +94,7 @@ client.shouldUseEnrichEndpoint({
   withOwnChildren: true,
   withReactionCounts: true,
   withRecentReactions: true,
-  reactionKindsFilter: ["likes"],
+  reactionKindsFilter: ['likes'],
 });
 client.shouldUseEnrichEndpoint({ enrich: '' });
 
