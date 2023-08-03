@@ -323,7 +323,7 @@ rawAsap.makeRequestCallFromTimer = makeRequestCallFromTimer;
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "n": () => (/* binding */ StreamClient)
+  n: () => (/* binding */ StreamClient)
 });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 5 modules
@@ -4024,8 +4024,8 @@ var StreamClient = /*#__PURE__*/function () {
     // which data center to use
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
-    if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.4"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && (_process$env2 = ({"PACKAGE_VERSION":"8.1.4"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.1.4"}).STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
+    if (typeof process !== 'undefined' && (_process$env2 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.1.5"}).STREAM_ANALYTICS_BASE_URL;
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
     // use for browser warnings
@@ -4110,8 +4110,8 @@ var StreamClient = /*#__PURE__*/function () {
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.1.4"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.1.4"})[urlEnvironmentKey];
-      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.1.4"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.1.5"})[urlEnvironmentKey];
+      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
       if (this.location) {
         var protocol = this.options.protocol || 'https';
         return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
@@ -4181,7 +4181,7 @@ var StreamClient = /*#__PURE__*/function () {
     key: "userAgent",
     value: function userAgent() {
       if (false) {}
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.4");
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.5");
     }
 
     /**
@@ -4197,8 +4197,8 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "getReadOnlyToken",
     value: function getReadOnlyToken(feedSlug, userId) {
-      src_utils/* default.validateFeedSlug */.Z.validateFeedSlug(feedSlug);
-      src_utils/* default.validateUserId */.Z.validateUserId(userId);
+      src_utils/* default */.Z.validateFeedSlug(feedSlug);
+      src_utils/* default */.Z.validateUserId(userId);
       return (0,signing/* JWTScopeToken */.v)(this.apiSecret, '*', 'read', {
         feedId: "".concat(feedSlug).concat(userId),
         expireTokens: this.expireTokens
@@ -4218,8 +4218,8 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "getReadWriteToken",
     value: function getReadWriteToken(feedSlug, userId) {
-      src_utils/* default.validateFeedSlug */.Z.validateFeedSlug(feedSlug);
-      src_utils/* default.validateUserId */.Z.validateUserId(userId);
+      src_utils/* default */.Z.validateFeedSlug(feedSlug);
+      src_utils/* default */.Z.validateUserId(userId);
       return (0,signing/* JWTScopeToken */.v)(this.apiSecret, '*', '*', {
         feedId: "".concat(feedSlug).concat(userId),
         expireTokens: this.expireTokens
@@ -4362,7 +4362,7 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "upload",
     value: function upload(url, uri, name, contentType, onUploadProgress) {
-      var fd = src_utils/* default.addFileToFormData */.Z.addFileToFormData(uri, name, contentType);
+      var fd = src_utils/* default */.Z.addFileToFormData(uri, name, contentType);
       return this.doAxiosRequest('POST', {
         url: url,
         body: fd,
@@ -4773,8 +4773,8 @@ var StreamClient = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "R": () => (/* binding */ CollectionEntry),
-/* harmony export */   "n": () => (/* binding */ Collections)
+/* harmony export */   R: () => (/* binding */ CollectionEntry),
+/* harmony export */   n: () => (/* binding */ Collections)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5861);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
@@ -5240,7 +5240,7 @@ var Collections = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "$": () => (/* binding */ connect)
+/* harmony export */   $: () => (/* binding */ connect)
 /* harmony export */ });
 /* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3421);
 
@@ -5270,8 +5270,8 @@ var Collections = /*#__PURE__*/function () {
  */
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
-  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.4"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
-    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.1.4"}).STREAM_URL) || [];
+  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.1.5"}).STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
@@ -5295,10 +5295,10 @@ function connect(apiKey, apiSecret, appId, options) {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "IY": () => (/* binding */ FeedError),
-  "uA": () => (/* binding */ MissingSchemaError),
-  "z4": () => (/* binding */ SiteError),
-  "eY": () => (/* binding */ StreamApiError)
+  IY: () => (/* binding */ FeedError),
+  uA: () => (/* binding */ MissingSchemaError),
+  z4: () => (/* binding */ SiteError),
+  eY: () => (/* binding */ StreamApiError)
 });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
@@ -5552,7 +5552,7 @@ var StreamApiError = /*#__PURE__*/function (_ErrorAbstract4) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "r": () => (/* binding */ StreamFeed)
+/* harmony export */   r: () => (/* binding */ StreamFeed)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5671);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3144);
@@ -5602,8 +5602,8 @@ var StreamFeed = /*#__PURE__*/function () {
     if (feedSlug.indexOf(':') !== -1) {
       throw new _errors__WEBPACK_IMPORTED_MODULE_2__/* .FeedError */ .IY('Please initialize the feed using client.feed("user", "1") not client.feed("user:1")');
     }
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(feedSlug);
-    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(userId);
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateFeedSlug(feedSlug);
+    _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateUserId(userId);
 
     // raise an error if there is no token
     if (!token) {
@@ -5632,7 +5632,7 @@ var StreamFeed = /*#__PURE__*/function () {
   (0,_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z)(StreamFeed, [{
     key: "addActivity",
     value: function addActivity(activity) {
-      activity = _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].replaceStreamObjects */ .Z.replaceStreamObjects(activity);
+      activity = _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.replaceStreamObjects(activity);
       if (!activity.actor && this.client.currentUser) {
         activity.actor = this.client.currentUser.ref();
       }
@@ -5680,7 +5680,7 @@ var StreamFeed = /*#__PURE__*/function () {
       return this.client.post({
         url: "feed/".concat(this.feedUrl, "/"),
         body: {
-          activities: _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].replaceStreamObjects */ .Z.replaceStreamObjects(activities)
+          activities: _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.replaceStreamObjects(activities)
         },
         token: this.token
       });
@@ -5707,8 +5707,8 @@ var StreamFeed = /*#__PURE__*/function () {
       if (targetUserId instanceof _user__WEBPACK_IMPORTED_MODULE_1__/* .StreamUser */ .h) {
         targetUserId = targetUserId.id;
       }
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(targetUserId);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateFeedSlug(targetSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateUserId(targetUserId);
       var body = {
         target: "".concat(targetSlug, ":").concat(targetUserId)
       };
@@ -5739,8 +5739,8 @@ var StreamFeed = /*#__PURE__*/function () {
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var qs = {};
       if (typeof options.keepHistory === 'boolean' && options.keepHistory) qs.keep_history = '1';
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateFeedSlug */ .Z.validateFeedSlug(targetSlug);
-      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"].validateUserId */ .Z.validateUserId(targetUserId);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateFeedSlug(targetSlug);
+      _utils__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z.validateUserId(targetUserId);
       var targetFeedId = "".concat(targetSlug, ":").concat(targetUserId);
       return this.client.delete({
         url: "feed/".concat(this.feedUrl, "/following/").concat(targetFeedId, "/"),
@@ -6016,7 +6016,7 @@ var StreamFeed = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "h": () => (/* binding */ StreamFileStore)
+/* harmony export */   h: () => (/* binding */ StreamFileStore)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5671);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3144);
@@ -6079,7 +6079,7 @@ var StreamFileStore = /*#__PURE__*/function () {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "$": () => (/* binding */ StreamImageStore)
+  $: () => (/* binding */ StreamImageStore)
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/extends.js
@@ -6208,7 +6208,7 @@ var StreamImageStore = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "S": () => (/* binding */ Personalization)
+/* harmony export */   S: () => (/* binding */ Personalization)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5671);
 /* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3144);
@@ -6315,7 +6315,7 @@ var Personalization = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "R": () => (/* binding */ StreamReaction)
+/* harmony export */   R: () => (/* binding */ StreamReaction)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4925);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5671);
@@ -6562,8 +6562,8 @@ var StreamReaction = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "c": () => (/* binding */ JWTUserSessionToken),
-/* harmony export */   "v": () => (/* binding */ JWTScopeToken)
+/* harmony export */   c: () => (/* binding */ JWTUserSessionToken),
+/* harmony export */   v: () => (/* binding */ JWTScopeToken)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4942);
 /* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1726);
@@ -6648,7 +6648,7 @@ function JWTUserSessionToken(apiSecret, userId) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "h": () => (/* binding */ StreamUser)
+/* harmony export */   h: () => (/* binding */ StreamUser)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5861);
 /* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5671);
@@ -6869,7 +6869,7 @@ var StreamUser = /*#__PURE__*/function () {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   Z: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8152);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1002);
@@ -8618,7 +8618,7 @@ var Transport = assign(Class({ className: 'Transport',
 
     var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
         upcase = name.toUpperCase(),
-        env    = ({"PACKAGE_VERSION":"8.1.4"}),
+        env    = ({"PACKAGE_VERSION":"8.1.5"}),
         keys, proxy;
 
     if (name === 'http_proxy' && env.REQUEST_METHOD) {
@@ -10165,7 +10165,7 @@ try {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _asyncToGenerator)
+/* harmony export */   Z: () => (/* binding */ _asyncToGenerator)
 /* harmony export */ });
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -10205,7 +10205,7 @@ function _asyncToGenerator(fn) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _classCallCheck)
+/* harmony export */   Z: () => (/* binding */ _classCallCheck)
 /* harmony export */ });
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -10220,7 +10220,7 @@ function _classCallCheck(instance, Constructor) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _createClass)
+/* harmony export */   Z: () => (/* binding */ _createClass)
 /* harmony export */ });
 /* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9142);
 
@@ -10249,7 +10249,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _defineProperty)
+/* harmony export */   Z: () => (/* binding */ _defineProperty)
 /* harmony export */ });
 /* harmony import */ var _toPropertyKey_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9142);
 
@@ -10277,7 +10277,7 @@ function _defineProperty(obj, key, value) {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _objectWithoutProperties)
+  Z: () => (/* binding */ _objectWithoutProperties)
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js
@@ -10320,7 +10320,7 @@ function _objectWithoutProperties(source, excluded) {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _slicedToArray)
+  Z: () => (/* binding */ _slicedToArray)
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
@@ -10393,7 +10393,7 @@ function _slicedToArray(arr, i) {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "Z": () => (/* binding */ _toPropertyKey)
+  Z: () => (/* binding */ _toPropertyKey)
 });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
@@ -10425,7 +10425,7 @@ function _toPropertyKey(arg) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (/* binding */ _typeof)
+/* harmony export */   Z: () => (/* binding */ _typeof)
 /* harmony export */ });
 function _typeof(obj) {
   "@babel/helpers - typeof";
@@ -10525,22 +10525,22 @@ var __webpack_exports__ = {};
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "CollectionEntry": () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.R),
-/* harmony export */   "Collections": () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.n),
-/* harmony export */   "FeedError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.IY),
-/* harmony export */   "JWTScopeToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.v),
-/* harmony export */   "JWTUserSessionToken": () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.c),
-/* harmony export */   "MissingSchemaError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.uA),
-/* harmony export */   "Personalization": () => (/* reexport safe */ _personalization__WEBPACK_IMPORTED_MODULE_6__.S),
-/* harmony export */   "SiteError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.z4),
-/* harmony export */   "StreamApiError": () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.eY),
-/* harmony export */   "StreamClient": () => (/* reexport safe */ _client__WEBPACK_IMPORTED_MODULE_1__.n),
-/* harmony export */   "StreamFeed": () => (/* reexport safe */ _feed__WEBPACK_IMPORTED_MODULE_3__.r),
-/* harmony export */   "StreamFileStore": () => (/* reexport safe */ _files__WEBPACK_IMPORTED_MODULE_4__.h),
-/* harmony export */   "StreamImageStore": () => (/* reexport safe */ _images__WEBPACK_IMPORTED_MODULE_5__.$),
-/* harmony export */   "StreamReaction": () => (/* reexport safe */ _reaction__WEBPACK_IMPORTED_MODULE_7__.R),
-/* harmony export */   "StreamUser": () => (/* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_8__.h),
-/* harmony export */   "connect": () => (/* reexport safe */ _connect__WEBPACK_IMPORTED_MODULE_0__.$)
+/* harmony export */   CollectionEntry: () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.R),
+/* harmony export */   Collections: () => (/* reexport safe */ _collections__WEBPACK_IMPORTED_MODULE_2__.n),
+/* harmony export */   FeedError: () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.IY),
+/* harmony export */   JWTScopeToken: () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.v),
+/* harmony export */   JWTUserSessionToken: () => (/* reexport safe */ _signing__WEBPACK_IMPORTED_MODULE_11__.c),
+/* harmony export */   MissingSchemaError: () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.uA),
+/* harmony export */   Personalization: () => (/* reexport safe */ _personalization__WEBPACK_IMPORTED_MODULE_6__.S),
+/* harmony export */   SiteError: () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.z4),
+/* harmony export */   StreamApiError: () => (/* reexport safe */ _errors__WEBPACK_IMPORTED_MODULE_10__.eY),
+/* harmony export */   StreamClient: () => (/* reexport safe */ _client__WEBPACK_IMPORTED_MODULE_1__.n),
+/* harmony export */   StreamFeed: () => (/* reexport safe */ _feed__WEBPACK_IMPORTED_MODULE_3__.r),
+/* harmony export */   StreamFileStore: () => (/* reexport safe */ _files__WEBPACK_IMPORTED_MODULE_4__.h),
+/* harmony export */   StreamImageStore: () => (/* reexport safe */ _images__WEBPACK_IMPORTED_MODULE_5__.$),
+/* harmony export */   StreamReaction: () => (/* reexport safe */ _reaction__WEBPACK_IMPORTED_MODULE_7__.R),
+/* harmony export */   StreamUser: () => (/* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_8__.h),
+/* harmony export */   connect: () => (/* reexport safe */ _connect__WEBPACK_IMPORTED_MODULE_0__.$)
 /* harmony export */ });
 /* harmony import */ var _connect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2631);
 /* harmony import */ var _client__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3421);
