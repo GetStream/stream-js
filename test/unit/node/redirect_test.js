@@ -1,6 +1,6 @@
+import url from 'url';
 import expect from 'expect.js';
 import jwt from 'jsonwebtoken';
-import url from 'url';
 import qs from 'qs';
 import request from 'request';
 
