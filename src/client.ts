@@ -1,9 +1,9 @@
 /// <reference path="../types/modules.d.ts" />
 
-import * as axios from 'axios';
-import * as Faye from 'faye';
 import * as http from 'http';
 import * as https from 'https';
+import * as axios from 'axios';
+import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
 import { Personalization } from './personalization';
