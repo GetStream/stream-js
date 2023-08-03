@@ -1,6 +1,6 @@
+import fs from 'fs';
 import FormData from 'form-data';
 import expect from 'expect.js';
-import fs from 'fs';
 
 import utils from '../../../src/utils';
 import { init } from '../utils/hooks';
