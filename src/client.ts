@@ -239,9 +239,14 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.location = this.options.location as string;
     this.baseUrl = this.getBaseUrl();
 
-    if (typeof process !== 'undefined' && process.env?.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && process.env?.STREAM_ANALYTICS_BASE_URL)
-      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined') {
+      if (process.env?.LOCAL_FAYE) {
+        this.fayeUrl = 'http://localhost:9999/faye/';
+      }
+      if (process.env?.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+      }
+    }
 
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
@@ -396,7 +401,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    if (process.env.PACKAGE_VERSION === undefined) {
+    if (process === undefined || process.env.PACKAGE_VERSION === undefined) {
       // eslint-disable-next-line
       return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${require('../package.json').version}`;
     }
