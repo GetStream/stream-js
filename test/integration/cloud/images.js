@@ -30,18 +30,18 @@ describe('Images', () => {
 
     describe('When alice process an image with bad params', () => {
       ctx.requestShouldError(400, async () => {
-        ctx.response = await ctx.alice.images.process(imageUrl, {
+        ctx.response = await ctx.alice.images.processImage(imageUrl, {
           crop: 'impossible',
         });
       });
       ctx.requestShouldError(400, async () => {
-        ctx.response = await ctx.alice.images.process(imageUrl, { w: -1 });
+        ctx.response = await ctx.alice.images.processImage(imageUrl, { w: -1 });
       });
       ctx.requestShouldError(400, async () => {
-        ctx.response = await ctx.alice.images.process(imageUrl, { h: -1 });
+        ctx.response = await ctx.alice.images.processImage(imageUrl, { h: -1 });
       });
       ctx.requestShouldError(400, async () => {
-        ctx.response = await ctx.alice.images.process(imageUrl, {
+        ctx.response = await ctx.alice.images.processImage(imageUrl, {
           resize: 'impossible',
         });
       });
@@ -75,7 +75,7 @@ describe('Images', () => {
 
   describe('When alice creates a crop bottom 75x50', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.images.process(imageUrl, {
+      ctx.response = await ctx.alice.images.processImage(imageUrl, {
         w: 75,
         h: 50,
         crop: 'bottom',
@@ -96,7 +96,7 @@ describe('Images', () => {
 
   describe("When bob tries to crop alice's image", () => {
     ctx.requestShouldError(403, async () => {
-      ctx.response = await ctx.bob.images.process(imageUrl, {
+      ctx.response = await ctx.bob.images.processImage(imageUrl, {
         w: 75,
         h: 50,
         crop: 'bottom,right',
@@ -107,7 +107,7 @@ describe('Images', () => {
 
   describe('When alice creates a scaled thumb 140x30', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.response = await ctx.alice.images.process(imageUrl, {
+      ctx.response = await ctx.alice.images.processImage(imageUrl, {
         w: 140,
         h: 30,
         resize: 'scale',
