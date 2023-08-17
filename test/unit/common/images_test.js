@@ -35,7 +35,7 @@ describe('[UNIT] Images (Common)', function () {
 
   it('#process', function () {
     const options = { crop: 'bottom', resize: 'scale', h: 100, w: 100 };
-    store.process(uri, options);
+    store.processImage(uri, options);
 
     td.verify(
       get({
