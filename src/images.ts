@@ -70,6 +70,10 @@ export class StreamImageStore {
     });
   }
 
+  process(uri: string, options: ImageProcessOptions) {
+    return this.processImage(uri, options);
+  }
+
   /**
    * Generate a thumbnail for a given image
    * @link https://getstream.io/activity-feeds/docs/node/files_introduction/?language=js#image_processing
