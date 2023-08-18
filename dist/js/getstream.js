@@ -3891,9 +3891,7 @@ var StreamClient = /*#__PURE__*/function () {
    * stream.connect(apiKey, null, appId);
    */
   function StreamClient(apiKey, apiSecretOrToken, appId) {
-    var _this = this,
-      _process$env,
-      _process$env2;
+    var _this = this;
     var _options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     (0,classCallCheck/* default */.Z)(this, StreamClient);
     (0,defineProperty/* default */.Z)(this, "baseUrl", void 0);
@@ -4024,8 +4022,15 @@ var StreamClient = /*#__PURE__*/function () {
     // which data center to use
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
-    if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && (_process$env2 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.1.5"}).STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined') {
+      var _process$env, _process$env2;
+      if ((_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
+        this.fayeUrl = 'http://localhost:9999/faye/';
+      }
+      if ((_process$env2 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.1.5"}).STREAM_ANALYTICS_BASE_URL;
+      }
+    }
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
     // use for browser warnings
@@ -4180,7 +4185,10 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "userAgent",
     value: function userAgent() {
-      if (false) {}
+      if (process === undefined || "8.1.5" === undefined) {
+        // eslint-disable-next-line
+        return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat((__webpack_require__(4147)/* .version */ .i8));
+      }
       return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.5");
     }
 
@@ -10431,6 +10439,14 @@ function _typeof(obj) {
     return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   }, _typeof(obj);
 }
+
+/***/ }),
+
+/***/ 4147:
+/***/ ((module) => {
+
+"use strict";
+module.exports = {"i8":"8.1.5"};
 
 /***/ })
 
