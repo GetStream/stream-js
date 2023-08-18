@@ -57,7 +57,7 @@ export class StreamImageStore {
    * @param {string} uri
    * @param {ImageProcessOptions} options
    */
-  processImage(uri: string, options: ImageProcessOptions) {
+  process(uri: string, options: ImageProcessOptions) {
     const params = Object.assign(options, { url: uri });
     if (Array.isArray(params.crop)) {
       params.crop = params.crop.join(',');
@@ -68,10 +68,6 @@ export class StreamImageStore {
       qs: params,
       token: this.token,
     });
-  }
-
-  process(uri: string, options: ImageProcessOptions) {
-    return this.processImage(uri, options);
   }
 
   /**
@@ -88,6 +84,6 @@ export class StreamImageStore {
     h: number | string,
     { crop, resize } = { crop: 'center', resize: 'clip' },
   ) {
-    return this.processImage(uri, { w, h, crop, resize });
+    return this.process(uri, { w, h, crop, resize });
   }
 }
