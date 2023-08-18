@@ -3948,6 +3948,9 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.own_children != null) {
           options.withOwnChildren = options.reactions.own_children;
         }
+        if (options.reactions.kinds != null) {
+          options.reactionKindsFilter = options.reactions.kinds;
+        }
         delete options.reactions;
       }
     });
@@ -4284,7 +4287,7 @@ var StreamClient = /*#__PURE__*/function () {
         delete options.enrich;
         return result;
       }
-      return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
+      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
     }
 
     /**

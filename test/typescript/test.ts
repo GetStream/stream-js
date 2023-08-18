@@ -1,5 +1,6 @@
+/* tslint:disable */
 /* eslint-disable */
-// @ts-ignore
+// @ts-nocheck
 import * as Faye from 'faye';
 import {
   connect,
@@ -18,7 +19,6 @@ import {
   FeedAPIResponse,
   FlatActivity,
   RealTimeMessage,
-  // @ts-ignore
 } from '../..';
 
 type UserType = { name: string; image?: string };
@@ -29,16 +29,15 @@ type ChildReactionType = { cText: string };
 type T = {};
 
 type Generics = {
-  userType: UserType;
   activityType: ActivityType;
-  collectionType: CollectionType;
-  reactionType: ReactionType;
   childReactionType: ChildReactionType;
+  collectionType: CollectionType;
   personalizationType: Faye.UR;
+  reactionType: ReactionType;
+  userType: UserType;
 };
 
 let voidReturn: void;
-let voidPromise: Promise<void>;
 let emptyAPIPromise: Promise<APIResponse>;
 
 let client: StreamClient<Generics> = connect<Generics>('api_key', 'secret!', 'app_id');
@@ -53,13 +52,9 @@ new StreamClient('', null);
 new StreamClient('', null, '', {});
 new StreamClient('', null, '', { timeout: 3000, keepAlive: true, expireTokens: false });
 
-// @ts-ignore
 connect('', null, true, {});
-// @ts-ignore
 connect('', null, '', { missingOption: '' });
-// @ts-ignore
 new StreamClient('', '', true, {});
-// @ts-ignore
 new StreamClient('', '', '', { missingOption: '' });
 
 const agent: string = client.userAgent();
@@ -72,9 +67,7 @@ const rToken: string = client.getReadOnlyToken('', '');
 const rwToken: string = client.getReadWriteToken('', '');
 const uToken: string = client.createUserToken('');
 client.createUserToken('', { anything: {} });
-// @ts-ignore
 client.getReadOnlyToken();
-// @ts-ignore
 client.getReadWriteToken();
 
 const baseUrl: string = client.getBaseUrl();
@@ -83,11 +76,9 @@ client.getBaseUrl('api');
 const enrichedUrl: string = client.enrichUrl('');
 client.enrichUrl('', '');
 
-// @ts-ignore
 client.enrichUrl();
 
 voidReturn = client.on('', () => {});
-// @ts-ignore
 client.on('');
 voidReturn = client.off();
 voidReturn = client.off('');
@@ -103,8 +94,8 @@ client.shouldUseEnrichEndpoint({
   withOwnChildren: true,
   withReactionCounts: true,
   withRecentReactions: true,
+  reactionKindsFilter: ['likes'],
 });
-// @ts-ignore
 client.shouldUseEnrichEndpoint({ enrich: '' });
 
 const faye: Faye.Client<RealTimeMessage<Generics>> = client.getFayeClient();
@@ -114,7 +105,6 @@ const upload: Promise<FileUploadAPIResponse> = client.upload('/file', 'uri');
 
 client.upload('/image', new File([], ''));
 client.upload('/image', new File([], ''), '', '');
-// @ts-ignore
 client.upload('/image', []);
 
 const ogPromise: Promise<OGAPIResponse> = client.og('');
@@ -124,18 +114,14 @@ ogPromise.then((og) => {
   const { url } = og;
   og.images[0].url as string;
   og.images[0].width as number;
-  // @ts-ignore
   og.images[0].url as number;
 });
-// @ts-ignore
 client.og();
 
 const axiosConfig = { token: '', url: '' };
 const response: T = client.handleResponse<T>({ data: {}, status: 100, statusText: '', headers: {}, config: {} });
 const axiosReq: Promise<T> = client.doAxiosRequest<T>('GET', axiosConfig);
-// @ts-ignore
 client.doAxiosRequest<T>('', {});
-// @ts-ignore
 client.doAxiosRequest<T>('POST', {});
 
 const get: T = client.get<T>(axiosConfig);
@@ -143,7 +129,6 @@ const post: T = client.post<T>(axiosConfig);
 const put: T = client.put<T>(axiosConfig);
 const del: T = client.delete<T>(axiosConfig);
 emptyAPIPromise = client.delete(axiosConfig);
-// @ts-ignore
 client.get<T>();
 
 const emptyActivity = {
@@ -155,9 +140,7 @@ const emptyActivity = {
 };
 emptyAPIPromise = client.updateActivity({ ...emptyActivity, aText: '' });
 emptyAPIPromise = client.updateActivities([{ ...emptyActivity, aText: '' }]);
-// @ts-ignore
 client.updateActivity(emptyActivity);
-// @ts-ignore
 client.updateActivities([emptyActivity]);
 
 const partialUpdatePromise: Promise<Activity<Generics>> = client.activityPartialUpdate({
@@ -167,9 +150,7 @@ const partialUpdatePromise: Promise<Activity<Generics>> = client.activityPartial
 });
 client.activityPartialUpdate({ time: '', foreign_id: '', unset: ['aText'] });
 
-// @ts-ignore
 client.activityPartialUpdate({ unset: ['missing'] });
-// @ts-ignore
 client.activityPartialUpdate({ set: { missing: '' } });
 
 const partialUpdatesPromise: Promise<{ activities: Activity<Generics>[] }> = client.activitiesPartialUpdate([
@@ -181,9 +162,7 @@ const partialUpdatesPromise: Promise<{ activities: Activity<Generics>[] }> = cli
 ]);
 client.activitiesPartialUpdate([{ time: '', foreign_id: '', unset: ['aText'] }]);
 
-// @ts-ignore
 client.activityPartialUpdate([{ unset: ['missing'] }]);
-// @ts-ignore
 client.activityPartialUpdate([{ set: { missing: '' } }]);
 
 const activitiesPromise: Promise<GetActivitiesAPIResponse<Generics>> = client.getActivities({ ids: ['', ''] });
@@ -199,7 +178,6 @@ activitiesPromise.then(({ results }) => {
 client.getActivities({ foreignIDTimes: [{ foreignID: '', time: '' }] });
 client.getActivities({ ids: ['', ''], enrich: true, ownReactions: true });
 client.getActivities({});
-// @ts-ignore
 client.getActivities();
 
 const pFeedPromise: Promise<PersonalizationFeedAPIResponse<Generics>> = client.personalizedFeed({ enrich: true });
@@ -212,15 +190,12 @@ pFeedPromise.then((pFeed) => {
 });
 
 const userPromise: Promise<StreamUser<Generics>> = client.setUser({ name: '' });
-// @ts-ignore
 client.setUser({ username: '' });
 
 const user: StreamUser<Generics> = client.user('user_id');
 const userGet: Promise<StreamUser<Generics>> = client.user('user_id').get();
 client.user('user_id').get({ with_follow_counts: true });
-// @ts-ignore
 client.user('user_id').get({ with_follow_counts: 1 });
-// @ts-ignore
 client.user('user_id').get({ list: true });
 
 const timeline: StreamFeed<Generics> = client.feed('timeline', 'feed_id');
