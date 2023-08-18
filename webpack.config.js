@@ -18,6 +18,10 @@ module.exports = (env = {}) => ({
         use: 'babel-loader',
         exclude: /node_modules/,
       },
+      {
+        exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx|cjs)$/, /\.html$/, /\.json$/],
+        type: 'asset/resource',
+      },
     ],
   },
 
