@@ -6166,8 +6166,8 @@ var StreamImageStore = /*#__PURE__*/function () {
      * @param {ImageProcessOptions} options
      */
   }, {
-    key: "processImage",
-    value: function processImage(uri, options) {
+    key: "process",
+    value: function process(uri, options) {
       var params = _extends(options, {
         url: uri
       });
@@ -6179,11 +6179,6 @@ var StreamImageStore = /*#__PURE__*/function () {
         qs: params,
         token: this.token
       });
-    }
-  }, {
-    key: "process",
-    value: function process(uri, options) {
-      return this.processImage(uri, options);
     }
 
     /**
@@ -6203,7 +6198,7 @@ var StreamImageStore = /*#__PURE__*/function () {
         },
         crop = _ref.crop,
         resize = _ref.resize;
-      return this.processImage(uri, {
+      return this.process(uri, {
         w: w,
         h: h,
         crop: crop,
@@ -9936,7 +9931,10 @@ function _regeneratorRuntime() {
       if ("executing" === state) throw new Error("Generator is already running");
       if ("completed" === state) {
         if ("throw" === method) throw arg;
-        return doneResult();
+        return {
+          value: void 0,
+          done: !0
+        };
       }
       for (context.method = method, context.arg = arg;;) {
         var delegate = context.delegate;
@@ -9989,7 +9987,7 @@ function _regeneratorRuntime() {
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
   function values(iterable) {
-    if (iterable) {
+    if (iterable || "" === iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
@@ -10002,15 +10000,7 @@ function _regeneratorRuntime() {
         return next.next = next;
       }
     }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
+    throw new TypeError(_typeof(iterable) + " is not iterable");
   }
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
     value: GeneratorFunctionPrototype,
