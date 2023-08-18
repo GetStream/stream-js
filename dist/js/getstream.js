@@ -341,6 +341,10 @@ var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(4687);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
+// EXTERNAL MODULE: http (ignored)
+var http_ignored_ = __webpack_require__(8854);
+// EXTERNAL MODULE: https (ignored)
+var https_ignored_ = __webpack_require__(5697);
 ;// CONCATENATED MODULE: ./node_modules/axios/lib/helpers/bind.js
 
 
@@ -3795,10 +3799,6 @@ axios.default = axios;
 
 // EXTERNAL MODULE: ./node_modules/faye/src/faye_browser.js
 var faye_browser = __webpack_require__(2965);
-// EXTERNAL MODULE: http (ignored)
-var http_ignored_ = __webpack_require__(8058);
-// EXTERNAL MODULE: https (ignored)
-var https_ignored_ = __webpack_require__(5697);
 ;// CONCATENATED MODULE: ./node_modules/jwt-decode/build/jwt-decode.esm.js
 function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ const jwt_decode_esm = (o);
 //# sourceMappingURL=jwt-decode.esm.js.map
@@ -7355,7 +7355,7 @@ var asap            = __webpack_require__(9272),
     Logging         = __webpack_require__(8782),
     Publisher       = __webpack_require__(4909),
     Channel         = __webpack_require__(1762),
-    Dispatcher      = __webpack_require__(8854),
+    Dispatcher      = __webpack_require__(2630),
     Error           = __webpack_require__(5656),
     Extensible      = __webpack_require__(9983),
     Publication     = __webpack_require__(4347),
@@ -7730,7 +7730,7 @@ module.exports = Client;
 
 /***/ }),
 
-/***/ 8854:
+/***/ 2630:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -9791,7 +9791,7 @@ module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 /***/ }),
 
-/***/ 8058:
+/***/ 8854:
 /***/ (() => {
 
 /* (ignored) */
@@ -9923,7 +9923,10 @@ function _regeneratorRuntime() {
       if ("executing" === state) throw new Error("Generator is already running");
       if ("completed" === state) {
         if ("throw" === method) throw arg;
-        return doneResult();
+        return {
+          value: void 0,
+          done: !0
+        };
       }
       for (context.method = method, context.arg = arg;;) {
         var delegate = context.delegate;
@@ -9976,7 +9979,7 @@ function _regeneratorRuntime() {
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
   function values(iterable) {
-    if (iterable) {
+    if (iterable || "" === iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
@@ -9989,15 +9992,7 @@ function _regeneratorRuntime() {
         return next.next = next;
       }
     }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
+    throw new TypeError(_typeof(iterable) + " is not iterable");
   }
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
     value: GeneratorFunctionPrototype,

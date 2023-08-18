@@ -284,7 +284,7 @@ client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp,
 ### Typescript
 
 ```ts
-import { connect, UR, EnrichedActivity, NotificationActivity } from getstream;
+import { connect, UR, EnrichedActivity, NotificationActivity } from 'getstream';
 
 type User1Type = { name: string; username: string; image?: string };
 type User2Type = { name: string; avatar?: string };
