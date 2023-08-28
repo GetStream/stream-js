@@ -16,12 +16,14 @@ export type FollowStatsOptions = {
 export type EnrichOptions = {
   enrich?: boolean;
   ownReactions?: boolean; // best not to use it, will be removed by client.replaceReactionOptions()
+  rankingVars?: string[];
   reactionKindsFilter?: string[]; // TODO: add support for array sample: kind,kind,kind
   recentReactionsLimit?: number;
   withOwnChildren?: boolean;
   withOwnReactions?: boolean;
   withReactionCounts?: boolean;
   withRecentReactions?: boolean;
+  withScoreVars?: boolean;
 };
 
 export type FeedPaginationOptions = {
@@ -503,6 +505,7 @@ export class StreamFeed<StreamFeedGenerics extends DefaultGenerics = DefaultGene
    * @example feed.getActivityDetail(activityId)
    * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
    * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+   * @example feed.getActivityDetail(activityId, {withScoreVars: true})
    * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
    */
   getActivityDetail(activityId: string, options: EnrichOptions) {

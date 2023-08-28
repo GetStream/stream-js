@@ -492,12 +492,14 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
+    rankingVars?: string[];
     reactionKindsFilter?: string[];
     reactions?: Record<string, boolean | string[]>;
     withOwnChildren?: boolean;
     withOwnReactions?: boolean;
     withReactionCounts?: boolean;
     withRecentReactions?: boolean;
+    withScoreVars?: boolean;
   }) => {
     // Shortcut options for reaction enrichment
     if (options?.reactions) {
@@ -506,6 +508,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       }
       if (options.reactions.recent != null) {
         options.withRecentReactions = options.reactions.recent as boolean;
+      }
+      if (options.reactions.score_vars != null) {
+        options.withScoreVars = options.reactions.score_vars as boolean;
       }
       if (options.reactions.counts != null) {
         options.withReactionCounts = options.reactions.counts as boolean;
@@ -528,6 +533,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       withOwnChildren?: boolean;
       withReactionCounts?: boolean;
       withRecentReactions?: boolean;
+      withScoreVars?: boolean;
     } = {},
   ) {
     if (options.enrich !== undefined) {
@@ -541,6 +547,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       options.ownReactions != null ||
       options.reactionKindsFilter != null ||
       options.withRecentReactions != null ||
+      options.withScoreVars != null ||
       options.withReactionCounts != null ||
       options.withOwnChildren != null
     );
