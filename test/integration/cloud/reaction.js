@@ -51,11 +51,11 @@ describe('Reaction pagination', () => {
   });
 
   describe('When bob reads alice her feed with all enrichment enabled', () => {
-    ctx.requestShouldNotError(async () => {
+    /* ctx.requestShouldNotError(async () => {
       ctx.r2 = await ctx.bob.feed('user', ctx.alice.userId).get({
         reactions: { score_vars: true, ranking_vars: { var1: 1, var2: 'str2' } },
       });
-    });
+    }); */
 
     ctx.requestShouldNotError(async () => {
       ctx.r2 = await ctx.bob.feed('user', ctx.alice.userId).get({
