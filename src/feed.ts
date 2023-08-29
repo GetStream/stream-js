@@ -505,7 +505,7 @@ export class StreamFeed<StreamFeedGenerics extends DefaultGenerics = DefaultGene
    * @example feed.getActivityDetail(activityId)
    * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
    * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
-   * @example feed.getActivityDetail(activityId, {withScoreVars: true})
+   * @example feed.getActivityDetail(activityId, {withScoreVars: true, rankingVars: {var1: 1, var2: "str2"}})
    * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
    */
   getActivityDetail(activityId: string, options: EnrichOptions) {
