@@ -50,16 +50,18 @@ describe('Reaction pagination', () => {
     }
   });
 
-  describe('When bob reads alice her feed with all enrichment enabled', () => {
-    /* ctx.requestShouldNotError(async () => {
-      ctx.r2 = await ctx.bob.feed('user', ctx.alice.userId).get({
+  describe('#testRankingVars', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
         reactions: { score_vars: true, ranking_vars: { var1: 1, var2: 'str2' } },
       });
-    }); */
+    });
+  });
 
+  describe('When bob reads alice her feed with all enrichment enabled', () => {
     ctx.requestShouldNotError(async () => {
-      ctx.r2 = await ctx.bob.feed('user', ctx.alice.userId).get({
-        reactions: { score_vars: true },
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { own: true, recent: true, counts: true },
       });
     });
 
