@@ -492,7 +492,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
-    rankingVars?: string[];
+    rankingVars?: Record<string, string | number>;
     reactionKindsFilter?: string[];
     reactions?: Record<string, boolean | string[]>;
     withOwnChildren?: boolean;

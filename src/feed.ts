@@ -16,7 +16,7 @@ export type FollowStatsOptions = {
 export type EnrichOptions = {
   enrich?: boolean;
   ownReactions?: boolean; // best not to use it, will be removed by client.replaceReactionOptions()
-  rankingVars?: string[];
+  rankingVars?: Record<string, string | number>;
   reactionKindsFilter?: string[]; // TODO: add support for array sample: kind,kind,kind
   recentReactionsLimit?: number;
   withOwnChildren?: boolean;
