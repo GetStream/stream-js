@@ -200,14 +200,12 @@ client.user('user_id').get({ list: true });
 
 const timeline: StreamFeed<Generics> = client.feed('timeline', 'feed_id');
 
-timeline
-  .get({ withScoreVars: true })
-  .then((response: FeedAPIResponse<Generics>) => {
-    response.next as string;
-    response.unread as number;
-    response.unseen as number;
-    response.results as FlatActivity<Generics>[];
-  });
+timeline.get({ withScoreVars: true }).then((response: FeedAPIResponse<Generics>) => {
+  response.next as string;
+  response.unread as number;
+  response.unseen as number;
+  response.results as FlatActivity<Generics>[];
+});
 
 timeline.get({ withOwnChildren: true, withOwnReactions: true }).then((response: FeedAPIResponse<Generics>) => {
   response.next as string;

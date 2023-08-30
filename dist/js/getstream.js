@@ -3942,6 +3942,9 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.recent != null) {
           options.withRecentReactions = options.reactions.recent;
         }
+        if (options.reactions.ranking_vars != null) {
+          options.rankingVars = options.reactions.ranking_vars;
+        }
         if (options.reactions.score_vars != null) {
           options.withScoreVars = options.reactions.score_vars;
         }
