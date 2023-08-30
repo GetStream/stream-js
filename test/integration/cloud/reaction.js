@@ -50,10 +50,10 @@ describe('Reaction pagination', () => {
     }
   });
 
-  describe('#testRankingVars', () => {
+  describe('#testScoreVars', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
-        reactions: { score_vars: true, ranking_vars: { var1: 1, var2: 'str2' } },
+        reactions: { score_vars: true },
       });
     });
   });
