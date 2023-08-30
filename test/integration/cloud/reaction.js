@@ -54,6 +54,14 @@ describe('Reaction pagination', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
         reactions: { score_vars: true },
+        limit: 4,
+        offset: 2,
+      });
+    });
+
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
       });
     });
   });
