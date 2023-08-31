@@ -50,12 +50,29 @@ describe('Reaction pagination', () => {
     }
   });
 
+  describe('#testScoreVars', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
+        limit: 4,
+        offset: 2,
+      });
+    });
+
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
+      });
+    });
+  });
+
   describe('When bob reads alice her feed with all enrichment enabled', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
         reactions: { own: true, recent: true, counts: true },
       });
     });
+
     ctx.responseShouldHaveActivityWithFields(
       'own_reactions',
       'latest_reactions',

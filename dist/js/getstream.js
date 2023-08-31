@@ -3942,6 +3942,12 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.recent != null) {
           options.withRecentReactions = options.reactions.recent;
         }
+        if (options.reactions.ranking_vars != null) {
+          options.rankingVars = options.reactions.ranking_vars;
+        }
+        if (options.reactions.score_vars != null) {
+          options.withScoreVars = options.reactions.score_vars;
+        }
         if (options.reactions.counts != null) {
           options.withReactionCounts = options.reactions.counts;
         }
@@ -4287,7 +4293,7 @@ var StreamClient = /*#__PURE__*/function () {
         delete options.enrich;
         return result;
       }
-      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
+      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withScoreVars != null || options.withReactionCounts != null || options.withOwnChildren != null;
     }
 
     /**
@@ -5880,6 +5886,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.getActivityDetail(activityId)
      * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withScoreVars: true})
      * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
   }, {
