@@ -3957,6 +3957,9 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.kinds != null) {
           options.reactionKindsFilter = options.reactions.kinds;
         }
+        if (options.reactions.user_id != null) {
+          options.withUserId = options.reactions.user_id;
+        }
         delete options.reactions;
       }
     });
@@ -4033,11 +4036,11 @@ var StreamClient = /*#__PURE__*/function () {
     this.baseUrl = this.getBaseUrl();
     if (typeof process !== 'undefined') {
       var _process$env, _process$env2;
-      if ((_process$env = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
+      if ((_process$env = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
         this.fayeUrl = 'http://localhost:9999/faye/';
       }
-      if ((_process$env2 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
-        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.2.0"}).STREAM_ANALYTICS_BASE_URL;
+      if ((_process$env2 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.3.1"}).STREAM_ANALYTICS_BASE_URL;
       }
     }
     this.handlers = {};
@@ -4124,8 +4127,8 @@ var StreamClient = /*#__PURE__*/function () {
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.2.0"})[urlEnvironmentKey];
-      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.3.1"})[urlEnvironmentKey];
+      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
       if (this.location) {
         var protocol = this.options.protocol || 'https';
         return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
@@ -4194,11 +4197,11 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "userAgent",
     value: function userAgent() {
-      if (process === undefined || "8.2.0" === undefined) {
+      if (process === undefined || "8.3.1" === undefined) {
         // eslint-disable-next-line
         return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat((__webpack_require__(4147)/* .version */ .i8));
       }
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.2.0");
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.3.1");
     }
 
     /**
@@ -4293,7 +4296,7 @@ var StreamClient = /*#__PURE__*/function () {
         delete options.enrich;
         return result;
       }
-      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withScoreVars != null || options.withReactionCounts != null || options.withOwnChildren != null;
+      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withScoreVars != null || options.withReactionCounts != null || options.withOwnChildren != null || options.withUserId != null;
     }
 
     /**
@@ -5287,8 +5290,8 @@ var Collections = /*#__PURE__*/function () {
  */
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
-  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
-    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.2.0"}).STREAM_URL) || [];
+  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.3.1"}).STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
@@ -6558,14 +6561,37 @@ var StreamReaction = /*#__PURE__*/function () {
      * @method delete
      * @memberof StreamReaction.prototype
      * @param  {string}   id Reaction Id
+     * @param  {bool}     soft Soft delete
      * @return {Promise<APIResponse>}
      * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
      */
   }, {
     key: "delete",
     value: function _delete(id) {
+      var soft = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       return this.client.delete({
         url: this.buildURL(id),
+        token: this.token,
+        qs: soft ? {
+          soft: 'true'
+        } : undefined
+      });
+    }
+
+    /**
+     * restore deleted reaction
+     * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#removing-reactions
+     * @method restore
+     * @memberof StreamReaction.prototype
+     * @param  {string}   id Reaction Id
+     * @return {Promise<APIResponse>}
+     * @example reactions.restore("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+     */
+  }, {
+    key: "restore",
+    value: function restore(id) {
+      return this.client.put({
+        url: this.buildURL(id, 'restore'),
         token: this.token
       });
     }
@@ -8636,7 +8662,7 @@ var Transport = assign(Class({ className: 'Transport',
 
     var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
         upcase = name.toUpperCase(),
-        env    = ({"PACKAGE_VERSION":"8.2.0"}),
+        env    = ({"PACKAGE_VERSION":"8.3.1"}),
         keys, proxy;
 
     if (name === 'http_proxy' && env.REQUEST_METHOD) {
@@ -10456,7 +10482,7 @@ function _typeof(obj) {
 /***/ ((module) => {
 
 "use strict";
-module.exports = {"i8":"8.2.0"};
+module.exports = {"i8":"8.3.1"};
 
 /***/ })
 
