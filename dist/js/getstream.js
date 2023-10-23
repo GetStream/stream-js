@@ -341,6 +341,10 @@ var defineProperty = __webpack_require__(4942);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(4687);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
+// EXTERNAL MODULE: http (ignored)
+var http_ignored_ = __webpack_require__(8854);
+// EXTERNAL MODULE: https (ignored)
+var https_ignored_ = __webpack_require__(5697);
 ;// CONCATENATED MODULE: ./node_modules/axios/lib/helpers/bind.js
 
 
@@ -3795,10 +3799,6 @@ axios.default = axios;
 
 // EXTERNAL MODULE: ./node_modules/faye/src/faye_browser.js
 var faye_browser = __webpack_require__(2965);
-// EXTERNAL MODULE: http (ignored)
-var http_ignored_ = __webpack_require__(8058);
-// EXTERNAL MODULE: https (ignored)
-var https_ignored_ = __webpack_require__(5697);
 ;// CONCATENATED MODULE: ./node_modules/jwt-decode/build/jwt-decode.esm.js
 function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ const jwt_decode_esm = (o);
 //# sourceMappingURL=jwt-decode.esm.js.map
@@ -3891,9 +3891,7 @@ var StreamClient = /*#__PURE__*/function () {
    * stream.connect(apiKey, null, appId);
    */
   function StreamClient(apiKey, apiSecretOrToken, appId) {
-    var _this = this,
-      _process$env,
-      _process$env2;
+    var _this = this;
     var _options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
     (0,classCallCheck/* default */.Z)(this, StreamClient);
     (0,defineProperty/* default */.Z)(this, "baseUrl", void 0);
@@ -3944,11 +3942,20 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.recent != null) {
           options.withRecentReactions = options.reactions.recent;
         }
+        if (options.reactions.ranking_vars != null) {
+          options.rankingVars = options.reactions.ranking_vars;
+        }
+        if (options.reactions.score_vars != null) {
+          options.withScoreVars = options.reactions.score_vars;
+        }
         if (options.reactions.counts != null) {
           options.withReactionCounts = options.reactions.counts;
         }
         if (options.reactions.own_children != null) {
           options.withOwnChildren = options.reactions.own_children;
+        }
+        if (options.reactions.kinds != null) {
+          options.reactionKindsFilter = options.reactions.kinds;
         }
         delete options.reactions;
       }
@@ -4024,8 +4031,15 @@ var StreamClient = /*#__PURE__*/function () {
     // which data center to use
     this.location = this.options.location;
     this.baseUrl = this.getBaseUrl();
-    if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && (_process$env2 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.1.5"}).STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined') {
+      var _process$env, _process$env2;
+      if ((_process$env = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
+        this.fayeUrl = 'http://localhost:9999/faye/';
+      }
+      if ((_process$env2 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.2.0"}).STREAM_ANALYTICS_BASE_URL;
+      }
+    }
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
     // use for browser warnings
@@ -4110,8 +4124,8 @@ var StreamClient = /*#__PURE__*/function () {
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.1.5"})[urlEnvironmentKey];
-      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.2.0"})[urlEnvironmentKey];
+      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
       if (this.location) {
         var protocol = this.options.protocol || 'https';
         return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
@@ -4180,8 +4194,11 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "userAgent",
     value: function userAgent() {
-      if (false) {}
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.1.5");
+      if (process === undefined || "8.2.0" === undefined) {
+        // eslint-disable-next-line
+        return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat((__webpack_require__(4147)/* .version */ .i8));
+      }
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.2.0");
     }
 
     /**
@@ -4276,7 +4293,7 @@ var StreamClient = /*#__PURE__*/function () {
         delete options.enrich;
         return result;
       }
-      return this.enrichByDefault || options.ownReactions != null || options.withRecentReactions != null || options.withReactionCounts != null || options.withOwnChildren != null;
+      return this.enrichByDefault || options.ownReactions != null || options.reactionKindsFilter != null || options.withRecentReactions != null || options.withScoreVars != null || options.withReactionCounts != null || options.withOwnChildren != null;
     }
 
     /**
@@ -5270,8 +5287,8 @@ var Collections = /*#__PURE__*/function () {
  */
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
-  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.1.5"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
-    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.1.5"}).STREAM_URL) || [];
+  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.2.0"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.2.0"}).STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
@@ -5869,6 +5886,7 @@ var StreamFeed = /*#__PURE__*/function () {
      * @example feed.getActivityDetail(activityId)
      * @example feed.getActivityDetail(activityId, {withRecentReactions: true})
      * @example feed.getActivityDetail(activityId, {withReactionCounts: true})
+     * @example feed.getActivityDetail(activityId, {withScoreVars: true})
      * @example feed.getActivityDetail(activityId, {withOwnReactions: true, withReactionCounts: true})
      */
   }, {
@@ -7355,7 +7373,7 @@ var asap            = __webpack_require__(9272),
     Logging         = __webpack_require__(8782),
     Publisher       = __webpack_require__(4909),
     Channel         = __webpack_require__(1762),
-    Dispatcher      = __webpack_require__(8854),
+    Dispatcher      = __webpack_require__(2630),
     Error           = __webpack_require__(5656),
     Extensible      = __webpack_require__(9983),
     Publication     = __webpack_require__(4347),
@@ -7730,7 +7748,7 @@ module.exports = Client;
 
 /***/ }),
 
-/***/ 8854:
+/***/ 2630:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -8618,7 +8636,7 @@ var Transport = assign(Class({ className: 'Transport',
 
     var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
         upcase = name.toUpperCase(),
-        env    = ({"PACKAGE_VERSION":"8.1.5"}),
+        env    = ({"PACKAGE_VERSION":"8.2.0"}),
         keys, proxy;
 
     if (name === 'http_proxy' && env.REQUEST_METHOD) {
@@ -9791,7 +9809,7 @@ module.exports = typeof self == 'object' ? self.FormData : window.FormData;
 
 /***/ }),
 
-/***/ 8058:
+/***/ 8854:
 /***/ (() => {
 
 /* (ignored) */
@@ -9923,7 +9941,10 @@ function _regeneratorRuntime() {
       if ("executing" === state) throw new Error("Generator is already running");
       if ("completed" === state) {
         if ("throw" === method) throw arg;
-        return doneResult();
+        return {
+          value: void 0,
+          done: !0
+        };
       }
       for (context.method = method, context.arg = arg;;) {
         var delegate = context.delegate;
@@ -9976,7 +9997,7 @@ function _regeneratorRuntime() {
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
   function values(iterable) {
-    if (iterable) {
+    if (iterable || "" === iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
@@ -9989,15 +10010,7 @@ function _regeneratorRuntime() {
         return next.next = next;
       }
     }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
+    throw new TypeError(_typeof(iterable) + " is not iterable");
   }
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
     value: GeneratorFunctionPrototype,
@@ -10436,6 +10449,14 @@ function _typeof(obj) {
     return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   }, _typeof(obj);
 }
+
+/***/ }),
+
+/***/ 4147:
+/***/ ((module) => {
+
+"use strict";
+module.exports = {"i8":"8.2.0"};
 
 /***/ })
 

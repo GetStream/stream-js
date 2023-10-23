@@ -239,9 +239,14 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.location = this.options.location as string;
     this.baseUrl = this.getBaseUrl();
 
-    if (typeof process !== 'undefined' && process.env?.LOCAL_FAYE) this.fayeUrl = 'http://localhost:9999/faye/';
-    if (typeof process !== 'undefined' && process.env?.STREAM_ANALYTICS_BASE_URL)
-      this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+    if (typeof process !== 'undefined') {
+      if (process.env?.LOCAL_FAYE) {
+        this.fayeUrl = 'http://localhost:9999/faye/';
+      }
+      if (process.env?.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = process.env.STREAM_ANALYTICS_BASE_URL;
+      }
+    }
 
     this.handlers = {};
     this.node = typeof window === 'undefined'; // use for real browser vs node behavior
@@ -396,7 +401,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    if (process.env.PACKAGE_VERSION === undefined) {
+    if (process === undefined || process.env.PACKAGE_VERSION === undefined) {
       // eslint-disable-next-line
       return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${require('../package.json').version}`;
     }
@@ -487,25 +492,41 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
-    reactions?: Record<string, boolean>;
+    rankingVars?: Record<string, string | number>;
+    reactionKindsFilter?: string[];
+    reactions?: Record<string, string | boolean | string[] | Record<string, string | number>>;
     withOwnChildren?: boolean;
     withOwnReactions?: boolean;
     withReactionCounts?: boolean;
     withRecentReactions?: boolean;
+    withScoreVars?: boolean;
+    withUserId?: string;
   }) => {
     // Shortcut options for reaction enrichment
     if (options?.reactions) {
       if (options.reactions.own != null) {
-        options.withOwnReactions = options.reactions.own;
+        options.withOwnReactions = options.reactions.own as boolean;
       }
       if (options.reactions.recent != null) {
-        options.withRecentReactions = options.reactions.recent;
+        options.withRecentReactions = options.reactions.recent as boolean;
+      }
+      if (options.reactions.ranking_vars != null) {
+        options.rankingVars = options.reactions.ranking_vars as Record<string, string | number>;
+      }
+      if (options.reactions.score_vars != null) {
+        options.withScoreVars = options.reactions.score_vars as boolean;
       }
       if (options.reactions.counts != null) {
-        options.withReactionCounts = options.reactions.counts;
+        options.withReactionCounts = options.reactions.counts as boolean;
       }
       if (options.reactions.own_children != null) {
-        options.withOwnChildren = options.reactions.own_children;
+        options.withOwnChildren = options.reactions.own_children as boolean;
+      }
+      if (options.reactions.kinds != null) {
+        options.reactionKindsFilter = options.reactions.kinds as string[];
+      }
+      if (options.reactions.user_id != null) {
+        options.withUserId = options.reactions.user_id as string;
       }
       delete options.reactions;
     }
@@ -515,9 +536,12 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     options: {
       enrich?: boolean;
       ownReactions?: boolean;
+      reactionKindsFilter?: string[];
       withOwnChildren?: boolean;
       withReactionCounts?: boolean;
       withRecentReactions?: boolean;
+      withScoreVars?: boolean;
+      withUserId?: string;
     } = {},
   ) {
     if (options.enrich !== undefined) {
@@ -529,9 +553,12 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     return (
       this.enrichByDefault ||
       options.ownReactions != null ||
+      options.reactionKindsFilter != null ||
       options.withRecentReactions != null ||
+      options.withScoreVars != null ||
       options.withReactionCounts != null ||
-      options.withOwnChildren != null
+      options.withOwnChildren != null ||
+      options.withUserId != null
     );
   }
 
