@@ -942,6 +942,18 @@ describe('Reaction CRUD and posting reactions to feeds', () => {
     });
   });
 
+  describe('When bob soft delete his comment', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.reactions.delete(comment.id, true);
+    });
+
+    describe('and restores it', () => {
+      ctx.requestShouldNotError(async () => {
+        ctx.response = await ctx.bob.reactions.restore(comment.id);
+      });
+    });
+  });
+
   describe('When bob deletes his comment', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.reactions.delete(comment.id);

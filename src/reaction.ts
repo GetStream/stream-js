@@ -293,12 +293,30 @@ export class StreamReaction<StreamFeedGenerics extends DefaultGenerics = Default
    * @method delete
    * @memberof StreamReaction.prototype
    * @param  {string}   id Reaction Id
+   * @param  {bool}     soft Soft delete
    * @return {Promise<APIResponse>}
    * @example reactions.delete("67b3e3b5-b201-4697-96ac-482eb14f88ec")
    */
-  delete(id: string) {
+  delete(id: string, soft = false) {
     return this.client.delete({
       url: this.buildURL(id),
+      token: this.token,
+      qs: soft ? { soft: 'true' } : undefined,
+    });
+  }
+
+  /**
+   * restore deleted reaction
+   * @link https://getstream.io/activity-feeds/docs/node/reactions_introduction/?language=js#removing-reactions
+   * @method restore
+   * @memberof StreamReaction.prototype
+   * @param  {string}   id Reaction Id
+   * @return {Promise<APIResponse>}
+   * @example reactions.restore("67b3e3b5-b201-4697-96ac-482eb14f88ec")
+   */
+  restore(id: string) {
+    return this.client.put({
+      url: this.buildURL(id, 'restore'),
       token: this.token,
     });
   }
