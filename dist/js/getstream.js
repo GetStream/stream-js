@@ -345,6 +345,12 @@ var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 var http_ignored_ = __webpack_require__(8854);
 // EXTERNAL MODULE: https (ignored)
 var https_ignored_ = __webpack_require__(5697);
+// EXTERNAL MODULE: ./node_modules/faye/src/faye_browser.js
+var faye_browser = __webpack_require__(2965);
+;// CONCATENATED MODULE: ./node_modules/jwt-decode/build/jwt-decode.esm.js
+function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ const jwt_decode_esm = (o);
+//# sourceMappingURL=jwt-decode.esm.js.map
+
 ;// CONCATENATED MODULE: ./node_modules/axios/lib/helpers/bind.js
 
 
@@ -3797,12 +3803,6 @@ axios.default = axios;
 // this module should only have a default export
 /* harmony default export */ const lib_axios = (axios);
 
-// EXTERNAL MODULE: ./node_modules/faye/src/faye_browser.js
-var faye_browser = __webpack_require__(2965);
-;// CONCATENATED MODULE: ./node_modules/jwt-decode/build/jwt-decode.esm.js
-function e(e){this.message=e}e.prototype=new Error,e.prototype.name="InvalidCharacterError";var r="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(r){var t=String(r).replace(/=+$/,"");if(t.length%4==1)throw new e("'atob' failed: The string to be decoded is not correctly encoded.");for(var n,o,a=0,i=0,c="";o=t.charAt(i++);~o&&(n=a%4?64*n+o:o,a++%4)?c+=String.fromCharCode(255&n>>(-2*a&6)):0)o="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(o);return c};function t(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(r(e).replace(/(.)/g,(function(e,r){var t=r.charCodeAt(0).toString(16).toUpperCase();return t.length<2&&(t="0"+t),"%"+t})))}(t)}catch(e){return r(t)}}function n(e){this.message=e}function o(e,r){if("string"!=typeof e)throw new n("Invalid token specified");var o=!0===(r=r||{}).header?0:1;try{return JSON.parse(t(e.split(".")[o]))}catch(e){throw new n("Invalid token specified: "+e.message)}}n.prototype=new Error,n.prototype.name="InvalidTokenError";/* harmony default export */ const jwt_decode_esm = (o);
-//# sourceMappingURL=jwt-decode.esm.js.map
-
 // EXTERNAL MODULE: ./src/personalization.ts
 var personalization = __webpack_require__(8039);
 // EXTERNAL MODULE: ./src/collections.ts
@@ -4036,11 +4036,11 @@ var StreamClient = /*#__PURE__*/function () {
     this.baseUrl = this.getBaseUrl();
     if (typeof process !== 'undefined') {
       var _process$env, _process$env2;
-      if ((_process$env = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
+      if ((_process$env = ({"PACKAGE_VERSION":"8.4.0"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
         this.fayeUrl = 'http://localhost:9999/faye/';
       }
-      if ((_process$env2 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
-        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.3.1"}).STREAM_ANALYTICS_BASE_URL;
+      if ((_process$env2 = ({"PACKAGE_VERSION":"8.4.0"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
+        this.baseAnalyticsUrl = ({"PACKAGE_VERSION":"8.4.0"}).STREAM_ANALYTICS_BASE_URL;
       }
     }
     this.handlers = {};
@@ -4127,8 +4127,8 @@ var StreamClient = /*#__PURE__*/function () {
       if (!serviceName) serviceName = 'api';
       if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
       var urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : "STREAM_".concat(serviceName.toUpperCase(), "_URL");
-      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.3.1"})[urlEnvironmentKey];
-      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
+      if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.4.0"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.4.0"})[urlEnvironmentKey];
+      if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.4.0"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return "http://localhost:8000/".concat(serviceName, "/");
       if (this.location) {
         var protocol = this.options.protocol || 'https';
         return "".concat(protocol, "://").concat(this.location, "-").concat(serviceName, ".stream-io-api.com/").concat(serviceName, "/");
@@ -4197,11 +4197,11 @@ var StreamClient = /*#__PURE__*/function () {
   }, {
     key: "userAgent",
     value: function userAgent() {
-      if (process === undefined || "8.3.1" === undefined) {
+      if (process === undefined || "8.4.0" === undefined) {
         // eslint-disable-next-line
         return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat((__webpack_require__(4147)/* .version */ .i8));
       }
-      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.3.1");
+      return "stream-javascript-client-".concat(this.node ? 'node' : 'browser', "-").concat("8.4.0");
     }
 
     /**
@@ -4305,7 +4305,7 @@ var StreamClient = /*#__PURE__*/function () {
      * @private
      * @memberof StreamClient.prototype
      * @param {AxiosConfig} kwargs
-     * @return {axios.AxiosRequestConfig}
+     * @return {AxiosRequestConfig}
      */
   }, {
     key: "enrichKwargs",
@@ -5290,8 +5290,8 @@ var Collections = /*#__PURE__*/function () {
  */
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
-  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.3.1"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
-    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.3.1"}).STREAM_URL) || [];
+  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.4.0"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
+    var parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(({"PACKAGE_VERSION":"8.4.0"}).STREAM_URL) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
     var location = parts[3];
@@ -8662,7 +8662,7 @@ var Transport = assign(Class({ className: 'Transport',
 
     var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
         upcase = name.toUpperCase(),
-        env    = ({"PACKAGE_VERSION":"8.3.1"}),
+        env    = ({"PACKAGE_VERSION":"8.4.0"}),
         keys, proxy;
 
     if (name === 'http_proxy' && env.REQUEST_METHOD) {
@@ -10482,7 +10482,7 @@ function _typeof(obj) {
 /***/ ((module) => {
 
 "use strict";
-module.exports = {"i8":"8.3.1"};
+module.exports = {"i8":"8.4.0"};
 
 /***/ })
 

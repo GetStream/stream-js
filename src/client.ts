@@ -2,10 +2,10 @@
 
 import * as http from 'http';
 import * as https from 'https';
-import * as axios from 'axios';
 import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
+import { default as axios, AxiosProgressEvent, AxiosInstance, AxiosRequestConfig, Method, AxiosResponse } from 'axios';
 import { Personalization } from './personalization';
 import { Collections } from './collections';
 import { StreamFileStore } from './files';
@@ -101,7 +101,7 @@ export type OGAPIResponse = APIResponse & {
 type AxiosConfig = {
   token: string;
   url: string;
-  axiosOptions?: axios.AxiosRequestConfig;
+  axiosOptions?: AxiosRequestConfig;
   body?: unknown;
   headers?: UR;
   qs?: UR;
@@ -161,7 +161,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   node: boolean;
   nodeOptions?: { httpAgent: http.Agent; httpsAgent: https.Agent };
 
-  request: axios.AxiosInstance;
+  request: AxiosInstance;
   subscriptions: Record<
     string,
     { fayeSubscription: Faye.Subscription | Promise<Faye.Subscription>; token: string; userId: string }
@@ -261,7 +261,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       };
     }
 
-    this.request = axios.default.create({
+    this.request = axios.create({
       timeout: this.options.timeout || 10000,
       withCredentials: false, // making sure cookies are not sent
       ...(this.nodeOptions || {}),
@@ -568,9 +568,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @private
    * @memberof StreamClient.prototype
    * @param {AxiosConfig} kwargs
-   * @return {axios.AxiosRequestConfig}
+   * @return {AxiosRequestConfig}
    */
-  enrichKwargs({ method, token, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
+  enrichKwargs({ method, token, ...kwargs }: AxiosConfig & { method: Method }): AxiosRequestConfig {
     return {
       method,
       url: this.enrichUrl(kwargs.url, kwargs.serviceName),
@@ -640,7 +640,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     return this.fayeClient;
   }
 
-  handleResponse = <T>(response: axios.AxiosResponse<T>): T => {
+  handleResponse = <T>(response: AxiosResponse<T>): T => {
     if (/^2/.test(`${response.status}`)) {
       this.send('response', null, response, response.data);
       return response.data;
@@ -653,7 +653,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     );
   };
 
-  doAxiosRequest = async <T>(method: axios.Method, options: AxiosConfig): Promise<T> => {
+  doAxiosRequest = async <T>(method: Method, options: AxiosConfig): Promise<T> => {
     this.send('request', method, options);
 
     try {
@@ -671,7 +671,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: axios.AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
