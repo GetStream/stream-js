@@ -5,6 +5,7 @@ import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
+import AxiosProgressEvent from 'axios';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
@@ -671,7 +672,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: axios.AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: typeof AxiosProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
