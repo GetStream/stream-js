@@ -5,7 +5,7 @@ import * as https from 'https';
 import * as Faye from 'faye';
 import jwtDecode from 'jwt-decode';
 
-import { default as axios, AxiosProgressEvent, AxiosInstance, AxiosRequestConfig, Method, AxiosResponse } from 'axios';
+import { default as axios, AxiosProgressEvent, AxiosInstance, AxiosRequestConfig, Method, AxiosResponse } from 'axios'; // eslint-disable-line
 import { Personalization } from './personalization';
 import { Collections } from './collections';
 import { StreamFileStore } from './files';
