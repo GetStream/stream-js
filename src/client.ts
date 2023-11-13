@@ -4,7 +4,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
@@ -492,7 +492,6 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
-    rankingVars?: Record<string, string | number>;
     reactionKindsFilter?: string[];
     reactions?: Record<string, string | boolean | string[] | Record<string, string | number>>;
     withOwnChildren?: boolean;
@@ -509,9 +508,6 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       }
       if (options.reactions.recent != null) {
         options.withRecentReactions = options.reactions.recent as boolean;
-      }
-      if (options.reactions.ranking_vars != null) {
-        options.rankingVars = options.reactions.ranking_vars as Record<string, string | number>;
       }
       if (options.reactions.score_vars != null) {
         options.withScoreVars = options.reactions.score_vars as boolean;
