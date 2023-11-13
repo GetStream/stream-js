@@ -335,10 +335,6 @@ __webpack_require__.d(common_utils_namespaceObject, {
   hasStandardBrowserWebWorkerEnv: () => (hasStandardBrowserWebWorkerEnv)
 });
 
-// NAMESPACE OBJECT: ./node_modules/jwt-decode/build/esm/index.js
-var esm_namespaceObject = {};
-__webpack_require__.r(esm_namespaceObject);
-
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 5 modules
 var slicedToArray = __webpack_require__(8152);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/objectWithoutProperties.js + 1 modules
@@ -4040,6 +4036,9 @@ var StreamClient = /*#__PURE__*/function () {
         if (options.reactions.recent != null) {
           options.withRecentReactions = options.reactions.recent;
         }
+        if (options.reactions.ranking_vars != null) {
+          options.rankingVars = options.reactions.ranking_vars;
+        }
         if (options.reactions.score_vars != null) {
           options.withScoreVars = options.reactions.score_vars;
         }
@@ -4109,7 +4108,7 @@ var StreamClient = /*#__PURE__*/function () {
     this.userToken = this.usingApiSecret ? null : apiSecretOrToken;
     this.enrichByDefault = !this.usingApiSecret;
     if (this.userToken != null) {
-      var jwtBody = (0,esm_namespaceObject["default"])(this.userToken);
+      var jwtBody = jwtDecode(this.userToken);
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
       }
