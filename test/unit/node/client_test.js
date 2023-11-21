@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import * as td from 'testdouble';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import pkg from '../../../package.json';
 import { connect, StreamClient, StreamFeed } from '../../../src';

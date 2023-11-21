@@ -4,7 +4,7 @@ import * as http from 'http';
 import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
