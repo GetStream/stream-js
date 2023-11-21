@@ -5,6 +5,7 @@ import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
 import { jwtDecode } from 'jwt-decode';
+import AxiosProgressEvent from 'axios';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
