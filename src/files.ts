@@ -1,4 +1,4 @@
-import { AxiosProgressEvent } from 'axios';
+import AxiosProgressEvent from 'axios';
 import { StreamClient } from './client';
 
 export class StreamFileStore {
@@ -25,7 +25,7 @@ export class StreamFileStore {
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: typeof AxiosProgressEvent) => void,
   ) {
     return this.client.upload('files/', uri, name, contentType, onUploadProgress);
   }
