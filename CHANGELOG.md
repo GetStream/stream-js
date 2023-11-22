@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.4.1](https://github.com/GetStream/stream-js/compare/v8.4.0...v8.4.1) (2023-11-21)
+
 ## [8.4.0](https://github.com/GetStream/stream-js/compare/v8.3.1...v8.4.0) (2023-10-24)
 
 ### [8.3.1](https://github.com/GetStream/stream-js/compare/v8.3.0...v8.3.1) (2023-09-05)
