@@ -237,7 +237,10 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.subscriptions = {};
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
-    this.location = this.options.location as string;
+    const location = this.options.location as string;
+    if (location !== null && location.length > 0) {
+      this.location = location;
+    }
     this.baseUrl = this.getBaseUrl();
 
     if (typeof process !== 'undefined') {
@@ -572,15 +575,20 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {axios.AxiosRequestConfig}
    */
   enrichKwargs({ method, token, ...kwargs }: AxiosConfig & { method: axios.Method }): axios.AxiosRequestConfig {
+    const params: Record<string, string> = {
+      api_key: this.apiKey,
+      ...(kwargs.qs || {}),
+    };
+
+    if (this.group) {
+      params.location = this.group;
+    }
+
     return {
       method,
       url: this.enrichUrl(kwargs.url, kwargs.serviceName),
       data: kwargs.body,
-      params: {
-        api_key: this.apiKey,
-        location: this.group,
-        ...(kwargs.qs || {}),
-      },
+      params,
       headers: {
         'X-Stream-Client': this.userAgent(),
         'stream-auth-type': 'jwt',
