@@ -156,7 +156,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   fayeUrl: string;
   group: string;
   expireTokens: boolean;
-  location: string;
+  location: string | undefined;
   fayeClient: Faye.Client<RealTimeMessage<StreamFeedGenerics>> | null;
   browser: boolean;
   node: boolean;
