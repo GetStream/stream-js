@@ -238,7 +238,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.expireTokens = this.options.expireTokens ? this.options.expireTokens : false;
     // which data center to use
     const location = this.options.location as string;
-    if (location !== null && location.length > 0) {
+    if (location) {
       this.location = location;
     }
     this.baseUrl = this.getBaseUrl();
