@@ -31,6 +31,7 @@ export type FeedPaginationOptions = {
   id_lt?: string;
   id_lte?: string;
   limit?: number;
+  refresh?: boolean;
 };
 
 export type RankedFeedOptions = {
