@@ -71,6 +71,7 @@ export type ReactionFilterConditions = {
   id_lte?: string;
   kind?: string;
   limit?: number;
+  ranking?: string;
   reaction_id?: string;
   user_id?: string;
   with_activity_data?: boolean;
