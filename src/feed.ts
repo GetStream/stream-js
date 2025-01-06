@@ -24,7 +24,7 @@ export type EnrichOptions = {
   withRecentReactions?: boolean;
 
   /**
-   * deprecated, use user_id
+   * @deprecated Use `user_id` instead.
    */
   withUserId?: string;
 };
