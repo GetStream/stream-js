@@ -803,6 +803,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     foreignIDTimes?: ForeignIDTimes[];
     ids?: string[];
     reactions?: Record<string, boolean>;
+    user_id?: string;
   }) {
     const extraParams: { foreign_ids?: string; ids?: string; timestamps?: string } = {};
 
