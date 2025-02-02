@@ -493,6 +493,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
+    ranking?: string;
     rankingVars?: Record<string, string | number>;
     reactionKindsFilter?: string[];
     reactions?: Record<string, string | boolean | string[] | Record<string, string | number>>;
@@ -510,6 +511,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       }
       if (options.reactions.recent != null) {
         options.withRecentReactions = options.reactions.recent as boolean;
+      }
+      if (options.reactions.ranking != null) {
+        options.ranking = options.reactions.ranking as string;
       }
       if (options.reactions.ranking_vars != null) {
         options.rankingVars = options.reactions.ranking_vars as Record<string, string | number>;
