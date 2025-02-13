@@ -5,7 +5,7 @@ import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
 import { jwtDecode } from 'jwt-decode';
-import AxiosProgressEvent from 'axios';
+import AxiosProgressEvent, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
@@ -658,8 +658,8 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.send('request', method, options);
 
     try {
-      const response = await this.request(this.enrichKwargs({ method, ...options }));
-      return this.handleResponse(response);
+      const response = await this.request<AxiosResponse<T>, T>(this.enrichKwargs({ method, ...options }));
+      return this.handleResponse<T>(response);
     } catch (error) {
       const err = error as StreamApiError<T>;
       if (err.response) return this.handleResponse(err.response);
@@ -684,6 +684,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
         timeout: 0,
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
+        // @ts-ignore
         onUploadProgress,
       },
     });
