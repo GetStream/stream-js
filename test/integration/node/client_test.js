@@ -3,7 +3,7 @@ import expect from 'expect.js';
 import { connect } from '../../../src';
 import * as errors from '../../../src/errors';
 
-import { init, beforeEachFn } from '../utils/hooks';
+import { init, beforeEachFn, randUserId } from '../utils/hooks';
 
 describe('[INTEGRATION] Stream client (Node)', function () {
   init.call(this);
@@ -214,6 +214,36 @@ describe('[INTEGRATION] Stream client (Node)', function () {
         expect(results[0].actor).to.be(activity.actor);
         expect(results[0].verb).to.be(activity.verb);
         expect(results[0].object).to.be(activity.object);
+      });
+  });
+
+  it('add multiple users', function () {
+    const id1 = randUserId('user1');
+    const id2 = randUserId('user2');
+
+    const users = [
+      { id: id1, data: { name: 'u1' } },
+      { id: id2, data: { name: 'u2' } },
+    ];
+
+    return this.client
+      .addUsers(users, true)
+      .then((response) => {
+        expect(response.created_users.length).to.be(2);
+        return this.client.getUsers([id1, id2]).then((getUsersRes) => {
+          expect(getUsersRes.users.length).to.be(2);
+          getUsersRes.users.forEach((user) => {
+            expect(user.data).to.eql(users.find((u) => u.id === user.id).data);
+          });
+        });
+      })
+      .then(() => {
+        // delete users
+        return this.client.deleteUsers([id1, id2]).then((response) => {
+          return this.client.getUsers([id1, id2]).then((getUsersRes) => {
+            expect(getUsersRes.users.length).to.be(0);
+          });
+        });
       });
   });
 

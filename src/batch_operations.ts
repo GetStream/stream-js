@@ -1,5 +1,6 @@
 import { StreamClient, APIResponse, DefaultGenerics } from './client';
 import utils from './utils';
+import { StreamUser } from './user';
 
 type BaseFollowRelation = {
   source: string;
@@ -84,9 +85,45 @@ function unfollowMany(this: StreamClient, unfollows: UnfollowRelation[]) {
     token: this.getOrCreateToken(),
   });
 }
+export type AddUsersResponse = APIResponse & {
+  created_users: StreamUser[];
+};
+
+export type GetUsersResponse = APIResponse & {
+  users: StreamUser[];
+};
+
+function addUsers(this: StreamClient, users: StreamUser[], overrideExisting: boolean = false) {
+  return this.post<AddUsersResponse>({
+    url: 'users/',
+    body: {
+      users,
+      override: overrideExisting,
+    },
+    token: this.getOrCreateToken(),
+  });
+}
+
+function getUsers(this: StreamClient, ids: string[]) {
+  return this.get<GetUsersResponse>({
+    url: 'users/',
+    qs: { ids: ids.join(',') },
+    token: this.getOrCreateToken(),
+  });
+}
+function deleteUsers(this: StreamClient, ids: string[]) {
+  return this.delete<string[]>({
+    url: 'users/',
+    qs: { ids: ids.join(',') },
+    token: this.getOrCreateToken(),
+  });
+}
 
 export default {
   addToMany,
   followMany,
   unfollowMany,
+  addUsers,
+  getUsers,
+  deleteUsers,
 };
