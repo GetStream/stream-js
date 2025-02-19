@@ -239,7 +239,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       })
       .then(() => {
         // delete users
-        return this.client.deleteUsers([id1, id2]).then((response) => {
+        return this.client.deleteUsers([id1, id2]).then(() => {
           return this.client.getUsers([id1, id2]).then((getUsersRes) => {
             expect(getUsersRes.users.length).to.be(0);
           });
