@@ -41,7 +41,7 @@ export type FeedPaginationOptions = {
 export type RankedFeedOptions = {
   offset?: number;
   ranking?: string;
-  rankingVars?: Record<string, string | number>;
+  rankingVars?: string | Record<string, string | number>;
   session?: string;
   withScoreVars?: boolean;
 };
