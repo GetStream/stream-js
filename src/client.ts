@@ -16,7 +16,12 @@ import { StreamUser } from './user';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
-import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
+import BatchOperations, {
+  AddUsersResponse,
+  FollowRelation,
+  GetUsersResponse,
+  UnfollowRelation,
+} from './batch_operations';
 import createRedirectUrl from './redirect_url';
 import {
   StreamFeed,
@@ -188,7 +193,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string; // eslint-disable-line no-use-before-define
-
+  addUsers?: (this: StreamClient, users: StreamUser[], overrideExisting: boolean) => Promise<AddUsersResponse>; // eslint-disable-line no-use-before-define
+  getUsers?: (this: StreamClient, ids: string[]) => Promise<GetUsersResponse>; // eslint-disable-line no-use-before-define
+  deleteUsers?: (this: StreamClient, ids: string[]) => Promise<string[]>; // eslint-disable-line no-use-before-define
   /**
    * Initialize a client
    * @link https://getstream.io/activity-feeds/docs/node/#setup
@@ -286,6 +293,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       this.followMany = BatchOperations.followMany;
       this.unfollowMany = BatchOperations.unfollowMany;
       this.createRedirectUrl = createRedirectUrl;
+      this.addUsers = BatchOperations.addUsers;
+      this.getUsers = BatchOperations.getUsers;
+      this.deleteUsers = BatchOperations.deleteUsers;
     }
   }
 
