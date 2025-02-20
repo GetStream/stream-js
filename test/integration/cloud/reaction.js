@@ -66,6 +66,36 @@ describe('Reaction pagination', () => {
     });
   });
 
+  describe('#withRankingVarsAsMap', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
+        limit: 4,
+        offset: 2,
+        rankingVars: { popular: 1, music: 4 },
+      });
+    });
+  });
+  describe('#withRankingVarsShouldErr', () => {
+    ctx.requestShouldError(400, async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
+        limit: 4,
+        offset: 2,
+        rankingVars: ['popular', 1],
+      });
+    });
+  });
+  describe('#withRankingVarsAsString', () => {
+    ctx.requestShouldNotError(async () => {
+      ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
+        reactions: { score_vars: true },
+        limit: 4,
+        offset: 2,
+        rankingVars: '{"sports":1,"music":4}',
+      });
+    });
+  });
   describe('When bob reads alice her feed with all enrichment enabled', () => {
     ctx.requestShouldNotError(async () => {
       ctx.response = await ctx.bob.feed('user', ctx.alice.userId).get({
