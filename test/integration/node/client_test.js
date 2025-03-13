@@ -681,7 +681,7 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     });
   });
 
-  it('delete activities', function () {
+  it('delete activities', async function () {
     const activities = [
       {
         actor: 'user:1',
@@ -699,19 +699,11 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       },
     ];
 
-    return this.user1
-      .addActivities(activities)
-      .then((body) => {
-        const activitiesToDelete = body.activities.map((activity) => ({
-          id: activity.id,
-          remove_from_feeds: [this.user1.id],
-        }));
-        return this.client.deleteActivities(activitiesToDelete);
-      })
-      .then(() => this.user1.get({ limit: 2 }))
-      .then((body) => {
-        expect(body.results.length).to.be(0);
-      });
+    const res = await this.user1.addActivities(activities);
+
+    await this.client.deleteActivities(res.activities.map((a) => ({ id: a.id })));
+    const resp = await this.client.getActivities({ ids: res.activities.map((a) => a.id) });
+    expect(resp.results.length).to.be(0);
   });
 
   it('delete reactions', async function () {
