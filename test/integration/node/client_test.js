@@ -680,4 +680,79 @@ describe('[INTEGRATION] Stream client (Node)', function () {
       });
     });
   });
+
+  it('delete activities', function () {
+    const activities = [
+      {
+        actor: 'user:1',
+        verb: 'tweet',
+        object: '1',
+        foreign_id: 'delete_gdpr_1',
+        time: new Date(),
+      },
+      {
+        actor: 'user:2',
+        verb: 'tweet',
+        object: '2',
+        foreign_id: 'delete_gdpr_2',
+        time: new Date(),
+      },
+    ];
+
+    return this.user1
+      .addActivities(activities)
+      .then((body) => {
+        const activitiesToDelete = body.activities.map((activity) => ({
+          id: activity.id,
+          remove_from_feeds: [this.user1.id],
+        }));
+        return this.client.deleteActivities(activitiesToDelete);
+        // return this.client.deleteUsers(['sa']);
+      })
+      .then(() => this.user1.get({ limit: 2 }))
+      .then((body) => {
+        expect(body.results.length).to.be(0);
+      });
+  });
+
+  it('delete reactions', async function () {
+    const activity = {
+      actor: 'user:1',
+      verb: 'tweet',
+      object: '1',
+    };
+
+    const activityRes = await this.user1.addActivity(activity);
+
+    const reaction1 = await this.client.reactions.add('like1', activityRes.id, { text: 'text' }, { userId: 'user1' });
+    const reaction2 = await this.client.reactions.add('like2', activityRes.id, { text: 'text' }, { userId: 'user1' });
+    await this.client.reactions.add('like3', activityRes.id, { text: 'text' }, { userId: 'user1' });
+
+    // delete 2 reaction
+    await this.client.deleteReactions([reaction1.id, reaction2.id]);
+    const resp = await this.client.reactions.filter({ activity_id: activityRes.id });
+    expect(resp.results.length).to.be(1);
+  });
+
+  it('export user data', async function () {
+    const userId = randUserId('export');
+    const activity = {
+      actor: userId,
+      verb: 'tweet',
+      object: '1',
+    };
+
+    const activityRes = await this.user1.addActivity(activity);
+
+    const reaction1 = await this.client.reactions.add('like1', activityRes.id, { text: 'text' }, { userId });
+    await this.client.reactions.add('like2', activityRes.id, { text: 'text' }, { userId: 'user1' });
+    const reaction3 = await this.client.reactions.add('like3', activityRes.id, { text: 'text' }, { userId });
+
+    const resp = await this.client.exportUserActivitiesAndReactionIDs(userId);
+    expect(resp.export.activity_count).to.be(1);
+    expect(resp.export.reaction_count).to.be(2);
+    expect(resp.export.user_id).to.be(userId);
+    expect(resp.export.activity_ids).to.eql([activityRes.id]);
+    expect(resp.export.reaction_ids).to.eql([reaction1.id, reaction3.id]);
+  });
 });
