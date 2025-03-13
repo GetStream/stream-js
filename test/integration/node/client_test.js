@@ -707,7 +707,6 @@ describe('[INTEGRATION] Stream client (Node)', function () {
           remove_from_feeds: [this.user1.id],
         }));
         return this.client.deleteActivities(activitiesToDelete);
-        // return this.client.deleteUsers(['sa']);
       })
       .then(() => this.user1.get({ limit: 2 }))
       .then((body) => {
