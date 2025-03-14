@@ -16,12 +16,15 @@ import { StreamUser } from './user';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
+import DataPrivacy, { ExportIDsResponse, ActivityToDelete } from './data_privacy';
+
 import BatchOperations, {
   AddUsersResponse,
   FollowRelation,
   GetUsersResponse,
   UnfollowRelation,
 } from './batch_operations';
+
 import createRedirectUrl from './redirect_url';
 import {
   StreamFeed,
@@ -196,6 +199,10 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   addUsers?: (this: StreamClient, users: StreamUser[], overrideExisting: boolean) => Promise<AddUsersResponse>; // eslint-disable-line no-use-before-define
   getUsers?: (this: StreamClient, ids: string[]) => Promise<GetUsersResponse>; // eslint-disable-line no-use-before-define
   deleteUsers?: (this: StreamClient, ids: string[]) => Promise<string[]>; // eslint-disable-line no-use-before-define
+  deleteActivities?: (this: StreamClient, activities: ActivityToDelete[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  deleteReactions?: (this: StreamClient, ids: string[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  exportUserActivitiesAndReactionIDs?: (this: StreamClient, userId: string) => Promise<ExportIDsResponse>; // eslint-disable-line no-use-before-define
+
   /**
    * Initialize a client
    * @link https://getstream.io/activity-feeds/docs/node/#setup
@@ -288,7 +295,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.reactions = new StreamReaction<StreamFeedGenerics>(this, this.getOrCreateToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
-    if (BatchOperations && !!createRedirectUrl) {
+    if (BatchOperations && !!createRedirectUrl && DataPrivacy) {
       this.addToMany = BatchOperations.addToMany;
       this.followMany = BatchOperations.followMany;
       this.unfollowMany = BatchOperations.unfollowMany;
@@ -296,6 +303,9 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       this.addUsers = BatchOperations.addUsers;
       this.getUsers = BatchOperations.getUsers;
       this.deleteUsers = BatchOperations.deleteUsers;
+      this.deleteActivities = DataPrivacy.deleteActivities;
+      this.deleteReactions = DataPrivacy.deleteReactions;
+      this.exportUserActivitiesAndReactionIDs = DataPrivacy.exportUserActivitiesAndReactionIDs;
     }
   }
 
