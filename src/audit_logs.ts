@@ -2,12 +2,12 @@ import { StreamClient, APIResponse, UR, DefaultGenerics } from './client';
 import { SiteError } from './errors';
 
 export type AuditLog = {
-  entity_type: string;
-  entity_id: string;
   action: string;
+  created_at: string;
+  entity_id: string;
+  entity_type: string;
   user_id: string;
   custom?: UR;
-  created_at: string;
 };
 
 export type AuditLogAPIResponse = APIResponse & AuditLog;
@@ -19,12 +19,12 @@ export type AuditLogFilterAPIResponse = APIResponse & {
 };
 
 export type AuditLogFilterConditions = {
-  entity_type?: string;
   entity_id?: string;
-  user_id?: string;
+  entity_type?: string;
+  limit?: number;
   next?: string;
   prev?: string;
-  limit?: number;
+  user_id?: string;
 };
 
 export class StreamAuditLogs<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
@@ -68,4 +68,4 @@ export class StreamAuditLogs<StreamFeedGenerics extends DefaultGenerics = Defaul
       token: this.token,
     });
   }
-} 
+}
