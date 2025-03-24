@@ -20,3 +20,4 @@ export * from './user';
 export * from './batch_operations';
 export * from './errors';
 export * from './signing';
+export * from './audit_logs';

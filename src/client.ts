@@ -4,8 +4,8 @@ import * as http from 'http';
 import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
-import { jwtDecode } from 'jwt-decode';
-import AxiosProgressEvent from 'axios';
+import jwtDecode from 'jwt-decode';
+import type { AxiosProgressEvent } from 'axios';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
@@ -28,6 +28,7 @@ import {
   GetFeedOptions,
   EnrichedActivity,
 } from './feed';
+import { StreamAuditLogs } from './audit_logs';
 
 export type UR = Record<string, unknown>;
 export type UnknownRecord = UR; // alias to avoid breaking change
@@ -175,6 +176,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   files: StreamFileStore;
   images: StreamImageStore;
   reactions: StreamReaction<StreamFeedGenerics>;
+  auditLogs: StreamAuditLogs<StreamFeedGenerics>;
 
   private _personalizationToken?: string;
   private _collectionsToken?: string;
@@ -278,7 +280,8 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.collections = new Collections<StreamFeedGenerics>(this, this.getOrCreateToken());
     this.files = new StreamFileStore(this as StreamClient, this.getOrCreateToken());
     this.images = new StreamImageStore(this as StreamClient, this.getOrCreateToken());
-    this.reactions = new StreamReaction<StreamFeedGenerics>(this, this.getOrCreateToken());
+    this.reactions = new StreamReaction<StreamFeedGenerics>(this, this.getAnalyticsToken());
+    this.auditLogs = new StreamAuditLogs<StreamFeedGenerics>(this, this.getAnalyticsToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && !!createRedirectUrl) {
@@ -402,12 +405,8 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    if (process === undefined || process.env.PACKAGE_VERSION === undefined) {
-      // eslint-disable-next-line
-      return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${require('../package.json').version}`;
-    }
-
-    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${process.env.PACKAGE_VERSION}`;
+    const version = process?.env?.PACKAGE_VERSION || 'unknown';
+    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${version}`;
   }
 
   /**
@@ -672,7 +671,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: typeof AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: axios.AxiosProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
