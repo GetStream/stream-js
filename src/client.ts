@@ -17,7 +17,15 @@ import { StreamUser } from './user';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
-import BatchOperations, { FollowRelation, UnfollowRelation } from './batch_operations';
+import DataPrivacy, { ExportIDsResponse, ActivityToDelete } from './data_privacy';
+
+import BatchOperations, {
+  AddUsersResponse,
+  FollowRelation,
+  GetUsersResponse,
+  UnfollowRelation,
+} from './batch_operations';
+
 import createRedirectUrl from './redirect_url';
 import {
   StreamFeed,
@@ -191,6 +199,12 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   followMany?: (this: StreamClient, follows: FollowRelation[], activityCopyLimit?: number) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   unfollowMany?: (this: StreamClient, unfollows: UnfollowRelation[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
   createRedirectUrl?: (this: StreamClient, targetUrl: string, userId: string, events: unknown[]) => string; // eslint-disable-line no-use-before-define
+  addUsers?: (this: StreamClient, users: StreamUser[], overrideExisting: boolean) => Promise<AddUsersResponse>; // eslint-disable-line no-use-before-define
+  getUsers?: (this: StreamClient, ids: string[]) => Promise<GetUsersResponse>; // eslint-disable-line no-use-before-define
+  deleteUsers?: (this: StreamClient, ids: string[]) => Promise<string[]>; // eslint-disable-line no-use-before-define
+  deleteActivities?: (this: StreamClient, activities: ActivityToDelete[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  deleteReactions?: (this: StreamClient, ids: string[]) => Promise<APIResponse>; // eslint-disable-line no-use-before-define
+  exportUserActivitiesAndReactionIDs?: (this: StreamClient, userId: string) => Promise<ExportIDsResponse>; // eslint-disable-line no-use-before-define
 
   /**
    * Initialize a client
@@ -285,11 +299,17 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.auditLogs = new StreamAuditLogs<StreamFeedGenerics>(this, this.getAnalyticsToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
-    if (BatchOperations && !!createRedirectUrl) {
+    if (BatchOperations && !!createRedirectUrl && DataPrivacy) {
       this.addToMany = BatchOperations.addToMany;
       this.followMany = BatchOperations.followMany;
       this.unfollowMany = BatchOperations.unfollowMany;
       this.createRedirectUrl = createRedirectUrl;
+      this.addUsers = BatchOperations.addUsers;
+      this.getUsers = BatchOperations.getUsers;
+      this.deleteUsers = BatchOperations.deleteUsers;
+      this.deleteActivities = DataPrivacy.deleteActivities;
+      this.deleteReactions = DataPrivacy.deleteReactions;
+      this.exportUserActivitiesAndReactionIDs = DataPrivacy.exportUserActivitiesAndReactionIDs;
     }
   }
 
@@ -493,7 +513,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   }
 
   replaceReactionOptions = (options: {
-    rankingVars?: Record<string, string | number>;
+    rankingVars?: string | Record<string, string | number>;
     reactionKindsFilter?: string[];
     reactions?: Record<string, string | boolean | string[] | Record<string, string | number>>;
     withOwnChildren?: boolean;
@@ -512,7 +532,15 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
         options.withRecentReactions = options.reactions.recent as boolean;
       }
       if (options.reactions.ranking_vars != null) {
-        options.rankingVars = options.reactions.ranking_vars as Record<string, string | number>;
+        if (typeof options.reactions.ranking_vars === 'object') {
+          options.rankingVars = options.reactions.ranking_vars as Record<string, string | number>;
+        } else if (typeof options.reactions.ranking_vars === 'string') {
+          options.rankingVars = options.reactions.ranking_vars as string;
+        }
+      }
+      // if ranking vars are Record, json stringify them
+      if (options.rankingVars && typeof options.rankingVars === 'object') {
+        options.rankingVars = JSON.stringify(options.rankingVars);
       }
       if (options.reactions.score_vars != null) {
         options.withScoreVars = options.reactions.score_vars as boolean;
@@ -803,6 +831,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     foreignIDTimes?: ForeignIDTimes[];
     ids?: string[];
     reactions?: Record<string, boolean>;
+    user_id?: string;
   }) {
     const extraParams: { foreign_ids?: string; ids?: string; timestamps?: string } = {};
 

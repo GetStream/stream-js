@@ -22,6 +22,10 @@ export type EnrichOptions = {
   withOwnReactions?: boolean;
   withReactionCounts?: boolean;
   withRecentReactions?: boolean;
+
+  /**
+   * @deprecated Use `user_id` instead.
+   */
   withUserId?: string;
 };
 
@@ -37,7 +41,7 @@ export type FeedPaginationOptions = {
 export type RankedFeedOptions = {
   offset?: number;
   ranking?: string;
-  rankingVars?: Record<string, string | number>;
+  rankingVars?: string | Record<string, string | number>;
   session?: string;
   withScoreVars?: boolean;
 };
