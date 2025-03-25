@@ -31,8 +31,13 @@ describe('[UNIT] Stream Client (Node)', function () {
 
   it('#userAgent', function () {
     const useragent = this.client.userAgent();
-
     expect(useragent).to.be(`stream-javascript-client-node-${pkg.version}`);
+
+    // Test with PACKAGE_VERSION environment variable
+    process.env.PACKAGE_VERSION = '1.2.3';
+    const useragentWithEnv = this.client.userAgent();
+    expect(useragentWithEnv).to.be('stream-javascript-client-node-1.2.3');
+    delete process.env.PACKAGE_VERSION;
   });
 
   it('#feed', function () {

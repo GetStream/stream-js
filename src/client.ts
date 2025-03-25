@@ -4,8 +4,9 @@ import * as http from 'http';
 import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
-import jwtDecode from 'jwt-decode';
-import type { AxiosProgressEvent } from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import type { AxiosRequestConfig, AxiosResponse } from 'axios';
+import pkg from '../package.json';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
@@ -46,7 +47,7 @@ export type APIResponse = { duration?: string };
 
 export type FileUploadAPIResponse = APIResponse & { file: string };
 
-export type OnUploadProgress = (progressEvent: ProgressEvent) => void;
+export type OnUploadProgress = NonNullable<AxiosRequestConfig['onUploadProgress']>;
 
 export type ClientOptions = {
   browser?: boolean;
@@ -220,12 +221,12 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.enrichByDefault = !this.usingApiSecret;
 
     if (this.userToken != null) {
-      const jwtBody: { user_id?: string } = jwtDecode(this.userToken);
+      const jwtBody = jwtDecode<{ user_id?: string }>(this.userToken);
       if (!jwtBody.user_id) {
         throw new TypeError('user_id is missing in user token');
       }
       this.userId = jwtBody.user_id;
-      this.currentUser = this.user(this.userId);
+      this.currentUser = this.user(jwtBody.user_id);
     }
 
     this.appId = appId;
@@ -405,7 +406,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    const version = process?.env?.PACKAGE_VERSION || 'unknown';
+    const version = typeof process !== 'undefined' && process?.env?.PACKAGE_VERSION || pkg.version;
     return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${version}`;
   }
 
@@ -640,7 +641,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     return this.fayeClient;
   }
 
-  handleResponse = <T>(response: axios.AxiosResponse<T>): T => {
+  handleResponse = <T>(response: AxiosResponse<T>): T => {
     if (/^2/.test(`${response.status}`)) {
       this.send('response', null, response, response.data);
       return response.data;
@@ -658,10 +659,10 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
 
     try {
       const response = await this.request(this.enrichKwargs({ method, ...options }));
-      return this.handleResponse(response);
+      return this.handleResponse<T>(response as AxiosResponse<T>);
     } catch (error) {
       const err = error as StreamApiError<T>;
-      if (err.response) return this.handleResponse(err.response);
+      if (err.response) return this.handleResponse<T>(err.response as AxiosResponse<T>);
       throw new SiteError(err.message);
     }
   };
@@ -671,7 +672,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: axios.AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: ProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
