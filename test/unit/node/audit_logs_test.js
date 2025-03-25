@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 import * as td from 'testdouble';
 
-import { StreamClient } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
 
 describe('[UNIT] Stream Audit Logs (node)', function () {
@@ -21,7 +20,7 @@ describe('[UNIT] Stream Audit Logs (node)', function () {
     it('should send get request with no conditions', function () {
       const fakedJWT = 'Faked JWT';
       this.client.auditLogs.token = fakedJWT;
-      
+
       this.client.auditLogs.filter();
 
       td.verify(
@@ -44,7 +43,7 @@ describe('[UNIT] Stream Audit Logs (node)', function () {
         prev: 'prev_cursor',
       };
       this.client.auditLogs.token = fakedJWT;
-      
+
       this.client.auditLogs.filter(conditions);
 
       td.verify(
@@ -63,7 +62,7 @@ describe('[UNIT] Stream Audit Logs (node)', function () {
         limit: 10,
       };
       this.client.auditLogs.token = fakedJWT;
-      
+
       this.client.auditLogs.filter(conditions);
 
       td.verify(
@@ -93,15 +92,17 @@ describe('[UNIT] Stream Audit Logs (node)', function () {
         prev: 'prev_cursor',
       };
       this.client.auditLogs.token = fakedJWT;
-      
-      td.when(get({
-        url: 'audit_logs/',
-        qs: undefined,
-        token: fakedJWT,
-      })).thenResolve(mockResponse);
+
+      td.when(
+        get({
+          url: 'audit_logs/',
+          qs: undefined,
+          token: fakedJWT,
+        }),
+      ).thenResolve(mockResponse);
 
       const response = await this.client.auditLogs.filter();
       expect(response).to.eql(mockResponse);
     });
   });
-}); 
+});

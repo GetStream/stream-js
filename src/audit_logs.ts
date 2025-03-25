@@ -1,59 +1,56 @@
-import { StreamClient, APIResponse, UR, DefaultGenerics } from './client';
-import { SiteError } from './errors';
+import { StreamClient, UR, DefaultGenerics } from './client';
 
-export type AuditLogFilterConditions = {
-  entity_type?: string;
+export interface AuditLog {
+  action: string;
+  created_at: string;
+  custom: Record<string, unknown>;
+  entity_id: string;
+  entity_type: string;
+  user_id: string;
+}
+
+export interface AuditLogFilterAPIResponse {
+  audit_logs: AuditLog[];
+  duration: string;
+  next?: string;
+  prev?: string;
+}
+
+export interface AuditLogFilterOptions extends UR {
   entity_id?: string;
-  user_id?: string;
+  entity_type?: string;
   limit?: number;
   next?: string;
   prev?: string;
-};
-
-export type AuditLog = {
-  entity_type: string;
-  entity_id: string;
-  action: string;
-  user_id: string;
-  custom: Record<string, unknown>;
-  created_at: string;
-};
-
-export type AuditLogAPIResponse = APIResponse & AuditLog;
-
-export type AuditLogFilterAPIResponse = APIResponse & {
-  audit_logs: AuditLogAPIResponse[];
-  next: string;
-  prev: string;
-};
+  user_id?: string;
+}
 
 export class StreamAuditLogs<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
-  client: StreamClient<StreamFeedGenerics>;
   token: string;
+  client: StreamClient<StreamFeedGenerics>;
 
   constructor(client: StreamClient<StreamFeedGenerics>, token: string) {
     this.client = client;
     this.token = token;
   }
 
-  buildURL = (...args: string[]) => {
+  buildURL(...args: string[]): string {
     return `${['audit_logs', ...args].join('/')}/`;
-  };
+  }
 
-  filter(conditions: AuditLogFilterConditions) {
-    const url = this.buildURL();
-    return this.client.get<AuditLogFilterAPIResponse>({
-      url,
-      qs: conditions,
+  async filter(options?: AuditLogFilterOptions): Promise<AuditLogFilterAPIResponse> {
+    return this.client.get({
+      url: this.buildURL(),
+      qs: options,
       token: this.token,
     });
   }
 
   get(id: string) {
     const url = this.buildURL(id);
-    return this.client.get<AuditLogAPIResponse>({
+    return this.client.get<AuditLog>({
       url,
       token: this.token,
     });
   }
-} 
+}
