@@ -45,12 +45,4 @@ export class StreamAuditLogs<StreamFeedGenerics extends DefaultGenerics = Defaul
       token: this.token,
     });
   }
-
-  get(id: string) {
-    const url = this.buildURL(id);
-    return this.client.get<AuditLog>({
-      url,
-      token: this.token,
-    });
-  }
 }
