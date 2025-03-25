@@ -13,6 +13,7 @@ import { StreamFileStore } from './files';
 import { StreamImageStore } from './images';
 import { StreamReaction } from './reaction';
 import { StreamUser } from './user';
+import { StreamAuditLogs } from './audit_logs';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
 import utils from './utils';
@@ -183,6 +184,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
   files: StreamFileStore;
   images: StreamImageStore;
   reactions: StreamReaction<StreamFeedGenerics>;
+  auditLogs: StreamAuditLogs<StreamFeedGenerics>;
 
   private _personalizationToken?: string;
   private _collectionsToken?: string;
@@ -293,6 +295,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     this.files = new StreamFileStore(this as StreamClient, this.getOrCreateToken());
     this.images = new StreamImageStore(this as StreamClient, this.getOrCreateToken());
     this.reactions = new StreamReaction<StreamFeedGenerics>(this, this.getOrCreateToken());
+    this.auditLogs = new StreamAuditLogs<StreamFeedGenerics>(this, this.getOrCreateToken());
 
     // If we are in a node environment and batchOperations/createRedirectUrl is available add the methods to the prototype of StreamClient
     if (BatchOperations && !!createRedirectUrl && DataPrivacy) {
