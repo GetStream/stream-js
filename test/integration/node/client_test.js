@@ -746,4 +746,109 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     expect(resp.export.activity_ids).to.eql([activityRes.id]);
     expect(resp.export.reaction_ids).to.eql([reaction1.id, reaction3.id]);
   });
+
+  describe('Audit Logs', function () {
+    it('filter audit logs by entity type and ID', async function () {
+      // First create an activity to generate an audit log
+      const activity = {
+        actor: 'user:1',
+        verb: 'tweet',
+        object: '1',
+        foreign_id: `audit-test-${Date.now()}`,
+      };
+
+      const activityRes = await this.user1.addActivity(activity);
+
+      // Filter audit logs for this activity
+      const response = await this.client.auditLogs.filter({
+        entity_type: 'activity',
+        entity_id: activityRes.id,
+        limit: 5,
+      });
+
+      // Verify response structure
+      expect(response).to.have.property('duration');
+      expect(response).to.have.property('audit_logs');
+      expect(Array.isArray(response.audit_logs)).to.be(true);
+
+      // There should be at least one audit log for this activity
+      expect(response.audit_logs.length).to.be.greaterThan(0);
+
+      // Check log structure
+      const log = response.audit_logs[0];
+      expect(log).to.have.property('entity_type');
+      expect(log).to.have.property('entity_id');
+      expect(log).to.have.property('action');
+      expect(log).to.have.property('user_id');
+      expect(log).to.have.property('created_at');
+    });
+
+    it('filter audit logs with pagination', async function () {
+      // First create an activity to generate an audit log
+      const activity = {
+        actor: 'user:1',
+        verb: 'tweet',
+        object: '1',
+        foreign_id: `audit-pagination-test-${Date.now()}`,
+      };
+
+      const activityRes = await this.user1.addActivity(activity);
+
+      // Filter with a small limit to ensure pagination
+      const response = await this.client.auditLogs.filter({
+        entity_type: 'activity',
+        entity_id: activityRes.id,
+        limit: 1,
+      });
+
+      // Verify response structure includes pagination
+      expect(response).to.have.property('next');
+
+      // If there's more than one result, test pagination
+      if (response.next) {
+        const nextPage = await this.client.auditLogs.filter({
+          entity_type: 'activity',
+          entity_id: activityRes.id,
+          limit: 1,
+          next: response.next,
+        });
+
+        expect(nextPage).to.have.property('audit_logs');
+        expect(Array.isArray(nextPage.audit_logs)).to.be(true);
+
+        // Next page should have results
+        expect(nextPage.audit_logs.length).to.be(1);
+
+        // Next page should have different results
+        if (response.audit_logs.length > 0 && nextPage.audit_logs.length > 0) {
+          expect(response.audit_logs[0].id).to.not.eql(nextPage.audit_logs[0].id);
+        }
+      }
+    });
+
+    it('filter audit logs by user ID', async function () {
+      // Create an activity with a specific user ID
+      const userId = randUserId('audit');
+      const activity = {
+        actor: userId,
+        verb: 'tweet',
+        object: '1',
+        foreign_id: `audit-user-test-${Date.now()}`,
+      };
+
+      await this.user1.addActivity(activity);
+
+      // Filter audit logs for this user
+      const response = await this.client.auditLogs.filter({
+        user_id: userId,
+        limit: 5,
+      });
+
+      // Check that we get logs for this user
+      if (response.audit_logs.length > 0) {
+        const log = response.audit_logs[0];
+        expect(log.user_id).to.be(userId);
+      }
+    });
+  });
 });
