@@ -425,7 +425,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
    * @return {string} current user agent
    */
   userAgent() {
-    if (process === undefined || process.env.PACKAGE_VERSION === undefined) {
+    if (typeof process === 'undefined' || process.env.PACKAGE_VERSION === undefined) {
       // eslint-disable-next-line
       return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${require('../package.json').version}`;
     }
