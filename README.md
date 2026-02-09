@@ -279,6 +279,15 @@ redirectUrl = client.createRedirectUrl('http://google.com', 'user_id', events);
 client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, ['feed:1234']);
 client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, null, ['feed:1234']);
 client.feed('user', 'ken').updateActivityToTargets('foreign_id:1234', timestamp, null, null, ['feed:1234']);
+
+// Flag a user for moderation
+client.flagUser('suspicious-user-123', { reason: 'spam' });
+client.flagUser('bad-actor-456', { reason: 'inappropriate_content' });
+
+// Or using the user object method
+const user = client.user('suspicious-user-123');
+user.flag({ reason: 'spam' });
+user.flag({ reason: 'inappropriate_content' });
 ```
 
 ### Typescript
