@@ -2,14 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [Unreleased]
-
-### Features
-
-- Add user flagging support for moderation
-  - Add `flagUser()` method to `StreamClient` class
-  - Add `flag()` method to `StreamUser` class
-  - Add `FlagUserOptions` and `FlagAPIResponse` TypeScript types
+## [8.9.0](https://github.com/GetStream/stream-js/compare/v8.8.0...v8.9.0) (2026-02-10)
 
 ## [8.8.0](https://github.com/GetStream/stream-js/compare/v8.7.0...v8.8.0) (2025-04-10)
 
