@@ -1,13 +1,19 @@
 import expect from 'expect.js';
 
 import { CloudContext } from './utils';
+import config from '../utils/config';
+
+// User flagging requires moderation features to be enabled on the Stream account.
+// Only run these tests on accounts with moderation enabled (APP_ID 16792).
+const shouldRunModerationTests = config.APP_ID === '16792';
+const describeOrSkip = shouldRunModerationTests ? describe : describe.skip;
 
 describe('User Flagging', () => {
   const ctx = new CloudContext();
 
   ctx.createUsers();
 
-  describe('When creating activities to establish users in moderation system', () => {
+  describeOrSkip('When creating activities to establish users in moderation system', () => {
     ctx.requestShouldNotError(async () => {
       // Create activities with users as actors to establish them in the moderation system
       // Using user1 and user2 which are commonly used across integration tests
@@ -26,7 +32,7 @@ describe('User Flagging', () => {
     });
   });
 
-  describe.skip('When flagging a user with client.flagUser()', () => {
+  describeOrSkip('When flagging a user with client.flagUser()', () => {
     ctx.requestShouldNotError(async () => {
       // Flag user1 (which exists in the moderation system from other tests)
       ctx.response = await ctx.serverSideClient.flagUser('user1', {
@@ -37,7 +43,7 @@ describe('User Flagging', () => {
     });
   });
 
-  describe('When flagging using user.flag()', () => {
+  describeOrSkip('When flagging using user.flag()', () => {
     ctx.requestShouldNotError(async () => {
       // Flag using the user object method
       ctx.response = await ctx.serverSideClient.user('user1').flag({
