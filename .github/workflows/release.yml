@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: write # Required to create GitHub releases (tags + release notes)
+
 jobs:
   Release:
     name: 🚀 Release
@@ -30,11 +34,7 @@ jobs:
       - uses: ./.github/actions/setup-node
 
       - name: Publish package
-        run: |
-          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
 
       - name: Create release on GitHub
         uses: ncipollo/release-action@v1
