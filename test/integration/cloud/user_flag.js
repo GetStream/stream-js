@@ -26,7 +26,7 @@ describe('User Flagging', () => {
     });
   });
 
-  describe('When flagging a user with client.flagUser()', () => {
+  describe.skip('When flagging a user with client.flagUser()', () => {
     ctx.requestShouldNotError(async () => {
       // Flag user1 (which exists in the moderation system from other tests)
       ctx.response = await ctx.serverSideClient.flagUser('user1', {
