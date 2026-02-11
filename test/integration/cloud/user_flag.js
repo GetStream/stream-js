@@ -4,7 +4,8 @@ import { CloudContext } from './utils';
 import config from '../utils/config';
 
 // User flagging requires moderation features to be enabled on the Stream account.
-// These tests run only on test accounts with moderation enabled (APP_ID 16792).
+// APP_ID 16792 has moderation enabled. Other test apps (e.g., from StreamAPI CI)
+// have moderation disabled, so we skip these tests there.
 const shouldRunModerationTests = config.APP_ID === '16792';
 const describeOrSkip = shouldRunModerationTests ? describe : describe.skip;
 
