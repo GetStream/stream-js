@@ -5,6 +5,10 @@ import config from '../utils/config';
 
 // User flagging requires moderation features to be enabled on the Stream account.
 // Only run these tests on accounts with moderation enabled (APP_ID 16792).
+//
+// Note: We can't enable moderation on the default test app (6743) because it would
+// break other existing tests that rely on moderation being disabled. Therefore,
+// we conditionally run these tests only on APP_ID 16792 which has moderation enabled.
 const shouldRunModerationTests = config.APP_ID === '16792';
 const describeOrSkip = shouldRunModerationTests ? describe : describe.skip;
 
