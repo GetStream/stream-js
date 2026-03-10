@@ -4,7 +4,7 @@ description: Sets up Node and Build SDK
 inputs:
   node-version:
     required: false
-    default: '24'
+    default: '22'
 
 runs:
   using: 'composite'
