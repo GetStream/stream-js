@@ -35,6 +35,8 @@ jobs:
 
       - name: Publish package
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create release on GitHub
         uses: ncipollo/release-action@v1
