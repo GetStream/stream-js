@@ -1,3 +1,4 @@
+import Url from 'url';
 import qs from 'qs';
 
 import { StreamClient } from './client';
@@ -19,15 +20,10 @@ import { JWTScopeToken } from './signing';
  * @return {string}           The redirect url
  */
 export default function createRedirectUrl(this: StreamClient, targetUrl: string, userId: string, events: unknown[]) {
-  let uri: URL;
-  try {
-    uri = new URL(targetUrl);
-  } catch {
-    throw new MissingSchemaError(`Invalid URI: "${targetUrl}"`);
-  }
+  const uri = Url.parse(targetUrl);
 
   if (!(uri.host || (uri.hostname && uri.port))) {
-    throw new MissingSchemaError(`Invalid URI: "${targetUrl}"`);
+    throw new MissingSchemaError(`Invalid URI: "${Url.format(uri)}"`);
   }
 
   const authToken = JWTScopeToken(this.apiSecret as string, 'redirect_and_track', '*', {
