@@ -5,6 +5,9 @@ inputs:
   node-version:
     required: false
     default: '24'
+  skip-puppeteer:
+    required: false
+    default: 'true'
 
 runs:
   using: 'composite'
@@ -19,3 +22,5 @@ runs:
     - name: Install Dependencies & Build
       run: yarn install --frozen-lockfile --ignore-engines
       shell: bash
+      env:
+        PUPPETEER_SKIP_DOWNLOAD: ${{ inputs.skip-puppeteer }}

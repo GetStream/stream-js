@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
+        with:
+          skip-puppeteer: 'false'
       - name: Test
         env:
           STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
