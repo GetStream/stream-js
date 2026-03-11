@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.12.0](https://github.com/GetStream/stream-js/compare/v8.9.0...v8.12.0) (2026-03-11)
+
+
+### Features
+
+* add Node 24 support ([#640](https://github.com/GetStream/stream-js/issues/640)) ([f758b05](https://github.com/GetStream/stream-js/commit/f758b05cfe678ebaaa2df5e40afdf13b85726ed3))
+
+
+### Bug Fixes
+
+* **ci:** upgrade GitHub Actions from v3 to v4 to fix hanging CI ([#639](https://github.com/GetStream/stream-js/issues/639)) ([52f9495](https://github.com/GetStream/stream-js/commit/52f949517743c08aa7cb219d780fce899736b05c))
+
 ## [8.11.0](https://github.com/GetStream/stream-js/compare/v8.9.0...v8.11.0) (2026-03-10)
 
 
