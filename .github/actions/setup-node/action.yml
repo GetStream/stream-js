@@ -14,13 +14,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
-
-    - name: Cache Dependencies
-      uses: actions/cache@v4
-      with:
-        path: ./node_modules
-        key: ${{ runner.os }}-${{ inputs.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: ${{ runner.os }}-${{ inputs.node-version }}-modules-
+        cache: 'yarn'
 
     - name: Install Dependencies & Build
       run: yarn install --frozen-lockfile --ignore-engines
