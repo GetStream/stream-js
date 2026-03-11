@@ -22,6 +22,10 @@ runs:
         key: ${{ runner.os }}-${{ inputs.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
         restore-keys: ${{ runner.os }}-${{ inputs.node-version }}-modules-
 
-    - name: Install Dependencies & Build
-      run: yarn install --frozen-lockfile --ignore-engines
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile --ignore-engines --ignore-scripts
+      shell: bash
+
+    - name: Build
+      run: yarn run build
       shell: bash
