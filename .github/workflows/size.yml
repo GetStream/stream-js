@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: preactjs/compressed-size-action@v2
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           build-script: 'dist'
