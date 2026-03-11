@@ -7,11 +7,18 @@ on:
   pull_request:
 
 jobs:
+  # TODO: remove once branch protection is updated to drop unit (16)
+  unit-legacy:
+    name: 'unit (16)'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deprecated — Node 16 is EOL. This job exists only to satisfy branch protection."
+
   unit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16, 18, 20, 22, 24]
+        node: [18, 20, 22, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-node
