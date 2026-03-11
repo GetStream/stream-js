@@ -2,10 +2,11 @@ import expect from 'expect.js';
 import * as td from 'testdouble';
 import { jwtDecode } from 'jwt-decode';
 import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const pkg = require('../../../package.json');
 import { connect, StreamClient, StreamFeed } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../../../package.json');
 
 describe('[UNIT] Stream Client instantiation (Node)', function () {
   it('with secret', function () {
