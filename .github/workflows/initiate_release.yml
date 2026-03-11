@@ -12,7 +12,7 @@ jobs:
     name: 🚀 Create release PR
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # gives the changelog generator access to all previous commits
 
@@ -21,7 +21,7 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@v1
 
       - name: Ensure version number higher than current
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         env:
           PREVIOUS_TAG: ${{ steps.previoustag.outputs.tag }}
           DESTINATION_TAG: ${{ github.event.inputs.version }}
@@ -49,7 +49,7 @@ jobs:
           git push -q -u origin "release-$VERSION"
 
       - name: Get changelog diff
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         with:
           script: |
             const get_change_log_diff = require('./scripts/get_changelog_diff.js')
