@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-import url from 'url';
 import expect from 'expect.js';
 
 import { CloudContext } from './utils';
@@ -144,7 +143,8 @@ describe('Reaction pagination', () => {
           expectedQuery.user_id = ctx.bob.userId;
         }
 
-        const { query } = url.parse(extra.next, true);
+        const parsedUrl = new URL(extra.next, 'http://localhost');
+        const query = Object.fromEntries(parsedUrl.searchParams.entries());
         latestExtra[kind].next.should.include('/activity_id/');
         latestExtra[kind].next.should.include(`/${kind}/`);
         latestExtra[kind].next.should.include(`/${ctx.activity.id}/`);

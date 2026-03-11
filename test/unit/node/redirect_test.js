@@ -1,4 +1,3 @@
-import url from 'url';
 import expect from 'expect.js';
 import jwt from 'jsonwebtoken';
 import qs from 'qs';
@@ -39,7 +38,7 @@ describe("[UNIT] Redirect URL's", function () {
     this.client = new StreamClient(config.API_KEY, config.API_SECRET);
     const redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    const queryString = qs.parse(url.parse(redirectUrl).query);
+    const queryString = qs.parse(new URL(redirectUrl).search, { ignoreQueryPrefix: true });
     const decoded = jwt.verify(queryString.authorization, config.API_SECRET);
 
     expect(decoded).to.eql({
@@ -82,7 +81,7 @@ describe("[UNIT] Redirect URL's", function () {
     this.client = new StreamClient(config.API_KEY, config.API_SECRET);
     const redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    const queryString = qs.parse(url.parse(redirectUrl).query);
+    const queryString = qs.parse(new URL(redirectUrl).search, { ignoreQueryPrefix: true });
     const decoded = jwt.verify(queryString.authorization, config.API_SECRET);
 
     expect(decoded).to.eql({

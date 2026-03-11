@@ -5,14 +5,14 @@ import * as https from 'https';
 import * as axios from 'axios';
 import * as Faye from 'faye';
 import { jwtDecode } from 'jwt-decode';
-import AxiosProgressEvent from 'axios';
+import type { AxiosProgressEvent } from 'axios';
 
 import { Personalization } from './personalization';
 import { Collections } from './collections';
 import { StreamFileStore } from './files';
 import { StreamImageStore } from './images';
 import { StreamReaction } from './reaction';
-import { StreamUser } from './user';
+import { StreamUser, FlagUserOptions, FlagAPIResponse } from './user';
 import { StreamAuditLogs } from './audit_logs';
 import { JWTScopeToken, JWTUserSessionToken } from './signing';
 import { FeedError, StreamApiError, SiteError } from './errors';
@@ -703,7 +703,7 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
     uri: string | File | Buffer | NodeJS.ReadStream,
     name?: string,
     contentType?: string,
-    onUploadProgress?: (progressEvent: typeof AxiosProgressEvent) => void,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
   ) {
     const fd = utils.addFileToFormData(uri, name, contentType);
     return this.doAxiosRequest<FileUploadAPIResponse>('POST', {
@@ -1053,6 +1053,33 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
       url: 'activity/',
       body: { changes },
       token,
+    });
+  }
+
+  /**
+   * Flag a user for moderation
+   * @link https://getstream.io/activity-feeds/docs/node/moderation/?language=js#flagging-users
+   * @method flagUser
+   * @memberof StreamClient.prototype
+   * @param {string} targetUserId - ID of the user to flag
+   * @param {FlagUserOptions} [options] - Optional flagging options
+   * @param {string} [options.reason] - Reason for flagging the user
+   * @return {Promise<FlagAPIResponse>}
+   * @example client.flagUser('suspicious-user-123', { reason: 'spam' })
+   * @example client.flagUser('bad-actor-456', { reason: 'inappropriate_content' })
+   */
+  flagUser(targetUserId: string, options: FlagUserOptions = {}) {
+    this._throwMissingApiSecret();
+
+    return this.post<FlagAPIResponse>({
+      url: 'moderation/flag',
+      body: {
+        entity_type: 'stream:user',
+        entity_id: targetUserId,
+        user_id: options.user_id,
+        reason: options.reason,
+      },
+      token: this.getOrCreateToken(),
     });
   }
 }

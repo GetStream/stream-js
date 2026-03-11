@@ -4,23 +4,24 @@ description: Sets up Node and Build SDK
 inputs:
   node-version:
     required: false
-    default: '18'
+    default: '24'
 
 runs:
   using: 'composite'
   steps:
     - name: Setup Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
+        registry-url: 'https://registry.npmjs.org'
 
     - name: Cache Dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ./node_modules
         key: ${{ runner.os }}-${{ inputs.node-version }}-modules-${{ hashFiles('**/yarn.lock') }}
         restore-keys: ${{ runner.os }}-${{ inputs.node-version }}-modules-
 
     - name: Install Dependencies & Build
-      run: yarn install --immutable --ignore-engines
+      run: yarn install --frozen-lockfile --ignore-engines
       shell: bash

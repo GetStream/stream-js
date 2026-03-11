@@ -1,10 +1,12 @@
 import expect from 'expect.js';
 import * as td from 'testdouble';
 import { jwtDecode } from 'jwt-decode';
-
-import pkg from '../../../package.json';
+import { createRequire } from 'node:module';
 import { connect, StreamClient, StreamFeed } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../../../package.json');
 
 describe('[UNIT] Stream Client instantiation (Node)', function () {
   it('with secret', function () {
@@ -18,6 +20,62 @@ describe('[UNIT] Stream Client instantiation (Node)', function () {
 
 describe('[UNIT] Stream Client (Node)', function () {
   beforeEach(beforeEachFn);
+
+  describe('#flagUser', function () {
+    it('should call post with correct url and body', function () {
+      const post = td.function();
+      const targetUserId = 'suspicious-user-123';
+      const reason = 'spam';
+
+      td.when(
+        post(
+          td.matchers.contains({
+            url: 'moderation/flag',
+            body: { entity_type: 'stream:user', entity_id: targetUserId, reason, user_id: undefined },
+          }),
+        ),
+        { ignoreExtraArgs: true },
+      ).thenResolve({
+        flag_id: 'flag-123',
+        target_user_id: targetUserId,
+        created_at: '2023-01-01T00:00:00Z',
+        reason,
+      });
+
+      td.replace(this.client, 'post', post);
+
+      return this.client.flagUser(targetUserId, { reason }).then((res) => {
+        expect(res.flag_id).to.be('flag-123');
+        expect(res.target_user_id).to.be(targetUserId);
+        expect(res.reason).to.be(reason);
+      });
+    });
+
+    it('should work without options', function () {
+      const post = td.function();
+      const targetUserId = 'user-456';
+
+      td.when(
+        post(
+          td.matchers.contains({
+            url: 'moderation/flag',
+          }),
+        ),
+        { ignoreExtraArgs: true },
+      ).thenResolve({
+        flag_id: 'flag-456',
+        target_user_id: targetUserId,
+        created_at: '2023-01-01T00:00:00Z',
+      });
+
+      td.replace(this.client, 'post', post);
+
+      return this.client.flagUser(targetUserId).then((res) => {
+        expect(res.flag_id).to.be('flag-456');
+        expect(res.target_user_id).to.be(targetUserId);
+      });
+    });
+  });
 
   it('#updateActivities', function () {
     const self = this;

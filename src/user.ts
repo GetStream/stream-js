@@ -14,6 +14,19 @@ export type UserAPIResponse<StreamFeedGenerics extends DefaultGenerics = Default
     following_count?: number;
   };
 
+export type FlagUserOptions = {
+  reason?: string;
+  user_id?: string;
+};
+
+export type FlagAPIResponse = APIResponse & {
+  created_at: string;
+  flag_id: string;
+  target_user_id: string;
+  flagged_by?: string;
+  reason?: string;
+};
+
 export class StreamUser<StreamFeedGenerics extends DefaultGenerics = DefaultGenerics> {
   client: StreamClient<StreamFeedGenerics>;
   token: string;
@@ -142,5 +155,21 @@ export class StreamUser<StreamFeedGenerics extends DefaultGenerics = DefaultGene
    */
   profile() {
     return this.get({ with_follow_counts: true });
+  }
+
+  /**
+   * Flag this user for moderation (⚠️ server-side only)
+   * @link https://getstream.io/activity-feeds/docs/node/moderation/?language=js#flagging-users
+   * @method flag
+   * @memberof StreamUser.prototype
+   * @param {FlagUserOptions} [options] - Optional flagging options
+   * @param {string} [options.reason] - Reason for flagging the user
+   * @param {string} [options.user_id] - ID of the user performing the flag
+   * @return {Promise<FlagAPIResponse>}
+   * @example user.flag({ reason: 'spam', user_id: 'moderator-123' })
+   * @example user.flag({ reason: 'inappropriate_content', user_id: 'alice' })
+   */
+  flag(options: FlagUserOptions = {}) {
+    return this.client.flagUser(this.id, options);
   }
 }

@@ -11,7 +11,7 @@
   "homepage": "https://getstream.io/docs/?language=js",
   "email": "support@getstream.io",
   "license": "BSD-3-Clause",
-  "version": "8.8.0",
+  "version": "8.11.0",
   "scripts": {
     "changelog": "standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v",
     "commitlinter": "commitlint",
@@ -25,10 +25,10 @@
     "lint-fix": "prettier --write '**/*.{js,ts}' && eslint --fix '**/*.{js,ts}'",
     "test": "yarn run test-unit-node",
     "test-types": "tsc --skipLibCheck --target es2020 --esModuleInterop true --noEmit true test/typescript/*.ts",
-    "test-unit-node": "mocha --require ./babel-register.js test/unit/common test/unit/node",
-    "test-integration-node": "mocha --require ./babel-register.js test/integration/common test/integration/node --exit",
-    "test-cloud": "mocha --require ./babel-register.js test/integration/cloud --timeout 40000",
-    "test-cloud-local": "LOCAL=true mocha --require ./babel-register.js test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'",
+    "test-unit-node": "mocha --require tsx/cjs --require dotenv/config test/unit/common test/unit/node",
+    "test-integration-node": "mocha --require tsx/cjs --require dotenv/config test/integration/common test/integration/node --exit",
+    "test-cloud": "mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --exit",
+    "test-cloud-local": "LOCAL=true mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'",
     "test-browser": "karma start karma.config.js",
     "prepare": "yarn run build",
     "preversion": "yarn run test-unit-node",
@@ -104,24 +104,28 @@
     "request": "^2.88.2",
     "standard-version": "^9.3.2",
     "testdouble": "3.20.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "@babel/runtime": "^7.23.2",
+    "@babel/runtime": "^7.26.10",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/qs": "^6.9.10",
-    "axios": "0.x",
+    "axios": "^1.13.5",
     "faye": "^1.4.0",
     "follow-redirects": "1.15.6",
-    "form-data": "^4.0.0",
+    "form-data": "^4.0.4",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-    "qs": "^6.10.2"
+    "qs": "^6.14.2"
   },
   "peerDependencies": {
     "@types/node": ">=10"
+  },
+  "resolutions": {
+    "jws": "^3.2.3"
   },
   "repository": {
     "type": "git",

@@ -681,7 +681,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     });
   });
 
-  it('delete activities', async function () {
+  it.skip('delete activities', async function () {
+    // Disabled: endpoint not enabled for this app
     const activities = [
       {
         actor: 'user:1',
@@ -706,7 +707,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     expect(resp.results.length).to.be(0);
   });
 
-  it('delete reactions', async function () {
+  it.skip('delete reactions', async function () {
+    // Disabled: endpoint not enabled for this app
     const activity = {
       actor: 'user:1',
       verb: 'tweet',
@@ -725,7 +727,8 @@ describe('[INTEGRATION] Stream client (Node)', function () {
     expect(resp.results.length).to.be(1);
   });
 
-  it('export user data', async function () {
+  it.skip('export user data', async function () {
+    // Disabled: endpoint not enabled for this app
     const userId = randUserId('export');
     const activity = {
       actor: userId,

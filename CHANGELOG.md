@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.11.0](https://github.com/GetStream/stream-js/compare/v8.9.0...v8.11.0) (2026-03-10)
+
+
+### Bug Fixes
+
+* **ci:** upgrade GitHub Actions from v3 to v4 to fix hanging CI ([#639](https://github.com/GetStream/stream-js/issues/639)) ([52f9495](https://github.com/GetStream/stream-js/commit/52f949517743c08aa7cb219d780fce899736b05c))
+
+## [8.9.0](https://github.com/GetStream/stream-js/compare/v8.8.0...v8.9.0) (2026-02-11)
+
+## [8.9.0](https://github.com/GetStream/stream-js/compare/v8.8.0...v8.9.0) (2026-02-10)
+
 ## [8.8.0](https://github.com/GetStream/stream-js/compare/v8.7.0...v8.8.0) (2025-04-10)
 
 ## [8.7.0](https://github.com/GetStream/stream-js/compare/v8.6.1...v8.7.0) (2025-03-14)
