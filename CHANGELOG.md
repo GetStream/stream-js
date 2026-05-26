@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.13.0](https://github.com/GetStream/stream-js/compare/v8.12.1...v8.13.0) (2026-05-26)
+
+
+### Features
+
+* make node agent keep-alive settings configurable ([#648](https://github.com/GetStream/stream-js/issues/648)) ([77eb4a5](https://github.com/GetStream/stream-js/commit/77eb4a512e3278d31851e1e6cf38198dc434023b))
+
 ### [8.12.1](https://github.com/GetStream/stream-js/compare/v8.12.0...v8.12.1) (2026-03-11)
 
 ## [8.12.0](https://github.com/GetStream/stream-js/compare/v8.9.0...v8.12.0) (2026-03-11)
