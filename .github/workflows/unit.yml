@@ -23,3 +23,21 @@ jobs:
           STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
           STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         run: yarn run test-unit-node
+
+  # Node 16 can't run Yarn 4 or tsx (both require Node >= 18), so we install
+  # dependencies on a supported Node version and then switch to Node 16 to run
+  # the suite through Babel (see babel-register.js).
+  unit-node16:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 16
+      - name: Test
+        env:
+          STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
+          STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+          STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
+        run: npm run test-unit-node16

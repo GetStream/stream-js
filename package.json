@@ -26,6 +26,7 @@
     "test": "yarn run test-unit-node",
     "test-types": "tsc --skipLibCheck --target es2020 --esModuleInterop true --noEmit true test/typescript/*.ts",
     "test-unit-node": "mocha --require tsx/cjs --require dotenv/config test/unit/common test/unit/node",
+    "test-unit-node16": "mocha --require ./babel-register.js test/unit/common test/unit/node",
     "test-integration-node": "mocha --require tsx/cjs --require dotenv/config test/integration/common test/integration/node --exit",
     "test-cloud": "mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --exit",
     "test-cloud-local": "LOCAL=true mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'",
