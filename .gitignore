@@ -19,6 +19,13 @@ coverage.lcov
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
