@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.14.0](https://github.com/GetStream/stream-js/compare/v8.13.0...v8.14.0) (2026-06-12)
+
+### Dependencies
+
+* upgraded `follow-redirects`, `axios` and a few more dev dependencies to their latest versions ([#655](https://github.com/GetStream/stream-js/pull/655)) ([83bed55](https://github.com/GetStream/stream-js/commit/83bed557807a135f71676201c999b5923ad7ceba))
+
+### Bug Fixes
+
+* undefined process in stream client ([#625](https://github.com/GetStream/stream-js/issues/625)) ([83bed55](https://github.com/GetStream/stream-js/commit/83bed557807a135f71676201c999b5923ad7ceba))
+
 ## [8.13.0](https://github.com/GetStream/stream-js/compare/v8.12.1...v8.13.0) (2026-05-26)
 
 
