@@ -2,6 +2,8 @@ import expect from 'expect.js';
 import * as td from 'testdouble';
 import { jwtDecode } from 'jwt-decode';
 import { createRequire } from 'node:module';
+import * as http from 'node:http';
+import * as https from 'node:https';
 import { connect, StreamClient, StreamFeed } from '../../../src';
 import { beforeEachFn } from '../utils/hooks';
 
@@ -15,6 +17,47 @@ describe('[UNIT] Stream Client instantiation (Node)', function () {
 
   it('without secret', function () {
     new StreamClient('stub-key', null, 9498); // eslint-disable-line no-new
+  });
+
+  it('uses default node agent options', function () {
+    const client = new StreamClient('stub-key', 'stub-secret', 9498);
+    expect(client.nodeOptions?.httpAgent.options.keepAlive).to.be(true);
+    expect(client.nodeOptions?.httpsAgent.options.keepAlive).to.be(true);
+    expect(client.nodeOptions?.httpAgent.options.keepAliveMsecs).to.be(3000);
+    expect(client.nodeOptions?.httpsAgent.options.keepAliveMsecs).to.be(3000);
+  });
+
+  it('supports configurable node agent options', function () {
+    const client = new StreamClient('stub-key', 'stub-secret', 9498, {
+      keepAlive: false,
+      keepAliveMsecs: 12345,
+      maxSockets: 10,
+      maxFreeSockets: 5,
+      scheduling: 'lifo',
+    });
+
+    expect(client.nodeOptions?.httpAgent.options.keepAlive).to.be(false);
+    expect(client.nodeOptions?.httpsAgent.options.keepAlive).to.be(false);
+    expect(client.nodeOptions?.httpAgent.options.keepAliveMsecs).to.be(12345);
+    expect(client.nodeOptions?.httpsAgent.options.keepAliveMsecs).to.be(12345);
+    expect(client.nodeOptions?.httpAgent.options.maxSockets).to.be(10);
+    expect(client.nodeOptions?.httpsAgent.options.maxSockets).to.be(10);
+    expect(client.nodeOptions?.httpAgent.options.maxFreeSockets).to.be(5);
+    expect(client.nodeOptions?.httpsAgent.options.maxFreeSockets).to.be(5);
+    expect(client.nodeOptions?.httpAgent.options.scheduling).to.be('lifo');
+    expect(client.nodeOptions?.httpsAgent.options.scheduling).to.be('lifo');
+  });
+
+  it('supports custom node agents', function () {
+    const httpAgent = new http.Agent({ keepAlive: true, keepAliveMsecs: 9000 });
+    const httpsAgent = new https.Agent({ keepAlive: true, keepAliveMsecs: 9000 });
+    const client = new StreamClient('stub-key', 'stub-secret', 9498, {
+      httpAgent,
+      httpsAgent,
+    });
+
+    expect(client.nodeOptions?.httpAgent).to.be(httpAgent);
+    expect(client.nodeOptions?.httpsAgent).to.be(httpsAgent);
   });
 });
 

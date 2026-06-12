@@ -61,10 +61,16 @@ export type ClientOptions = {
   expireTokens?: boolean;
   fayeUrl?: string;
   group?: string;
+  httpAgent?: http.Agent;
+  httpsAgent?: https.Agent;
   keepAlive?: boolean;
+  keepAliveMsecs?: number;
   local?: boolean;
   location?: string;
+  maxFreeSockets?: number;
+  maxSockets?: number;
   protocol?: string;
+  scheduling?: 'fifo' | 'lifo';
   timeout?: number;
   urlOverride?: Record<string, string>;
   version?: string;
@@ -272,9 +278,23 @@ export class StreamClient<StreamFeedGenerics extends DefaultGenerics = DefaultGe
 
     if (this.node) {
       const keepAlive = this.options.keepAlive === undefined ? true : this.options.keepAlive;
+      const keepAliveMsecs = this.options.keepAliveMsecs ?? 3000;
+      const agentOptions: http.AgentOptions = {
+        keepAlive,
+        keepAliveMsecs,
+      };
+      if (this.options.maxSockets !== undefined) {
+        agentOptions.maxSockets = this.options.maxSockets;
+      }
+      if (this.options.maxFreeSockets !== undefined) {
+        agentOptions.maxFreeSockets = this.options.maxFreeSockets;
+      }
+      if (this.options.scheduling !== undefined) {
+        agentOptions.scheduling = this.options.scheduling;
+      }
       this.nodeOptions = {
-        httpAgent: new http.Agent({ keepAlive, keepAliveMsecs: 3000 }),
-        httpsAgent: new https.Agent({ keepAlive, keepAliveMsecs: 3000 }),
+        httpAgent: this.options.httpAgent ?? new http.Agent(agentOptions),
+        httpsAgent: this.options.httpsAgent ?? new https.Agent(agentOptions),
       };
     }
 
