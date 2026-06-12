@@ -13,14 +13,14 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Node
-      uses: actions/setup-node@v5
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
         registry-url: 'https://registry.npmjs.org'
         cache: 'yarn'
 
-    - name: Install Dependencies & Build
-      run: yarn install --frozen-lockfile --ignore-engines
+    - name: Install Dependencies
+      run: yarn install --immutable
       shell: bash
       env:
         PUPPETEER_SKIP_DOWNLOAD: ${{ inputs.skip-puppeteer }}
