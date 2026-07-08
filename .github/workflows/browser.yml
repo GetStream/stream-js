@@ -6,6 +6,10 @@ on:
       - 'main'
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   browser:
     runs-on: ubuntu-latest
