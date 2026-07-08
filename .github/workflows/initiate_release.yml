@@ -7,6 +7,10 @@ on:
         description: "The new version number with 'v' prefix. Example: v1.40.1"
         required: true
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   init_release:
     name: 🚀 Create release PR
