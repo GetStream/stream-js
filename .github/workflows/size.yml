@@ -8,6 +8,10 @@ on:
       - 'test/**'
       - '**.md'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
