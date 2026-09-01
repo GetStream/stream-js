@@ -1,5 +1,5 @@
 import fs from 'fs';
-import request from 'request';
+import axios from 'axios';
 
 import { CloudContext } from './utils';
 
@@ -22,10 +22,12 @@ describe('Files', () => {
 
   describe('When alice adds a different type of file stream', () => {
     ctx.requestShouldNotError(async () => {
-      const file = request('http://nodejs.org/images/logo.png');
-      ctx.response = await ctx.alice.files.upload(file);
+      const { data: file } = await axios.get('https://nodejs.org/static/images/logo.svg', {
+        responseType: 'stream',
+      });
+      ctx.response = await ctx.alice.files.upload(file, 'logo.svg');
       ctx.response.should.not.be.empty;
-      ctx.response.file.includes('logo.png?').should.be.true;
+      ctx.response.file.includes('logo.svg?').should.be.true;
     });
   });
 
@@ -39,11 +41,9 @@ describe('Files', () => {
   });
 
   describe('When the file is requested', () => {
-    ctx.test('should return 200', function (done) {
-      request.get(fileURL, function (err, res) {
-        res.statusCode.should.eql(200);
-        done();
-      });
+    ctx.test('should return 200', async () => {
+      const res = await axios.get(fileURL, { validateStatus: () => true });
+      res.status.should.eql(200);
     });
   });
 

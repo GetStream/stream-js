@@ -14,7 +14,6 @@
   "version": "8.14.0",
   "scripts": {
     "changelog": "standard-version --release-as $VERSION --skip.tag --skip.commit --tag-prefix=v",
-    "commitlinter": "commitlint",
     "transpile": "babel src --out-dir lib --extensions '.ts'",
     "types": "tsc --emitDeclarationOnly",
     "build": "rm -rf lib && yarn run transpile && yarn run types",
@@ -26,7 +25,6 @@
     "test": "yarn run test-unit-node",
     "test-types": "tsc --skipLibCheck --target es2020 --esModuleInterop true --noEmit true test/typescript/*.ts",
     "test-unit-node": "mocha --require tsx/cjs --require dotenv/config test/unit/common test/unit/node",
-    "test-unit-node16": "mocha --require ./babel-register.js test/unit/common test/unit/node",
     "test-integration-node": "mocha --require tsx/cjs --require dotenv/config test/integration/common test/integration/node --exit",
     "test-cloud": "mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --exit",
     "test-cloud-local": "LOCAL=true mocha --require tsx/cjs --require dotenv/config test/integration/cloud --timeout 40000 --ignore 'test/integration/cloud/{personalized_feed,files,images}.js'",
@@ -36,11 +34,6 @@
     "version": "yarn run dist && yarn run build && git add dist",
     "postversion": "git push && git push --tags && npm publish"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn run lint"
-    }
-  },
   "browser": {
     "./lib/batch_operations.js": false,
     "./lib/redirect_url.js": false,
@@ -48,7 +41,6 @@
     "http": false,
     "https": false,
     "jsonwebtoken": false,
-    "qs": false,
     "url": false
   },
   "react-native": {
@@ -56,78 +48,54 @@
     "jsonwebtoken": false,
     "./lib/batch_operations.js": false,
     "./lib/redirect_url.js": false,
-    "qs": false,
     "url": false
   },
   "devDependencies": {
     "@babel/cli": "^7.29.7",
     "@babel/core": "^7.29.7",
     "@babel/eslint-parser": "^7.29.7",
-    "@babel/node": "^7.29.7",
-    "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-    "@babel/plugin-transform-object-assign": "^7.29.7",
-    "@babel/plugin-transform-runtime": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-typescript": "^7.29.7",
-    "@babel/register": "^7.29.7",
-    "@commitlint/cli": "^18.4.1",
-    "@commitlint/config-conventional": "^18.4.0",
     "@types/node": "^18.19.130",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "babel-loader": "^9.2.1",
-    "chai": "^4.3.10",
-    "dotenv": "^16.0.3",
-    "eslint": "^8.53.0",
+    "chai": "^4.5.0",
+    "dotenv": "^16.6.1",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.2",
-    "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-chai-friendly": "^0.7.4",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.6",
-    "eslint-plugin-sonarjs": "^0.23.0",
-    "eslint-plugin-typescript-sort-keys": "^3.1.0",
+    "eslint-plugin-typescript-sort-keys": "^3.3.0",
     "expect.js": "^0.3.1",
-    "husky": "^8.0.3",
-    "json-loader": "~0.5.7",
-    "karma": "^6.3.9",
-    "karma-chrome-launcher": "^3.1.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "~2.2.5",
-    "karma-sauce-launcher": "^4.3.6",
     "karma-sourcemap-loader": "~0.4.0",
-    "karma-webpack": "^5.0.0",
-    "mocha": "^10.2.0",
+    "karma-webpack": "^5.0.1",
+    "mocha": "^10.8.2",
     "null-loader": "^4.0.1",
-    "nyc": "^15.1.0",
-    "prettier": "^3.1.0",
-    "puppeteer": "^24.39.0",
-    "puppeteer-core": "^24.39.0",
-    "request": "^2.88.2",
-    "standard-version": "^9.3.2",
-    "testdouble": "3.20.0",
-    "tsx": "^4.21.0",
+    "prettier": "^3.9.6",
+    "standard-version": "^9.5.0",
+    "testdouble": "3.20.2",
+    "tsx": "^4.23.13",
     "typescript": "^5.2.2",
-    "webpack": "^5.107.2",
-    "webpack-cli": "^5.1.1"
+    "webpack": "^5.110.2",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@babel/runtime": "^7.29.7",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/qs": "^6.9.10",
-    "axios": "^1.17.0",
-    "faye": "^1.4.0",
-    "follow-redirects": "^1.16.0",
-    "form-data": "^4.0.4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "axios": "^1.20.0",
+    "faye": "^1.4.1",
+    "form-data": "^4.0.6",
     "jsonwebtoken": "^9.0.3",
-    "jwt-decode": "^4.0.0",
-    "qs": "^6.14.2"
+    "jwt-decode": "^4.0.0"
   },
   "peerDependencies": {
     "@types/node": ">=10"
-  },
-  "resolutions": {
-    "jws": "^3.2.3"
   },
   "repository": {
     "type": "git",
@@ -140,7 +108,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "keywords": [
     "stream",

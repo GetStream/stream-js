@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import { StreamClient } from './client';
 import { MissingSchemaError } from './errors';
 import utils from './utils';
@@ -43,7 +41,9 @@ export default function createRedirectUrl(this: StreamClient, targetUrl: string,
     events: JSON.stringify(events),
   };
 
-  const qString = utils.rfc3986(qs.stringify(kwargs));
+  // URLSearchParams form-encodes spaces as + and percent-encodes ~; the analytics endpoint
+  // expects %20 and a literal ~, so keep both replaces to match the previous qs.stringify output.
+  const qString = utils.rfc3986(new URLSearchParams(kwargs).toString().replace(/\+/g, '%20').replace(/%7E/g, '~'));
 
   return `${analyticsUrl}?${qString}`;
 }

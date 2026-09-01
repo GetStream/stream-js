@@ -1,7 +1,6 @@
 import expect from 'expect.js';
 import jwt from 'jsonwebtoken';
-import qs from 'qs';
-import request from 'request';
+import axios from 'axios';
 
 import { StreamClient, MissingSchemaError } from '../../../src';
 import config from '../utils/config';
@@ -38,7 +37,7 @@ describe("[UNIT] Redirect URL's", function () {
     this.client = new StreamClient(config.API_KEY, config.API_SECRET);
     const redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    const queryString = qs.parse(new URL(redirectUrl).search, { ignoreQueryPrefix: true });
+    const queryString = Object.fromEntries(new URL(redirectUrl).searchParams);
     const decoded = jwt.verify(queryString.authorization, config.API_SECRET);
 
     expect(decoded).to.eql({
@@ -81,7 +80,7 @@ describe("[UNIT] Redirect URL's", function () {
     this.client = new StreamClient(config.API_KEY, config.API_SECRET);
     const redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    const queryString = qs.parse(new URL(redirectUrl).search, { ignoreQueryPrefix: true });
+    const queryString = Object.fromEntries(new URL(redirectUrl).searchParams);
     const decoded = jwt.verify(queryString.authorization, config.API_SECRET);
 
     expect(decoded).to.eql({
@@ -118,17 +117,40 @@ describe("[UNIT] Redirect URL's", function () {
 
     const redirectUrl = this.client.createRedirectUrl(targetUrl, userId, events);
 
-    request(redirectUrl, function (err, response) {
-      if (err) {
-        done(err);
-      } else if (response.statusCode !== 200) {
-        done(`Expecting a status code of 200 but got ${response.statusCode}`);
-      } else if (response.request.uri.hostname.indexOf('google') === -1) {
-        done('Did not follow redirect to google');
-      } else {
-        done();
-      }
-    });
+    axios
+      .get(redirectUrl, { validateStatus: () => true })
+      .then(function (response) {
+        // axios follows redirects by default; res.responseUrl is the final URL
+        const finalHostname = new URL(response.request.res.responseUrl).hostname;
+        if (response.status !== 200) {
+          done(`Expecting a status code of 200 but got ${response.status}`);
+        } else if (finalHostname.indexOf('google') === -1) {
+          done('Did not follow redirect to google');
+        } else {
+          done();
+        }
+      })
+      .catch(done);
+  });
+
+  // Pins the exact query-string encoding of the redirect URL. The analytics
+  // endpoint parses this URL, so the encoding is part of the wire contract:
+  // spaces must be %20 (not +) and ~ must stay literal.
+  it('should encode the query string exactly', function () {
+    const client = new StreamClient(config.API_KEY, config.API_SECRET);
+    const targetUrl = 'http://example.com/a b~c?x=1&y=2';
+    const events = [{ foreign_id: 'tweet:1', label: "click!'()*", user_id: 'tom~my' }];
+
+    const redirectUrl = client.createRedirectUrl(targetUrl, 'tommaso', events);
+    const { search } = new URL(redirectUrl);
+
+    expect(search).to.contain('url=http%3A%2F%2Fexample.com%2Fa%20b~c%3Fx%3D1%26y%3D2');
+    expect(search).to.contain(
+      'events=%5B%7B%22foreign_id%22%3A%22tweet%3A1%22%2C%22label%22%3A%22click%21%27%28%29%2A%22%2C%22user_id%22%3A%22tom~my%22%7D%5D',
+    );
+    expect(search).to.contain(`api_key=${config.API_KEY}`);
+    expect(search.indexOf('+')).to.equal(-1);
+    expect(search.indexOf('%7E')).to.equal(-1);
   });
 
   it('should fail creating email redirects on invalid targets', function () {

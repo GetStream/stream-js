@@ -15,9 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-node
-      - name: Install Chrome
-        run: npx puppeteer browsers install chrome
-        shell: bash
       - name: Test
         env:
           STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}

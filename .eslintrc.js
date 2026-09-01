@@ -8,10 +8,6 @@ const sharedRules = {
   'prefer-destructuring': ['error', { object: true, array: false }],
   'max-classes-per-file': 0,
   'no-plusplus': 0,
-  'sonarjs/cognitive-complexity': 0,
-  'sonarjs/no-collapsible-if': 0,
-  'sonarjs/no-duplicate-string': 0,
-  'sonarjs/no-identical-functions': 0,
   'class-methods-use-this': 0,
 };
 
@@ -24,13 +20,7 @@ const settings = {
 module.exports = {
   root: true,
   plugins: ['prettier', 'chai-friendly'],
-  extends: [
-    'airbnb-base',
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-    'plugin:sonarjs/recommended',
-    'plugin:chai-friendly/recommended',
-  ],
+  extends: ['airbnb-base', 'eslint:recommended', 'plugin:prettier/recommended', 'plugin:chai-friendly/recommended'],
   parser: '@babel/eslint-parser',
   env: {
     es6: true,
@@ -53,7 +43,6 @@ module.exports = {
         'plugin:prettier/recommended',
         'prettier',
         'plugin:@typescript-eslint/recommended',
-        'plugin:sonarjs/recommended',
       ],
       parser: '@typescript-eslint/parser',
       settings,

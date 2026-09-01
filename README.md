@@ -387,7 +387,7 @@ Docs are available on [GetStream.io](http://getstream.io/docs/?language=js).
 
 ## ⚠️ Node version requirements & Browser support
 
-This API Client project requires Node.js v16 at a minimum.
+This API Client project requires Node.js v18 at a minimum.
 
 The project is supported in line with the Node.js Foundation Release Working Group.
 
