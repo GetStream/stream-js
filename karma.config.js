@@ -6,7 +6,18 @@ const webpackConfig = require('./webpack.config.js')(); // eslint-disable-line i
 delete webpackConfig.entry;
 delete webpackConfig.output;
 webpackConfig.devtool = 'inline-source-map';
-webpackConfig.plugins = [new webpack.EnvironmentPlugin(process.env)];
+webpackConfig.resolve = { ...webpackConfig.resolve, fallback: { module: false } };
+webpackConfig.plugins = [
+  ...webpackConfig.plugins,
+  new webpack.EnvironmentPlugin({
+    STREAM_ANALYTICS_BASE_URL: '',
+    STREAM_API_KEY: '',
+    STREAM_API_SECRET: '',
+    STREAM_APP_ID: '',
+    STREAM_URL: '',
+    ...process.env,
+  }),
+];
 
 // Karma config
 module.exports = function (config) {
