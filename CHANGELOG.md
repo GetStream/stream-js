@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.15.0](https://github.com/GetStream/stream-js/compare/v8.14.0...v8.15.0) (2026-09-01)
+
+
+### Features
+
+* trim dependencies, drop Node 16, and target ES2020 ([#667](https://github.com/GetStream/stream-js/issues/667)) ([f385a45](https://github.com/GetStream/stream-js/commit/f385a45c0e790f507d03b9af5b38883c604ad388))
+
 ## [8.14.0](https://github.com/GetStream/stream-js/compare/v8.13.0...v8.14.0) (2026-06-12)
 
 ### Dependencies
