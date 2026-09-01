@@ -6,6 +6,7 @@ const webpackConfig = require('./webpack.config.js')(); // eslint-disable-line i
 delete webpackConfig.entry;
 delete webpackConfig.output;
 webpackConfig.devtool = 'inline-source-map';
+webpackConfig.resolve = { ...webpackConfig.resolve, fallback: { module: false } };
 webpackConfig.plugins = [
   ...webpackConfig.plugins,
   new webpack.EnvironmentPlugin({
