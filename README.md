@@ -1,3 +1,8 @@
+> **`stream-js` is a Feeds v2 client and is now in maintenance mode.** It will continue to
+> receive critical fixes, so it is safe to keep using with a v2 app. New projects should start
+> with Feeds v3: [`stream-node`](https://github.com/GetStream/stream-node) (npm `@stream-io/node-sdk`) on the server and [`stream-feeds-js`](https://github.com/GetStream/stream-feeds-js) (npm `@stream-io/feeds-client`) in the browser.
+> Migration guide: https://getstream.io/activity-feeds/docs/node/v2-to-v3-migration/
+
 # Official JavaScript SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
 [![build](https://github.com/GetStream/stream-js/workflows/build/badge.svg)](https://github.com/GetStream/stream-js/actions)
