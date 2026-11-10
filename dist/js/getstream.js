@@ -1,5 +1,5 @@
 /*!
- * getstream v8.15.0
+ * getstream v8.15.1
  * DEPRECATED: loading this UMD bundle via <script> (CDN or direct download) is deprecated.
  * Install from npm (`npm install getstream`) and use a bundler instead.
  * See https://github.com/GetStream/stream-js#readme
@@ -403,7 +403,7 @@ var constants_namespaceFn = () => {
 
 // MODULE: ./package.json
 var package_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
-const __WEBPACK_NAMESPACE_OBJECT__ = {"rE":"8.15.0"};
+const __WEBPACK_NAMESPACE_OBJECT__ = {"rE":"8.15.1"};
 module.exports = __WEBPACK_NAMESPACE_OBJECT__;
 });
 
@@ -6871,10 +6871,10 @@ class StreamClient {
     this.baseUrl = this.getBaseUrl();
     if (typeof process !== 'undefined') {
       var _process$env, _process$env2;
-      if ((_process$env = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
+      if ((_process$env = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})) !== null && _process$env !== void 0 && _process$env.LOCAL_FAYE) {
         this.fayeUrl = 'http://localhost:9999/faye/';
       }
-      if ((_process$env2 = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
+      if ((_process$env2 = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})) !== null && _process$env2 !== void 0 && _process$env2.STREAM_ANALYTICS_BASE_URL) {
         this.baseAnalyticsUrl = undefined;
       }
     }
@@ -6969,8 +6969,8 @@ class StreamClient {
     if (!serviceName) serviceName = 'api';
     if (this.options.urlOverride && this.options.urlOverride[serviceName]) return this.options.urlOverride[serviceName];
     const urlEnvironmentKey = serviceName === 'api' ? 'STREAM_BASE_URL' : `STREAM_${serviceName.toUpperCase()}_URL`;
-    if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})[urlEnvironmentKey];
-    if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return `http://localhost:8000/${serviceName}/`;
+    if (typeof process !== 'undefined' && (_process$env3 = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})) !== null && _process$env3 !== void 0 && _process$env3[urlEnvironmentKey]) return ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})[urlEnvironmentKey];
+    if (typeof process !== 'undefined' && (_process$env4 = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})) !== null && _process$env4 !== void 0 && _process$env4.LOCAL || this.options.local) return `http://localhost:8000/${serviceName}/`;
     if (this.location) {
       const protocol = this.options.protocol || 'https';
       return `${protocol}://${this.location}-${serviceName}.stream-io-api.com/${serviceName}/`;
@@ -7031,11 +7031,11 @@ class StreamClient {
    * @return {string} current user agent
    */
   userAgent() {
-    if (typeof process === 'undefined' || "8.15.0" === undefined) {
+    if (typeof process === 'undefined' || "8.15.1" === undefined) {
       // eslint-disable-next-line
       return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${(package_namespaceFn().rE)}`;
     }
-    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${"8.15.0"}`;
+    return `stream-javascript-client-${this.node ? 'node' : 'browser'}-${"8.15.1"}`;
   }
 
   /**
@@ -7902,7 +7902,7 @@ class Collections {
  */
 function connect(apiKey, apiSecret, appId, options) {
   var _process$env;
-  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
+  if (typeof process !== 'undefined' && (_process$env = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"})) !== null && _process$env !== void 0 && _process$env.STREAM_URL && !apiKey) {
     const parts = /https:\/\/(\w+):(\w+)@([\w-]*).*\?app_id=(\d+)/.exec(undefined) || [];
     apiKey = parts[1];
     apiSecret = parts[2];
@@ -10884,7 +10884,7 @@ var Transport = assign(Class({ className: 'Transport',
 
     var name   = protocol.replace(/:$/, '').toLowerCase() + '_proxy',
         upcase = name.toUpperCase(),
-        env    = ({"PACKAGE_VERSION":"8.15.0","NODE_ENV":"production"}),
+        env    = ({"PACKAGE_VERSION":"8.15.1","NODE_ENV":"production"}),
         keys, proxy;
 
     if (name === 'http_proxy' && env.REQUEST_METHOD) {
