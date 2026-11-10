@@ -56,7 +56,7 @@ yarn add getstream
 
 ### Using JS deliver (deprecated)
 
-> :warning: **Deprecated:** loading the UMD bundle with a `<script>` tag (from a CDN or by downloading the file) is deprecated and will not be maintained going forward. Install the package from npm and use a bundler instead, so your dependency tooling (`npm audit`, Dependabot, etc.) can see and update the SDK's dependencies.
+> :warning: **Deprecated:** loading the UMD bundle with a `<script>` tag (from a CDN or by downloading the file) is deprecated. The bundle is still published for now, but may be removed in a future major version. Install the package from npm and use a bundler instead, so your dependency tooling (`npm audit`, Dependabot, etc.) can see and update the SDK's dependencies.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/getstream/dist/js_min/getstream.js"></script>

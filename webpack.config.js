@@ -50,7 +50,7 @@ module.exports = (env = {}) => ({
         `getstream v${pkg.version}`,
         'DEPRECATED: loading this UMD bundle via <script> (CDN or direct download) is deprecated.',
         'Install from npm (`npm install getstream`) and use a bundler instead.',
-        'See https://github.com/GetStream/stream-js#installation',
+        'See https://github.com/GetStream/stream-js#readme',
       ].join('\n'),
     }),
     new webpack.DefinePlugin({
