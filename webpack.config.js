@@ -43,6 +43,16 @@ module.exports = (env = {}) => ({
   },
 
   plugins: [
+    new webpack.BannerPlugin({
+      // run after minification so terser doesn't extract the banner into LICENSE.txt
+      stage: webpack.Compilation.PROCESS_ASSETS_STAGE_REPORT,
+      banner: [
+        `getstream v${pkg.version}`,
+        'DEPRECATED: loading this UMD bundle via <script> (CDN or direct download) is deprecated.',
+        'Install from npm (`npm install getstream`) and use a bundler instead.',
+        'See https://github.com/GetStream/stream-js#readme',
+      ].join('\n'),
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         PACKAGE_VERSION: JSON.stringify(pkg.version),
