@@ -54,7 +54,9 @@ or if you are using yarn
 yarn add getstream
 ```
 
-### Using JS deliver
+### Using JS deliver (deprecated)
+
+> :warning: **Deprecated:** loading the UMD bundle with a `<script>` tag (from a CDN or by downloading the file) is deprecated and will not be maintained going forward. Install the package from npm and use a bundler instead, so your dependency tooling (`npm audit`, Dependabot, etc.) can see and update the SDK's dependencies.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/getstream/dist/js_min/getstream.js"></script>
@@ -66,7 +68,9 @@ yarn add getstream
 <script src="https://cdn.jsdelivr.net/npm/getstream@8.0.0/dist/js_min/getstream.js"></script>
 ```
 
-### Install by downloading the JS file
+### Install by downloading the JS file (deprecated)
+
+> :warning: **Deprecated:** see the note above, use the npm package instead.
 
 [JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js/getstream.js) /
 [Minified JS](https://raw.githubusercontent.com/GetStream/stream-js/main/dist/js_min/getstream.js)
