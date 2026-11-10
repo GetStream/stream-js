@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [8.15.1](https://github.com/GetStream/stream-js/compare/v8.15.0...v8.15.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* rebuild stale dist bundles and deprecate UMD/CDN usage ([#672](https://github.com/GetStream/stream-js/issues/672)) ([44d0c6f](https://github.com/GetStream/stream-js/commit/44d0c6fadb2191ffe276de2064c09fce509f77a6)), closes [#504](https://github.com/GetStream/stream-js/issues/504)
+
 ## [8.15.0](https://github.com/GetStream/stream-js/compare/v8.14.0...v8.15.0) (2026-09-01)
 
 
