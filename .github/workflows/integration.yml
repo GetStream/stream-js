@@ -17,7 +17,7 @@ jobs:
       - uses: ./.github/actions/setup-node
       - name: Test
         env:
-          STREAM_APP_ID: ${{ secrets.STREAM_APP_ID }}
-          STREAM_API_KEY: ${{ secrets.STREAM_API_KEY }}
+          STREAM_APP_ID: ${{ vars.STREAM_APP_ID }}
+          STREAM_API_KEY: ${{ vars.STREAM_API_KEY }}
           STREAM_API_SECRET: ${{ secrets.STREAM_API_SECRET }}
         run: yarn run test-integration-node
