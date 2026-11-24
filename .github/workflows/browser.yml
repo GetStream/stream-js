@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   browser:
-    runs-on: ubuntu-latest
+    runs-on: { group: github-public-amd64 }
     # karma-webpack turns a failed bundle into an indefinite hang rather than an
     # error, so cap the job; a healthy run takes about two minutes.
     timeout-minutes: 10
